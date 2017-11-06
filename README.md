@@ -12,7 +12,27 @@ The sections below will describe the additions to the Electron APIs, for anythin
 
 **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
-## Overriding Widevine DRM installation error handling
+## Using Electron for Content Security with npm
+
+To use Electron for Content Security as a replacement for stock Electron for a project it can be referenced directly as a dependency inside `package.json`. To achieve this, replace the stock Electron dependency so that:
+
+```
+"dependencies": {
+  "electron": "1.7.9"
+}
+```
+
+becomes:
+
+```
+"dependencies": {
+  "electron": "https://github.com/castlabs/electron-releases#v1.8.1-vmp1010"
+}
+```
+
+The `#1.8.1-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+
+## Overriding Widevine CDM installation error handling
 
 To allow custom error handling for Widevine DRM installation errors a new application event, ```widevine-error``` was added, taking one argument which is an ```Error```-instance describing the error that occurred. Installing an event handler for this event will override the default behaviour:
 
