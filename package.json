@@ -22,7 +22,7 @@
   "directories": {
     "test": "test"
   },
-  "name": "electron-castlabs",
+  "name": "electron",
   "version": "1.8.1-vmp1010",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
