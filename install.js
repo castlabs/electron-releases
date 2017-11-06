@@ -24,7 +24,7 @@ if (installedVersion === version && fs.existsSync(path.join(__dirname, platformP
 
 // downloads if not cached
 download({
-  mirror: 'https://github.com/castlabs/electron-releases/releases/download/',
+  mirror: 'https://github.com/castlabs/electron-releases/releases/download/v',
   cache: process.env.electron_config_cache,
   version: version,
   platform: process.env.npm_config_platform,
