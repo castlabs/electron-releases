@@ -1,0 +1,36 @@
+{
+  "scripts": {
+    "cache-clean": "rm -rf ~/.electron && rm -rf dist",
+    "postinstall": "node install.js",
+    "pretest": "npm run cache-clean",
+    "test": "standard"
+  },
+  "bin": {
+    "electron": "cli.js"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@types/node": "^7.0.18",
+    "electron-download": "^3.0.1",
+    "extract-zip": "^1.0.3"
+  },
+  "devDependencies": {
+    "home-path": "^0.1.1",
+    "path-exists": "^2.0.0",
+    "standard": "^5.4.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "name": "electron-castlabs",
+  "version": "1.8.1-vmp1010",
+  "repository": "https://github.com/castlabs/electron-releases",
+  "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
+  "license": "MIT",
+  "author": "castLabs GmbH (based on work by Electron Community)",
+  "keywords": [
+    "electron",
+    "widevine",
+    "vmp"
+  ]
+}
