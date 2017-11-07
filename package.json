@@ -28,9 +28,17 @@
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
   "author": "castLabs GmbH (based on work by Electron Community)",
+  "maintainers": [
+    {
+      "name": "Emil Pettersson",
+      "email": "emil.pettersson@castlabs.com"
+    }
+  ],
   "keywords": [
     "electron",
     "widevine",
-    "vmp"
+    "vmp",
+    "drm",
+    "offline"
   ]
 }
