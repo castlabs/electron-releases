@@ -32,6 +32,21 @@ becomes:
 
 The `#1.8.1-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
+## Using the Widevine CDM in Electron for Content Security
+
+When using the Widevine plugin within Electron the relevant `BrowserWindow` needs to have `plugins` enabled within its `webPreferences`, like this:
+
+#### Example BrowserWindow instantiation
+
+```
+const win = new BrowserWindow({
+  webPreferences: {
+    plugins: true
+  }
+});
+win.loadURL(yourContentURL);
+```
+
 ## Overriding Widevine CDM installation error handling
 
 To allow custom error handling for Widevine DRM installation errors a new application event, ```widevine-error``` was added, taking one argument which is an ```Error```-instance describing the error that occurred. Installing an event handler for this event will override the default behaviour:
@@ -57,7 +72,7 @@ electron.exe -> MyPlayer.exe
 electron.exe.sig -> MyPlayer.exe.sig
 ```
 
-In addition, if the executable is changed in any way, even if it is just adding meta-data or code-signing the executable, the VMP signature will currently be invalidatad and the executable will need to be re-signed.
+In addition, if the executable is changed in any way, even if it is just adding meta-data or code-signing the executable, the VMP signature will currently be invalidated and the executable will need to be re-signed.
 
 ## DISCLAIMER
 
