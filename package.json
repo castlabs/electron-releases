@@ -9,6 +9,7 @@
     "electron": "cli.js"
   },
   "main": "index.js",
+  "types": "electron.d.ts",
   "dependencies": {
     "@types/node": "^7.0.18",
     "electron-download": "^3.0.1",
