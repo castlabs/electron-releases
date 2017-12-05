@@ -16,7 +16,7 @@ try {
   // do nothing
 }
 
-if (process.env.DONT_INSTALL_ELECTRON) {
+if (process.env.DONT_INSTALL_ELECTRON == "1") {
   process.exit(0);
 }
 
