@@ -260,7 +260,7 @@ def sign_mac_package(dir, version, key, cert, name):
     rsrc_dir = path.join(app_dir, 'Contents/Resources')
     fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
     fwbin_path = path.join(fwver_dir, 'Electron Framework')
-    fwsig_path = fwbin_path + '.sig'
+    fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
     sign(fwbin_path, fwsig_path, version, key, cert, hash_macho, True)
 
 def sign_win_package(dir, version, key, cert, name):
