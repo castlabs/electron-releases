@@ -10,7 +10,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v1.8.1/README.md)
+[Electron README](https://github.com/electron/electron/blob/v1.8.2-beta.3/README.md)
 
 **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -28,11 +28,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v1.8.1-vmp1010"
+  "electron": "https://github.com/castlabs/electron-releases#v1.8.2-beta.3-vmp1010"
 }
 ```
 
-The `#1.8.1-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#1.8.2-beta.3-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Using the Widevine CDM in Electron for Content Security
 
