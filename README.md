@@ -83,9 +83,9 @@ If the application has been renamed as part of the packaging process, e.g. to Pl
 vmp-resign.py -C cert.pem -P "pass" -K key.pem -M Player.app -W Player.exe MacPlayer-v1.0/ WinPlayer-v1.0/
 ```
 
-**NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but on Windows the reverse is true since it stores the VS code-signature inside a VMP signed PE binary.
+**NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but in Visual Studio the reverse is true since it stores the code-signature inside a VMP signed PE binary.
 
-**NOTE**: Make sure to use the [vmp-resign.py](vmp-resign.py) tool corresponding to the release in use. If Electron is installed as a node module using npm the correct script is available in `node_modules/electron/vmp-resign.py`.
+**NOTE**: Make sure to use the [vmp-resign.py](vmp-resign.py) tool corresponding to the release in use. If Electron is installed as a node module, using npm, the correct script is available in `node_modules/electron/vmp-resign.py`.
 
 ### Special considerations
 
