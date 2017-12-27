@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.1-vmp1010
+// Type definitions for Electron 1.8.2-beta.3-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -966,6 +966,8 @@ declare namespace Electron {
 
     constructor(options?: BrowserViewConstructorOptions);
     static fromId(id: number): BrowserView;
+    static fromWebContents(webContents: WebContents): BrowserView | null;
+    static getAllViews(): BrowserView[];
     setAutoResize(options: AutoResizeOptions): void;
     setBackgroundColor(color: string): void;
     /**
@@ -1237,6 +1239,7 @@ declare namespace Electron {
      * This API cannot be called before the ready event of the app module is emitted.
      */
     static addExtension(path: string): void;
+    static fromBrowserView(browserView: BrowserView): BrowserWindow | null;
     static fromId(id: number): BrowserWindow;
     static fromWebContents(webContents: WebContents): BrowserWindow;
     static getAllWindows(): BrowserWindow[];
@@ -1308,6 +1311,11 @@ declare namespace Electron {
     focus(): void;
     focusOnWebView(): void;
     getBounds(): Rectangle;
+    /**
+     * Note: The BrowserView API is currently experimental and may change or be removed
+     * in future Electron releases.
+     */
+    getBrowserView(): BrowserView | null;
     getChildWindows(): BrowserWindow[];
     getContentBounds(): Rectangle;
     getContentSize(): number[];
@@ -1468,10 +1476,6 @@ declare namespace Electron {
      * Resizes and moves the window to the supplied bounds
      */
     setBounds(bounds: Rectangle, animate?: boolean): void;
-    /**
-     * Note: The BrowserView API is currently experimental and may change or be removed
-     * in future Electron releases.
-     */
     setBrowserView(browserView: BrowserView): void;
     /**
      * Sets whether the window can be manually closed by user. On Linux does nothing.
@@ -1910,7 +1914,7 @@ declare namespace Electron {
                                       * An object representing the HTTP response message.
                                       */
                                      response: IncomingMessage) => void): this;
-    constructor(options: any | string);
+    constructor(options: 'method' | 'url' | 'session' | 'partition' | 'protocol' | 'host' | 'hostname' | 'port' | 'path' | 'redirect');
     /**
      * Cancels an ongoing HTTP transaction. If the request has already emitted the
      * close event, the abort operation will have no effect. Otherwise an ongoing event
@@ -2237,10 +2241,22 @@ declare namespace Electron {
     // Docs: http://electron.atom.io/docs/api/crash-reporter
 
     /**
+     * Set an extra parameter to be sent with the crash report. The values specified
+     * here will be sent in addition to any values set via the extra option when start
+     * was called. This API is only available on macOS, if you need to add/update extra
+     * parameters on Linux and Windows after your first call to start you can call
+     * start again with the updated extra options.
+     */
+    addExtraParameter(key: string, value: string): void;
+    /**
      * Returns the date and ID of the last crash report. If no crash reports have been
      * sent or the crash reporter has not been started, null is returned.
      */
     getLastCrashReport(): CrashReport;
+    /**
+     * See all of the current parameters being passed to the crash reporter.
+     */
+    getParameters(): void;
     /**
      * Returns all uploaded crash reports. Each report contains the date and uploaded
      * ID.
@@ -2251,13 +2267,10 @@ declare namespace Electron {
      */
     getUploadToServer(): boolean;
     /**
-     * Set an extra parameter to be sent with the crash report. The values specified
-     * here will be sent in addition to any values set via the extra option when start
-     * was called. This API is only available on macOS, if you need to add/update extra
-     * parameters on Linux and Windows after your first call to start you can call
-     * start again with the updated extra options.
+     * Remove a extra parameter from the current set of parameters so that it will not
+     * be sent with the crash report.
      */
-    setExtraParameter(key: string, value: string): void;
+    removeExtraParameter(key: string): void;
     /**
      * This would normally be controlled by user preferences. This has no effect if
      * called before start is called. Note: This API can only be called from the main
@@ -2569,10 +2582,7 @@ declare namespace Electron {
      * Cancels the download operation.
      */
     cancel(): void;
-    /**
-     * Resumes Boolean - Whether the download can resume.
-     */
-    canResume(): void;
+    canResume(): boolean;
     getContentDisposition(): string;
     getETag(): string;
     /**
@@ -2868,6 +2878,10 @@ declare namespace Electron {
      */
     sendSync(channel: string, ...args: any[]): any;
     /**
+     * Sends a message to a window with windowid via channel
+     */
+    sendTo(windowId: number, channel: string, ...args: any[]): void;
+    /**
      * Like ipcRenderer.send but the event will be sent to the <webview> element in the
      * host page instead of the main process.
      */
@@ -2993,7 +3007,7 @@ declare namespace Electron {
      * Note: The returned Menu instance doesn't support dynamic addition or removal of
      * menu items. Instance properties can still be dynamically modified.
      */
-    static getApplicationMenu(): Menu;
+    static getApplicationMenu(): Menu | null;
     /**
      * Sends the action to the first responder of application. This is used for
      * emulating default macOS menu behaviors. Usually you would just use the role
@@ -3007,7 +3021,7 @@ declare namespace Electron {
      * Windows and Linux but has no effect on macOS. Note: This API has to be called
      * after the ready event of app module.
      */
-    static setApplicationMenu(menu: Menu): void;
+    static setApplicationMenu(menu: Menu | null): void;
     /**
      * Appends the menuItem to the menu.
      */
@@ -3167,7 +3181,7 @@ declare namespace Electron {
     removeListener(event: 'click', listener: (event: Event) => void): this;
     /**
      * Emitted when the notification is closed by manual intervention from the user.
-     * This event is not guarunteed to be emitted in all cases where the notification
+     * This event is not guaranteed to be emitted in all cases where the notification
      * is closed.
      */
     on(event: 'close', listener: (event: Event) => void): this;
@@ -3210,10 +3224,16 @@ declare namespace Electron {
     constructor(options: NotificationConstructorOptions);
     static isSupported(): boolean;
     /**
+     * Dismisses the notification.
+     */
+    close(): void;
+    /**
      * Immediately shows the notification to the user, please note this means unlike
      * the HTML5 Notification implementation, simply instantiating a new Notification
      * does not immediately show it to the user, you need to call this method before
-     * the OS will display it.
+     * the OS will display it. If the notification has been shown before, this method
+     * will dismiss the previously shown notification and create a new one with
+     * identical properties.
      */
     show(): void;
   }
@@ -3348,6 +3368,11 @@ declare namespace Electron {
      */
     interceptHttpProtocol(scheme: string, handler: (request: InterceptHttpProtocolRequest, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
+     * Same as protocol.registerStreamProtocol, except that it replaces an existing
+     * protocol handler.
+     */
+    interceptStreamProtocol(scheme: string, handler: (request: InterceptStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
+    /**
      * Intercepts scheme protocol and uses handler as the protocol's new handler which
      * sends a String as a response.
      */
@@ -3407,6 +3432,15 @@ declare namespace Electron {
      * the ready event of the app module gets emitted.
      */
     registerStandardSchemes(schemes: string[], options?: RegisterStandardSchemesOptions): void;
+    /**
+     * Registers a protocol of scheme that will send a Readable as a response. The
+     * usage is similar to the other register{Any}Protocol, except that the callback
+     * should be called with either a Readable object or an object that has the data,
+     * statusCode, and headers properties. Example: It is possible to pass any object
+     * that implements the readable stream API (emits data/end/error events). For
+     * example, here's how a file could be returned:
+     */
+    registerStreamProtocol(scheme: string, handler: (request: RegisterStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of scheme that will send a String as a response. The usage
      * is the same with registerFileProtocol, except that the callback should be called
@@ -3700,9 +3734,9 @@ declare namespace Electron {
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * session. Calling callback(true) will allow the permission and callback(false)
-     * will reject it.
+     * will reject it. To clear the handler, call setPermissionRequestHandler(null).
      */
-    setPermissionRequestHandler(handler: (webContents: WebContents, permission: string, callback: (permissionGranted: boolean) => void) => void): void;
+    setPermissionRequestHandler(handler: (webContents: WebContents, permission: string, callback: (permissionGranted: boolean) => void) => void | null): void;
     /**
      * Sets the proxy settings. When pacScript and proxyRules are provided together,
      * the proxyRules option is ignored and pacScript configuration is applied. The
@@ -3805,6 +3839,24 @@ declare namespace Electron {
 
     height: number;
     width: number;
+  }
+
+  interface StreamProtocolResponse {
+
+    // Docs: http://electron.atom.io/docs/api/structures/stream-protocol-response
+
+    /**
+     * A Node.js readable stream representing the response body
+     */
+    data: ReadableStream;
+    /**
+     * An object containing the response headers
+     */
+    headers: Headers;
+    /**
+     * The HTTP response code
+     */
+    statusCode: number;
   }
 
   interface SystemPreferences extends EventEmitter {
@@ -4544,6 +4596,26 @@ declare namespace Electron {
                                               certificate: Certificate,
                                               callback: (isTrusted: boolean) => void) => void): this;
     /**
+     * Emitted when the associated window logs a console message. Will not be emitted
+     * for windows with offscreen rendering enabled.
+     */
+    on(event: 'console-message', listener: (level: number,
+                                            message: string,
+                                            line: number,
+                                            sourceId: string) => void): this;
+    once(event: 'console-message', listener: (level: number,
+                                            message: string,
+                                            line: number,
+                                            sourceId: string) => void): this;
+    addListener(event: 'console-message', listener: (level: number,
+                                            message: string,
+                                            line: number,
+                                            sourceId: string) => void): this;
+    removeListener(event: 'console-message', listener: (level: number,
+                                            message: string,
+                                            line: number,
+                                            sourceId: string) => void): this;
+    /**
      * Emitted when there is a new context menu that needs to be handled.
      */
     on(event: 'context-menu', listener: (event: Event,
@@ -4672,6 +4744,29 @@ declare namespace Electron {
     once(event: 'devtools-reload-page', listener: Function): this;
     addListener(event: 'devtools-reload-page', listener: Function): this;
     removeListener(event: 'devtools-reload-page', listener: Function): this;
+    /**
+     * Emitted when a <webview> has been attached to this web contents.
+     */
+    on(event: 'did-attach-webview', listener: (event: Event,
+                                               /**
+                                                * The guest web contents that is used by the `<webview>`.
+                                                */
+                                               webContents: WebContents) => void): this;
+    once(event: 'did-attach-webview', listener: (event: Event,
+                                               /**
+                                                * The guest web contents that is used by the `<webview>`.
+                                                */
+                                               webContents: WebContents) => void): this;
+    addListener(event: 'did-attach-webview', listener: (event: Event,
+                                               /**
+                                                * The guest web contents that is used by the `<webview>`.
+                                                */
+                                               webContents: WebContents) => void): this;
+    removeListener(event: 'did-attach-webview', listener: (event: Event,
+                                               /**
+                                                * The guest web contents that is used by the `<webview>`.
+                                                */
+                                               webContents: WebContents) => void): this;
     /**
      * Emitted when a page's theme color changes. This is usually due to encountering a
      * meta tag:
@@ -5906,6 +6001,10 @@ declare namespace Electron {
      */
     addEventListener(event: 'devtools-focused', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-focused', listener: (event: Event) => void): this;
+    addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
+    removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
     canGoBack(): boolean;
     canGoForward(): boolean;
     canGoToOffset(offset: number): boolean;
@@ -6449,7 +6548,7 @@ declare namespace Electron {
      */
     enableLargerThanScreen?: boolean;
     /**
-     * Window's background color as Hexadecimal value, like #66CD00 or #FFF or
+     * Window's background color as a hexadecimal value, like #66CD00 or #FFF or
      * #80FFFFFF (alpha is supported). Default is #FFF (white).
      */
     backgroundColor?: string;
@@ -6535,7 +6634,11 @@ declare namespace Electron {
     /**
      * Verification result from chromium.
      */
-    error: string;
+    verificationResult: string;
+    /**
+     * Error code.
+     */
+    errorCode: number;
   }
 
   interface ClearStorageDataOptions {
@@ -6843,8 +6946,8 @@ declare namespace Electron {
 
   interface DisplayBalloonOptions {
     icon?: NativeImage | string;
-    title?: string;
-    content?: string;
+    title: string;
+    content: string;
   }
 
   interface Dock {
@@ -6984,6 +7087,9 @@ declare namespace Electron {
     name: string;
   }
 
+  interface Headers {
+  }
+
   interface IgnoreMouseEventsOptions {
     /**
      * If true, forwards mouse move messages to Chromium, enabling mouse related events
@@ -7055,6 +7161,14 @@ declare namespace Electron {
 
   interface InterceptHttpProtocolRequest {
     url: string;
+    referrer: string;
+    method: string;
+    uploadData: UploadData[];
+  }
+
+  interface InterceptStreamProtocolRequest {
+    url: string;
+    headers: Headers;
     referrer: string;
     method: string;
     uploadData: UploadData[];
@@ -7316,7 +7430,7 @@ declare namespace Electron {
     /**
      * An icon to use in the notification
      */
-    icon?: NativeImage;
+    icon?: string | NativeImage;
     /**
      * Whether or not to add an inline reply option to the notification.
      */
@@ -7709,6 +7823,14 @@ declare namespace Electron {
     secure?: boolean;
   }
 
+  interface RegisterStreamProtocolRequest {
+    url: string;
+    headers: Headers;
+    referrer: string;
+    method: string;
+    uploadData: UploadData[];
+  }
+
   interface RegisterStringProtocolRequest {
     url: string;
     referrer: string;
@@ -7963,7 +8085,7 @@ declare namespace Electron {
   }
 
   interface TouchBarConstructorOptions {
-    items: TouchBarButton | TouchBarColorPicker | TouchBarGroup | TouchBarLabel | TouchBarPopover | TouchBarScrubber | TouchBarSegmentedControl | TouchBarSlider | TouchBarSpacer;
+    items: Array<TouchBarButton | TouchBarColorPicker | TouchBarGroup | TouchBarLabel | TouchBarPopover | TouchBarScrubber | TouchBarSegmentedControl | TouchBarSlider | TouchBarSpacer>;
     escapeItem?: TouchBarButton | TouchBarColorPicker | TouchBarGroup | TouchBarLabel | TouchBarPopover | TouchBarScrubber | TouchBarSegmentedControl | TouchBarSlider | TouchBarSpacer;
   }
 
@@ -8164,9 +8286,6 @@ declare namespace Electron {
     finalUpdate: boolean;
   }
 
-  interface Headers {
-  }
-
   interface MediaFlags {
     /**
      * Whether the media element has crashed.
@@ -8349,7 +8468,7 @@ declare namespace Electron {
     defaultEncoding?: string;
     /**
      * Whether to throttle animations and timers when the page becomes background. This
-     * also affects the [Page Visibility API][#page-visibility]. Defaults to true.
+     * also affects the . Defaults to true.
      */
     backgroundThrottling?: boolean;
     /**
