@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.2-beta.4-mp1010
+// Type definitions for Electron 1.8.2-beta.5-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
