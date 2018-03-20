@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.3-vmp1010
+// Type definitions for Electron 1.8.4-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -968,6 +968,13 @@ declare namespace Electron {
     static fromId(id: number): BrowserView;
     static fromWebContents(webContents: WebContents): BrowserView | null;
     static getAllViews(): BrowserView[];
+    /**
+     * Force closing the view, the unload and beforeunload events won't be emitted for
+     * the web page. After you're done with a view, call this function in order to free
+     * memory and other resources as soon as possible.
+     */
+    destroy(): void;
+    isDestroyed(): boolean;
     setAutoResize(options: AutoResizeOptions): void;
     setBackgroundColor(color: string): void;
     /**
