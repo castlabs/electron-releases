@@ -218,7 +218,7 @@ def decode_signature(io):
 def load_cert_bytes(file):
     with open(file, 'rb') as f:
         data = f.read()
-    if (data.startswith(b'-----BEGIN CERTIFICATE-----')):
+    if (data.startswith(b'-----BEGIN ')):
         logging.info('Loading PEM certificate: %s', file)
         cert = x509.load_pem_x509_certificate(data, CRYPTO_BACKEND)
     else:
@@ -229,7 +229,7 @@ def load_cert_bytes(file):
 def load_key(file, password=None):
     with open(file, 'rb') as f:
         data = f.read()
-    if (data.startswith(b'-----BEGIN PRIVATE KEY-----')):
+    if (data.startswith(b'-----BEGIN ')):
         logging.info('Loading PEM key: %s', file)
         key = serialization.load_pem_private_key(data, password=password, backend=CRYPTO_BACKEND)
     else:
