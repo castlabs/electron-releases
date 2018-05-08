@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.4-vmp1010
+// Type definitions for Electron 1.8.6-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7778,9 +7778,9 @@ declare namespace Electron {
 
   interface ProgressBarOptions {
     /**
-     * Mode for the progress bar. Can be none, normal, indeterminate, error, or paused.
+     * Mode for the progress bar. Can be none, normal, indeterminate, error or paused.
      */
-    mode: ('none' | 'normal' | 'indeterminate' | 'error');
+    mode: ('none' | 'normal' | 'indeterminate' | 'error' | 'paused');
   }
 
   interface Provider {
