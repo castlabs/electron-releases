@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.7-vmp1010
+// Type definitions for Electron 1.8.7-hdcp-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions

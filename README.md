@@ -28,11 +28,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v1.8.7-vmp1010"
+  "electron": "https://github.com/castlabs/electron-releases#v1.8.7-hdcp-vmp1010"
 }
 ```
 
-The `#1.8.7-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#1.8.7-hdcp-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Using the Widevine CDM in Electron for Content Security
 
