@@ -69,7 +69,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
 
 ### Re-signing
 
-We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography), [macholib](https://pypi.python.org/pypi/macholib) and [file-magic](https://pypi.python.org/pypi/file-magic), all avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates have been acquired from [Google Widevine](http://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate the required signatures. Basic usage looks as follows:
+We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography), [macholib](https://pypi.python.org/pypi/macholib) and [file-magic](https://pypi.python.org/pypi/file-magic), all avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](http://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate the required signatures. Basic usage looks as follows:
 
 ```
 vmp-resign.py -C CERT-PATH [-P KEY-PASS] -K KEY-PATH PKG-PATH [PKG-PATH...]
@@ -82,6 +82,8 @@ If the application has been renamed as part of the packaging process, e.g. to Pl
 ```
 vmp-resign.py -C cert.pem -P "pass" -K key.pem -M Player.app -W Player.exe MacPlayer-v1.0/ WinPlayer-v1.0/
 ```
+
+The signature file (`.sig`) generatered by the script is automatically picked up and verified by Electron and the Widevine CDM. On Windows the `.sig` file resides next to the `.exe` file, but in later releases on macOS it has moved further into the app bundle.
 
 **NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but in Visual Studio the reverse is true since it stores the code-signature inside a VMP signed PE binary.
 
