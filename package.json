@@ -11,8 +11,8 @@
   "main": "index.js",
   "types": "electron.d.ts",
   "dependencies": {
-    "@types/node": "^7.0.18",
-    "electron-download": "^3.0.1",
+    "@types/node": "^8.0.24",
+    "electron-download": "^4.1.0",
     "extract-zip": "^1.0.3"
   },
   "devDependencies": {
@@ -23,8 +23,11 @@
   "directories": {
     "test": "test"
   },
+  "engines": {
+    "node": ">= 4.0"
+  },
   "name": "electron",
-  "version": "1.8.7-hdcp-vmp1010",
+  "version": "v3.0.0-wvvmp-beta.9",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",

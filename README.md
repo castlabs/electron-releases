@@ -10,7 +10,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v1.8.7/README.md)
+[Electron README](https://github.com/electron/electron/blob/v3.0.0-beta.9/README.md)
 
 **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -28,11 +28,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v1.8.7-hdcp-vmp1010"
+  "electron": "https://github.com/castlabs/electron-releases#v3.0.0-wvvmp-beta.9"
 }
 ```
 
-The `#1.8.7-hdcp-vmp1010` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v3.0.0-wvvmp-beta.9` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Using the Widevine CDM in Electron for Content Security
 
@@ -49,16 +49,49 @@ const win = new BrowserWindow({
 win.loadURL(yourContentURL);
 ```
 
-## Overriding Widevine CDM installation error handling
+## Widevine specific events
 
-To allow custom error handling for Widevine DRM installation errors a new application event, ```widevine-error``` was added, taking one argument which is an ```Error```-instance describing the error that occurred. Installing an event handler for this event will override the default behaviour:
+As a part of the installation process for the Widevine components certain events will be emitted to the application. These events allow the user to monitor the Widevine status to a certain extent. The events are:
 
-#### Example handler
+### ```widevine-ready``` 
+ 
+This event is emitted once Widevine has been properly installed/updated/registered and is ready to use to be used. Trying to play back protected content prior to the reception of this event will cause errors. The event is always emitted after the ```ready``` event.
+ 
+An argument is provided that contains the version of Widevine in use.
+ 
+#### Example
+ 
+```
+app.on('widevine-ready', (version) => {
+  console.log('Widevine ' + version + ' is ready to be used!');
+});
+```
+ 
+### ```widevine-update-pending``` 
+ 
+ This event is emitted when there is a Widevine update available that is pending installation. Once the application is restarted the update will be automatically applied and a ```widevine-ready```-event emitted, as usual.
+ 
+ Two arguments are provided which contains the current and pending versions of Widevine.
+ 
+#### Example
+ 
+```
+app.on('widevine-update-pending', (currentVersion, pendingVersion) => {
+  console.log('Widevine ' + currentVersion + ' is ready to be upgraded to ' + pendingVersion + '!');
+});
+```
+ 
+ ### ```widevine-error``` 
+
+This event is emitted when there is a problem with the Widevine installation that cannot be resolved. If there are no handlers registered for this event it will show a dialog with the error and terminate the application when it is dismissed. If this is not the desired behaviour a handler needs to be registered to provide customized behaviour.
+
+An argument is provided that contains an ```Error```-instance describing the error that occured.
+
+#### Example
 
 ```
-app.on('widevine-error', (err) => {
-  app.focus()
-  dialog.showErrorBox('Failed to install Widevine components', err.name + ': ' + err.message)
+app.on('widevine-error', (error) => {
+  console.log('Widevine installation encounterted an error: ' + error);
   process.exit(1)
 });
 ```
