@@ -1,4 +1,4 @@
-// Type definitions for Electron 1.8.7-hdcp-vmp1010
+// Type definitions for Electron 1.8.8-vmp1010
 // Project: http://electron.atom.io/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1579,7 +1579,7 @@ declare namespace Electron {
      * Sets a 16 x 16 pixel overlay onto the current taskbar icon, usually used to
      * convey some sort of application status or to passively notify the user.
      */
-    setOverlayIcon(overlay: NativeImage, description: string): void;
+    setOverlayIcon(overlay: NativeImage | null, description: string): void;
     /**
      * Sets parent as current window's parent window, passing null will turn current
      * window into a top-level window.
@@ -4425,7 +4425,7 @@ declare namespace Electron {
     /**
      * Sets the image associated with this tray icon when pressed on macOS.
      */
-    setPressedImage(image: NativeImage): void;
+    setPressedImage(image: NativeImage | string): void;
     /**
      * Sets the title displayed aside of the tray icon in the status bar.
      */
@@ -7900,6 +7900,7 @@ declare namespace Electron {
 
   interface ResourceUsage {
     images: MemoryUsageDetails;
+    scripts: MemoryUsageDetails;
     cssStyleSheets: MemoryUsageDetails;
     xslStyleSheets: MemoryUsageDetails;
     fonts: MemoryUsageDetails;
