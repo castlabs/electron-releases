@@ -1,12 +1,12 @@
-# castLabs Electron Release for Content Security
+# castLabs Electron v3.0.0 for Content Security 
 
 ## Summary
 
 This is a fork of Electron created with the goal of facilitating the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and protected storage of licenses for offline playback scenarios. It is intended to be used as a drop-in replacement for a regular Electron build and currently supports Windows and macOS platforms.
 
-To achieve this the necessary Widevine DRM components will be installed on first launch and enabled as an option for playback of DRM protected content using common EME APIs. By default, if the installation of any Widevine DRM component fails the application will display an error and exit (this can be overridden). If the installation successfully completes the application will automatically restart to correctly load the installed components.
+To achieve this the necessary Widevine DRM components will be installed on first launch and enabled as an option for playback of DRM protected content using common EME APIs. By default, if the installation of any Widevine DRM component fails the application will display an error and exit ([this can be overridden](#widevine-specific-events)). If it succeeds an [event](#widevine-specific-events) will be emitted to the applicatoin indicating that Widevine is ready to be used.
 
-The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](http://www.widevine.com/) is needed to get production certificates for [re-signing the final package](#re-signing).
+The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](https://www.widevine.com/) is needed to get production certificates for [re-signing the final package](#re-signing).
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
@@ -53,9 +53,9 @@ win.loadURL(yourContentURL);
 
 As a part of the installation process for the Widevine components certain events will be emitted to the application. These events allow the user to monitor the Widevine status to a certain extent. The events are:
 
-### ```widevine-ready``` 
+### `widevine-ready` 
  
-This event is emitted once Widevine has been properly installed/updated/registered and is ready to use to be used. Trying to play back protected content prior to the reception of this event will cause errors. The event is always emitted after the ```ready``` event.
+Emitted once Widevine has been properly installed/updated/registered and is ready to use to be used. Trying to play back protected content prior to the reception of this event will cause errors. This event is always emitted after the `ready` event.
  
 An argument is provided that contains the version of Widevine in use.
  
@@ -67,11 +67,11 @@ app.on('widevine-ready', (version) => {
 });
 ```
  
-### ```widevine-update-pending``` 
+### `widevine-update-pending` 
  
- This event is emitted when there is a Widevine update available that is pending installation. Once the application is restarted the update will be automatically applied and a ```widevine-ready```-event emitted, as usual.
+Emitted when there is a Widevine update available that is pending installation. This event is always emitted after the `ready` event. Once the application is restarted the update will be automatically applied and a `widevine-ready`-event emitted, as usual.
  
- Two arguments are provided which contains the current and pending versions of Widevine.
+Two arguments are provided which contains the current and pending versions of Widevine.
  
 #### Example
  
@@ -81,11 +81,11 @@ app.on('widevine-update-pending', (currentVersion, pendingVersion) => {
 });
 ```
  
- ### ```widevine-error``` 
+ ### `widevine-error` 
 
-This event is emitted when there is a problem with the Widevine installation that cannot be resolved. If there are no handlers registered for this event it will show a dialog with the error and terminate the application when it is dismissed. If this is not the desired behaviour a handler needs to be registered to provide customized behaviour.
+Emitted when there is a problem with the Widevine installation that cannot be automatically handled. If there are no handlers registered for this event it will show a dialog with the error and terminate the application when it is dismissed. If this is not the desired behaviour a handler needs to be registered to provide customized behaviour. This event is always emitted after the `ready` event.
 
-An argument is provided that contains an ```Error```-instance describing the error that occured.
+An argument is provided that contains an `Error`-instance describing the error that occured.
 
 #### Example
 
@@ -98,11 +98,17 @@ app.on('widevine-error', (error) => {
 
 ## Verified Media Path (VMP)
 
-The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](http://www.widevine.com/) is needed to get production certificates for re-signing the final package.
+This fork of Electron provides support for [Verified Media Path (VMP)](https://www.widevine.com/product_news.html).  VMP provides a method to verify the autenticity of a device platform by requiring signatures for binary components taking part in the media pipeline. 
+
+The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](https://www.widevine.com/) is needed to get production certificates for re-signing the final package.
+
+### Licensing
+
+To be able to re-sign your application for your own purposes a license agreement wit Google Widevine is required. To start the process you can use the [contact sheet](https://www.widevine.com/contact.html) on the [Widevine web site](https://www.widevine.com/), or send an e-mail to [widevine@google.com](mailto:widevine@google.com) showing interest in a license agreement and VMP signing. This process may take some time to complete so keep that in mind when planning your product release.
 
 ### Re-signing
 
-We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography), [macholib](https://pypi.python.org/pypi/macholib) and [file-magic](https://pypi.python.org/pypi/file-magic), all avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](http://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate the required signatures. Basic usage looks as follows:
+We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography), [macholib](https://pypi.python.org/pypi/macholib) and [file-magic](https://pypi.python.org/pypi/file-magic), all avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](https://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate the required signatures. Basic usage looks as follows:
 
 ```
 vmp-resign.py -C CERT-PATH [-P KEY-PASS] -K KEY-PATH PKG-PATH [PKG-PATH...]
@@ -133,7 +139,7 @@ electron.exe -> Player.exe
 electron.exe.sig -> Player.exe.sig
 ```
 
-In addition, if the executable is changed in any way, even if it is just adding meta-data or code-signing the executable, the VMP signature will be invalidated and the executable needs to be re-signed.
+In addition, if the executable is changed in any way, even if it is just adding meta-data or code-signing the executable, the VMP signature will be invalidated and the executable needs to be re-signed. This often happens when using a packager, such as electron-packager or electron-builder, since they usually add an icon or other meta-data to the executable.
 
 ## DISCLAIMER
 
