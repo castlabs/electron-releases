@@ -608,6 +608,42 @@ declare namespace Electron {
     removeListener(event: 'web-contents-created', listener: (event: Event,
                                                  webContents: WebContents) => void): this;
     /**
+     * This event is emitted when there is a problem with the Widevine installation
+     * that cannot be resolved. If there are no handlers registered for this event it
+     * will show a dialog with the error and terminate the application when it is
+     * dismissed. If this is not the desired behaviour a handler needs to be registered
+     * to provide customized behaviour. The event is always emitted after the ready
+     * event.
+     */
+    on(event: 'widevine-error', listener: (error: Error) => void): this;
+    once(event: 'widevine-error', listener: (error: Error) => void): this;
+    addListener(event: 'widevine-error', listener: (error: Error) => void): this;
+    removeListener(event: 'widevine-error', listener: (error: Error) => void): this;
+    /**
+     * This event is emitted once Widevine has been properly
+     * installed/updated/registered and is ready to use to be used. Trying to play back
+     * protected content prior to the reception of this event will cause errors. The
+     * event is always emitted after the ready event.
+     */
+    on(event: 'widevine-ready', listener: (version: string) => void): this;
+    once(event: 'widevine-ready', listener: (version: string) => void): this;
+    addListener(event: 'widevine-ready', listener: (version: string) => void): this;
+    removeListener(event: 'widevine-ready', listener: (version: string) => void): this;
+    /**
+     * This event is emitted when there is a Widevine update available that is pending
+     * installation. The event is always emitted after the ready event. Once the
+     * application is restarted the update will be automatically applied and a
+     * widevine-ready-event emitted, as usual.
+     */
+    on(event: 'widevine-update-pending', listener: (currentVersion: string,
+                                                    pendingVersion: string) => void): this;
+    once(event: 'widevine-update-pending', listener: (currentVersion: string,
+                                                    pendingVersion: string) => void): this;
+    addListener(event: 'widevine-update-pending', listener: (currentVersion: string,
+                                                    pendingVersion: string) => void): this;
+    removeListener(event: 'widevine-update-pending', listener: (currentVersion: string,
+                                                    pendingVersion: string) => void): this;
+    /**
      * Emitted during Handoff before an activity from a different device wants to be
      * resumed. You should call event.preventDefault() if you want to handle this
      * event.
