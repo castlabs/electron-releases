@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.0-wvvmp-beta.9
+// Type definitions for Electron 3.0.0-wvvmp-beta.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -608,11 +608,11 @@ declare namespace Electron {
     removeListener(event: 'web-contents-created', listener: (event: Event,
                                                  webContents: WebContents) => void): this;
     /**
-     * This event is emitted when there is a problem with the Widevine installation
-     * that cannot be resolved. If there are no handlers registered for this event it
+     * Emitted when there is a problem with the Widevine installation that cannot be
+     * automatically handled. If there are no handlers registered for this event it
      * will show a dialog with the error and terminate the application when it is
      * dismissed. If this is not the desired behaviour a handler needs to be registered
-     * to provide customized behaviour. The event is always emitted after the ready
+     * to provide customized behaviour. This event is always emitted after the ready
      * event.
      */
     on(event: 'widevine-error', listener: (error: Error) => void): this;
@@ -620,20 +620,20 @@ declare namespace Electron {
     addListener(event: 'widevine-error', listener: (error: Error) => void): this;
     removeListener(event: 'widevine-error', listener: (error: Error) => void): this;
     /**
-     * This event is emitted once Widevine has been properly
-     * installed/updated/registered and is ready to use to be used. Trying to play back
-     * protected content prior to the reception of this event will cause errors. The
-     * event is always emitted after the ready event.
+     * Emitted once Widevine has been properly installed/updated/registered and is
+     * ready to use to be used. Trying to play back protected content prior to the
+     * reception of this event will cause errors. This event is always emitted after
+     * the ready event.
      */
     on(event: 'widevine-ready', listener: (version: string) => void): this;
     once(event: 'widevine-ready', listener: (version: string) => void): this;
     addListener(event: 'widevine-ready', listener: (version: string) => void): this;
     removeListener(event: 'widevine-ready', listener: (version: string) => void): this;
     /**
-     * This event is emitted when there is a Widevine update available that is pending
-     * installation. The event is always emitted after the ready event. Once the
-     * application is restarted the update will be automatically applied and a
-     * widevine-ready-event emitted, as usual.
+     * Emitted when there is a Widevine update available that is pending installation.
+     * This event is always emitted after the ready event. Once the application is
+     * restarted the update will be automatically applied and a widevine-ready-event
+     * emitted, as usual.
      */
     on(event: 'widevine-update-pending', listener: (currentVersion: string,
                                                     pendingVersion: string) => void): this;
@@ -3711,7 +3711,7 @@ declare namespace Electron {
      * Same as protocol.registerStreamProtocol, except that it replaces an existing
      * protocol handler.
      */
-    interceptStreamProtocol(scheme: string, handler: (request: InterceptStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
+    interceptStreamProtocol(scheme: string, handler: (request: InterceptStreamProtocolRequest, callback: (stream?: NodeJS.ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts scheme protocol and uses handler as the protocol's new handler which
      * sends a String as a response.
@@ -3780,7 +3780,7 @@ declare namespace Electron {
      * that implements the readable stream API (emits data/end/error events). For
      * example, here's how a file could be returned:
      */
-    registerStreamProtocol(scheme: string, handler: (request: RegisterStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
+    registerStreamProtocol(scheme: string, handler: (request: RegisterStreamProtocolRequest, callback: (stream?: NodeJS.ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of scheme that will send a String as a response. The usage
      * is the same with registerFileProtocol, except that the callback should be called
@@ -4236,7 +4236,7 @@ declare namespace Electron {
     /**
      * A Node.js readable stream representing the response body
      */
-    data: ReadableStream;
+    data: NodeJS.ReadableStream;
     /**
      * An object containing the response headers
      */
