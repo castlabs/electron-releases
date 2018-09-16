@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.0-wvvmp-beta.10
+// Type definitions for Electron 3.0.0-wvvmp-beta.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -615,33 +615,117 @@ declare namespace Electron {
      * to provide customized behaviour. This event is always emitted after the ready
      * event.
      */
-    on(event: 'widevine-error', listener: (error: Error) => void): this;
-    once(event: 'widevine-error', listener: (error: Error) => void): this;
-    addListener(event: 'widevine-error', listener: (error: Error) => void): this;
-    removeListener(event: 'widevine-error', listener: (error: Error) => void): this;
+    on(event: 'widevine-error', listener: (
+                                           /**
+                                            * An `Error` instance indicating what went wrong during the Widevine CDM
+                                            * installation.
+                                            */
+                                           error: Error) => void): this;
+    once(event: 'widevine-error', listener: (
+                                           /**
+                                            * An `Error` instance indicating what went wrong during the Widevine CDM
+                                            * installation.
+                                            */
+                                           error: Error) => void): this;
+    addListener(event: 'widevine-error', listener: (
+                                           /**
+                                            * An `Error` instance indicating what went wrong during the Widevine CDM
+                                            * installation.
+                                            */
+                                           error: Error) => void): this;
+    removeListener(event: 'widevine-error', listener: (
+                                           /**
+                                            * An `Error` instance indicating what went wrong during the Widevine CDM
+                                            * installation.
+                                            */
+                                           error: Error) => void): this;
     /**
      * Emitted once Widevine has been properly installed/updated/registered and is
      * ready to use to be used. Trying to play back protected content prior to the
      * reception of this event will cause errors. This event is always emitted after
      * the ready event.
      */
-    on(event: 'widevine-ready', listener: (version: string) => void): this;
-    once(event: 'widevine-ready', listener: (version: string) => void): this;
-    addListener(event: 'widevine-ready', listener: (version: string) => void): this;
-    removeListener(event: 'widevine-ready', listener: (version: string) => void): this;
+    on(event: 'widevine-ready', listener: (
+                                           /**
+                                            * A string indicating the version of the Widevine CDM in use.
+                                            */
+                                           version: string,
+                                           /**
+                                            * If a pending update was applied, contains a string indicating the last CDM
+                                            * version, otherwise `null`.
+                                            */
+                                           lastVersion?: string) => void): this;
+    once(event: 'widevine-ready', listener: (
+                                           /**
+                                            * A string indicating the version of the Widevine CDM in use.
+                                            */
+                                           version: string,
+                                           /**
+                                            * If a pending update was applied, contains a string indicating the last CDM
+                                            * version, otherwise `null`.
+                                            */
+                                           lastVersion?: string) => void): this;
+    addListener(event: 'widevine-ready', listener: (
+                                           /**
+                                            * A string indicating the version of the Widevine CDM in use.
+                                            */
+                                           version: string,
+                                           /**
+                                            * If a pending update was applied, contains a string indicating the last CDM
+                                            * version, otherwise `null`.
+                                            */
+                                           lastVersion?: string) => void): this;
+    removeListener(event: 'widevine-ready', listener: (
+                                           /**
+                                            * A string indicating the version of the Widevine CDM in use.
+                                            */
+                                           version: string,
+                                           /**
+                                            * If a pending update was applied, contains a string indicating the last CDM
+                                            * version, otherwise `null`.
+                                            */
+                                           lastVersion?: string) => void): this;
     /**
      * Emitted when there is a Widevine update available that is pending installation.
      * This event is always emitted after the ready event. Once the application is
      * restarted the update will be automatically applied and a widevine-ready-event
      * emitted, as usual.
      */
-    on(event: 'widevine-update-pending', listener: (currentVersion: string,
+    on(event: 'widevine-update-pending', listener: (
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM in use.
+                                                     */
+                                                    currentVersion: string,
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM pending installation.
+                                                     */
                                                     pendingVersion: string) => void): this;
-    once(event: 'widevine-update-pending', listener: (currentVersion: string,
+    once(event: 'widevine-update-pending', listener: (
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM in use.
+                                                     */
+                                                    currentVersion: string,
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM pending installation.
+                                                     */
                                                     pendingVersion: string) => void): this;
-    addListener(event: 'widevine-update-pending', listener: (currentVersion: string,
+    addListener(event: 'widevine-update-pending', listener: (
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM in use.
+                                                     */
+                                                    currentVersion: string,
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM pending installation.
+                                                     */
                                                     pendingVersion: string) => void): this;
-    removeListener(event: 'widevine-update-pending', listener: (currentVersion: string,
+    removeListener(event: 'widevine-update-pending', listener: (
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM in use.
+                                                     */
+                                                    currentVersion: string,
+                                                    /**
+                                                     * A string indicating the version of the Widevine CDM pending installation.
+                                                     */
                                                     pendingVersion: string) => void): this;
     /**
      * Emitted during Handoff before an activity from a different device wants to be

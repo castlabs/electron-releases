@@ -4,13 +4,13 @@
 
 This is a fork of Electron created with the goal of facilitating the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and protected storage of licenses for offline playback scenarios. It is intended to be used as a drop-in replacement for a regular Electron build and currently supports Windows and macOS platforms.
 
-To achieve this the necessary Widevine DRM components will be installed on first launch and enabled as an option for playback of DRM protected content using common EME APIs. By default, if the installation of any Widevine DRM component fails the application will display an error and exit ([this can be overridden](#widevine-specific-events)). If it succeeds an [event](#widevine-specific-events) will be emitted to the applicatoin indicating that Widevine is ready to be used.
+To achieve this the necessary Widevine DRM components will be installed on first launch and enabled as an option for playback of DRM protected content using common EME APIs. By default, if the installation of any Widevine DRM component fails the application will display an error and exit ([this can be overridden](#widevine-specific-events)). If it succeeds an [event](#widevine-specific-events) will be emitted to the application indicating that Widevine is ready to be used.
 
 The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](https://www.widevine.com/) is needed to get production certificates for [re-signing the final package](#re-signing).
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v3.0.0-beta.10/README.md)
+[Electron README](https://github.com/electron/electron/blob/v3.0.0-beta.12/README.md)
 
 **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -28,11 +28,17 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v3.0.0-wvvmp-beta.10"
+  "electron": "https://github.com/castlabs/electron-releases#v3.0.0-wvvmp-beta.12"
 }
 ```
 
-The `#v3.0.0-wvvmp-beta.10` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v3.0.0-wvvmp-beta.12` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+
+## Migrating from castLabs Electron v1.8.x for Content Security
+
+Due to a change in the key system used by the more recent Widevine CDM any previously persisted licenses cannot be automatically migrated to the new release. The recommended workaround is to listen for the `widevine-ready` event and then trigger a manual re-fetch of all persisted licenses when the `lastVersion` argument indicates an upgrade from a CDM in the 1.4.8-series to the more recent 1.4.9.
+
+The new Widevine CDM also support a new VMP status, PLATFORM_SECURE_STORAGE_SOFTWARE_VERIFIED, that was not previously available. This status may be required by certain Widevine proxies to allow distribution of persistent licenses, depending on their configuration. To be able to support the new VMP status a recent VMP singning certificate is required. This means that that if you have already applied for a VMP certificate you may need to do so again to get an updated version able to support the new VMP status.
 
 ## Using the Widevine CDM in Electron for Content Security
 
@@ -62,8 +68,12 @@ An argument is provided that contains the version of Widevine in use.
 #### Example
  
 ```
-app.on('widevine-ready', (version) => {
-  console.log('Widevine ' + version + ' is ready to be used!');
+app.on('widevine-ready', (version, lastVersion) => {
+  if (null !== lastVersion) {
+    console.log('Widevine ' + version + ', upgraded from ' + lastVersion + ', is ready to be used!');
+  } else {
+    console.log('Widevine ' + version + ' is ready to be used!');
+  }
 });
 ```
  
