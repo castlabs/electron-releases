@@ -118,10 +118,13 @@ To be able to re-sign your application for your own purposes a license agreement
 
 ### Re-signing
 
-We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography), [macholib](https://pypi.python.org/pypi/macholib) and [file-magic](https://pypi.python.org/pypi/file-magic), all avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](https://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate the required signatures. Basic usage looks as follows:
+We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography) and [macholib](https://pypi.python.org/pypi/macholib), both avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](https://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate (and verify) the required signatures. Basic usage looks as follows:
 
 ```
-vmp-resign.py -C CERT-PATH [-P KEY-PASS] -K KEY-PATH PKG-PATH [PKG-PATH...]
+vmp-resign.py [-h] [-v] [-q] [-M MACOS_NAME] [-W WINDOWS_NAME]
+              [-V VERSION] [-C CERTIFICATE] [-P PASSWORD] [-p] [-K KEY]
+              [-Y]
+              dirs [dirs ...]
 ```
 
 For full usage information execute `vmp-resign.py -h`.
@@ -133,6 +136,14 @@ vmp-resign.py -C cert.pem -P "pass" -K key.pem -M Player.app -W Player.exe MacPl
 ```
 
 The signature file (`.sig`) generatered by the script is automatically picked up and verified by Electron and the Widevine CDM. On Windows the `.sig` file resides next to the `.exe` file, but in later releases on macOS it has moved further into the app bundle.
+
+To verify that signatures are vaild the `-Y` option can be used:
+
+```
+vmp-resign.py -M Player.app -W Player.exe -Y MacPlayer-v1.0/ WinPlayer-v1.0/
+```
+
+Keep in mind that this only verifies the integrity of the executable and signature, it does not currently check that the certificate/key used for signing is actually a valid VMP certificate.
 
 **NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but in Visual Studio the reverse is true since it stores the code-signature inside a VMP signed PE binary.
 

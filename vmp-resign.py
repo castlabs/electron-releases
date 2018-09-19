@@ -10,12 +10,13 @@ from cryptography.hazmat.primitives import constant_time
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.exceptions import InvalidSignature
 
 from macholib import MachO
 from macholib import mach_o
-import magic
 
 from os import path
+from io import BytesIO
 
 ################################################################################
 
@@ -215,6 +216,30 @@ def decode_signature(io):
 
 ################################################################################
 
+def verify_signature(sig, data):
+    cert = x509.load_der_x509_certificate(sig.cert, CRYPTO_BACKEND)
+    key = cert.public_key()
+    try:
+        key.verify(sig.sig, data,
+            padding.PSS(mgf=padding.MGF1(hashes.SHA1()), salt_length=20),
+            hashes.SHA1()
+        )
+    except (ValueError, IndexError, TypeError, InvalidSignature):
+        return False;
+    return True
+
+def verify_file(file, sigdata, hash_func, flags=None):
+    with BytesIO(sigdata) as io:
+        sig = decode_signature(io)
+    if (flags is not None and encode_byte(flags) != sig.flags):
+        logging.error('Expected flags differ from signature flags')
+        raise ValueError('Expected flags differ from signature flags')
+    digest = hash_func(file, sig.version)
+    logging.info('Verifying signature for: %s', file)
+    return verify_signature(sig, digest + sig.flags)
+
+################################################################################
+
 def load_cert_bytes(file):
     with open(file, 'rb') as f:
         data = f.read()
@@ -257,14 +282,12 @@ def sign(source, target, version, key, cert, hash_func, bless=False):
 
 def sign_mac_package(dir, version, key, cert, name):
     app_dir = path.join(dir, name)
-    rsrc_dir = path.join(app_dir, 'Contents/Resources')
     fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
     fwbin_path = path.join(fwver_dir, 'Electron Framework')
     fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
     sign(fwbin_path, fwsig_path, version, key, cert, hash_macho, True)
 
 def sign_win_package(dir, version, key, cert, name):
-    rsrc_dir = path.join(dir, 'resources')
     exe_path = path.join(dir, name)
     sig_path = path.join(dir, name + '.sig')
     sign(exe_path, sig_path, version, key, cert, hash_pe, True)
@@ -278,6 +301,36 @@ def sign_package(dir, version, key, cert, names):
     logging.error('Unsupported Electron extension: %s', name)
     raise ValueError('Unsupported Electron extension: %s' % name)
 
+def verify(source, target, hash_func, bless=False):
+    if (not target):
+        target = source + '.sig'
+    logging.info('Reading signature from: %s', target)
+    with open(target, 'rb') as file:
+        sig = file.read()
+    logging.info('Verifying file: %s', source)
+    return verify_file(source, sig, hash_func, 1 if bless else 0)
+
+def verify_mac_package(dir, name):
+    app_dir = path.join(dir, name)
+    fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
+    fwbin_path = path.join(fwver_dir, 'Electron Framework')
+    fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
+    return verify(fwbin_path, fwsig_path, hash_macho, True)
+
+def verify_win_package(dir, name):
+    exe_path = path.join(dir, name)
+    sig_path = path.join(dir, name + '.sig')
+    return verify(exe_path, sig_path, hash_pe, True)
+
+def verify_package(dir, names):
+    name = match_name(dir, names)
+    if ('.app' == path.splitext(name)[1]):
+        return verify_mac_package(dir, name)
+    elif ('.exe' == path.splitext(name)[1]):
+        return verify_win_package(dir, name)
+    logging.error('Unsupported Electron extension: %s', name)
+    raise ValueError('Unsupported Electron extension: %s' % name)
+
 ################################################################################
 
 if (__name__ == "__main__"):
@@ -288,26 +341,41 @@ if (__name__ == "__main__"):
         parser = argparse.ArgumentParser(description='Generate VMP signatures for Electron packages')
         parser.add_argument('-v', '--verbose', action='count', default=0, help='increase log verbosity level')
         parser.add_argument('-q', '--quiet', action='count', default=3, help='decrease log verbosity level')
-        parser.add_argument('-V', '--version', type=int, default=0, help='algorithm version')
-        parser.add_argument('-C', '--certificate', required=True, help='signing certificate file')
-        parser.add_argument('-P', '--password', default=None, help='signing key password')
-        parser.add_argument('-p', '--prompt-password', action='store_true', help='prompt for signing key password')
-        parser.add_argument('-K', '--key', required=True, help='signing key file')
         parser.add_argument('-M', '--macos-name', default='Electron.app', help='macOS app name')
         parser.add_argument('-W', '--windows-name', default='electron.exe', help='Windows exe name')
+        parser.add_argument('-V', '--version', type=int, default=0, help='algorithm version')
+        parser.add_argument('-C', '--certificate', default=None, help='signing certificate file')
+        parser.add_argument('-P', '--password', default=None, help='signing key password')
+        parser.add_argument('-p', '--prompt-password', action='store_true', help='prompt for signing key password')
+        parser.add_argument('-K', '--key', default=None, help='signing key file')
+        parser.add_argument('-Y', '--verify', action='store_true', help='verify signature')
         parser.add_argument('dirs', nargs='+', help='packages to process')
         args = parser.parse_args()
         levels = [0, logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL, sys.maxsize]
         level = levels[max(0, min(args.quiet - args.verbose, len(levels) - 1))]
         logging.basicConfig(level=level, format='%(module)s/%(levelname)s: %(message)s')
-        cert = load_cert_bytes(args.certificate)
-        if (args.prompt_password):
-            args.password = getpass(prompt='Private key password: ')
-        key = load_key(args.key, args.password.encode('utf-8') if args.password else None)
         names = [ args.macos_name, args.windows_name ]
-        for dir in args.dirs:
-            logging.info('Resigning package: %s', path)
-            sign_package(dir, args.version, key, cert, names)
+        if (not args.verify):
+            if (args.certificate is None or args.key is None):
+                parser.error('-C/--certificate and -K/key are required for signing')
+            cert = load_cert_bytes(args.certificate)
+            if (args.prompt_password):
+                args.password = getpass(prompt='Private key password: ')
+            key = load_key(args.key, args.password.encode('utf-8') if args.password else None)
+            for dir in args.dirs:
+                logging.info('Resigning package: %s', dir)
+                sign_package(dir, args.version, key, cert, names)
+        else:
+            status = 0
+            for dir in args.dirs:
+                logging.info('Verifying package: %s', dir)
+                if verify_package(dir, names):
+                    logging.info('Package verification succeeded: %s', dir)
+                else:
+                    logging.error('Package verificaton failed: %s', dir)
+                    status = 1
+            sys.exit(status)
+
     main()
 
 ################################################################################
