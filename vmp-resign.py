@@ -140,6 +140,7 @@ def encode_signature(sig):
 ################################################################################
 
 def sign_bytes(data, key):
+    logging.debug('Signing data: %s', data.hex())
     sig = key.sign(data,
         padding.PSS(mgf=padding.MGF1(hashes.SHA1()), salt_length=20),
         hashes.SHA1()
@@ -151,8 +152,11 @@ def sign_file(file, version, key, cert, hash_func, flags):
     sig.version = version
     sig.flags = encode_byte(flags)
     sig.cert = cert
-    sig.sig = sign_bytes(hash_func(file, version) + sig.flags, key)
-    logging.info('Encoding signature data')
+    digest = hash_func(file, version)
+    logging.info('Signing file: %s', file)
+    logging.debug('File digest: %s', digest.hex())
+    sig.sig = sign_bytes(digest + sig.flags, key)
+    logging.debug('Encoding signature data')
     return encode_signature(sig)
 
 ################################################################################
@@ -217,6 +221,7 @@ def decode_signature(io):
 ################################################################################
 
 def verify_signature(sig, data):
+    logging.debug('Verifying data: %s', data.hex())
     cert = x509.load_der_x509_certificate(sig.cert, CRYPTO_BACKEND)
     key = cert.public_key()
     try:
@@ -234,8 +239,9 @@ def verify_file(file, sigdata, hash_func, flags=None):
     if (flags is not None and encode_byte(flags) != sig.flags):
         logging.error('Expected flags differ from signature flags')
         raise ValueError('Expected flags differ from signature flags')
+    logging.info('Verifying file: %s', file)
     digest = hash_func(file, sig.version)
-    logging.info('Verifying signature for: %s', file)
+    logging.debug('File digest: %s', digest.hex())
     return verify_signature(sig, digest + sig.flags)
 
 ################################################################################
@@ -307,7 +313,6 @@ def verify(source, target, hash_func, bless=False):
     logging.info('Reading signature from: %s', target)
     with open(target, 'rb') as file:
         sig = file.read()
-    logging.info('Verifying file: %s', source)
     return verify_file(source, sig, hash_func, 1 if bless else 0)
 
 def verify_mac_package(dir, name):
@@ -337,7 +342,6 @@ if (__name__ == "__main__"):
     def main():
         import argparse
         from getpass import getpass
-        from binascii import hexlify
         parser = argparse.ArgumentParser(description='Generate VMP signatures for Electron packages')
         parser.add_argument('-v', '--verbose', action='count', default=0, help='increase log verbosity level')
         parser.add_argument('-q', '--quiet', action='count', default=3, help='decrease log verbosity level')
