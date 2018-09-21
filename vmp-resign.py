@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives import constant_time
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey, RSAPrivateKey
 from cryptography.exceptions import InvalidSignature
 
 from macholib import MachO
@@ -151,7 +152,7 @@ def sign_file(file, version, key, cert, hash_func, flags):
     sig = Signature()
     sig.version = version
     sig.flags = encode_byte(flags)
-    sig.cert = cert
+    sig.cert = cert.public_bytes(serialization.Encoding.DER)
     digest = hash_func(file, version)
     logging.info('Signing file: %s', file)
     logging.debug('File digest: %s', digest.hex())
@@ -246,7 +247,7 @@ def verify_file(file, sigdata, hash_func, flags=None):
 
 ################################################################################
 
-def load_cert_bytes(file):
+def load_cert(file):
     with open(file, 'rb') as f:
         data = f.read()
     if (data.startswith(b'-----BEGIN ')):
@@ -255,7 +256,7 @@ def load_cert_bytes(file):
     else:
         logging.info('Loading DER certificate: %s', file)
         cert = x509.load_der_x509_certificate(data, CRYPTO_BACKEND)
-    return cert.public_bytes(serialization.Encoding.DER)
+    return cert
 
 def load_key(file, password=None):
     with open(file, 'rb') as f:
@@ -267,6 +268,20 @@ def load_key(file, password=None):
         logging.info('Loading DER key: %s', file)
         key = serialization.load_der_private_key(data, password=password, backend=CRYPTO_BACKEND)
     return key
+
+def validate_cert_and_key(cert, key):
+    cpk = cert.public_key()
+    if (not isinstance(cpk, RSAPublicKey)):
+        logging.error('Unsupported certificate key type, only RSA keys are allowed')
+        raise ValueError('Unsupported certificate key type, only RSA keys are allowed')
+    if (not isinstance(key, RSAPrivateKey)):
+        logging.error('Unsupported private key type, only RSA keys are allowed')
+        raise ValueError('Unsupported private key type, only RSA keys are allowed')
+    pk = key.public_key()
+    if (cpk.public_numbers() != pk.public_numbers()):
+        logging.error('Private key does not match the certificate public key')
+        raise ValueError('Private key does not match the certificate public key')
+    logging.debug('RSA key size: %d', cpk.key_size)
 
 ################################################################################
 
@@ -362,10 +377,11 @@ if (__name__ == "__main__"):
         if (not args.verify):
             if (args.certificate is None or args.key is None):
                 parser.error('-C/--certificate and -K/key are required for signing')
-            cert = load_cert_bytes(args.certificate)
+            cert = load_cert(args.certificate)
             if (args.prompt_password):
                 args.password = getpass(prompt='Private key password: ')
             key = load_key(args.key, args.password.encode('utf-8') if args.password else None)
+            validate_cert_and_key(cert, key)
             for dir in args.dirs:
                 logging.info('Resigning package: %s', dir)
                 sign_package(dir, args.version, key, cert, names)
