@@ -40,6 +40,11 @@ BLESSED_FLAG = 1
 
 ################################################################################
 
+SIGNATURE_HASHER = hashes.SHA1()
+SIGNATURE_PADDING = padding.PSS(mgf=padding.MGF1(SIGNATURE_HASHER), salt_length=20)
+
+################################################################################
+
 def compute_digest(hasher, *args):
     for arg in args:
         if (type(arg) is not list):
@@ -142,11 +147,7 @@ def encode_signature(sig):
 
 def sign_bytes(data, key):
     logging.debug('Signing data: %s', data.hex())
-    sig = key.sign(data,
-        padding.PSS(mgf=padding.MGF1(hashes.SHA1()), salt_length=20),
-        hashes.SHA1()
-    )
-    return sig
+    return key.sign(data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def sign_file(file, version, key, cert, hash_func, flags):
     sig = Signature()
@@ -225,14 +226,7 @@ def verify_signature(sig, data):
     logging.debug('Verifying data: %s', data.hex())
     cert = x509.load_der_x509_certificate(sig.cert, CRYPTO_BACKEND)
     key = cert.public_key()
-    try:
-        key.verify(sig.sig, data,
-            padding.PSS(mgf=padding.MGF1(hashes.SHA1()), salt_length=20),
-            hashes.SHA1()
-        )
-    except (ValueError, IndexError, TypeError, InvalidSignature):
-        return False;
-    return True
+    key.verify(sig.sig, data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def verify_file(file, sigdata, hash_func, flags=None):
     with BytesIO(sigdata) as io:
@@ -243,7 +237,7 @@ def verify_file(file, sigdata, hash_func, flags=None):
     logging.info('Verifying file: %s', file)
     digest = hash_func(file, sig.version)
     logging.debug('File digest: %s', digest.hex())
-    return verify_signature(sig, digest + sig.flags)
+    verify_signature(sig, digest + sig.flags)
 
 ################################################################################
 
@@ -293,63 +287,42 @@ def match_name(dir, names):
     logging.error('Could not find a valid Electron package in: %s', dir)
     raise ValueError('Could not find a valid Electron package in: %s' % dir)
 
-def sign(source, target, version, key, cert, hash_func, bless=False):
-    if (not target):
-        target = source + '.sig'
-    sig = sign_file(source, version, key, cert, hash_func, 1 if bless else 0)
-    logging.info('Writing signature to: %s', target)
-    with open(target, 'wb') as file:
+def package_config(dir, names):
+    name = match_name(dir, names)
+    if ('.app' == path.splitext(name)[1]):
+        app_dir = path.join(dir, name)
+        fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
+        fwbin_path = path.join(fwver_dir, 'Electron Framework')
+        fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
+        return (fwbin_path, fwsig_path, hash_macho)
+    elif ('.exe' == path.splitext(name)[1]):
+        exe_path = path.join(dir, name)
+        sig_path = path.join(dir, name + '.sig')
+        return (exe_path, sig_path, hash_pe)
+    logging.error('Unsupported Electron extension: %s', name)
+    raise ValueError('Unsupported Electron extension: %s' % name)
+
+################################################################################
+
+def sign(bin_path, sig_path, version, key, cert, hash_func, bless=False):
+    sig = sign_file(bin_path, version, key, cert, hash_func, 1 if bless else 0)
+    logging.info('Writing signature to: %s', sig_path)
+    with open(sig_path, 'wb') as file:
         file.write(sig)
 
-def sign_mac_package(dir, version, key, cert, name):
-    app_dir = path.join(dir, name)
-    fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
-    fwbin_path = path.join(fwver_dir, 'Electron Framework')
-    fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
-    sign(fwbin_path, fwsig_path, version, key, cert, hash_macho, True)
-
-def sign_win_package(dir, version, key, cert, name):
-    exe_path = path.join(dir, name)
-    sig_path = path.join(dir, name + '.sig')
-    sign(exe_path, sig_path, version, key, cert, hash_pe, True)
-
 def sign_package(dir, version, key, cert, names):
-    name = match_name(dir, names)
-    if ('.app' == path.splitext(name)[1]):
-        return sign_mac_package(dir, version, key, cert, name)
-    elif ('.exe' == path.splitext(name)[1]):
-        return sign_win_package(dir, version, key, cert, name)
-    logging.error('Unsupported Electron extension: %s', name)
-    raise ValueError('Unsupported Electron extension: %s' % name)
+    bin_path, sig_path, hash_func = package_config(dir, names)
+    sign(bin_path, sig_path, version, key, cert, hash_func, True)
 
-def verify(source, target, hash_func, bless=False):
-    if (not target):
-        target = source + '.sig'
-    logging.info('Reading signature from: %s', target)
-    with open(target, 'rb') as file:
+def verify(bin_path, sig_path, hash_func, bless=False):
+    logging.info('Reading signature from: %s', sig_path)
+    with open(sig_path, 'rb') as file:
         sig = file.read()
-    return verify_file(source, sig, hash_func, 1 if bless else 0)
-
-def verify_mac_package(dir, name):
-    app_dir = path.join(dir, name)
-    fwver_dir = path.join(app_dir, 'Contents/Frameworks/Electron Framework.framework/Versions/A')
-    fwbin_path = path.join(fwver_dir, 'Electron Framework')
-    fwsig_path = path.join(fwver_dir, 'Resources/Electron Framework.sig')
-    return verify(fwbin_path, fwsig_path, hash_macho, True)
-
-def verify_win_package(dir, name):
-    exe_path = path.join(dir, name)
-    sig_path = path.join(dir, name + '.sig')
-    return verify(exe_path, sig_path, hash_pe, True)
+    verify_file(bin_path, sig, hash_func, 1 if bless else 0)
 
 def verify_package(dir, names):
-    name = match_name(dir, names)
-    if ('.app' == path.splitext(name)[1]):
-        return verify_mac_package(dir, name)
-    elif ('.exe' == path.splitext(name)[1]):
-        return verify_win_package(dir, name)
-    logging.error('Unsupported Electron extension: %s', name)
-    raise ValueError('Unsupported Electron extension: %s' % name)
+    bin_path, sig_path, hash_func = package_config(dir, names)
+    verify(bin_path, sig_path, hash_func, True)
 
 ################################################################################
 
@@ -385,16 +358,16 @@ if (__name__ == "__main__"):
             for dir in args.dirs:
                 logging.info('Resigning package: %s', dir)
                 sign_package(dir, args.version, key, cert, names)
+                logging.info('Signed package: %s', dir)
         else:
-            status = 0
+            if (args.certificate is not None):
+                logging.warning('-C/--certificate is ignored for verification')
+            if (args.key is not None or args.password is not None or args.prompt_password):
+                logging.warning('-K/--key, -P/--password and -p/--prompt-password are ignored for verification')
             for dir in args.dirs:
                 logging.info('Verifying package: %s', dir)
-                if verify_package(dir, names):
-                    logging.info('Package verification succeeded: %s', dir)
-                else:
-                    logging.error('Package verificaton failed: %s', dir)
-                    status = 1
-            sys.exit(status)
+                verify_package(dir, names)
+                logging.info('Verified package: %s', dir)
 
     main()
 
