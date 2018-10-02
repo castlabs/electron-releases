@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.0-wvvmp-beta.12
+// Type definitions for Electron 3.0.2-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7186,7 +7186,9 @@ declare namespace Electron {
     enableLargerThanScreen?: boolean;
     /**
      * Window's background color as a hexadecimal value, like #66CD00 or #FFF or
-     * #80FFFFFF (alpha is supported). Default is #FFF (white).
+     * #80FFFFFF (alpha is supported). Default is #FFF (white). If transparent is set
+     * to true, only values with transparent (#00-------) or opaque (#FF-----) alpha
+     * values are respected.
      */
     backgroundColor?: string;
     /**
