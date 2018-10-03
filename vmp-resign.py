@@ -113,6 +113,20 @@ def hash_pe(exe, version):
 
 ################################################################################
 
+def hash_elf0(exe):
+    with open(exe, 'rb') as f:
+        data = f.read()
+        return compute_sha512(data)
+
+def hash_elf(exe, version):
+    if (0 == version):
+        return hash_elf0(exe)
+    else:
+        logging.error('Unsupported VMP/ELF digest version: %d', version)
+        raise ValueError('Unsupported VMP/ELF digest version: %d' % version)
+
+################################################################################
+
 class Signature:
     def __init__(self):
         self.version = None
@@ -299,6 +313,10 @@ def package_config(dir, names):
         exe_path = path.join(dir, name)
         sig_path = path.join(dir, name + '.sig')
         return (exe_path, sig_path, hash_pe)
+    else:
+        exe_path = path.join(dir, name)
+        sig_path = path.join(dir, name + '.sig')
+        return (exe_path, sig_path, hash_elf)
     logging.error('Unsupported Electron extension: %s', name)
     raise ValueError('Unsupported Electron extension: %s' % name)
 
@@ -335,6 +353,7 @@ if (__name__ == "__main__"):
         parser.add_argument('-q', '--quiet', action='count', default=3, help='decrease log verbosity level')
         parser.add_argument('-M', '--macos-name', default='Electron.app', help='macOS app name')
         parser.add_argument('-W', '--windows-name', default='electron.exe', help='Windows exe name')
+        parser.add_argument('-L', '--linux-name', default='electron', help='Linux binary name')
         parser.add_argument('-V', '--version', type=int, default=0, help='algorithm version')
         parser.add_argument('-C', '--certificate', default=None, help='signing certificate file')
         parser.add_argument('-P', '--password', default=None, help='signing key password')
@@ -346,7 +365,7 @@ if (__name__ == "__main__"):
         levels = [0, logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL, sys.maxsize]
         level = levels[max(0, min(args.quiet - args.verbose, len(levels) - 1))]
         logging.basicConfig(level=level, format='%(module)s/%(levelname)s: %(message)s')
-        names = [ args.macos_name, args.windows_name ]
+        names = [ args.macos_name, args.windows_name, args.linux_name ]
         if (not args.verify):
             if (args.certificate is None or args.key is None):
                 parser.error('-C/--certificate and -K/key are required for signing')
