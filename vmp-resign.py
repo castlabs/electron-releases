@@ -349,21 +349,22 @@ if (__name__ == "__main__"):
         import argparse
         from getpass import getpass
         parser = argparse.ArgumentParser(description='Generate VMP signatures for Electron packages')
-        parser.add_argument('-v', '--verbose', action='count', default=0, help='increase log verbosity level')
-        parser.add_argument('-q', '--quiet', action='count', default=3, help='decrease log verbosity level')
+        parser.add_argument('-v', '--verbose', action='count', default=0, help='Increase log verbosity level')
+        parser.add_argument('-q', '--quiet', action='count', default=0, help='Decrease log verbosity level')
+        parser.add_argument('-V', '--verbosity', type=int, default=3, help='Set log verbosity level')
         parser.add_argument('-M', '--macos-name', default='Electron.app', help='macOS app name')
         parser.add_argument('-W', '--windows-name', default='electron.exe', help='Windows exe name')
         parser.add_argument('-L', '--linux-name', default='electron', help='Linux binary name')
-        parser.add_argument('-V', '--version', type=int, default=0, help='algorithm version')
-        parser.add_argument('-C', '--certificate', default=None, help='signing certificate file')
-        parser.add_argument('-P', '--password', default=None, help='signing key password')
-        parser.add_argument('-p', '--prompt-password', action='store_true', help='prompt for signing key password')
-        parser.add_argument('-K', '--key', default=None, help='signing key file')
-        parser.add_argument('-Y', '--verify', action='store_true', help='verify signature')
-        parser.add_argument('dirs', nargs='+', help='packages to process')
+        parser.add_argument('-A', '--algorithm', type=int, default=0, help='Algorithm version')
+        parser.add_argument('-C', '--certificate', default=None, help='Signing certificate file')
+        parser.add_argument('-P', '--password', default=None, help='Signing key password')
+        parser.add_argument('-p', '--prompt-password', action='store_true', help='Prompt for signing key password')
+        parser.add_argument('-K', '--key', default=None, help='Signing key file')
+        parser.add_argument('-Y', '--verify', action='store_true', help='Verify signature')
+        parser.add_argument('dirs', nargs='+', help='Packages to process')
         args = parser.parse_args()
         levels = [0, logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL, sys.maxsize]
-        level = levels[max(0, min(args.quiet - args.verbose, len(levels) - 1))]
+        level = levels[max(0, min(args.verbosity + args.quiet - args.verbose, len(levels) - 1))]
         logging.basicConfig(level=level, format='%(module)s/%(levelname)s: %(message)s')
         names = [ args.macos_name, args.windows_name, args.linux_name ]
         if (not args.verify):
@@ -376,7 +377,7 @@ if (__name__ == "__main__"):
             validate_cert_and_key(cert, key)
             for dir in args.dirs:
                 logging.info('Resigning package: %s', dir)
-                sign_package(dir, args.version, key, cert, names)
+                sign_package(dir, args.algorithm, key, cert, names)
                 logging.info('Signed package: %s', dir)
         else:
             if (args.certificate is not None):
