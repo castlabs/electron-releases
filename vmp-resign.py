@@ -277,19 +277,116 @@ def load_key(file, password=None):
         key = serialization.load_der_private_key(data, password=password, backend=CRYPTO_BACKEND)
     return key
 
+_OID_NAME_MAP = {
+    x509.NameOID.COMMON_NAME: 'CN',
+    x509.NameOID.COUNTRY_NAME: 'C',
+    x509.NameOID.LOCALITY_NAME: 'L',
+    x509.NameOID.STATE_OR_PROVINCE_NAME: 'ST',
+    x509.NameOID.ORGANIZATION_NAME: 'O',
+    x509.NameOID.ORGANIZATIONAL_UNIT_NAME: 'OU',
+    x509.NameOID.SURNAME: 'SN',
+    x509.NameOID.GIVEN_NAME: 'GN',
+    x509.NameOID.USER_ID: 'UID',
+    x509.NameOID.DOMAIN_COMPONENT: 'DC',
+}
+
+def mk_names(names):
+    entries = []
+    for i in names:
+        name = _OID_NAME_MAP.get(i.oid, None)
+        if name: entries.append('%s=%s' % (name, i.value))
+    return entries
+
+def mk_extension_values(func, val):
+    entries = []
+    func(entries, val)
+    return entries
+
+def mk_subject_key_identifier(entries, val):
+    if val.digest: entries.append('Digest: %s' % val.digest.hex())
+
+def mk_authority_key_identifier(entries, val):
+    if val.key_identifier: entries.append('Key ID: %s' % val.key_identifier.hex())
+    if val.authority_cert_issuer is not None: entries.append('Issuer: %s' % ', '.join(mk_names(val.authority_cert_issuer)))
+    if val.authority_cert_serial_number: entries.append('Serial Number: %x' % val.authority_cert_serial_number)
+
+def mk_basic_constraints(entries, val):
+    entries.append('CA: %s' % val.ca)
+    if val.ca and va.path_length is not None: entries.append('Path Length: %d' % val.path_length)
+
+def mk_key_usage(entries, val):
+    if val.digital_signature: entries.append('Digital Signature')
+    if val.content_commitment: entries.append('Content Commitment')
+    if val.key_encipherment: entries.append('Key Encipherment')
+    if val.data_encipherment: entries.append('Data Encipherment')
+    if val.key_agreement:
+        entries.append('Key Agreement')
+        if val.encipher_only: entries.append('Encipher Only')
+        if val.decipher_only: entries.append('Decipher Only')
+    if val.key_cert_sign: entries.append('Key Cert Sign')
+    if val.crl_sign: entries.append('CRL Sign')
+
+_OID_EXT_KEY_USAGE_MAP = {
+    x509.ExtendedKeyUsageOID.SERVER_AUTH: "Server Auth",
+    x509.ExtendedKeyUsageOID.CLIENT_AUTH: "Client Auth",
+    x509.ExtendedKeyUsageOID.CODE_SIGNING: "Code Signing",
+    x509.ExtendedKeyUsageOID.EMAIL_PROTECTION: "E-mail Protection",
+    x509.ExtendedKeyUsageOID.TIME_STAMPING: "Timestamping",
+    x509.ExtendedKeyUsageOID.OCSP_SIGNING: "OCSPSigning",
+}
+
+def mk_extended_key_usage(entries, val):
+    for i in val: entries.append(_OID_EXT_KEY_USAGE_MAP.get(i, i.dotted_string))
+
+def mk_binary_extension(entries, val):
+    entries.append(val.value.hex())
+
+def mk_unknown_extension(entries, val):
+    entries.append('...')
+
+_OID_EXTENSION_MAP = {
+    x509.ExtensionOID.SUBJECT_KEY_IDENTIFIER: ('Subject Key Identifier', mk_subject_key_identifier),
+    x509.ExtensionOID.AUTHORITY_KEY_IDENTIFIER: ('Authority Key Identifier', mk_authority_key_identifier),
+    x509.ExtensionOID.BASIC_CONSTRAINTS: ('Basic Constraints', mk_basic_constraints),
+    x509.ExtensionOID.KEY_USAGE: ('Key Usage', mk_key_usage),
+    x509.ExtensionOID.EXTENDED_KEY_USAGE: ('Extended Key Usage', mk_extended_key_usage),
+    x509.ObjectIdentifier('1.3.6.1.4.1.11129.4.1.2'): ('Google<1.3.6.1.4.1.11129.4.1.2>', mk_binary_extension),
+}
+
+def mk_extensions(extensions):
+    entries = []
+    for i in extensions:
+        name, func = _OID_EXTENSION_MAP.get(i.oid, (i.oid.dotted_string, mk_unknown_extension))
+        if i.critical: name += ' [CRITICAL]'
+        entries.append((name, mk_extension_values(func, i.value)))
+    return entries
+
 def validate_cert_and_key(cert, key):
+    logging.debug('Certificate:')
+    logging.debug('  Version: %s' % cert.version.name)
+    logging.debug('  Serial Number: %x' % cert.serial_number)
+    logging.debug('  Signature Hash Algorithm: %s' % cert.signature_hash_algorithm.name)
+    logging.debug('  Issuer: %s' % ', '.join(mk_names(cert.issuer)))
+    logging.debug('  Subject: %s' % ', '.join(mk_names(cert.subject)))
+    logging.debug('  Not Before: %s' % cert.not_valid_before)
+    logging.debug('  Not After: %s' % cert.not_valid_after)
+    logging.debug('  Extensions:')
+    for ext, vals in mk_extensions(cert.extensions):
+        logging.debug('    %s:' % ext)
+        for val in vals: logging.debug('      %s' % val)
     cpk = cert.public_key()
     if (not isinstance(cpk, RSAPublicKey)):
         logging.error('Unsupported certificate key type, only RSA keys are allowed')
         raise ValueError('Unsupported certificate key type, only RSA keys are allowed')
+    logging.debug('Public Key: RSA %d bit' % cpk.key_size)
     if (not isinstance(key, RSAPrivateKey)):
         logging.error('Unsupported private key type, only RSA keys are allowed')
         raise ValueError('Unsupported private key type, only RSA keys are allowed')
+    logging.debug('Private Key: RSA %d bit', key.key_size)
     pk = key.public_key()
     if (cpk.public_numbers() != pk.public_numbers()):
         logging.error('Private key does not match the certificate public key')
         raise ValueError('Private key does not match the certificate public key')
-    logging.debug('RSA key size: %d', cpk.key_size)
 
 ################################################################################
 
