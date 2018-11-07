@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 import logging
@@ -42,6 +42,14 @@ BLESSED_FLAG = 1
 
 SIGNATURE_HASHER = hashes.SHA1()
 SIGNATURE_PADDING = padding.PSS(mgf=padding.MGF1(SIGNATURE_HASHER), salt_length=20)
+
+################################################################################
+
+def to_hex(data):
+    if isinstance(data, str):
+        return data.encode('hex')
+    else:
+        return data.hex()
 
 ################################################################################
 
@@ -137,7 +145,7 @@ class Signature:
 ################################################################################
 
 def encode_byte(val):
-    return val.to_bytes(1, 'little')
+    return bytes(bytearray([val]))
 
 def encode_leb128(val):
     out = b''
@@ -160,7 +168,7 @@ def encode_signature(sig):
 ################################################################################
 
 def sign_bytes(data, key):
-    logging.debug('Signing data: %s', data.hex())
+    logging.debug('Signing data: %s', to_hex(data))
     return key.sign(data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def sign_file(file, version, key, cert, hash_func, flags):
@@ -170,7 +178,7 @@ def sign_file(file, version, key, cert, hash_func, flags):
     sig.cert = cert.public_bytes(serialization.Encoding.DER)
     digest = hash_func(file, version)
     logging.info('Signing file: %s', file)
-    logging.debug('File digest: %s', digest.hex())
+    logging.debug('File digest: %s', to_hex(digest))
     sig.sig = sign_bytes(digest + sig.flags, key)
     logging.debug('Encoding signature data')
     return encode_signature(sig)
@@ -182,7 +190,7 @@ def decode_byte(io):
     if (not b):
         logging.error('Unsupported EOF while reading VMP signature file')
         raise EOFError('Unsupported EOF while reading VMP signature file')
-    return int.from_bytes(b, 'little')
+    return ord(b)
 
 def decode_leb128(io):
     shift = 0
@@ -201,14 +209,13 @@ def decode_bytes(io):
 def decode_entry(io):
     return io.read(1), decode_bytes(io)
 
-def decode_signature(io):
+def decode_signature(io, end):
     sig = Signature()
     sig.version = decode_byte(io)
     logging.debug('Decoding signature file with version: %d', sig.version)
     if (sig.version not in range(0, 2)):
         logging.error('Unsupported VMP signature file version: %d', sig.version)
         raise ValueError('Unsupported VMP signature file version: %d' % sig.version)
-    end = len(io.getbuffer())
     while io.tell() != end:
         tag, entry = decode_entry(io)
         if (CERT_TAG == tag):
@@ -237,20 +244,20 @@ def decode_signature(io):
 ################################################################################
 
 def verify_signature(sig, data):
-    logging.debug('Verifying data: %s', data.hex())
+    logging.debug('Verifying data: %s', to_hex(data))
     cert = x509.load_der_x509_certificate(sig.cert, CRYPTO_BACKEND)
     key = cert.public_key()
     key.verify(sig.sig, data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def verify_file(file, sigdata, hash_func, flags=None):
     with BytesIO(sigdata) as io:
-        sig = decode_signature(io)
+        sig = decode_signature(io, len(sigdata))
     if (flags is not None and encode_byte(flags) != sig.flags):
         logging.error('Expected flags differ from signature flags')
         raise ValueError('Expected flags differ from signature flags')
     logging.info('Verifying file: %s', file)
     digest = hash_func(file, sig.version)
-    logging.debug('File digest: %s', digest.hex())
+    logging.debug('File digest: %s', to_hex(digest))
     verify_signature(sig, digest + sig.flags)
 
 ################################################################################
@@ -315,10 +322,10 @@ def mk_extension_values(func, val):
     return entries
 
 def mk_subject_key_identifier(entries, val):
-    if val.digest: entries.append('Digest: %s' % val.digest.hex())
+    if val.digest: entries.append('Digest: %s' % to_hex(val.digest))
 
 def mk_authority_key_identifier(entries, val):
-    if val.key_identifier: entries.append('Key ID: %s' % val.key_identifier.hex())
+    if val.key_identifier: entries.append('Key ID: %s' % to_hex(val.key_identifier))
     if val.authority_cert_issuer is not None: entries.append('Issuer: %s' % ', '.join(mk_names(val.authority_cert_issuer)))
     if val.authority_cert_serial_number: entries.append('Serial Number: %x' % val.authority_cert_serial_number)
 
@@ -351,7 +358,7 @@ def mk_extended_key_usage(entries, val):
     for i in val: entries.append(_OID_EXT_KEY_USAGE_MAP.get(i, i.dotted_string))
 
 def mk_binary_extension(entries, val):
-    entries.append(val.value.hex())
+    entries.append(to_hex(val.value))
 
 def mk_unknown_extension(entries, val):
     entries.append('...')
