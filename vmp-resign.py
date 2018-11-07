@@ -255,27 +255,39 @@ def verify_file(file, sigdata, hash_func, flags=None):
 
 ################################################################################
 
+def load_pem_cert(data):
+    return x509.load_pem_x509_certificate(data, backend=CRYPTO_BACKEND)
+
+def load_der_cert(data):
+    return x509.load_der_x509_certificate(data, backend=CRYPTO_BACKEND)
+
 def load_cert(file):
     with open(file, 'rb') as f:
         data = f.read()
-    if (data.startswith(b'-----BEGIN ')):
-        logging.info('Loading PEM certificate: %s', file)
-        cert = x509.load_pem_x509_certificate(data, CRYPTO_BACKEND)
-    else:
-        logging.info('Loading DER certificate: %s', file)
-        cert = x509.load_der_x509_certificate(data, CRYPTO_BACKEND)
-    return cert
+    type, loader = ('PEM', load_pem_cert) if (data.startswith(b'-----BEGIN ')) else ('DER', load_der_cert)
+    logging.info('Loading %s certificate: %s', type, file)
+    return loader(data)
 
-def load_key(file, password=None):
+def load_pem_key(data, password=None):
+    return serialization.load_pem_private_key(data, password=password, backend=CRYPTO_BACKEND)
+
+def load_der_key(data, password=None):
+    return serialization.load_der_private_key(data, password=password, backend=CRYPTO_BACKEND)
+
+def load_key(file, password=None, prompt_password=False):
+    password_provided = password is not None
     with open(file, 'rb') as f:
         data = f.read()
-    if (data.startswith(b'-----BEGIN ')):
-        logging.info('Loading PEM key: %s', file)
-        key = serialization.load_pem_private_key(data, password=password, backend=CRYPTO_BACKEND)
-    else:
-        logging.info('Loading DER key: %s', file)
-        key = serialization.load_der_private_key(data, password=password, backend=CRYPTO_BACKEND)
-    return key
+    type, loader = ('PEM', load_pem_key) if (data.startswith(b'-----BEGIN ')) else ('DER', load_der_key)
+    logging.info('Loading %s key: %s', type, file)
+    while True:
+        try:
+            return loader(data, password)
+        except (TypeError, ValueError) as e:
+            if password_provided or not prompt_password: raise
+            print(e)
+            from getpass import getpass
+            password = getpass(prompt='Private key password: ').encode('utf-8')
 
 _OID_NAME_MAP = {
     x509.NameOID.COMMON_NAME: 'CN',
@@ -444,7 +456,6 @@ def verify_package(dir, names):
 if (__name__ == "__main__"):
     def main():
         import argparse
-        from getpass import getpass
         parser = argparse.ArgumentParser(description='Generate VMP signatures for Electron packages')
         parser.add_argument('-v', '--verbose', action='count', default=0, help='Increase log verbosity level')
         parser.add_argument('-q', '--quiet', action='count', default=0, help='Decrease log verbosity level')
@@ -455,6 +466,7 @@ if (__name__ == "__main__"):
         parser.add_argument('-A', '--algorithm', type=int, default=0, help='Algorithm version')
         parser.add_argument('-C', '--certificate', default=None, help='Signing certificate file')
         parser.add_argument('-P', '--password', default=None, help='Signing key password')
+        parser.add_argument('-n', '--no-prompt-password', dest='prompt_password', default=True, action='store_false', help='Don\'t prompt for signing key password')
         parser.add_argument('-p', '--prompt-password', action='store_true', help='Prompt for signing key password')
         parser.add_argument('-K', '--key', default=None, help='Signing key file')
         parser.add_argument('-Y', '--verify', action='store_true', help='Verify signature')
@@ -468,9 +480,7 @@ if (__name__ == "__main__"):
             if (args.certificate is None or args.key is None):
                 parser.error('-C/--certificate and -K/key are required for signing')
             cert = load_cert(args.certificate)
-            if (args.prompt_password):
-                args.password = getpass(prompt='Private key password: ')
-            key = load_key(args.key, args.password.encode('utf-8') if args.password else None)
+            key = load_key(args.key, args.password.encode('utf-8') if args.password else None, args.prompt_password)
             validate_cert_and_key(cert, key)
             for dir in args.dirs:
                 logging.info('Resigning package: %s', dir)
@@ -480,7 +490,7 @@ if (__name__ == "__main__"):
             if (args.certificate is not None):
                 logging.warning('-C/--certificate is ignored for verification')
             if (args.key is not None or args.password is not None or args.prompt_password):
-                logging.warning('-K/--key, -P/--password and -p/--prompt-password are ignored for verification')
+                logging.warning('-K/--key, -P/--password, -n/--no-prompt-password and -p/--prompt-password are ignored for verification')
             for dir in args.dirs:
                 logging.info('Verifying package: %s', dir)
                 verify_package(dir, names)
