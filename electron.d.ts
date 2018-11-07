@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.7-wvvmp
+// Type definitions for Electron 3.0.8-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8400,7 +8400,7 @@ declare namespace Electron {
      * Specify page size of the generated PDF. Can be A3, A4, A5, Legal, Letter,
      * Tabloid or an Object containing height and width in microns.
      */
-    pageSize?: string;
+    pageSize?: string | Size;
     /**
      * Whether to print CSS backgrounds.
      */
