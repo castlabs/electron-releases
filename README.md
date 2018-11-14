@@ -34,11 +34,11 @@ becomes:
 
 The `#v4.0.0-wvvmp-beta.7` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
-## Migrating from castLabs Electron v1.8.x for Content Security
+## Migrating from an earlier castLabs Electron for Content Security release
 
-Due to a change in the key system used by the more recent Widevine CDM any previously persisted licenses cannot be automatically migrated to the new release. The recommended workaround is to listen for the `widevine-ready` event and then trigger a manual re-fetch of all persisted licenses when the `lastVersion` argument indicates an upgrade from a CDM in the 1.4.8-series to the more recent 1.4.9.
+Due to a changes in the key system used between major versions of the Widevine CDM any previously persisted licenses cannot be automatically migrated when such a CDM upgrade occurs. The recommended workaround is to listen for the `widevine-ready` event and then trigger a manual re-fetch of all persisted licenses when the `lastVersion` argument indicates an upgrade from a CDM in a different series, i.e. `1.4.8.*` -> `1.4.9.*` -> `4.10.*`.
 
-The new Widevine CDM also support a new VMP status, PLATFORM_SECURE_STORAGE_SOFTWARE_VERIFIED, that was not previously available. This status may be required by certain Widevine proxies to allow distribution of persistent licenses, depending on their configuration. To be able to support the new VMP status a recent VMP singning certificate is required. This means that that if you have already applied for a VMP certificate you may need to do so again to get an updated version able to support the new VMP status.
+The more recent Widevine CDMs also support a new VMP status, `PLATFORM_SECURE_STORAGE_SOFTWARE_VERIFIED`, that was not previously available. This status may be required by certain Widevine proxies to allow distribution of persistent licenses, depending on their configuration. To be able to support the new VMP status a recent VMP singning certificate is required. This means that that if you have already applied for a VMP certificate you may need to do so again to get an updated version able to support the new VMP status.
 
 ## Using the Widevine CDM in Electron for Content Security
 
