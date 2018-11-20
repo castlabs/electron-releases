@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.9-wvvmp
+// Type definitions for Electron 3.0.10-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9182,7 +9182,9 @@ declare namespace Electron {
      */
     contextIsolation?: boolean;
     /**
-     * Whether to use native window.open(). Defaults to false. This option is currently
+     * Whether to use native window.open(). If set to true, the webPreferences of child
+     * window will always be the same with parent window, regardless of the parameters
+     * passed to window.open(). Defaults to false. This option is currently
      * experimental.
      */
     nativeWindowOpen?: boolean;
