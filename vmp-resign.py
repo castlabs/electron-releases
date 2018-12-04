@@ -243,25 +243,6 @@ def decode_signature(io, end):
 
 ################################################################################
 
-def verify_signature(sig, data):
-    logging.debug('Verifying data: %s', to_hex(data))
-    cert = x509.load_der_x509_certificate(sig.cert, CRYPTO_BACKEND)
-    key = cert.public_key()
-    key.verify(sig.sig, data, SIGNATURE_PADDING, SIGNATURE_HASHER)
-
-def verify_file(file, sigdata, hash_func, flags=None):
-    with BytesIO(sigdata) as io:
-        sig = decode_signature(io, len(sigdata))
-    if (flags is not None and encode_byte(flags) != sig.flags):
-        logging.error('Expected flags differ from signature flags')
-        raise ValueError('Expected flags differ from signature flags')
-    logging.info('Verifying file: %s', file)
-    digest = hash_func(file, sig.version)
-    logging.debug('File digest: %s', to_hex(digest))
-    verify_signature(sig, digest + sig.flags)
-
-################################################################################
-
 def load_pem_cert(data):
     return x509.load_pem_x509_certificate(data, backend=CRYPTO_BACKEND)
 
@@ -380,7 +361,7 @@ def mk_extensions(extensions):
         entries.append((name, mk_extension_values(func, i.value)))
     return entries
 
-def validate_cert_and_key(cert, key):
+def validate_cert(cert):
     logging.debug('Certificate:')
     logging.debug('  Version: %s' % cert.version.name)
     logging.debug('  Serial Number: %x' % cert.serial_number)
@@ -398,14 +379,36 @@ def validate_cert_and_key(cert, key):
         logging.error('Unsupported certificate key type, only RSA keys are allowed')
         raise ValueError('Unsupported certificate key type, only RSA keys are allowed')
     logging.debug('Public Key: RSA %d bit' % cpk.key_size)
+
+def validate_cert_and_key(cert, key):
+    validate_cert(cert)
     if (not isinstance(key, RSAPrivateKey)):
         logging.error('Unsupported private key type, only RSA keys are allowed')
         raise ValueError('Unsupported private key type, only RSA keys are allowed')
     logging.debug('Private Key: RSA %d bit', key.key_size)
-    pk = key.public_key()
-    if (cpk.public_numbers() != pk.public_numbers()):
+    if (cert.public_key().public_numbers() != key.public_key().public_numbers()):
         logging.error('Private key does not match the certificate public key')
         raise ValueError('Private key does not match the certificate public key')
+
+################################################################################
+
+def verify_signature(cert, sig, data):
+    logging.debug('Verifying data: %s', to_hex(data))
+    key = cert.public_key()
+    key.verify(sig, data, SIGNATURE_PADDING, SIGNATURE_HASHER)
+
+def verify_file(file, sigdata, hash_func, flags=None):
+    with BytesIO(sigdata) as io:
+        sig = decode_signature(io, len(sigdata))
+    cert = load_der_cert(sig.cert)
+    validate_cert(cert)
+    if (flags is not None and encode_byte(flags) != sig.flags):
+        logging.error('Expected flags differ from signature flags')
+        raise ValueError('Expected flags differ from signature flags')
+    logging.info('Verifying file: %s', file)
+    digest = hash_func(file, sig.version)
+    logging.debug('File digest: %s', to_hex(digest))
+    verify_signature(cert, sig.sig, digest + sig.flags)
 
 ################################################################################
 
