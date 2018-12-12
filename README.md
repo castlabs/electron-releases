@@ -28,11 +28,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v3.0.11-wvvmp"
+  "electron": "https://github.com/castlabs/electron-releases#v3.0.11-wvvmp.1"
 }
 ```
 
-The `#v3.0.11-wvvmp` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v3.0.11-wvvmp.1` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Migrating from castLabs Electron v1.8.x for Content Security
 
