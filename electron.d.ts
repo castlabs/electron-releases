@@ -1,4 +1,4 @@
-// Type definitions for Electron 4.0.0-beta.7
+// Type definitions for Electron 4.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1011,9 +1011,9 @@ declare namespace Electron {
     setAboutPanelOptions(options: AboutPanelOptionsOptions): void;
     /**
      * Manually enables Chrome's accessibility support, allowing to expose
-     * accessibility switch to users in application settings.
-     * https://www.chromium.org/developers/design-documents/accessibility for more
-     * details. Disabled by default. Note: Rendering accessibility tree can
+     * accessibility switch to users in application settings. See Chromium's
+     * accessibility docs for more details. Disabled by default. This API must be
+     * called after the ready event is emitted. Note: Rendering accessibility tree can
      * significantly affect the performance of your app. It should not be enabled by
      * default.
      */
@@ -1096,6 +1096,11 @@ declare namespace Electron {
      * them.
      */
     show(): void;
+    /**
+     * Show the about panel with the values defined in the app's .plist file or with
+     * the options set via app.setAboutPanelOptions(options).
+     */
+    showAboutPanel(): void;
     /**
      * Start accessing a security scoped resource. With this method Electron
      * applications that are packaged for the Mac App Store may reach outside their
@@ -1824,7 +1829,8 @@ declare namespace Electron {
      */
     setBackgroundColor(backgroundColor: string): void;
     /**
-     * Resizes and moves the window to the supplied bounds
+     * Resizes and moves the window to the supplied bounds. Any properties that are not
+     * supplied will default to their current values.
      */
     setBounds(bounds: Rectangle, animate?: boolean): void;
     setBrowserView(browserView: BrowserView): void;
@@ -2430,20 +2436,9 @@ declare namespace Electron {
      * Start recording on all processes. Recording begins immediately locally and
      * asynchronously on child processes as soon as they receive the EnableRecording
      * request. The callback will be called once all child processes have acknowledged
-     * the startRecording request. categoryFilter is a filter to control what category
-     * groups should be traced. A filter can have an optional - prefix to exclude
-     * category groups that contain a matching category. Having both included and
-     * excluded category patterns in the same list is not supported. Examples:
-     * traceOptions controls what kind of tracing is enabled, it is a comma-delimited
-     * list. Possible options are: The first 3 options are trace recording modes and
-     * hence mutually exclusive. If more than one trace recording modes appear in the
-     * traceOptions string, the last one takes precedence. If none of the trace
-     * recording modes are specified, recording mode is record-until-full. The trace
-     * option will first be reset to the default option (record_mode set to
-     * record-until-full, enable_sampling and enable_systrace set to false) before
-     * options parsed from traceOptions are applied on it.
+     * the startRecording request.
      */
-    startRecording(options: StartRecordingOptions, callback: Function): void;
+    startRecording(options: (TraceCategoriesAndOptions) | (TraceConfig), callback: Function): void;
     /**
      * Stop monitoring on all processes. Once all child processes have acknowledged the
      * stopMonitoring request the callback is called.
@@ -3056,7 +3051,9 @@ declare namespace Electron {
      * registered shortcut is pressed by the user. When the accelerator is already
      * taken by other applications, this call will silently fail. This behavior is
      * intended by operating systems, since they don't want applications to fight for
-     * global shortcuts.
+     * global shortcuts. The following accelerators will not be registered successfully
+     * on macOS 10.14 Mojave unless the app has been authorized as a trusted
+     * accessibility client:
      */
     register(accelerator: Accelerator, callback: Function): void;
     /**
@@ -4538,6 +4535,17 @@ declare namespace Electron {
                                                            * used, `false` otherwise.
                                                            */
                                                           invertedColorScheme: boolean) => void): this;
+    /**
+     * Important: In order to properly leverage this API, you must set the
+     * NSMicrophoneUsageDescription and NSCameraUsageDescription strings in your app's
+     * Info.plist file. The values for these keys will be used to populate the
+     * permission dialogs so that the user will be properly informed as to the purpose
+     * of the permission request. See Electron Application Distribution for more
+     * information about how to set these in the context of Electron. This user consent
+     * was not required until macOS 10.14 Mojave, so this method will always return
+     * true if your system is running 10.13 High Sierra or lower.
+     */
+    askForMediaAccess(mediaType: 'microphone' | 'camera'): Promise<Boolean>;
     getAccentColor(): string;
     /**
      * Gets the macOS appearance setting that you have declared you want for your
@@ -4558,6 +4566,11 @@ declare namespace Electron {
      */
     getEffectiveAppearance(): ('dark' | 'light' | 'unknown');
     /**
+     * This user consent was not required until macOS 10.14 Mojave, so this method will
+     * always return granted if your system is running 10.13 High Sierra or lower.
+     */
+    getMediaAccessStatus(mediaType: string): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
+    /**
      * Some popular key and types are:
      */
     getUserDefault(key: string, type: 'string' | 'boolean' | 'integer' | 'float' | 'double' | 'url' | 'array' | 'dictionary'): any;
@@ -4569,6 +4582,7 @@ declare namespace Electron {
     isDarkMode(): boolean;
     isInvertedColorScheme(): boolean;
     isSwipeTrackingFromScrollEventsEnabled(): boolean;
+    isTrustedAccessibilityClient(prompt: boolean): boolean;
     /**
      * Posts event as native notifications of macOS. The userInfo is an Object that
      * contains the user information dictionary sent along with the notification.
@@ -4794,6 +4808,42 @@ declare namespace Electron {
     static TouchBarSegmentedControl: typeof TouchBarSegmentedControl;
     static TouchBarSlider: typeof TouchBarSlider;
     static TouchBarSpacer: typeof TouchBarSpacer;
+  }
+
+  interface TraceCategoriesAndOptions {
+
+    // Docs: http://electronjs.org/docs/api/structures/trace-categories-and-options
+
+    /**
+     * – is a filter to control what category groups should be traced. A filter can
+     * have an optional prefix to exclude category groups that contain a matching
+     * category. Having both included and excluded category patterns in the same list
+     * is not supported. Examples: test_MyTest*, test_MyTest*,test_OtherStuff,
+     * -excluded_category1,-excluded_category2.
+     */
+    categoryFilter: string;
+    /**
+     * Controls what kind of tracing is enabled, it is a comma-delimited sequence of
+     * the following strings: record-until-full, record-continuously, trace-to-console,
+     * enable-sampling, enable-systrace, e.g. 'record-until-full,enable-sampling'. The
+     * first 3 options are trace recording modes and hence mutually exclusive. If more
+     * than one trace recording modes appear in the traceOptions string, the last one
+     * takes precedence. If none of the trace recording modes are specified, recording
+     * mode is record-until-full. The trace option will first be reset to the default
+     * option (record_mode set to record-until-full, enable_sampling and
+     * enable_systrace set to false) before options parsed from traceOptions are
+     * applied on it.
+     */
+    traceOptions: string;
+  }
+
+  interface TraceConfig {
+
+    // Docs: http://electronjs.org/docs/api/structures/trace-config
+
+    excluded_categories?: string[];
+    included_categories?: string[];
+    memory_dump_config?: MemoryDumpConfig;
   }
 
   interface Transaction {
@@ -6412,6 +6462,11 @@ declare namespace Electron {
      * Mute the audio on the current web page.
      */
     setAudioMuted(muted: boolean): void;
+    /**
+     * Controls whether or not this WebContents will throttle animations and timers
+     * when the page becomes backgrounded. This also affects the Page Visibility API.
+     */
+    setBackgroundThrottling(allowed: boolean): void;
     /**
      * Uses the devToolsWebContents as the target WebContents to show devtools. The
      * devToolsWebContents must not have done any navigation, and it should not be used
@@ -8246,6 +8301,9 @@ declare namespace Electron {
     args?: string[];
   }
 
+  interface MemoryDumpConfig {
+  }
+
   interface MenuItemConstructorOptions {
     /**
      * Will be called with click(menuItem, browserWindow, event) when the menu item is
@@ -8277,6 +8335,11 @@ declare namespace Electron {
      * Should only be specified for checkbox or radio type menu items.
      */
     checked?: boolean;
+    /**
+     * If false, the accelerator won't be registered with the system, but it will still
+     * be displayed. Defaults to true.
+     */
+    registerAccelerator?: boolean;
     /**
      * Should be specified for submenu type menu items. If submenu is specified, the
      * type: 'submenu' can be omitted. If the value is not a then it will be
@@ -9003,11 +9066,6 @@ declare namespace Electron {
     traceOptions: string;
   }
 
-  interface StartRecordingOptions {
-    categoryFilter: string;
-    traceOptions: string;
-  }
-
   interface SystemMemoryInfo {
     /**
      * The total amount of physical memory in Kilobytes available to the system.
@@ -9524,12 +9582,13 @@ declare namespace Electron {
      * content to ensure the loaded content cannot tamper with the preload script and
      * any Electron APIs being used. This option uses the same technique used by . You
      * can access this context in the dev tools by selecting the 'Electron Isolated
-     * Context' entry in the combo box at the top of the Console tab. This option is
-     * currently experimental and may change or be removed in future Electron releases.
+     * Context' entry in the combo box at the top of the Console tab.
      */
     contextIsolation?: boolean;
     /**
-     * Whether to use native window.open(). Defaults to false. This option is currently
+     * Whether to use native window.open(). If set to true, the webPreferences of child
+     * window will always be the same with parent window, regardless of the parameters
+     * passed to window.open(). Defaults to false. This option is currently
      * experimental.
      */
     nativeWindowOpen?: boolean;
