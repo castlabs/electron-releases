@@ -36,7 +36,7 @@ The `#v3.0.14-wvvmp` part of the URL references a specific release tag for Elect
 
 ## Migrating from castLabs Electron v1.8.x for Content Security
 
-Due to a change in the key system used by the more recent Widevine CDM any previously persisted licenses cannot be automatically migrated to the new release. The recommended workaround is to listen for the `widevine-ready` event and then trigger a manual re-fetch of all persisted licenses when the `lastVersion` argument indicates an upgrade from a CDM in the 1.4.8-series to the more recent 1.4.9.
+Due to a changes in the key system id used between major and/or certain vulnerable versions of the Widevine CDM previously persisted licenses cannot be automatically migrated when such a CDM upgrade occurs. The recommended workaround is to listen for the `widevine-ready` event and then trigger a manual re-fetch of all persisted licenses in case an update was applied, i.e. if  `lastVersion` is not `null` and not equal to `version` (or at least verify the loadability of previously persisted licenses).
 
 The new Widevine CDM also support a new VMP status, PLATFORM_SECURE_STORAGE_SOFTWARE_VERIFIED, that was not previously available. This status may be required by certain Widevine proxies to allow distribution of persistent licenses, depending on their configuration. To be able to support the new VMP status a recent VMP singning certificate is required. This means that that if you have already applied for a VMP certificate you may need to do so again to get an updated version able to support the new VMP status.
 
@@ -62,8 +62,10 @@ As a part of the installation process for the Widevine components certain events
 ### `widevine-ready` 
  
 Emitted once Widevine has been properly installed/updated/registered and is ready to use to be used. Trying to play back protected content prior to the reception of this event will cause errors. This event is always emitted after the `ready` event.
- 
-An argument is provided that contains the version of Widevine in use.
+
+Two arguments are provided indicating the current and last versions of Widevine.
+
+If the `lastVersion` argument is not `null` and is not equal to `version` an update has occured, potentially rendering any persisted licenses unusable, see the [migration section](#migrating-from-an-earlier-castlabs-electron-for-content-security-release) for more information.
  
 #### Example
  
