@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.0.14-wvvmp
+// Type definitions for Electron 3.0.15-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2914,7 +2914,9 @@ declare namespace Electron {
      * registered shortcut is pressed by the user. When the accelerator is already
      * taken by other applications, this call will silently fail. This behavior is
      * intended by operating systems, since they don't want applications to fight for
-     * global shortcuts.
+     * global shortcuts. The following accelerators will not be registered successfully
+     * on macOS 10.14 Mojave unless the app has been authorized as a trusted
+     * accessibility client:
      */
     register(accelerator: Accelerator, callback: Function): void;
     /**
