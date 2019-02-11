@@ -110,13 +110,13 @@ app.on('widevine-error', (error) => {
 
 ## Verified Media Path (VMP)
 
-This fork of Electron provides support for [Verified Media Path (VMP)](https://www.widevine.com/product_news.html).  VMP provides a method to verify the autenticity of a device platform by requiring signatures for binary components taking part in the media pipeline. 
+This fork of Electron provides support for [Verified Media Path (VMP)](https://www.widevine.com/news).  VMP provides a method to verify the autenticity of a device platform by requiring signatures for binary components taking part in the media pipeline. 
 
 The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](https://www.widevine.com/) is needed to get production certificates for re-signing the final package.
 
 ### Licensing
 
-To be able to re-sign your application for your own purposes a license agreement wit Google Widevine is required. To start the process you can use the [contact sheet](https://www.widevine.com/contact.html) on the [Widevine web site](https://www.widevine.com/), or send an e-mail to [widevine@google.com](mailto:widevine@google.com) showing interest in a license agreement and VMP signing. This process may take some time to complete so keep that in mind when planning your product release.
+To be able to re-sign your application for your own purposes a license agreement wit Google Widevine is required. To start the process you can use the [contact sheet](https://www.widevine.com/contact) on the [Widevine web site](https://www.widevine.com/), or send an e-mail to [widevine@google.com](mailto:widevine@google.com) showing interest in a license agreement and VMP signing. This process may take some time to complete so keep that in mind when planning your product release.
 
 ### Re-signing
 
