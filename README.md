@@ -1,4 +1,4 @@
-# castLabs Electron v4.0.5 for Content Security
+# castLabs Electron v5.0.0-beta.3 for Content Security
 
 ## Summary
 
@@ -10,7 +10,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v4.0.5/README.md)
+[Electron README](https://github.com/electron/electron/blob/v5.0.0-beta.3/README.md)
 
 **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -28,11 +28,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v4.0.5-wvvmp"
+  "electron": "https://github.com/castlabs/electron-releases#v5.0.0-wvvmp-beta.3"
 }
 ```
 
-The `#v4.0.5-wvvmp` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v5.0.0-wvvmp-beta.3` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Migrating from an earlier castLabs Electron for Content Security release
 
