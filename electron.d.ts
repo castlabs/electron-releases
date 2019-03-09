@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.1.4-wvvmp
+// Type definitions for Electron 3.1.6-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1492,11 +1492,11 @@ declare namespace Electron {
     /**
      * Same as webContents.capturePage([rect, ]callback).
      */
-    capturePage(callback: (image: NativeImage) => void): void;
+    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
     /**
      * Same as webContents.capturePage([rect, ]callback).
      */
-    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
+    capturePage(callback: (image: NativeImage) => void): void;
     /**
      * Moves window to the center of the screen.
      */
@@ -3783,7 +3783,7 @@ declare namespace Electron {
      * Same as protocol.registerStreamProtocol, except that it replaces an existing
      * protocol handler.
      */
-    interceptStreamProtocol(scheme: string, handler: (request: InterceptStreamProtocolRequest, callback: (stream?: NodeJS.ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
+    interceptStreamProtocol(scheme: string, handler: (request: InterceptStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts scheme protocol and uses handler as the protocol's new handler which
      * sends a String as a response.
@@ -3852,7 +3852,7 @@ declare namespace Electron {
      * that implements the readable stream API (emits data/end/error events). For
      * example, here's how a file could be returned:
      */
-    registerStreamProtocol(scheme: string, handler: (request: RegisterStreamProtocolRequest, callback: (stream?: NodeJS.ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
+    registerStreamProtocol(scheme: string, handler: (request: RegisterStreamProtocolRequest, callback: (stream?: ReadableStream | StreamProtocolResponse) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of scheme that will send a String as a response. The usage
      * is the same with registerFileProtocol, except that the callback should be called
@@ -4309,7 +4309,7 @@ declare namespace Electron {
     /**
      * A Node.js readable stream representing the response body
      */
-    data: NodeJS.ReadableStream;
+    data: ReadableStream;
     /**
      * An object containing the response headers
      */
@@ -5923,7 +5923,7 @@ declare namespace Electron {
      * part of the page was repainted. If onlyDirty is set to true, image will only
      * contain the repainted area. onlyDirty defaults to false.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the callback will
      * be called with callback(image, dirtyRect) when there is a presentation event.
@@ -5932,7 +5932,7 @@ declare namespace Electron {
      * part of the page was repainted. If onlyDirty is set to true, image will only
      * contain the repainted area. onlyDirty defaults to false.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     canGoBack(): boolean;
     canGoForward(): boolean;
     canGoToOffset(offset: number): boolean;
@@ -6405,24 +6405,24 @@ declare namespace Electron {
      * The listener will be called with listener(details) when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: (details: OnBeforeRedirectDetails) => void): void;
+    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: (details: OnBeforeRedirectDetails) => void): void;
     /**
      * The listener will be called with listener(details) when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: (details: OnBeforeRedirectDetails) => void): void;
-    /**
-     * The listener will be called with listener(details, callback) when a request is
-     * about to occur. The uploadData is an array of UploadData objects. The callback
-     * has to be called with an response object.
-     */
-    onBeforeRequest(listener: (details: OnBeforeRequestDetails, callback: (response: Response) => void) => void): void;
+    onBeforeRedirect(listener: (details: OnBeforeRedirectDetails) => void): void;
     /**
      * The listener will be called with listener(details, callback) when a request is
      * about to occur. The uploadData is an array of UploadData objects. The callback
      * has to be called with an response object.
      */
     onBeforeRequest(filter: OnBeforeRequestFilter, listener: (details: OnBeforeRequestDetails, callback: (response: Response) => void) => void): void;
+    /**
+     * The listener will be called with listener(details, callback) when a request is
+     * about to occur. The uploadData is an array of UploadData objects. The callback
+     * has to be called with an response object.
+     */
+    onBeforeRequest(listener: (details: OnBeforeRequestDetails, callback: (response: Response) => void) => void): void;
     /**
      * The listener will be called with listener(details, callback) before sending an
      * HTTP request, once the request headers are available. This may occur after a TCP
@@ -6448,11 +6448,11 @@ declare namespace Electron {
     /**
      * The listener will be called with listener(details) when an error occurs.
      */
-    onErrorOccurred(listener: (details: OnErrorOccurredDetails) => void): void;
+    onErrorOccurred(filter: OnErrorOccurredFilter, listener: (details: OnErrorOccurredDetails) => void): void;
     /**
      * The listener will be called with listener(details) when an error occurs.
      */
-    onErrorOccurred(filter: OnErrorOccurredFilter, listener: (details: OnErrorOccurredDetails) => void): void;
+    onErrorOccurred(listener: (details: OnErrorOccurredDetails) => void): void;
     /**
      * The listener will be called with listener(details, callback) when HTTP response
      * headers of a request have been received. The callback has to be called with an
@@ -6470,13 +6470,13 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: (details: OnResponseStartedDetails) => void): void;
+    onResponseStarted(filter: OnResponseStartedFilter, listener: (details: OnResponseStartedDetails) => void): void;
     /**
      * The listener will be called with listener(details) when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: OnResponseStartedFilter, listener: (details: OnResponseStartedDetails) => void): void;
+    onResponseStarted(listener: (details: OnResponseStartedDetails) => void): void;
     /**
      * The listener will be called with listener(details) just before a request is
      * going to be sent to the server, modifications of previous onBeforeSendHeaders
@@ -6691,12 +6691,12 @@ declare namespace Electron {
      * Captures a snapshot of the webview's page. Same as
      * webContents.capturePage([rect, ]callback).
      */
-    capturePage(callback: (image: NativeImage) => void): void;
+    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
     /**
      * Captures a snapshot of the webview's page. Same as
      * webContents.capturePage([rect, ]callback).
      */
-    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
+    capturePage(callback: (image: NativeImage) => void): void;
     /**
      * Clears the navigation history.
      */
