@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.0-beta.4
+// Type definitions for Electron 5.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -937,18 +937,18 @@ declare namespace Electron {
      * and macOS, icons depend on the application associated with file mime type.
      * Deprecated Soon
      */
-    getFileIcon(path: string, callback: (error: Error, icon: NativeImage) => void): void;
-    /**
-     * Fetches a path's associated icon. On Windows, there a 2 kinds of icons: On Linux
-     * and macOS, icons depend on the application associated with file mime type.
-     * Deprecated Soon
-     */
     getFileIcon(path: string, options: FileIconOptions, callback: (error: Error, icon: NativeImage) => void): void;
     /**
      * Fetches a path's associated icon. On Windows, there a 2 kinds of icons: On Linux
      * and macOS, icons depend on the application associated with file mime type.
      */
     getFileIcon(path: string, options?: FileIconOptions): Promise<NativeImage>;
+    /**
+     * Fetches a path's associated icon. On Windows, there a 2 kinds of icons: On Linux
+     * and macOS, icons depend on the application associated with file mime type.
+     * Deprecated Soon
+     */
+    getFileIcon(path: string, callback: (error: Error, icon: NativeImage) => void): void;
     getGPUFeatureStatus(): GPUFeatureStatus;
     /**
      * For infoType equal to complete: Promise is fulfilled with Object containing all
@@ -1698,7 +1698,7 @@ declare namespace Electron {
      * data of the snapshot. Omitting rect will capture the whole visible page.
      * Deprecated Soon
      */
-    capturePage(callback: (image: NativeImage) => void): void;
+    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
     /**
      * Captures a snapshot of the page within rect. Omitting rect will capture the
      * whole visible page.
@@ -1710,7 +1710,7 @@ declare namespace Electron {
      * data of the snapshot. Omitting rect will capture the whole visible page.
      * Deprecated Soon
      */
-    capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
+    capturePage(callback: (image: NativeImage) => void): void;
     /**
      * Moves window to the center of the screen.
      */
@@ -2982,17 +2982,19 @@ declare namespace Electron {
     /**
      * Shows a message box, it will block the process until the message box is closed.
      * It returns the index of the clicked button. The browserWindow argument allows
-     * the dialog to attach itself to a parent window, making it modal. If a callback
-     * is passed, the dialog will not block the process. The API call will be
-     * asynchronous and the result will be passed via callback(response).
+     * the dialog to attach itself to a parent window, making it modal. If the callback
+     * and browserWindow arguments are passed, the dialog will not block the process.
+     * The API call will be asynchronous and the result will be passed via
+     * callback(response).
      */
     showMessageBox(browserWindow: BrowserWindow, options: MessageBoxOptions, callback?: (response: number, checkboxChecked: boolean) => void): number;
     /**
      * Shows a message box, it will block the process until the message box is closed.
      * It returns the index of the clicked button. The browserWindow argument allows
-     * the dialog to attach itself to a parent window, making it modal. If a callback
-     * is passed, the dialog will not block the process. The API call will be
-     * asynchronous and the result will be passed via callback(response).
+     * the dialog to attach itself to a parent window, making it modal. If the callback
+     * and browserWindow arguments are passed, the dialog will not block the process.
+     * The API call will be asynchronous and the result will be passed via
+     * callback(response).
      */
     showMessageBox(options: MessageBoxOptions, callback?: (response: number, checkboxChecked: boolean) => void): number;
     /**
@@ -6515,7 +6517,7 @@ declare namespace Electron {
      * part of the page was repainted. If onlyDirty is set to true, image will only
      * contain the repainted area. onlyDirty defaults to false.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the callback will
      * be called with callback(image, dirtyRect) when there is a presentation event.
@@ -6524,15 +6526,10 @@ declare namespace Electron {
      * part of the page was repainted. If onlyDirty is set to true, image will only
      * contain the repainted area. onlyDirty defaults to false.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     canGoBack(): boolean;
     canGoForward(): boolean;
     canGoToOffset(offset: number): boolean;
-    /**
-     * Captures a snapshot of the page within rect. Omitting rect will capture the
-     * whole visible page.
-     */
-    capturePage(rect?: Rectangle): void;
     /**
      * Captures a snapshot of the page within rect. Upon completion callback will be
      * called with callback(image). The image is an instance of NativeImage that stores
@@ -6540,6 +6537,11 @@ declare namespace Electron {
      * Deprecated Soon
      */
     capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
+    /**
+     * Captures a snapshot of the page within rect. Omitting rect will capture the
+     * whole visible page.
+     */
+    capturePage(rect?: Rectangle): void;
     /**
      * Captures a snapshot of the page within rect. Upon completion callback will be
      * called with callback(image). The image is an instance of NativeImage that stores
@@ -7012,90 +7014,90 @@ declare namespace Electron {
      * The listener will be called with listener(details) when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: (details: OnBeforeRedirectDetails) => void): void;
+    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: ((details: OnBeforeRedirectDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: (details: OnBeforeRedirectDetails) => void): void;
+    onBeforeRedirect(listener: ((details: OnBeforeRedirectDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) when a request is
      * about to occur. The uploadData is an array of UploadData objects. The callback
      * has to be called with an response object.
      */
-    onBeforeRequest(listener: (details: OnBeforeRequestDetails, callback: (response: Response) => void) => void): void;
+    onBeforeRequest(filter: OnBeforeRequestFilter, listener: ((details: OnBeforeRequestDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) when a request is
      * about to occur. The uploadData is an array of UploadData objects. The callback
      * has to be called with an response object.
      */
-    onBeforeRequest(filter: OnBeforeRequestFilter, listener: (details: OnBeforeRequestDetails, callback: (response: Response) => void) => void): void;
+    onBeforeRequest(listener: ((details: OnBeforeRequestDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) before sending an
      * HTTP request, once the request headers are available. This may occur after a TCP
      * connection is made to the server, but before any http data is sent. The callback
      * has to be called with an response object.
      */
-    onBeforeSendHeaders(filter: OnBeforeSendHeadersFilter, listener: (details: OnBeforeSendHeadersDetails, callback: (response: OnBeforeSendHeadersResponse) => void) => void): void;
+    onBeforeSendHeaders(filter: OnBeforeSendHeadersFilter, listener: ((details: OnBeforeSendHeadersDetails, callback: (response: OnBeforeSendHeadersResponse) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) before sending an
      * HTTP request, once the request headers are available. This may occur after a TCP
      * connection is made to the server, but before any http data is sent. The callback
      * has to be called with an response object.
      */
-    onBeforeSendHeaders(listener: (details: OnBeforeSendHeadersDetails, callback: (response: OnBeforeSendHeadersResponse) => void) => void): void;
+    onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersDetails, callback: (response: OnBeforeSendHeadersResponse) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when a request is completed.
      */
-    onCompleted(filter: OnCompletedFilter, listener: (details: OnCompletedDetails) => void): void;
+    onCompleted(filter: OnCompletedFilter, listener: ((details: OnCompletedDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when a request is completed.
      */
-    onCompleted(listener: (details: OnCompletedDetails) => void): void;
+    onCompleted(listener: ((details: OnCompletedDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when an error occurs.
      */
-    onErrorOccurred(listener: (details: OnErrorOccurredDetails) => void): void;
+    onErrorOccurred(filter: OnErrorOccurredFilter, listener: ((details: OnErrorOccurredDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when an error occurs.
      */
-    onErrorOccurred(filter: OnErrorOccurredFilter, listener: (details: OnErrorOccurredDetails) => void): void;
+    onErrorOccurred(listener: ((details: OnErrorOccurredDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) when HTTP response
      * headers of a request have been received. The callback has to be called with an
      * response object.
      */
-    onHeadersReceived(filter: OnHeadersReceivedFilter, listener: (details: OnHeadersReceivedDetails, callback: (response: OnHeadersReceivedResponse) => void) => void): void;
+    onHeadersReceived(filter: OnHeadersReceivedFilter, listener: ((details: OnHeadersReceivedDetails, callback: (response: OnHeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) when HTTP response
      * headers of a request have been received. The callback has to be called with an
      * response object.
      */
-    onHeadersReceived(listener: (details: OnHeadersReceivedDetails, callback: (response: OnHeadersReceivedResponse) => void) => void): void;
+    onHeadersReceived(listener: ((details: OnHeadersReceivedDetails, callback: (response: OnHeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: (details: OnResponseStartedDetails) => void): void;
+    onResponseStarted(filter: OnResponseStartedFilter, listener: ((details: OnResponseStartedDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: OnResponseStartedFilter, listener: (details: OnResponseStartedDetails) => void): void;
+    onResponseStarted(listener: ((details: OnResponseStartedDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) just before a request is
      * going to be sent to the server, modifications of previous onBeforeSendHeaders
      * response are visible by the time this listener is fired.
      */
-    onSendHeaders(filter: OnSendHeadersFilter, listener: (details: OnSendHeadersDetails) => void): void;
+    onSendHeaders(filter: OnSendHeadersFilter, listener: ((details: OnSendHeadersDetails) => void) | (null)): void;
     /**
      * The listener will be called with listener(details) just before a request is
      * going to be sent to the server, modifications of previous onBeforeSendHeaders
      * response are visible by the time this listener is fired.
      */
-    onSendHeaders(listener: (details: OnSendHeadersDetails) => void): void;
+    onSendHeaders(listener: ((details: OnSendHeadersDetails) => void) | (null)): void;
   }
 
   interface WebSource {
@@ -7300,19 +7302,19 @@ declare namespace Electron {
      * data of the snapshot. Omitting rect will capture the whole visible page.
      * Deprecated Soon
      */
-    capturePage(callback: (image: NativeImage) => void): void;
-    /**
-     * Captures a snapshot of the page within rect. Upon completion callback will be
-     * called with callback(image). The image is an instance of NativeImage that stores
-     * data of the snapshot. Omitting rect will capture the whole visible page.
-     * Deprecated Soon
-     */
     capturePage(rect: Rectangle, callback: (image: NativeImage) => void): void;
     /**
      * Captures a snapshot of the page within rect. Omitting rect will capture the
      * whole visible page.
      */
     capturePage(rect?: Rectangle): void;
+    /**
+     * Captures a snapshot of the page within rect. Upon completion callback will be
+     * called with callback(image). The image is an instance of NativeImage that stores
+     * data of the snapshot. Omitting rect will capture the whole visible page.
+     * Deprecated Soon
+     */
+    capturePage(callback: (image: NativeImage) => void): void;
     /**
      * Clears the navigation history.
      */
@@ -8853,6 +8855,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     redirectURL: string;
     statusCode: number;
@@ -8878,6 +8881,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     uploadData: UploadData[];
   }
@@ -8896,6 +8900,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     requestHeaders: RequestHeaders;
   }
@@ -8944,6 +8949,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     fromCache: boolean;
     /**
@@ -8966,6 +8972,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     statusLine: string;
     statusCode: number;
@@ -8999,6 +9006,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     responseHeaders: ResponseHeaders;
     /**
@@ -9023,6 +9031,7 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     resourceType: string;
+    referrer: string;
     timestamp: number;
     requestHeaders: RequestHeaders;
   }
