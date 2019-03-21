@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.0-beta.5
+// Type definitions for Electron 5.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7555,6 +7555,13 @@ declare namespace Electron {
      * system resources. Node integration is disabled by default in the guest page.
      */
     nodeintegration?: string;
+    /**
+     * Experimental option for enabling NodeJS support in sub-frames such as iframes
+     * inside the webview. All your preloads will load for every iframe, you can use
+     * process.isMainFrame to determine if you are in the main frame or not. This
+     * option is disabled by default in the guest page.
+     */
+    nodeintegrationinsubframes?: string;
     /**
      * Sets the session used by the page. If partition starts with persist:, the page
      * will use a persistent session available to all pages in the app with the same
