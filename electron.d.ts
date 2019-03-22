@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.1.6-wvvmp
+// Type definitions for Electron 3.1.7-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
