@@ -27,7 +27,7 @@
     "node": ">= 4.0"
   },
   "name": "electron",
-  "version": "4.1.2-wvvmp",
+  "version": "4.1.3-wvvmp",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
