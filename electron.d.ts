@@ -1,4 +1,4 @@
-// Type definitions for Electron 4.1.5
+// Type definitions for Electron 4.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1173,6 +1173,18 @@ declare namespace Electron {
      * userInfo into its current userInfo dictionary.
      */
     updateCurrentActivity(type: string, userInfo: any): void;
+    /**
+     * Initiates asynchronous Widevine CDM verify/install/update procedure and returns
+     * no value. Once initiated Widevine related events will be emitted as necessary,
+     * namely widevine-ready, widevine-update-pending & widevine-error. Unless the
+     * no-verify-widevine-cdm command line parameter is set this API is automatically
+     * called on startup and should not be called manually. If customized options are
+     * necessary for some reason no-verify-widevine-cdm should be set and the API call
+     * made once (with the custom options), very early, after the app has received the
+     * ready event (but before loading any media-related content to avoid potentially
+     * requiring a restart if CDM installation is necessary).
+     */
+    verifyWidevineCdm(options?: VerifyWidevineCdmOptions): void;
     whenReady(): Promise<void>;
     commandLine: CommandLine;
     dock: Dock;
@@ -1182,6 +1194,14 @@ declare namespace Electron {
      * production environments.
      */
     isPackaged?: boolean;
+    /**
+     * A String which is the user agent string Electron will use as a global fallback.
+     * This is the user agent that will be used when no user agent is set at the
+     * webContents or session level.  Useful for ensuring your entire app has the same
+     * user agent.  Set to a custom value as early as possible in your apps
+     * initialization to ensure that your overridden value is used.
+     */
+    userAgentFallback?: string;
   }
 
   interface AutoUpdater extends EventEmitter {
@@ -7043,11 +7063,6 @@ declare namespace Electron {
     addEventListener(event: 'crashed', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'crashed', listener: (event: Event) => void): this;
     /**
-     * Fired when the gpu process is crashed.
-     */
-    addEventListener(event: 'gpu-crashed', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'gpu-crashed', listener: (event: Event) => void): this;
-    /**
      * Fired when a plugin process is crashed.
      */
     addEventListener(event: 'plugin-crashed', listener: (event: PluginCrashedEvent) => void, useCapture?: boolean): this;
@@ -9477,6 +9492,10 @@ declare namespace Electron {
      * The number of bytes that will be uploaded this request
      */
     total: number;
+  }
+
+  interface VerifyWidevineCdmOptions {
+    session?: Session;
   }
 
   interface Versions {
