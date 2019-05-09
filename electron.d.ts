@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.0
+// Type definitions for Electron 5.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1193,6 +1193,18 @@ declare namespace Electron {
      * userInfo into its current userInfo dictionary.
      */
     updateCurrentActivity(type: string, userInfo: any): void;
+    /**
+     * Initiates asynchronous Widevine CDM verify/install/update procedure and returns
+     * no value. Once initiated Widevine related events will be emitted as necessary,
+     * namely widevine-ready, widevine-update-pending & widevine-error. Unless the
+     * no-verify-widevine-cdm command line parameter is set this API is automatically
+     * called on startup and should not be called manually. If customized options are
+     * necessary for some reason no-verify-widevine-cdm should be set and the API call
+     * made once (with the custom options), very early, after the app has received the
+     * ready event (but before loading any media-related content to avoid potentially
+     * requiring a restart if CDM installation is necessary).
+     */
+    verifyWidevineCdm(options?: VerifyWidevineCdmOptions): void;
     whenReady(): Promise<void>;
     commandLine: CommandLine;
     dock: Dock;
@@ -4119,14 +4131,14 @@ declare namespace Electron {
      * scheme is successfully registered or completion(error) when failed. To handle
      * the request, the callback should be called with either the file's path or an
      * object that has a path property, e.g. callback(filePath) or callback({ path:
-     * filePath }). The object may also have a headers property which gives a list of
-     * strings for the response headers, e.g. callback({ path: filePath, headers:
-     * ["Content-Security-Policy: default-src 'none'"]}). When callback is called with
-     * nothing, a number, or an object that has an error property, the request will
-     * fail with the error number you specified. For the available error numbers you
-     * can use, please see the net error list. By default the scheme is treated like
-     * http:, which is parsed differently than protocols that follow the "generic URI
-     * syntax" like file:, so you probably want to call
+     * filePath }). The object may also have a headers property which gives a map of
+     * headers to values for the response headers, e.g. callback({ path: filePath,
+     * headers: {"Content-Security-Policy": "default-src 'none'"]}). When callback is
+     * called with nothing, a number, or an object that has an error property, the
+     * request will fail with the error number you specified. For the available error
+     * numbers you can use, please see the net error list. By default the scheme is
+     * treated like http:, which is parsed differently than protocols that follow the
+     * "generic URI syntax" like file:, so you probably want to call
      * protocol.registerStandardSchemes to have your scheme treated as a standard
      * scheme.
      */
@@ -7250,11 +7262,6 @@ declare namespace Electron {
     addEventListener(event: 'crashed', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'crashed', listener: (event: Event) => void): this;
     /**
-     * Fired when the gpu process is crashed.
-     */
-    addEventListener(event: 'gpu-crashed', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'gpu-crashed', listener: (event: Event) => void): this;
-    /**
      * Fired when a plugin process is crashed.
      */
     addEventListener(event: 'plugin-crashed', listener: (event: PluginCrashedEvent) => void, useCapture?: boolean): this;
@@ -9745,6 +9752,10 @@ declare namespace Electron {
      * The number of bytes that will be uploaded this request
      */
     total: number;
+  }
+
+  interface VerifyWidevineCdmOptions {
+    session?: Session;
   }
 
   interface Versions {
