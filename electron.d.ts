@@ -1,4 +1,4 @@
-// Type definitions for Electron 3.1.8-wvvmp
+// Type definitions for Electron 3.1.9-wvvmp
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1060,6 +1060,18 @@ declare namespace Electron {
      * userInfo into its current userInfo dictionary.
      */
     updateCurrentActivity(type: string, userInfo: any): void;
+    /**
+     * Initiates asynchronous Widevine CDM verify/install/update procedure and returns
+     * no value. Once initiated Widevine related events will be emitted as necessary,
+     * namely widevine-ready, widevine-update-pending & widevine-error. Unless the
+     * no-verify-widevine-cdm command line parameter is set this API is automatically
+     * called on startup and should not be called manually. If customized options are
+     * necessary for some reason no-verify-widevine-cdm should be set and the API call
+     * made once (with the custom options), very early, after the app has received the
+     * ready event (but before loading any media-related content to avoid potentially
+     * requiring a restart if CDM installation is necessary).
+     */
+    verifyWidevineCdm(options?: VerifyWidevineCdmOptions): void;
     whenReady(): Promise<any>;
     commandLine: CommandLine;
     dock: Dock;
@@ -8978,6 +8990,10 @@ declare namespace Electron {
      * The number of bytes that will be uploaded this request
      */
     total: number;
+  }
+
+  interface VerifyWidevineCdmOptions {
+    session?: Session;
   }
 
   interface Versions {
