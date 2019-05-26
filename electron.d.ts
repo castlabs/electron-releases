@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.1
+// Type definitions for Electron 5.0.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1483,16 +1483,21 @@ declare namespace Electron {
     removeListener(event: 'new-window-for-tab', listener: Function): this;
     /**
      * Emitted when the document changed its title, calling event.preventDefault() will
-     * prevent the native window's title from changing.
+     * prevent the native window's title from changing. explicitSet is false when title
+     * is synthesized from file url.
      */
     on(event: 'page-title-updated', listener: (event: Event,
-                                               title: string) => void): this;
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
     once(event: 'page-title-updated', listener: (event: Event,
-                                               title: string) => void): this;
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
     addListener(event: 'page-title-updated', listener: (event: Event,
-                                               title: string) => void): this;
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
     removeListener(event: 'page-title-updated', listener: (event: Event,
-                                               title: string) => void): this;
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
     /**
      * Emitted when the web page has been rendered (while not being shown) and window
      * can be displayed without a visual flash.
@@ -2457,12 +2462,12 @@ declare namespace Electron {
 
     // Docs: http://electronjs.org/docs/api/clipboard
 
-    availableFormats(type?: string): string[];
+    availableFormats(type?: 'selection' | 'clipboard'): string[];
     /**
      * Clears the clipboard content.
      */
-    clear(type?: string): void;
-    has(format: string, type?: string): boolean;
+    clear(type?: 'selection' | 'clipboard'): void;
+    has(format: string, type?: 'selection' | 'clipboard'): boolean;
     read(format: string): string;
     /**
      * Returns an Object containing title and url keys representing the bookmark in the
@@ -2472,24 +2477,24 @@ declare namespace Electron {
     readBookmark(): ReadBookmark;
     readBuffer(format: string): Buffer;
     readFindText(): string;
-    readHTML(type?: string): string;
-    readImage(type?: string): NativeImage;
-    readRTF(type?: string): string;
-    readText(type?: string): string;
+    readHTML(type?: 'selection' | 'clipboard'): string;
+    readImage(type?: 'selection' | 'clipboard'): NativeImage;
+    readRTF(type?: 'selection' | 'clipboard'): string;
+    readText(type?: 'selection' | 'clipboard'): string;
     /**
      * Writes data to the clipboard.
      */
-    write(data: Data, type?: string): void;
+    write(data: Data, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes the title and url into the clipboard as a bookmark. Note: Most apps on
      * Windows don't support pasting bookmarks into them so you can use clipboard.write
      * to write both a bookmark and fallback text to the clipboard.
      */
-    writeBookmark(title: string, url: string, type?: string): void;
+    writeBookmark(title: string, url: string, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes the buffer into the clipboard as format.
      */
-    writeBuffer(format: string, buffer: Buffer, type?: string): void;
+    writeBuffer(format: string, buffer: Buffer, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes the text into the find pasteboard as plain text. This method uses
      * synchronous IPC when called from the renderer process.
@@ -2498,19 +2503,19 @@ declare namespace Electron {
     /**
      * Writes markup to the clipboard.
      */
-    writeHTML(markup: string, type?: string): void;
+    writeHTML(markup: string, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes image to the clipboard.
      */
-    writeImage(image: NativeImage, type?: string): void;
+    writeImage(image: NativeImage, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes the text into the clipboard in RTF.
      */
-    writeRTF(text: string, type?: string): void;
+    writeRTF(text: string, type?: 'selection' | 'clipboard'): void;
     /**
      * Writes the text into the clipboard as plain text.
      */
-    writeText(text: string, type?: string): void;
+    writeText(text: string, type?: 'selection' | 'clipboard'): void;
   }
 
   interface ContentTracing extends EventEmitter {
@@ -6231,6 +6236,22 @@ declare namespace Electron {
                                                   * Array of URLs.
                                                   */
                                                  favicons: string[]) => void): this;
+    /**
+     * Fired when page title is set during navigation. explicitSet is false when title
+     * is synthesized from file url.
+     */
+    on(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    once(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    addListener(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    removeListener(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
     /**
      * Emitted when a new frame is generated. Only the dirty area is passed in the
      * buffer.
