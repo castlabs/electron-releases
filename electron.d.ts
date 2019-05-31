@@ -1,4 +1,4 @@
-// Type definitions for Electron 6.0.0-beta.4
+// Type definitions for Electron 6.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -586,12 +586,13 @@ declare namespace Electron {
                                                      killed: boolean) => void): this;
     /**
      * This event will be emitted inside the primary instance of your application when
-     * a second instance has been executed. argv is an Array of the second instance's
-     * command line arguments, and workingDirectory is its current working directory.
-     * Usually applications respond to this by making their primary window focused and
-     * non-minimized. This event is guaranteed to be emitted after the ready event of
-     * app gets emitted. Note: Extra command line arguments might be added by Chromium,
-     * such as --original-process-start-time.
+     * a second instance has been executed and calls app.requestSingleInstanceLock().
+     * argv is an Array of the second instance's command line arguments, and
+     * workingDirectory is its current working directory. Usually applications respond
+     * to this by making their primary window focused and non-minimized. This event is
+     * guaranteed to be emitted after the ready event of app gets emitted. Note: Extra
+     * command line arguments might be added by Chromium, such as
+     * --original-process-start-time.
      */
     on(event: 'second-instance', listener: (event: Event,
                                             /**
@@ -1107,9 +1108,9 @@ declare namespace Electron {
     setAccessibilitySupportEnabled(enabled: boolean): void;
     /**
      * Sets or creates a directory your app's logs which can then be manipulated with
-     * app.getPath() or app.setPath(newPath). On macOS, this directory will be set by
-     * deafault to /Library/Logs/YourAppName, and on Linux and Windows it will be
-     * placed inside your userData directory.
+     * app.getPath() or app.setPath(pathName, newPath). On macOS, this directory will
+     * be set by deafault to /Library/Logs/YourAppName, and on Linux and Windows it
+     * will be placed inside your userData directory.
      */
     setAppLogsPath(path?: string): void;
     /**
@@ -1169,12 +1170,12 @@ declare namespace Electron {
     setName(name: string): void;
     /**
      * Overrides the path to a special directory or file associated with name. If the
-     * path specifies a directory that does not exist, the directory will be created by
-     * this method. On failure an Error is thrown. You can only override paths of a
-     * name defined in app.getPath. By default, web pages' cookies and caches will be
-     * stored under the userData directory. If you want to change this location, you
-     * have to override the userData path before the ready event of the app module is
-     * emitted.
+     * path specifies a directory that does not exist, an Error is thrown. In that
+     * case, the directory should be created with fs.mkdirSync or similar. You can only
+     * override paths of a name defined in app.getPath. By default, web pages' cookies
+     * and caches will be stored under the userData directory. If you want to change
+     * this location, you have to override the userData path before the ready event of
+     * the app module is emitted.
      */
     setPath(name: string, path: string): void;
     /**
@@ -1252,6 +1253,14 @@ declare namespace Electron {
      * production environments.
      */
     isPackaged?: boolean;
+    /**
+     * A String which is the user agent string Electron will use as a global fallback.
+     * This is the user agent that will be used when no user agent is set at the
+     * webContents or session level.  Useful for ensuring your entire app has the same
+     * user agent.  Set to a custom value as early as possible in your apps
+     * initialization to ensure that your overridden value is used.
+     */
+    userAgentFallback?: string;
   }
 
   interface AutoUpdater extends EventEmitter {
@@ -3794,35 +3803,6 @@ declare namespace Electron {
      * gesture like mouse click
      */
     triggeredByAccelerator?: boolean;
-  }
-
-  interface MemoryInfo {
-
-    // Docs: http://electronjs.org/docs/api/structures/memory-info
-
-    /**
-     * The maximum amount of memory that has ever been pinned to actual physical RAM.
-     * On macOS its value will always be 0.
-     */
-    peakWorkingSetSize: number;
-    /**
-     * Process id of the process.
-     */
-    pid: number;
-    /**
-     * The amount of memory not shared by other processes, such as JS heap or HTML
-     * content.
-     */
-    privateBytes: number;
-    /**
-     * The amount of memory shared between processes, typically memory consumed by the
-     * Electron code itself
-     */
-    sharedBytes: number;
-    /**
-     * The amount of memory currently pinned to actual physical RAM.
-     */
-    workingSetSize: number;
   }
 
   interface MemoryUsageDetails {
