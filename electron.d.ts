@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.2
+// Type definitions for Electron 5.0.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -580,12 +580,13 @@ declare namespace Electron {
                                            moduleName: string) => void): this;
     /**
      * This event will be emitted inside the primary instance of your application when
-     * a second instance has been executed. argv is an Array of the second instance's
-     * command line arguments, and workingDirectory is its current working directory.
-     * Usually applications respond to this by making their primary window focused and
-     * non-minimized. This event is guaranteed to be emitted after the ready event of
-     * app gets emitted. Note: Extra command line arguments might be added by Chromium,
-     * such as --original-process-start-time.
+     * a second instance has been executed and calls app.requestSingleInstanceLock().
+     * argv is an Array of the second instance's command line arguments, and
+     * workingDirectory is its current working directory. Usually applications respond
+     * to this by making their primary window focused and non-minimized. This event is
+     * guaranteed to be emitted after the ready event of app gets emitted. Note: Extra
+     * command line arguments might be added by Chromium, such as
+     * --original-process-start-time.
      */
     on(event: 'second-instance', listener: (event: Event,
                                             /**
@@ -3581,35 +3582,6 @@ declare namespace Electron {
      * One of the following:
      */
     type?: ('task' | 'separator' | 'file');
-  }
-
-  interface MemoryInfo {
-
-    // Docs: http://electronjs.org/docs/api/structures/memory-info
-
-    /**
-     * The maximum amount of memory that has ever been pinned to actual physical RAM.
-     * On macOS its value will always be 0.
-     */
-    peakWorkingSetSize: number;
-    /**
-     * Process id of the process.
-     */
-    pid: number;
-    /**
-     * The amount of memory not shared by other processes, such as JS heap or HTML
-     * content.
-     */
-    privateBytes: number;
-    /**
-     * The amount of memory shared between processes, typically memory consumed by the
-     * Electron code itself
-     */
-    sharedBytes: number;
-    /**
-     * The amount of memory currently pinned to actual physical RAM.
-     */
-    workingSetSize: number;
   }
 
   interface MemoryUsageDetails {
@@ -7864,8 +7836,9 @@ declare namespace Electron {
      */
     kiosk?: boolean;
     /**
-     * Default window title. Default is "Electron". If the HTML tag is defined in the
-     * HTML file loaded by loadURL(), this property will be ignored.
+     * Default window title. Default is "Electron". If the HTML tag </code> is defined
+     * in the HTML file loaded by <code>loadURL()</code>, this property will be
+     * ignored.</foo>
      */
     title?: string;
     /**
