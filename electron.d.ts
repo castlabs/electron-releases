@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.3
+// Type definitions for Electron 5.0.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3669,10 +3669,20 @@ declare namespace Electron {
     // Docs: http://electronjs.org/docs/api/menu-item
 
     constructor(options: MenuItemConstructorOptions);
+    accelerator: string;
     checked: boolean;
     click: Function;
+    commandId: number;
     enabled: boolean;
+    icon: NativeImage;
+    id: string;
     label: string;
+    menu: Menu;
+    registerAccelerator: boolean;
+    role: string;
+    sublabel: string;
+    submenu: Menu;
+    type: string;
     visible: boolean;
   }
 
@@ -4033,14 +4043,15 @@ declare namespace Electron {
      */
     contentVersion: string;
     /**
-     * A Boolean value that indicates whether the App Store has downloadable content
-     * for this product.
-     */
-    downloadable: boolean;
-    /**
      * The locale formatted price of the product.
      */
     formattedPrice: string;
+    /**
+     * A Boolean value that indicates whether the App Store has downloadable content
+     * for this product. true if at least one file has been associated with the
+     * product.
+     */
+    isDownloadable: boolean;
     /**
      * A description of the product.
      */
@@ -8675,11 +8686,11 @@ declare namespace Electron {
      * Can be undo, redo, cut, copy, paste, pasteandmatchstyle, delete, selectall,
      * reload, forcereload, toggledevtools, resetzoom, zoomin, zoomout,
      * togglefullscreen, window, minimize, close, help, about, services, hide,
-     * hideothers, unhide, quit, startspeaking, stopspeaking, close, minimize, zoom or
-     * front Define the action of the menu item, when specified the click property will
-     * be ignored. See .
+     * hideothers, unhide, quit, startspeaking, stopspeaking, close, minimize, zoom,
+     * front, appMenu, fileMenu, editMenu, viewMenu or windowMenu Define the action of
+     * the menu item, when specified the click property will be ignored. See .
      */
-    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteandmatchstyle' | 'delete' | 'selectall' | 'reload' | 'forcereload' | 'toggledevtools' | 'resetzoom' | 'zoomin' | 'zoomout' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideothers' | 'unhide' | 'quit' | 'startspeaking' | 'stopspeaking' | 'close' | 'minimize' | 'zoom' | 'front');
+    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteandmatchstyle' | 'delete' | 'selectall' | 'reload' | 'forcereload' | 'toggledevtools' | 'resetzoom' | 'zoomin' | 'zoomout' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideothers' | 'unhide' | 'quit' | 'startspeaking' | 'stopspeaking' | 'close' | 'minimize' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'windowMenu');
     /**
      * Can be normal, separator, submenu, checkbox or radio.
      */
