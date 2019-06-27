@@ -1,4 +1,4 @@
-// Type definitions for Electron 6.0.0-beta.8
+// Type definitions for Electron 6.0.0-beta.11
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9703,17 +9703,33 @@ declare namespace Electron {
      * The type of media access being requested, can be video, audio or unknown
      */
     mediaType: ('video' | 'audio' | 'unknown');
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PermissionRequestHandlerDetails {
     /**
      * The url of the openExternal request.
      */
-    externalURL: string;
+    externalURL?: string;
     /**
      * The types of media access being requested, elements can be video or audio
      */
-    mediaTypes: Array<'video' | 'audio'>;
+    mediaTypes?: Array<'video' | 'audio'>;
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PluginCrashedEvent extends Event {
