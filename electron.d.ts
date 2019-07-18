@@ -1,4 +1,4 @@
-// Type definitions for Electron 6.0.0-beta.13
+// Type definitions for Electron 6.0.0-beta.14
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4305,9 +4305,9 @@ declare namespace Electron {
      */
     pid: number;
     /**
-     * Process type (Browser or Tab or GPU etc).
+     * Process type. One of the following values:
      */
-    type: string;
+    type: ('Browser' | 'Tab' | 'Utility' | 'Zygote' | 'GPU' | 'Unknown');
   }
 
   interface Product {
@@ -5682,9 +5682,9 @@ declare namespace Electron {
      */
     setContextMenu(menu: (Menu) | (null)): void;
     /**
-     * Sets when the tray's icon background becomes highlighted (in blue). Note: You
-     * can use highlightMode with a BrowserWindow by toggling between 'never' and
-     * 'always' modes when the window visibility changes.
+     * Sets when the tray's icon background becomes highlighted (in blue). Deprecated
+     * Note: You can use highlightMode with a BrowserWindow by toggling between 'never'
+     * and 'always' modes when the window visibility changes.
      */
     setHighlightMode(mode: 'selection' | 'always' | 'never'): void;
     /**
@@ -7772,7 +7772,7 @@ declare namespace Electron {
      * Loads the url in the webview, the url must contain the protocol prefix, e.g. the
      * http:// or file://.
      */
-    loadURL(url: string, options?: LoadURLOptions): void;
+    loadURL(url: string, options?: LoadURLOptions): Promise<void>;
     /**
      * Opens a DevTools window for guest page.
      */

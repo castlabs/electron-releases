@@ -11,7 +11,7 @@
   "main": "index.js",
   "types": "electron.d.ts",
   "dependencies": {
-    "@types/node": "^8.0.24",
+    "@types/node": "^10.12.18",
     "electron-download": "^4.1.0",
     "extract-zip": "^1.0.3"
   },
@@ -27,11 +27,11 @@
     "node": ">= 4.0"
   },
   "name": "electron",
-  "version": "6.0.0-wvvmp-beta.13",
+  "version": "6.0.0-wvvmp-beta.14",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
-  "author": "castLabs GmbH (based on work by Electron Community)",
+  "author": "castLabs GmbH (based on work by the Electron Community)",
   "maintainers": [
     {
       "name": "Emil Pettersson",
@@ -43,6 +43,7 @@
     "widevine",
     "vmp",
     "drm",
-    "offline"
+    "offline",
+    "persistent-license"
   ]
 }
