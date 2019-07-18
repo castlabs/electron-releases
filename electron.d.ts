@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.6
+// Type definitions for Electron 5.0.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3978,6 +3978,17 @@ declare namespace Electron {
     once(event: 'unlock-screen', listener: Function): this;
     addListener(event: 'unlock-screen', listener: Function): this;
     removeListener(event: 'unlock-screen', listener: Function): this;
+    /**
+     * Calculate the system idle state. idleThreshold is the amount of time (in
+     * seconds) before considered idle. callback will be called synchronously on some
+     * systems and with an idleState argument that describes the system's state. locked
+     * is available on supported systems only.
+     */
+    querySystemIdleState(idleThreshold: number, callback: (idleState: 'active' | 'idle' | 'locked' | 'unknown') => void): void;
+    /**
+     * Calculate system idle time in seconds.
+     */
+    querySystemIdleTime(callback: (idleTime: number) => void): void;
   }
 
   interface PowerSaveBlocker extends EventEmitter {
@@ -4672,30 +4683,6 @@ declare namespace Electron {
                                                   * The new RGBA color the user assigned to be their system accent color.
                                                   */
                                                  newColor: string) => void): this;
-    /**
-     * NOTE: This event is only emitted after you have called
-     * startAppLevelAppearanceTrackingOS
-     */
-    on(event: 'appearance-changed', listener: (
-                                               /**
-                                                * Can be `dark` or `light`
-                                                */
-                                               newAppearance: ('dark' | 'light')) => void): this;
-    once(event: 'appearance-changed', listener: (
-                                               /**
-                                                * Can be `dark` or `light`
-                                                */
-                                               newAppearance: ('dark' | 'light')) => void): this;
-    addListener(event: 'appearance-changed', listener: (
-                                               /**
-                                                * Can be `dark` or `light`
-                                                */
-                                               newAppearance: ('dark' | 'light')) => void): this;
-    removeListener(event: 'appearance-changed', listener: (
-                                               /**
-                                                * Can be `dark` or `light`
-                                                */
-                                               newAppearance: ('dark' | 'light')) => void): this;
     on(event: 'color-changed', listener: (event: Event) => void): this;
     once(event: 'color-changed', listener: (event: Event) => void): this;
     addListener(event: 'color-changed', listener: (event: Event) => void): this;
@@ -7847,9 +7834,8 @@ declare namespace Electron {
      */
     kiosk?: boolean;
     /**
-     * Default window title. Default is "Electron". If the HTML tag </code> is defined
-     * in the HTML file loaded by <code>loadURL()</code>, this property will be
-     * ignored.</foo>
+     * Default window title. Default is "Electron". If the HTML tag is defined in the
+     * HTML file loaded by loadURL(), this property will be ignored.
      */
     title?: string;
     /**
@@ -9196,17 +9182,33 @@ declare namespace Electron {
      * The type of media access being requested, can be video, audio or unknown
      */
     mediaType: ('video' | 'audio' | 'unknown');
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PermissionRequestHandlerDetails {
     /**
      * The url of the openExternal request.
      */
-    externalURL: string;
+    externalURL?: string;
     /**
      * The types of media access being requested, elements can be video or audio
      */
-    mediaTypes: Array<'video' | 'audio'>;
+    mediaTypes?: Array<'video' | 'audio'>;
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PluginCrashedEvent extends Event {
