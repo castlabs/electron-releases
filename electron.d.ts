@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.7
+// Type definitions for Electron 5.0.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7834,8 +7834,9 @@ declare namespace Electron {
      */
     kiosk?: boolean;
     /**
-     * Default window title. Default is "Electron". If the HTML tag is defined in the
-     * HTML file loaded by loadURL(), this property will be ignored.
+     * Default window title. Default is "Electron". If the HTML tag </code> is defined
+     * in the HTML file loaded by <code>loadURL()</code>, this property will be
+     * ignored.</foo>
      */
     title?: string;
     /**
