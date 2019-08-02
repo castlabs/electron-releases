@@ -1,5 +1,7 @@
 # castLabs Electron v4.2.8 for Content Security
 
+Check out the [Wiki](https://github.com/castlabs/electron-releases/wiki) for general news and other updates.
+
 ## Summary
 
 This is a fork of Electron created with the goal of facilitating the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and protected storage of licenses for offline playback scenarios. It is intended to be used as a drop-in replacement for a regular Electron build and currently supports Windows and macOS platforms.
