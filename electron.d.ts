@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.8
+// Type definitions for Electron 5.0.9
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7037,13 +7037,13 @@ declare namespace Electron {
     /**
      * The listener will be called with listener(details, callback) when a request is
      * about to occur. The uploadData is an array of UploadData objects. The callback
-     * has to be called with an response object.
+     * has to be called with an response object. Some examples of valid urls:
      */
     onBeforeRequest(filter: OnBeforeRequestFilter, listener: ((details: OnBeforeRequestDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The listener will be called with listener(details, callback) when a request is
      * about to occur. The uploadData is an array of UploadData objects. The callback
-     * has to be called with an response object.
+     * has to be called with an response object. Some examples of valid urls:
      */
     onBeforeRequest(listener: ((details: OnBeforeRequestDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
@@ -7645,7 +7645,8 @@ declare namespace Electron {
      */
     website?: string;
     /**
-     * Path to the app's icon.
+     * Path to the app's icon. Will be shown as 64x64 pixels while retaining aspect
+     * ratio.
      */
     iconPath?: string;
   }
