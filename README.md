@@ -59,12 +59,15 @@ win.loadURL(yourContentURL);
 
 ## Widevine specific APIs
 
-Widevine CDM verification/installation/update is normally automatically triggered on startup, if this is good enough for your scenario you can skip this section and jump to the section about [Widevine events](#widevine-specific-events). It is possible to stop this from triggering automatically using the command line switch `no-verify-widevine-cdm` and manually triggering the process instead, allowing extra optioins to be passed, using the API described below:
+Widevine CDM verification/installation/update is normally automatically triggered on startup, if this is good enough for your scenario you can skip this section and jump to the section about [Widevine events](#widevine-specific-events). It is possible to stop this from triggering automatically using the command line switch `no-verify-widevine-cdm` and manually triggering the process instead, allowing extra options to be passed. Another command line switch is available to prevent updates of the CDM, `no-update-widevine-cdm`, which can be used in *offline*, e.g. geo-blocking, scenarios to avoid pre-persisted licenses being invalidated by a CDM update. This update behaviour is also possible to control using the  `disableUpdate` option, which takes precedence over the command line switch, with the API described below.
+
+> **WARNING**: Using `disableUpdate` for extended periods of time is not advisable since you may miss a critical CDM update, ultimately rendering the media client unusable!
 
 ### `app.verifyWidevineCdm([options])`
 
 * `options` Object (optional)
   * `session` [Session](https://github.com/electron/electron/blob/v6.0.2/docs/api/session.md) (optional)
+  * `disableUpdate` boolean (optional)
 
 Initiates asynchronous Widevine CDM verify/install/update procedure and returns no value. Once initiated Widevine related events will be emitted as necessary, namely `widevine-ready`, `widevine-update-pending` & `widevine-error`. Unless the `no-verify-widevine-cdm` command line parameter is set this API is automatically triggered on startup and should not be called manually. If customized options are necessary `no-verify-widevine-cdm` should be set and the API call made once, very early, after the app has received the `ready` event (but before loading any media-related content to avoid potentially requiring a restart).
 
@@ -73,10 +76,14 @@ const { app, session } = require('electron');
 
 app.commandLine.appendSwitch('no-verify-widevine-cdm')
 
+// Demonstrating with constant, but this should be set dynamically
+let isOffline = false
+
 app.on('ready', () => {
   // Demonstrating with default session, but a custom session object can be used
   app.verifyWidevineCdm({
     session: session.defaultSession,
+    disableUpdate: isOffline,
   });
 
   // Do other early initialization...
