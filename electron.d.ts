@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.0.0-beta.2
+// Type definitions for Electron 7.0.0-beta.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -37,6 +37,7 @@ declare namespace Electron {
     MenuItem: typeof MenuItem;
     Menu: typeof Menu;
     nativeImage: typeof NativeImage;
+    nativeTheme: NativeTheme;
     netLog: NetLog;
     net: Net;
     Notification: typeof Notification;
@@ -86,6 +87,7 @@ declare namespace Electron {
   const ipcRenderer: IpcRenderer;
   type nativeImage = NativeImage;
   const nativeImage: typeof NativeImage;
+  const nativeTheme: NativeTheme;
   const netLog: NetLog;
   const net: Net;
   const powerMonitor: PowerMonitor;
@@ -2335,9 +2337,8 @@ __Note__: On macOS this event is an alias of `moved`.
      */
     getNormalBounds(): Rectangle;
     /**
-     * between 0.0 (fully transparent) and 1.0 (fully opaque)
-     *
-     * @platform win32,darwin
+     * between 0.0 (fully transparent) and 1.0 (fully opaque). On Linux, always returns
+     * 1.
      */
     getOpacity(): number;
     /**
@@ -2367,10 +2368,6 @@ __Note__: On macOS this event is an alias of `moved`.
     getTitle(): string;
     /**
      * Whether the window has a shadow.
-
-On Windows and Linux always returns `true`.
-     *
-     * @platform darwin
      */
     hasShadow(): boolean;
     /**
@@ -2723,9 +2720,7 @@ On macOS it does not remove the focus from the window.
      */
     setFullScreenable(fullscreenable: boolean): void;
     /**
-     * Sets whether the window should have a shadow. On Windows and Linux does nothing.
-     *
-     * @platform darwin
+     * Sets whether the window should have a shadow.
      */
     setHasShadow(hasShadow: boolean): void;
     /**
@@ -2793,7 +2788,8 @@ On macOS it does not remove the focus from the window.
      */
     setMovable(movable: boolean): void;
     /**
-     * Sets the opacity of the window. On Linux does nothing.
+     * Sets the opacity of the window. On Linux, does nothing. Out of bound number
+     * values are clamped to the [0, 1] range.
      *
      * @platform win32,darwin
      */
@@ -5327,6 +5323,42 @@ Please note that this property only has an effect on macOS.
     toPNG(options?: ToPNGOptions): Buffer;
   }
 
+  interface NativeTheme extends NodeJS.EventEmitter {
+
+    // Docs: http://electronjs.org/docs/api/native-theme
+
+    /**
+     * Emitted when something in the underlying NativeTheme has changed. This normally
+     * means that either the value of `shouldUseDarkColors`,
+     * `shouldUseHighContrastColors` or `shouldUseInvertedColorScheme` has changed. You
+     * will have to check them to determine which one has changed.
+     */
+    on(event: 'updated', listener: Function): this;
+    once(event: 'updated', listener: Function): this;
+    addListener(event: 'updated', listener: Function): this;
+    removeListener(event: 'updated', listener: Function): this;
+    /**
+     * A `Boolean` for if the OS / Chromium currently has a dark mode enabled or is
+     * being instructed to show a dark-style UI.
+     *
+     */
+    readonly shouldUseDarkColors: boolean;
+    /**
+     * A `Boolean` for if the OS / Chromium currently has high-contrast mode enabled or
+     * is being instructed to show a high-constrast UI.
+     *
+     * @platform darwin,win32
+     */
+    readonly shouldUseHighContrastColors: boolean;
+    /**
+     * A `Boolean` for if the OS / Chromium currently has an inverted color scheme or
+     * is being instructed to use an inverted color scheme.
+     *
+     * @platform darwin,win32
+     */
+    readonly shouldUseInvertedColorScheme: boolean;
+  }
+
   interface Net {
 
     // Docs: http://electronjs.org/docs/api/net
@@ -6589,6 +6621,12 @@ Creates or updates a shortcut link at `shortcutPath`.
     once(event: 'color-changed', listener: (event: Event) => void): this;
     addListener(event: 'color-changed', listener: (event: Event) => void): this;
     removeListener(event: 'color-changed', listener: (event: Event) => void): this;
+    /**
+     * **Deprecated:** Should use the new `updated` event on the `nativeTheme` module.
+     *
+     * @deprecated
+     * @platform win32
+     */
     on(event: 'high-contrast-color-scheme-changed', listener: (event: Event,
                                                                /**
                                                                 * `true` if a high contrast theme is being used, `false` otherwise.
@@ -6609,6 +6647,12 @@ Creates or updates a shortcut link at `shortcutPath`.
                                                                 * `true` if a high contrast theme is being used, `false` otherwise.
                                                                 */
                                                                highContrastColorScheme: boolean) => void): this;
+    /**
+     * **Deprecated:** Should use the new `updated` event on the `nativeTheme` module.
+     *
+     * @deprecated
+     * @platform win32
+     */
     on(event: 'inverted-color-scheme-changed', listener: (event: Event,
                                                           /**
                                                            * `true` if an inverted color scheme (a high contrast color scheme with light text
@@ -6695,6 +6739,7 @@ Returns an object with system animation settings.
 
 **Deprecated**
      *
+     * @deprecated
      * @platform darwin
      */
     getAppLevelAppearance(): ('dark' | 'light' | 'unknown');
@@ -6718,6 +6763,8 @@ Returns an object with system animation settings.
      * `Info.plist` to `false`.  If you are using `electron-packager` or
      * `electron-forge` just set the `enableDarwinDarkMode` packager option to `true`.
      * See the Electron Packager API for more details.
+
+**Deprecated**
      *
      * @platform darwin
      */
@@ -6773,13 +6820,20 @@ Returns an object with system animation settings.
      * value when in the "automatic" dark mode setting you must either have
      * `NSRequiresAquaSystemAppearance=false` in your `Info.plist` or be on Electron
      * `>=7.0.0`.  See the dark mode guide for more information.
+     * 
+**Deprecated:** Should use the new `nativeTheme.shouldUseDarkColors` API.
      *
+     * @deprecated
      * @platform darwin,win32
      */
     isDarkMode(): boolean;
     /**
      * `true` if a high contrast theme is active, `false` otherwise.
      *
+     * **Depreacted:** Should use the new `nativeTheme.shouldUseHighContrastColors`
+     * API.
+     *
+     * @deprecated
      * @platform darwin,win32
      */
     isHighContrastColorScheme(): boolean;
@@ -6787,6 +6841,10 @@ Returns an object with system animation settings.
      * `true` if an inverted color scheme (a high contrast color scheme with light text
      * and dark backgrounds) is active, `false` otherwise.
      *
+     * **Deprecated:** Should use the new `nativeTheme.shouldUseInvertedColorScheme`
+     * API.
+     *
+     * @deprecated
      * @platform win32
      */
     isInvertedColorScheme(): boolean;
@@ -6859,6 +6917,7 @@ Returns an object with system animation settings.
      * 
 **Deprecated**
      *
+     * @deprecated
      * @platform darwin
      */
     setAppLevelAppearance(appearance: (('dark' | 'light')) | (null)): void;
@@ -6937,9 +6996,10 @@ Some popular `key` and `type`s are:
      */
     unsubscribeWorkspaceNotification(id: number): void;
     /**
-     * A `String` property that determines the macOS appearance setting for your
-     * application. This maps to values in: NSApplication.appearance. Setting this will
-     * override the system default as well as the value of `getEffectiveAppearance`.
+     * A `String` property that can be `dark`, `light` or `unknown`. It determines the
+     * macOS appearance setting for your application. This maps to values in:
+     * NSApplication.appearance. Setting this will override the system default as well
+     * as the value of `getEffectiveAppearance`.
      *
      * Possible values that can be set are `dark` and `light`, and possible return
      * values are `dark`, `light`, and `unknown`.
@@ -6948,7 +7008,24 @@ This property is only available on macOS 10.14 Mojave or newer.
      *
      * @platform darwin
      */
-    appLevelAppearance: string;
+    appLevelAppearance: ('dark' | 'light' | 'unknown');
+    /**
+     * A `String` property that can be `dark`, `light` or `unknown`.
+     *
+     * Returns the macOS appearance setting that is currently applied to your
+     * application, maps to NSApplication.effectiveAppearance
+     *
+     * Please note that until Electron is built targeting the 10.14 SDK, your
+     * application's `effectiveAppearance` will default to 'light' and won't inherit
+     * the OS preference. In the interim in order for your application to inherit the
+     * OS preference you must set the `NSRequiresAquaSystemAppearance` key in your apps
+     * `Info.plist` to `false`.  If you are using `electron-packager` or
+     * `electron-forge` just set the `enableDarwinDarkMode` packager option to `true`.
+     * See the Electron Packager API for more details.
+     *
+     * @platform darwin
+     */
+    readonly effectiveAppearance: ('dark' | 'light' | 'unknown');
   }
 
   interface Task {
@@ -9163,9 +9240,6 @@ Would require code like this
      * Prints window's web page. When `silent` is set to `true`, Electron will pick the
      * system's default printer if `deviceName` is empty and the default settings for
      * printing.
-     *
-     * Calling `window.print()` in web page is equivalent to calling
-     * `webContents.print({ silent: false, printBackground: false, deviceName: '' })`.
      *
      * Use `page-break-before: always;` CSS style to force to print to a new page.
      * 
@@ -12699,6 +12773,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface VerifyWidevineCdmOptions {
     session?: Session;
+    disableUpdate?: boolean;
   }
 
   interface VisibleOnAllWorkspacesOptions {
