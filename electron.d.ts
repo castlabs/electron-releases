@@ -1,4 +1,4 @@
-// Type definitions for Electron 5.0.9
+// Type definitions for Electron 5.0.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1793,9 +1793,6 @@ declare namespace Electron {
      * window.
      */
     getTitle(): string;
-    /**
-     * On Windows and Linux always returns true.
-     */
     hasShadow(): boolean;
     /**
      * Hides the window.
@@ -1997,7 +1994,7 @@ declare namespace Electron {
      */
     setFullScreenable(fullscreenable: boolean): void;
     /**
-     * Sets whether the window should have a shadow. On Windows and Linux does nothing.
+     * Sets whether the window should have a shadow.
      */
     setHasShadow(hasShadow: boolean): void;
     /**
@@ -7835,9 +7832,8 @@ declare namespace Electron {
      */
     kiosk?: boolean;
     /**
-     * Default window title. Default is "Electron". If the HTML tag </code> is defined
-     * in the HTML file loaded by <code>loadURL()</code>, this property will be
-     * ignored.</foo>
+     * Default window title. Default is "Electron". If the HTML tag is defined in the
+     * HTML file loaded by loadURL(), this property will be ignored.
      */
     title?: string;
     /**
@@ -8779,7 +8775,7 @@ declare namespace Electron {
      * Initial checked state of the checkbox. false by default.
      */
     checkboxChecked?: boolean;
-    icon?: NativeImage;
+    icon?: (NativeImage) | (string);
     /**
      * The index of the button to be used to cancel the dialog, via the Esc key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
@@ -9765,6 +9761,7 @@ declare namespace Electron {
 
   interface VerifyWidevineCdmOptions {
     session?: Session;
+    disableUpdate?: boolean;
   }
 
   interface Versions {
