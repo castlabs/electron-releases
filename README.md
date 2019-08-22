@@ -4,17 +4,17 @@ Check out the [Wiki](https://github.com/castlabs/electron-releases/wiki) for gen
 
 ## Summary
 
-This is a fork of Electron created with the goal of facilitating the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and protected storage of licenses for offline playback scenarios. It is intended to be used as a drop-in replacement for a regular Electron build and currently supports Windows and macOS platforms.
+This is a fork of Electron created with the goal of facilitating the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and protected storage of licenses for offline playback scenarios. It is intended to be used as a drop-in replacement for a regular Electron build and currently has full support for Windows and macOS platforms, with partial support for Linux (lacking support for persistent licenses due to VMP limitations).
 
 To achieve this the necessary Widevine DRM components will be installed on first launch and enabled as an option for playback of DRM protected content using common EME APIs. By default, if the installation of any Widevine DRM component fails the application will display an error and exit ([this can be overridden](#widevine-specific-events)). If it succeeds an [event](#widevine-specific-events) will be emitted to the application indicating that Widevine is ready to be used.
 
-The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a license agreement with [Google Widevine](https://www.widevine.com/) is needed to get production certificates for [re-signing the final package](#re-signing).
+The provided builds are VMP-signed for development use, i.e. using Widevine UAT or servers accepting development clients. For production use a [license agreement with Google Widevine](#licensing) is necessary to get production certificates for [re-signing the final package](#re-signing).
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
 [Electron README](https://github.com/electron/electron/blob/v6.0.3/README.md)
 
-**NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
+> **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
 ## Using Electron for Content Security with npm
 
@@ -144,7 +144,7 @@ An argument is provided that contains an `Error`-instance describing the error t
 
 ```
 app.on('widevine-error', (error) => {
-  console.log('Widevine installation encounterted an error: ' + error);
+  console.log('Widevine installation encountered an error: ' + error);
   process.exit(1)
 });
 ```
@@ -157,11 +157,15 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
 
 ### Licensing
 
-To be able to re-sign your application for your own purposes a license agreement wit Google Widevine is required. To start the process you can use the [contact sheet](https://www.widevine.com/contact) on the [Widevine web site](https://www.widevine.com/), or send an e-mail to [widevine@google.com](mailto:widevine@google.com) showing interest in a license agreement and VMP signing. This process may take some time to complete so keep that in mind when planning your product release.
+To be able to re-sign your application for your own purposes a license agreement with Google Widevine is required. To start the process you can use the [contact sheet](https://www.widevine.com/contact) on the [Widevine web site](https://www.widevine.com/), or send an e-mail to [widevine@google.com](mailto:widevine@google.com) showing interest in a license agreement and VMP signing. This process may take some time to complete so keep that in mind when planning your product release.
+
+Once a license agreement is in place you will be asked to provide CSRs for development and production VMP certificates. Google will sign and return the certificates enabling them to be used for VMP-signing your applications.
+
+> **NOTE**: Signing with a development certificate will only allow the application to pass VMP validation when using the application with development/UAT servers, **for production use a production VMP signature is required**.
 
 ### Re-signing
 
-We are providing a Python 3 script to make the re-signing process easier. It requires the Python modules: [cryptography](https://pypi.python.org/pypi/cryptography) and [macholib](https://pypi.python.org/pypi/macholib), both avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](https://www.widevine.com/) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate (and verify) the required signatures. Basic usage looks as follows:
+We are providing a Python script to make the re-signing process easier. It requires the Python modules [cryptography](https://pypi.python.org/pypi/cryptography) and [macholib](https://pypi.python.org/pypi/macholib), both avaliable through the [Python Package Index](https://pypi.python.org/) and easily installed, e.g. using [pip](https://pypi.python.org/pypi/pip). Once VMP signing certificates (in either `PEM` or `DER` file-formats) have been acquired from [Google Widevine](#licensing) the [vmp-resign.py](vmp-resign.py) script, available in the repository, can be used to easily regenerate (and verify) the required signatures. Basic usage looks as follows:
 
 ```
 vmp-resign.py [-h] [-v] [-q] [-M MACOS_NAME] [-W WINDOWS_NAME]
@@ -188,9 +192,9 @@ vmp-resign.py -M Player.app -W Player.exe -Y MacPlayer-v1.0/ WinPlayer-v1.0/
 
 Keep in mind that this only verifies the integrity of the executable and signature, it does not currently check that the certificate/key used for signing is actually a valid VMP certificate.
 
-**NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but in Visual Studio the reverse is true since it stores the code-signature inside a VMP signed PE binary.
+> **NOTE**: Since VMP-signing and Xcode/VS code-signing may have impact on each other care needs to be taken, in case both are used, to avoid conflicting signatures being generated. With Xcode VMP-signing must be done before code-signing, but in Visual Studio the reverse is true since it stores the code-signature inside a VMP signed PE binary.
 
-**NOTE**: Make sure to use the [vmp-resign.py](vmp-resign.py) tool corresponding to the release in use. If Electron is installed as a node module, using npm, the correct script is available in `node_modules/electron/vmp-resign.py`.
+> **NOTE**: Make sure to use the [vmp-resign.py](vmp-resign.py) tool corresponding to the release in use. If Electron is installed as a node module, using npm, the correct script is available in `node_modules/electron/vmp-resign.py`.
 
 ### Special considerations
 
