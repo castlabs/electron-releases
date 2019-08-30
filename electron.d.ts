@@ -1,4 +1,4 @@
-// Type definitions for Electron 4.2.9
+// Type definitions for Electron 4.2.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9491,6 +9491,7 @@ declare namespace Electron {
 
   interface VerifyWidevineCdmOptions {
     session?: Session;
+    disableUpdate?: boolean;
   }
 
   interface Versions {
