@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.0.0-beta.3
+// Type definitions for Electron 7.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1118,6 +1118,10 @@ This method can only be called before app is ready.
     /**
      * A path to a special directory or file associated with `name`. On failure, an
      * `Error` is thrown.
+     *
+     * If `app.getPath('logs')` is called without called `app.setAppLogsPath()` being
+     * called first, a default log directory will be created equivalent to calling
+     * `app.setAppLogsPath()` without a `path` parameter.
      */
     getPath(name: 'home' | 'appData' | 'userData' | 'cache' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'logs' | 'pepperFlashSystemPlugin'): string;
     /**
@@ -1331,7 +1335,7 @@ This method can only be called before app is ready.
      * `app.getPath()` or `app.setPath(pathName, newPath)`.
      *
      * Calling `app.setAppLogsPath()` without a `path` parameter will result in this
-     * directory being set to `/Library/Logs/YourAppName` on _macOS_, and inside the
+     * directory being set to `~/Library/Logs/YourAppName` on _macOS_, and inside the
      * `userData` directory on _Linux_ and _Windows_.
      */
     setAppLogsPath(path?: string): void;
@@ -3995,6 +3999,9 @@ Send given command to the debugging target.
      */
     showOpenDialog(options: OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
     /**
+     * the file paths chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
@@ -4009,8 +4016,11 @@ Send given command to the debugging target.
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): void;
+    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
+     * the file paths chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
@@ -4025,7 +4035,7 @@ Send given command to the debugging target.
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(options: OpenDialogSyncOptions): void;
+    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * Resolve with an object containing the following:
      *
@@ -4146,14 +4156,17 @@ Send given command to the debugging target.
     // Docs: http://electronjs.org/docs/api/dock
 
     /**
+     * an ID representing the request.
+     *
      * When `critical` is passed, the dock icon will bounce until either the
      * application becomes active or the request is canceled.
      *
      * When `informational` is passed, the dock icon will bounce for one second.
      * However, the request remains active until either the application becomes active
      * or the request is canceled.
-
-an ID representing the request.
+     *
+     * **Nota Bene:** This method can only be used while the app is not focused; when
+     * the app is focused it will return -1.
      *
      * @platform darwin
      */
@@ -6271,6 +6284,52 @@ e.g.
      */
     static defaultSession: Session;
     /**
+     * Emitted when a render process requests preconnection to a URL, generally due to
+     * a resource hint.
+     *
+     * @experimental
+     */
+    on(event: 'preconnect', listener: (event: Event,
+                                       /**
+                                        * The URL being requested for preconnection by the renderer.
+                                        */
+                                       preconnectUrl: string,
+                                       /**
+                                        * True if the renderer is requesting that the connection include credentials (see
+                                        * the spec for more details.)
+                                        */
+                                       allowCredentials: boolean) => void): this;
+    once(event: 'preconnect', listener: (event: Event,
+                                       /**
+                                        * The URL being requested for preconnection by the renderer.
+                                        */
+                                       preconnectUrl: string,
+                                       /**
+                                        * True if the renderer is requesting that the connection include credentials (see
+                                        * the spec for more details.)
+                                        */
+                                       allowCredentials: boolean) => void): this;
+    addListener(event: 'preconnect', listener: (event: Event,
+                                       /**
+                                        * The URL being requested for preconnection by the renderer.
+                                        */
+                                       preconnectUrl: string,
+                                       /**
+                                        * True if the renderer is requesting that the connection include credentials (see
+                                        * the spec for more details.)
+                                        */
+                                       allowCredentials: boolean) => void): this;
+    removeListener(event: 'preconnect', listener: (event: Event,
+                                       /**
+                                        * The URL being requested for preconnection by the renderer.
+                                        */
+                                       preconnectUrl: string,
+                                       /**
+                                        * True if the renderer is requesting that the connection include credentials (see
+                                        * the spec for more details.)
+                                        */
+                                       allowCredentials: boolean) => void): this;
+    /**
      * Emitted when Electron is about to download `item` in `webContents`.
      *
      * Calling `event.preventDefault()` will cancel the download and `item` will not be
@@ -6350,6 +6409,12 @@ Clears the host resolver cache.
      * The user agent for this session.
      */
     getUserAgent(): string;
+    /**
+     * Preconnects the given number of sockets to an origin.
+     *
+     * @experimental
+     */
+    preconnect(options: PreconnectOptions): void;
     /**
      * Resolves with the proxy information for `url`.
      */
@@ -11646,7 +11711,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Initial checked state of the checkbox. `false` by default.
      */
     checkboxChecked?: boolean;
-    icon?: NativeImage;
+    icon?: (NativeImage) | (string);
     /**
      * The index of the button to be used to cancel the dialog, via the `Esc` key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
@@ -12154,6 +12219,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Called when menu is closed.
      */
     callback?: () => void;
+  }
+
+  interface PreconnectOptions {
+    /**
+     * URL for preconnect. Only the origin is relevant for opening the socket.
+     */
+    url: string;
+    /**
+     * number of sockets to preconnect. Must be between 1 and 6. Defaults to 1.
+     */
+    numSockets?: number;
   }
 
   interface PrintOptions {
