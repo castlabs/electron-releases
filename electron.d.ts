@@ -1,4 +1,4 @@
-// Type definitions for Electron 6.0.9
+// Type definitions for Electron 6.0.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9576,6 +9576,10 @@ declare namespace Electron {
   }
 
   interface OpenDialogReturnValue {
+    /**
+     * whether or not the dialog was canceled.
+     */
+    canceled: boolean;
     /**
      * An array of file paths chosen by the user. If the dialog is cancelled this will
      * be an empty array.
