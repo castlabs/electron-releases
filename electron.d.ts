@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.0.0-beta.4
+// Type definitions for Electron 7.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1955,6 +1955,10 @@ __Note__: On macOS this event is an alias of `moved`.
     /**
      * Emitted when the web page has been rendered (while not being shown) and window
      * can be displayed without a visual flash.
+     *
+     * Please note that using this event implies that the renderer will be considered
+     * "visible" and paint even though `show` is false.  This event will never fire if
+     * you use `paintWhenInitiallyHidden: false`
      */
     on(event: 'ready-to-show', listener: Function): this;
     once(event: 'ready-to-show', listener: Function): this;
@@ -10698,6 +10702,13 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether window should be shown when created. Default is `true`.
      */
     show?: boolean;
+    /**
+     * Whether the renderer should be active when `show` is `false` and it has just
+     * been created.  In order for `document.visibilityState` to work correctly on
+     * first load with `show: false` you should set this to `false`.  Setting this to
+     * `false` will cause the `ready-to-show` event to not fire.  Default is `true`.
+     */
+    paintWhenInitiallyHidden?: boolean;
     /**
      * Specify `false` to create a Frameless Window. Default is `true`.
      */
