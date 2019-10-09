@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.0.0-beta.5
+// Type definitions for Electron 7.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3355,9 +3355,12 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      */
     readBuffer(format: string): Buffer;
     /**
-     * The text on the find pasteboard. This method uses synchronous IPC when called
-     * from the renderer process. The cached value is reread from the find pasteboard
-     * whenever the application is activated.
+     * The text on the find pasteboard, which is the pasteboard that holds information
+     * about the current state of the active application’s find panel.
+     *
+     * This method uses synchronous IPC when called from the renderer process. The
+     * cached value is reread from the find pasteboard whenever the application is
+     * activated.
      *
      * @platform darwin
      */
@@ -3399,8 +3402,10 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      */
     writeBuffer(format: string, buffer: Buffer, type?: 'selection' | 'clipboard'): void;
     /**
-     * Writes the `text` into the find pasteboard as plain text. This method uses
-     * synchronous IPC when called from the renderer process.
+     * Writes the `text` into the find pasteboard (the pasteboard that holds
+     * information about the current state of the active application’s find panel) as
+     * plain text. This method uses synchronous IPC when called from the renderer
+     * process.
      *
      * @platform darwin
      */
@@ -5356,7 +5361,8 @@ Please note that this property only has an effect on macOS.
     removeListener(event: 'updated', listener: Function): this;
     /**
      * A `Boolean` for if the OS / Chromium currently has a dark mode enabled or is
-     * being instructed to show a dark-style UI.
+     * being instructed to show a dark-style UI.  If you want to modify this value you
+     * should use `themeSource` below.
      *
      */
     readonly shouldUseDarkColors: boolean;
@@ -5374,6 +5380,44 @@ Please note that this property only has an effect on macOS.
      * @platform darwin,win32
      */
     readonly shouldUseInvertedColorScheme: boolean;
+    /**
+     * A `String` property that can be `system`, `light` or `dark`.  It is used to
+     * override and supercede the value that Chromium has chosen to use internally.
+     *
+     * Setting this property to `system` will remove the override and everything will
+     * be reset to the OS default.  By default `themeSource` is `system`.
+     *
+     * Settings this property to `dark` will have the following effects:
+     *
+     * * `nativeTheme.shouldUseDarkColors` will be `true` when accessed
+     * * Any UI Electron renders on Linux and Windows including context menus,
+     * devtools, etc. will use the dark UI.
+     * * Any UI the OS renders on macOS including menus, window frames, etc. will use
+     * the dark UI.
+     * * The `prefers-color-scheme` CSS query will match `dark` mode.
+     * * The `updated` event will be emitted
+     *
+     * Settings this property to `light` will have the following effects:
+     *
+     * * `nativeTheme.shouldUseDarkColors` will be `false` when accessed
+     * * Any UI Electron renders on Linux and Windows including context menus,
+     * devtools, etc. will use the light UI.
+     * * Any UI the OS renders on macOS including menus, window frames, etc. will use
+     * the light UI.
+     * * The `prefers-color-scheme` CSS query will match `light` mode.
+     * * The `updated` event will be emitted
+     *
+     * The usage of this property should align with a classic "dark mode" state machine
+     * in your application where the user has three options.
+     *
+     * * `Follow OS` --> `themeSource = 'system'`
+     * * `Dark Mode` --> `themeSource = 'dark'`
+     * * `Light Mode` --> `themeSource = 'light'`
+     *
+     * Your application should then always use `shouldUseDarkColors` to determine what
+     * CSS to apply.
+     */
+    themeSource: ('system' | 'light' | 'dark');
   }
 
   interface Net {
