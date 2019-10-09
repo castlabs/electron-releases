@@ -1,4 +1,4 @@
-// Type definitions for Electron 6.0.11
+// Type definitions for Electron 6.0.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8681,7 +8681,9 @@ declare namespace Electron {
      * When critical is passed, the dock icon will bounce until either the application
      * becomes active or the request is canceled. When informational is passed, the
      * dock icon will bounce for one second. However, the request remains active until
-     * either the application becomes active or the request is canceled.
+     * either the application becomes active or the request is canceled. Nota Bene:
+     * This method can only be used while the app is not focused; when the app is
+     * focused it will return -1.
      */
     bounce: (type?: 'critical' | 'informational') => number;
     /**
