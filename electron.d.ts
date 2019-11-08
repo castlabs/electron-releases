@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.0
+// Type definitions for Electron 7.1.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2738,7 +2738,7 @@ On macOS it does not remove the focus from the window.
      *
      * @platform win32,linux
      */
-    setIcon(icon: NativeImage): void;
+    setIcon(icon: (NativeImage) | (string)): void;
     /**
      * Makes the window ignore all mouse events.
      *
@@ -3597,7 +3597,7 @@ Writes any unwritten cookies data to disk.
      * Sends a request to get all cookies matching `filter`, and resolves a promise
      * with the response.
      */
-    get(filter: Filter): Promise<Electron.Cookie[]>;
+    get(filter: CookiesGetFilter): Promise<Electron.Cookie[]>;
     /**
      * A promise which resolves when the cookie has been removed
      * 
@@ -3609,7 +3609,7 @@ Removes the cookies matching `url` and `name`
      * 
 Sets a cookie with `details`.
      */
-    set(details: Details): Promise<void>;
+    set(details: CookiesSetDetails): Promise<void>;
   }
 
   interface CPUUsage {
@@ -5906,7 +5906,7 @@ Example:
      * 
 For POST requests the `uploadData` object must be provided.
      */
-    registerHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: CallbackRedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    registerHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
      * **Note:** This method can only be used before the `ready` event of the `app`
      * module gets emitted and can be called only once.
@@ -6066,7 +6066,7 @@ For POST requests the `uploadData` object must be provided.
     /**
      * Content to be sent.
      */
-    data: string;
+    data: (string) | (Buffer);
   }
 
   interface Rectangle {
@@ -6496,7 +6496,7 @@ Clears the host resolver cache.
      * `session`. Returning `true` will allow the permission and `false` will reject
      * it. To clear the handler, call `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: Details) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -9367,7 +9367,7 @@ Would require code like this
      * 
 Example usage:
      */
-    print(options?: PrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
+    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
     /**
      * Resolves with the generated PDF data.
      *
@@ -9769,7 +9769,7 @@ An example of using node-spellchecker as provider:
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(filter: Filter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
@@ -9785,7 +9785,7 @@ An example of using node-spellchecker as provider:
      * 
 Some examples of valid `urls`:
      */
-    onBeforeRequest(filter: OnBeforeRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRequest(filter: Filter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -9802,22 +9802,22 @@ Some examples of valid `urls`:
      * an HTTP request, once the request headers are available. This may occur after a
      * TCP connection is made to the server, but before any http data is sent.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(filter: OnBeforeSendHeadersFilter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(filter: Filter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
      * TCP connection is made to the server, but before any http data is sent.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
     onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
      */
-    onCompleted(filter: OnCompletedFilter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
+    onCompleted(filter: Filter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
@@ -9826,7 +9826,7 @@ The `callback` has to be called with an `response` object.
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: OnErrorOccurredFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: Filter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
@@ -9835,22 +9835,22 @@ The `callback` has to be called with an `response` object.
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(filter: OnHeadersReceivedFilter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onHeadersReceived(filter: Filter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: OnHeadersReceivedListenerResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: OnHeadersReceivedListenerResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: OnResponseStartedFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: Filter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
@@ -9862,7 +9862,7 @@ The `callback` has to be called with an `response` object.
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
      * response are visible by the time this listener is fired.
      */
-    onSendHeaders(filter: OnSendHeadersFilter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
+    onSendHeaders(filter: Filter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
@@ -10258,7 +10258,7 @@ Calling `event.preventDefault()` does __NOT__ have any effect.
     /**
      * Prints `webview`'s web page. Same as `webContents.print([options])`.
      */
-    print(options?: PrintOptions): Promise<void>;
+    print(options?: WebviewTagPrintOptions): Promise<void>;
     /**
      * Resolves with the generated PDF data.
      * 
@@ -10870,19 +10870,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
     webPreferences?: WebPreferences;
   }
 
-  interface CallbackRedirectRequest {
-    url: string;
-    method?: string;
-    session?: (Session) | (null);
-    uploadData?: ProtocolResponseUploadData;
-  }
-
   interface CallbackResponse {
     cancel?: boolean;
     /**
      * When provided, request will be made with these headers.
      */
-    requestHeaders?: Record<string, string>;
+    requestHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface CertificateTrustDialogOptions {
@@ -11069,6 +11062,73 @@ See webContents.sendInputEvent for detailed description of `event` object.
     editFlags: EditFlags;
   }
 
+  interface CookiesGetFilter {
+    /**
+     * Retrieves cookies which are associated with `url`. Empty implies retrieving
+     * cookies of all URLs.
+     */
+    url?: string;
+    /**
+     * Filters cookies by name.
+     */
+    name?: string;
+    /**
+     * Retrieves cookies whose domains match or are subdomains of `domains`.
+     */
+    domain?: string;
+    /**
+     * Retrieves cookies whose path matches `path`.
+     */
+    path?: string;
+    /**
+     * Filters cookies by their Secure property.
+     */
+    secure?: boolean;
+    /**
+     * Filters out session or persistent cookies.
+     */
+    session?: boolean;
+  }
+
+  interface CookiesSetDetails {
+    /**
+     * The URL to associate the cookie with. The promise will be rejected if the URL is
+     * invalid.
+     */
+    url: string;
+    /**
+     * The name of the cookie. Empty by default if omitted.
+     */
+    name?: string;
+    /**
+     * The value of the cookie. Empty by default if omitted.
+     */
+    value?: string;
+    /**
+     * The domain of the cookie; this will be normalized with a preceding dot so that
+     * it's also valid for subdomains. Empty by default if omitted.
+     */
+    domain?: string;
+    /**
+     * The path of the cookie. Empty by default if omitted.
+     */
+    path?: string;
+    /**
+     * Whether the cookie should be marked as Secure. Defaults to false.
+     */
+    secure?: boolean;
+    /**
+     * Whether the cookie should be marked as HTTP only. Defaults to false.
+     */
+    httpOnly?: boolean;
+    /**
+     * The expiration date of the cookie as the number of seconds since the UNIX epoch.
+     * If omitted then the cookie becomes a session cookie and will not be retained
+     * between sessions.
+     */
+    expirationDate?: number;
+  }
+
   interface CrashReporterStartOptions {
     companyName: string;
     /**
@@ -11169,41 +11229,21 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Details {
     /**
-     * The URL to associate the cookie with. The promise will be rejected if the URL is
-     * invalid.
+     * The security orign of the `media` check.
      */
-    url: string;
+    securityOrigin: string;
     /**
-     * The name of the cookie. Empty by default if omitted.
+     * The type of media access being requested, can be `video`, `audio` or `unknown`
      */
-    name?: string;
+    mediaType: ('video' | 'audio' | 'unknown');
     /**
-     * The value of the cookie. Empty by default if omitted.
+     * The last URL the requesting frame loaded
      */
-    value?: string;
+    requestingUrl: string;
     /**
-     * The domain of the cookie; this will be normalized with a preceding dot so that
-     * it's also valid for subdomains. Empty by default if omitted.
+     * Whether the frame making the request is the main frame
      */
-    domain?: string;
-    /**
-     * The path of the cookie. Empty by default if omitted.
-     */
-    path?: string;
-    /**
-     * Whether the cookie should be marked as Secure. Defaults to false.
-     */
-    secure?: boolean;
-    /**
-     * Whether the cookie should be marked as HTTP only. Defaults to false.
-     */
-    httpOnly?: boolean;
-    /**
-     * The expiration date of the cookie as the number of seconds since the UNIX epoch.
-     * If omitted then the cookie becomes a session cookie and will not be retained
-     * between sessions.
-     */
-    expirationDate?: number;
+    isMainFrame: boolean;
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -11277,30 +11317,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Filter {
     /**
-     * Retrieves cookies which are associated with `url`. Empty implies retrieving
-     * cookies of all URLs.
+     * Array of URL patterns that will be used to filter out the requests that do not
+     * match the URL patterns.
      */
-    url?: string;
-    /**
-     * Filters cookies by name.
-     */
-    name?: string;
-    /**
-     * Retrieves cookies whose domains match or are subdomains of `domains`.
-     */
-    domain?: string;
-    /**
-     * Retrieves cookies whose path matches `path`.
-     */
-    path?: string;
-    /**
-     * Filters cookies by their Secure property.
-     */
-    secure?: boolean;
-    /**
-     * Filters out session or persistent cookies.
-     */
-    session?: boolean;
+    urls: string[];
   }
 
   interface FindInPageOptions {
@@ -11882,14 +11902,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     closeButtonText?: string;
   }
 
-  interface OnBeforeRedirectFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnBeforeRedirectListenerDetails {
     id: number;
     url: string;
@@ -11900,20 +11912,13 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     redirectURL: string;
     statusCode: number;
+    statusLine: string;
     /**
      * The server IP address that the request was actually sent to.
      */
     ip?: string;
     fromCache: boolean;
     responseHeaders?: Record<string, string>;
-  }
-
-  interface OnBeforeRequestFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnBeforeRequestListenerDetails {
@@ -11927,14 +11932,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     uploadData: UploadData[];
   }
 
-  interface OnBeforeSendHeadersFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnBeforeSendHeadersListenerDetails {
     id: number;
     url: string;
@@ -11944,14 +11941,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     referrer: string;
     timestamp: number;
     requestHeaders: Record<string, string>;
-  }
-
-  interface OnCompletedFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnCompletedListenerDetails {
@@ -11966,14 +11955,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     fromCache: boolean;
     statusCode: number;
     statusLine: string;
-  }
-
-  interface OnErrorOccurredFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnErrorOccurredListenerDetails {
@@ -11991,14 +11972,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     error: string;
   }
 
-  interface OnHeadersReceivedFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnHeadersReceivedListenerDetails {
     id: number;
     url: string;
@@ -12012,12 +11985,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
     responseHeaders?: Record<string, string>;
   }
 
-  interface OnResponseStartedFilter {
+  interface OnHeadersReceivedListenerResponse {
+    cancel?: boolean;
     /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
+     * When provided, the server is assumed to have responded with these headers.
      */
-    urls: string[];
+    responseHeaders?: Record<string, (string) | (string[])>;
+    /**
+     * Should be provided when overriding `responseHeaders` to change header status
+     * otherwise original response header's status will be used.
+     */
+    statusLine?: string;
   }
 
   interface OnResponseStartedListenerDetails {
@@ -12035,14 +12013,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     fromCache: boolean;
     statusCode: number;
     statusLine: string;
-  }
-
-  interface OnSendHeadersFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnSendHeadersListenerDetails {
@@ -12214,25 +12184,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     quantity: number;
   }
 
-  interface PermissionCheckHandlerHandlerDetails {
-    /**
-     * The security orign of the `media` check.
-     */
-    securityOrigin: string;
-    /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
-     */
-    mediaType: ('video' | 'audio' | 'unknown');
-    /**
-     * The last URL the requesting frame loaded
-     */
-    requestingUrl: string;
-    /**
-     * Whether the frame making the request is the main frame
-     */
-    isMainFrame: boolean;
-  }
-
   interface PermissionRequestHandlerHandlerDetails {
     /**
      * The url of the `openExternal` request.
@@ -12294,57 +12245,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * number of sockets to preconnect. Must be between 1 and 6. Defaults to 1.
      */
     numSockets?: number;
-  }
-
-  interface PrintOptions {
-    /**
-     * Don't ask user for print settings. Default is `false`.
-     */
-    silent?: boolean;
-    /**
-     * Prints the background color and image of the web page. Default is `false`.
-     */
-    printBackground?: boolean;
-    /**
-     * Set the printer device name to use. Default is `''`.
-     */
-    deviceName?: string;
-    /**
-     * Set whether the printed web page will be in color or grayscale. Default is
-     * `true`.
-     */
-    color?: boolean;
-    margins?: Margins;
-    /**
-     * Whether the web page should be printed in landscape mode. Default is `false`.
-     */
-    landscape?: boolean;
-    /**
-     * The scale factor of the web page.
-     */
-    scaleFactor?: number;
-    /**
-     * The number of pages to print per page sheet.
-     */
-    pagesPerSheet?: number;
-    /**
-     * Whether the web page should be collated.
-     */
-    collate?: boolean;
-    /**
-     * The number of copies of the web page to print.
-     */
-    copies?: number;
-    /**
-     * The page range to print. Should have two keys: `from` and `to`.
-     */
-    pageRanges?: Record<string, number>;
-    /**
-     * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
-     * `longEdge`.
-     */
-    duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
-    dpi?: Dpi;
   }
 
   interface PrintToPDFOptions {
@@ -12435,7 +12335,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method?: string;
     session?: (Session) | (null);
-    uploadData?: UploadData;
+    uploadData?: ProtocolResponseUploadData;
   }
 
   interface RelaunchOptions {
@@ -12923,6 +12823,72 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * @platform darwin
      */
     visibleOnFullScreen?: boolean;
+  }
+
+  interface WebContentsPrintOptions {
+    /**
+     * Don't ask user for print settings. Default is `false`.
+     */
+    silent?: boolean;
+    /**
+     * Prints the background color and image of the web page. Default is `false`.
+     */
+    printBackground?: boolean;
+    /**
+     * Set the printer device name to use. Default is `''`.
+     */
+    deviceName?: string;
+    /**
+     * Set whether the printed web page will be in color or grayscale. Default is
+     * `true`.
+     */
+    color?: boolean;
+    margins?: Margins;
+    /**
+     * Whether the web page should be printed in landscape mode. Default is `false`.
+     */
+    landscape?: boolean;
+    /**
+     * The scale factor of the web page.
+     */
+    scaleFactor?: number;
+    /**
+     * The number of pages to print per page sheet.
+     */
+    pagesPerSheet?: number;
+    /**
+     * Whether the web page should be collated.
+     */
+    collate?: boolean;
+    /**
+     * The number of copies of the web page to print.
+     */
+    copies?: number;
+    /**
+     * The page range to print. Should have two keys: `from` and `to`.
+     */
+    pageRanges?: Record<string, number>;
+    /**
+     * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
+     * `longEdge`.
+     */
+    duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
+    dpi?: Dpi;
+  }
+
+  interface WebviewTagPrintOptions {
+    /**
+     * Don't ask user for print settings. Default is `false`.
+     */
+    silent?: boolean;
+    /**
+     * Also prints the background color and image of the web page. Default is `false`.
+     */
+    printBackground?: boolean;
+    /**
+     * Set the printer device name to use. Default is `''`.
+     */
+    deviceName?: string;
   }
 
   interface WillNavigateEvent extends Event {
