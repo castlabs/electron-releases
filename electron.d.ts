@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.1
+// Type definitions for Electron 7.1.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -416,22 +416,22 @@ declare namespace Electron {
      */
     on(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     /**
@@ -5271,15 +5271,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
      */
     static createFromPath(path: string): NativeImage;
     /**
-     * A `Boolean` property that determines whether the image is considered a template
-     * image.
-
-Please note that this property only has an effect on macOS.
-     *
-     * @platform darwin
-     */
-    static isMacTemplateImage: boolean;
-    /**
      * Add an image representation for a specific scale factor. This can be used to
      * explicitly add different scale factor representations to an image. This can be
      * called on empty images.
@@ -5352,6 +5343,7 @@ Please note that this property only has an effect on macOS.
      * A Buffer that contains the image's `PNG` encoded data.
      */
     toPNG(options?: ToPNGOptions): Buffer;
+    isMacTemplateImage: boolean;
   }
 
   interface NativeTheme extends NodeJS.EventEmitter {
@@ -5836,27 +5828,27 @@ Calculate system idle time in seconds.
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `Buffer` as a response.
      */
-    interceptBufferProtocol(scheme: string, handler: (request: HandlerRequest, callback: (buffer?: Buffer) => void) => void, completion?: (error: Error) => void): void;
+    interceptBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: Buffer) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a file as a response.
      */
-    interceptFileProtocol(scheme: string, handler: (request: HandlerRequest, callback: (filePath: string) => void) => void, completion?: (error: Error) => void): void;
+    interceptFileProtocol(scheme: string, handler: (request: Request, callback: (filePath: string) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a new HTTP request as a response.
      */
-    interceptHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    interceptHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Same as `protocol.registerStreamProtocol`, except that it replaces an existing
      * protocol handler.
      */
-    interceptStreamProtocol(scheme: string, handler: (request: HandlerRequest, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `String` as a response.
      */
-    interceptStringProtocol(scheme: string, handler: (request: HandlerRequest, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * fulfilled with a boolean that indicates whether there is already a handler for
      * `scheme`.
@@ -5871,7 +5863,7 @@ Calculate system idle time in seconds.
 
 Example:
      */
-    registerBufferProtocol(scheme: string, handler: (request: HandlerRequest, callback: (buffer?: (Buffer) | (MimeTypedBuffer)) => void) => void, completion?: (error: Error) => void): void;
+    registerBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: (Buffer) | (MimeTypedBuffer)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send the file as a response. The
      * `handler` will be called with `handler(request, callback)` when a `request` is
@@ -5893,7 +5885,7 @@ Example:
      * By default the `scheme` is treated like `http:`, which is parsed differently
      * than protocols that follow the "generic URI syntax" like `file:`.
      */
-    registerFileProtocol(scheme: string, handler: (request: HandlerRequest, callback: (filePath?: (string) | (FilePathWithHeaders)) => void) => void, completion?: (error: Error) => void): void;
+    registerFileProtocol(scheme: string, handler: (request: Request, callback: (filePath?: (string) | (FilePathWithHeaders)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send an HTTP request as a response.
      *
@@ -5906,7 +5898,7 @@ Example:
      * 
 For POST requests the `uploadData` object must be provided.
      */
-    registerHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    registerHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
      * **Note:** This method can only be used before the `ready` event of the `app`
      * module gets emitted and can be called only once.
@@ -5960,7 +5952,7 @@ For POST requests the `uploadData` object must be provided.
      * It is possible to pass any object that implements the readable stream API (emits
      * `data`/`end`/`error` events). For example, here's how a file could be returned:
      */
-    registerStreamProtocol(scheme: string, handler: (request: HandlerRequest, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send a `String` as a response.
      *
@@ -5968,7 +5960,7 @@ For POST requests the `uploadData` object must be provided.
      * should be called with either a `String` or an object that has the `data`,
      * `mimeType`, and `charset` properties.
      */
-    registerStringProtocol(scheme: string, handler: (request: HandlerRequest, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Remove the interceptor installed for `scheme` and restore its original handler.
      */
@@ -8545,19 +8537,19 @@ The usage is the same with the `certificate-error` event of `app`.
 The usage is the same with the `login` event of `app`.
      */
     on(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username: string, password: string) => void) => void): this;
     /**
@@ -9804,7 +9796,7 @@ Some examples of valid `urls`:
      * 
 The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(filter: Filter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(filter: Filter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -9812,7 +9804,7 @@ The `callback` has to be called with a `response` object.
      * 
 The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
@@ -9837,14 +9829,14 @@ The `callback` has to be called with a `response` object.
      * 
 The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(filter: Filter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: OnHeadersReceivedListenerResponse) => void) => void) | (null)): void;
+    onHeadersReceived(filter: Filter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
      * 
 The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: OnHeadersReceivedListenerResponse) => void) => void) | (null)): void;
+    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
@@ -10578,6 +10570,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     relaunchDisplayName?: string;
   }
 
+  interface AuthenticationResponseDetails {
+    url: string;
+  }
+
   interface AuthInfo {
     isProxy: boolean;
     scheme: string;
@@ -10607,6 +10603,14 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * with the window. `false` by default.
      */
     vertical?: boolean;
+  }
+
+  interface BeforeSendResponse {
+    cancel?: boolean;
+    /**
+     * When provided, request will be made with these headers.
+     */
+    requestHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface BitmapOptions {
@@ -10868,14 +10872,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
-  }
-
-  interface CallbackResponse {
-    cancel?: boolean;
-    /**
-     * When provided, request will be made with these headers.
-     */
-    requestHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface CertificateTrustDialogOptions {
@@ -11359,12 +11355,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
     cache: boolean;
   }
 
-  interface HandlerRequest {
-    url: string;
-    headers: Record<string, string>;
-    referrer: string;
-    method: string;
-    uploadData: UploadData[];
+  interface HeadersReceivedResponse {
+    cancel?: boolean;
+    /**
+     * When provided, the server is assumed to have responded with these headers.
+     */
+    responseHeaders?: Record<string, (string) | (string[])>;
+    /**
+     * Should be provided when overriding `responseHeaders` to change header status
+     * otherwise original response header's status will be used.
+     */
+    statusLine?: string;
   }
 
   interface HeapStatistics {
@@ -11985,19 +11986,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     responseHeaders?: Record<string, string>;
   }
 
-  interface OnHeadersReceivedListenerResponse {
-    cancel?: boolean;
-    /**
-     * When provided, the server is assumed to have responded with these headers.
-     */
-    responseHeaders?: Record<string, (string) | (string[])>;
-    /**
-     * Should be provided when overriding `responseHeaders` to change header status
-     * otherwise original response header's status will be used.
-     */
-    statusLine?: string;
-  }
-
   interface OnResponseStartedListenerDetails {
     id: number;
     url: string;
@@ -12344,9 +12332,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface Request {
-    method: string;
     url: string;
+    headers: Record<string, string>;
     referrer: string;
+    method: string;
+    uploadData: UploadData[];
   }
 
   interface ResizeOptions {
