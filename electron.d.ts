@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.2
+// Type definitions for Electron 7.1.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -413,27 +413,31 @@ declare namespace Electron {
      * The default behavior is to cancel all authentications. To override this you
      * should prevent the default behavior with `event.preventDefault()` and call
      * `callback(username, password)` with the credentials.
+     *
+     * If `callback` is called without a username or password, the authentication
+     * request will be cancelled and the authentication error will be returned to the
+     * page.
      */
     on(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when the user clicks the native macOS new tab button. The new tab button
      * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`
@@ -2107,22 +2111,22 @@ __Note__: On macOS this event is an alias of `moved`.
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     once(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     addListener(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     removeListener(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     /**
      * Emitted before the window is resized. Calling `event.preventDefault()` will
      * prevent the window from being resized.
@@ -2136,22 +2140,22 @@ __Note__: On macOS this event is an alias of `moved`.
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     once(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     addListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     removeListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     /**
      * BrowserWindow
      */
@@ -3204,16 +3208,18 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      * error on the response object:
      */
     on(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
-     * Emitted when there is redirection and the mode is `manual`. Calling
-     * `request.followRedirect` will continue with the redirection.
+     * Emitted when the server returns a redirect response (e.g. 301 Moved
+     * Permanently). Calling `request.followRedirect` will continue with the
+     * redirection.  If this event is handled, `request.followRedirect` must be called
+     * **synchronously**, otherwise the request will be cancelled.
      */
     on(event: 'redirect', listener: (statusCode: number,
                                      method: string,
@@ -3268,8 +3274,8 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      */
     end(chunk?: (string) | (Buffer), encoding?: string, callback?: () => void): void;
     /**
-     * Continues any deferred redirection request when the redirection mode is
-     * `manual`.
+     * Continues any pending redirection. Can only be called during a `'redirect'`
+     * event.
      */
     followRedirect(): void;
     /**
@@ -8539,19 +8545,19 @@ The usage is the same with the `login` event of `app`.
     on(event: 'login', listener: (event: Event,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when media is paused or done playing.
      */
@@ -10948,9 +10954,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The redirect mode for this request. Should be one of `follow`, `error` or
      * `manual`. Defaults to `follow`. When mode is `error`, any redirection will be
-     * aborted. When mode is `manual` the redirection will be deferred until
-     * `request.followRedirect` is invoked. Listen for the `redirect` event in this
-     * mode to get more details about the redirect request.
+     * aborted. When mode is `manual` the redirection will be cancelled unless
+     * `request.followRedirect` is invoked synchronously during the `redirect` event.
      */
     redirect?: string;
   }
