@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.3
+// Type definitions for Electron 7.1.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9175,10 +9175,8 @@ Code execution will be suspended until web page stop loading.
     getOSProcessId(): number;
     /**
      * Get the system printer list.
-
-Returns `PrinterInfo[]`.
      */
-    getPrinters(): void;
+    getPrinters(): PrinterInfo[];
     /**
      * The Chromium internal `pid` of the associated renderer. Can be compared to the
      * `frameProcessId` passed by frame specific navigation events (e.g.
