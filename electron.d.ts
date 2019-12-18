@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.5
+// Type definitions for Electron 7.1.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12807,6 +12807,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
   interface VerifyWidevineCdmOptions {
     session?: Session;
     disableUpdate?: boolean;
+    baseDir?: string;
   }
 
   interface VisibleOnAllWorkspacesOptions {
