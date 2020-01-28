@@ -59,6 +59,7 @@ function getPlatformPath () {
     case 'darwin':
       return 'Electron.app/Contents/MacOS/Electron'
     case 'freebsd':
+    case 'openbsd':
     case 'linux':
       return 'electron'
     case 'win32':

@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.0.0
+// Type definitions for Electron 8.0.0-beta.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -22,6 +22,7 @@ declare namespace Electron {
     clipboard: Clipboard;
     CommandLine: typeof CommandLine;
     contentTracing: ContentTracing;
+    contextBridge: ContextBridge;
     Cookies: typeof Cookies;
     crashReporter: CrashReporter;
     Debugger: typeof Debugger;
@@ -78,6 +79,7 @@ declare namespace Electron {
   const autoUpdater: AutoUpdater;
   const clipboard: Clipboard;
   const contentTracing: ContentTracing;
+  const contextBridge: ContextBridge;
   const crashReporter: CrashReporter;
   const desktopCapturer: DesktopCapturer;
   const dialog: Dialog;
@@ -411,27 +413,31 @@ declare namespace Electron {
      * The default behavior is to cancel all authentications. To override this you
      * should prevent the default behavior with `event.preventDefault()` and call
      * `callback(username, password)` with the credentials.
+     *
+     * If `callback` is called without a username or password, the authentication
+     * request will be cancelled and the authentication error will be returned to the
+     * page.
      */
     on(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
                                   webContents: WebContents,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when the user clicks the native macOS new tab button. The new tab button
      * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`
@@ -995,6 +1001,17 @@ This method can only be called before app is ready.
      */
     focus(): void;
     /**
+     * Name of the application handling the protocol, or an empty string if there is no
+     * handler. For instance, if Electron is the default handler of the URL, this could
+     * be `Electron` on Windows and Mac. However, don't rely on the precise format
+     * which is not guaranteed to remain unchanged. Expect a different format on Linux,
+     * possibly with a `.desktop` suffix.
+     *
+     * This method returns the application name of the default handler for the protocol
+     * (aka URI scheme) of a URL.
+     */
+    getApplicationNameForProtocol(url: string): string;
+    /**
      * Array of `ProcessMetric` objects that correspond to memory and CPU usage
      * statistics of all the processes associated with the app.
      */
@@ -1311,8 +1328,6 @@ This method can only be called before app is ready.
      * Set the about panel options. This will override the values defined in the app's
      * `.plist` file on MacOS. See the Apple docs for more details. On Linux, values
      * must be set in order to be shown; there are no defaults.
-     *
-     * @platform darwin,linux
      */
     setAboutPanelOptions(options: AboutPanelOptionsOptions): void;
     /**
@@ -1436,6 +1451,9 @@ Here's a very simple example of creating a custom Jump List:
     setLoginItemSettings(settings: Settings): void;
     /**
      * Overrides the current application's name.
+     *
+     * **Note:** This function overrides the name used internally by Electron; it does
+     * not affect the name that the OS uses.
 
 **Deprecated**
      */
@@ -1482,8 +1500,6 @@ Here's a very simple example of creating a custom Jump List:
     /**
      * Show the app's about panel options. These options can be overridden with
      * `app.setAboutPanelOptions(options)`.
-     *
-     * @platform darwin,linux
      */
     showAboutPanel(): void;
     /**
@@ -2093,34 +2109,34 @@ __Note__: On macOS this event is an alias of `moved`.
     addListener(event: 'unresponsive', listener: Function): this;
     removeListener(event: 'unresponsive', listener: Function): this;
     /**
-     * Emitted before the window is moved. Calling `event.preventDefault()` will
-     * prevent the window from being moved.
+     * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
+     * will prevent the window from being moved.
      *
      * Note that this is only emitted when the window is being resized manually.
      * Resizing the window with `setBounds`/`setSize` will not emit this event.
      *
-     * @platform win32
+     * @platform darwin,win32
      */
     on(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     once(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     addListener(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     removeListener(event: 'will-move', listener: (event: Event,
                                       /**
                                        * Location the window is being moved to.
                                        */
-                                      newBounds: `Rectangle`) => void): this;
+                                      newBounds: Rectangle) => void): this;
     /**
      * Emitted before the window is resized. Calling `event.preventDefault()` will
      * prevent the window from being resized.
@@ -2134,22 +2150,22 @@ __Note__: On macOS this event is an alias of `moved`.
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     once(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     addListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     removeListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: `Rectangle`) => void): this;
+                                        newBounds: Rectangle) => void): this;
     /**
      * BrowserWindow
      */
@@ -2189,9 +2205,10 @@ __Note__: On macOS this event is an alias of `moved`.
      */
     static fromId(id: number): BrowserWindow;
     /**
-     * The window that owns the given `webContents`.
+     * The window that owns the given `webContents` or `null` if the contents are not
+     * owned by a window.
      */
-    static fromWebContents(webContents: WebContents): BrowserWindow;
+    static fromWebContents(webContents: WebContents): (BrowserWindow) | (null);
     /**
      * An array of all opened browser windows.
      */
@@ -2292,8 +2309,8 @@ __Note__: On macOS this event is an alias of `moved`.
      */
     getBounds(): Rectangle;
     /**
-     * an BrowserView what is attached. Returns `null` if none is attached. Throw error
-     * if multiple BrowserViews is attached.
+     * The `BrowserView` attached to `win`. Returns `null` if one is not attached.
+     * Throws an error if multiple `BrowserView`s are attached.
      *
      * @experimental
      */
@@ -2324,6 +2341,16 @@ __Note__: On macOS this event is an alias of `moved`.
      * Contains the window's maximum width and height.
      */
     getMaximumSize(): number[];
+    /**
+     * Window id in the format of DesktopCapturerSource's id. For example
+     * "window:1234:0".
+     *
+     * More precisely the format is `window:id:other_id` where `id` is `HWND` on
+     * Windows, `CGWindowID` (`uint64_t`) on macOS and `Window` (`unsigned long`) on
+     * Linux. `other_id` is used to identify web contents (tabs) so within the same top
+     * level window.
+     */
+    getMediaSourceId(): string;
     /**
      * Contains the window's minimum width and height.
      */
@@ -2564,6 +2591,12 @@ On Linux always returns `true`.
      */
     minimize(): void;
     /**
+     * Moves window above the source window in the sense of z-order. If the
+     * `mediaSourceId` is not of type window or if the window does not exist then this
+     * method throws an error.
+     */
+    moveAbove(mediaSourceId: string): void;
+    /**
      * Moves the current tab into a new window if native tabs are enabled and there is
      * more than one tab in the current window.
      *
@@ -2736,7 +2769,7 @@ On macOS it does not remove the focus from the window.
      *
      * @platform win32,linux
      */
-    setIcon(icon: NativeImage): void;
+    setIcon(icon: (NativeImage) | (string)): void;
     /**
      * Makes the window ignore all mouse events.
      *
@@ -3013,6 +3046,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      * Unmaximizes the window.
      */
     unmaximize(): void;
+    accessibleTitle: string;
     autoHideMenuBar: boolean;
     closable: boolean;
     excludedFromShownWindowsMenu: boolean;
@@ -3202,16 +3236,18 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      * error on the response object:
      */
     on(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
-     * Emitted when there is redirection and the mode is `manual`. Calling
-     * `request.followRedirect` will continue with the redirection.
+     * Emitted when the server returns a redirect response (e.g. 301 Moved
+     * Permanently). Calling `request.followRedirect` will continue with the
+     * redirection.  If this event is handled, `request.followRedirect` must be called
+     * **synchronously**, otherwise the request will be cancelled.
      */
     on(event: 'redirect', listener: (statusCode: number,
                                      method: string,
@@ -3266,8 +3302,8 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      */
     end(chunk?: (string) | (Buffer), encoding?: string, callback?: () => void): void;
     /**
-     * Continues any deferred redirection request when the redirection mode is
-     * `manual`.
+     * Continues any pending redirection. Can only be called during a `'redirect'`
+     * event.
      */
     followRedirect(): void;
     /**
@@ -3518,6 +3554,13 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
     stopRecording(resultFilePath?: string): Promise<string>;
   }
 
+  interface ContextBridge extends NodeJS.EventEmitter {
+
+    // Docs: http://electronjs.org/docs/api/context-bridge
+
+    exposeInMainWorld(apiKey: string, api: Record<string, any>): void;
+  }
+
   interface Cookie {
 
     // Docs: http://electronjs.org/docs/api/structures/cookie
@@ -3588,7 +3631,7 @@ Writes any unwritten cookies data to disk.
      * Sends a request to get all cookies matching `filter`, and resolves a promise
      * with the response.
      */
-    get(filter: Filter): Promise<Electron.Cookie[]>;
+    get(filter: CookiesGetFilter): Promise<Electron.Cookie[]>;
     /**
      * A promise which resolves when the cookie has been removed
      * 
@@ -3600,7 +3643,7 @@ Removes the cookies matching `url` and `name`
      * 
 Sets a cookie with `details`.
      */
-    set(details: Details): Promise<void>;
+    set(details: CookiesSetDetails): Promise<void>;
   }
 
   interface CPUUsage {
@@ -3640,6 +3683,10 @@ Sets a cookie with `details`.
      * @platform darwin,win32
      */
     addExtraParameter(key: string, value: string): void;
+    /**
+     * The directory where crashes are temporarily stored before being uploaded.
+     */
+    getCrashesDirectory(): string;
     /**
      * Returns the date and ID of the last crash report. Only crash reports that have
      * been uploaded will be returned; even if a crash report is present on disk it
@@ -3757,7 +3804,7 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: unknown) => void): this;
+                                    params: any) => void): this;
     once(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3767,7 +3814,7 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: unknown) => void): this;
+                                    params: any) => void): this;
     addListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3777,7 +3824,7 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: unknown) => void): this;
+                                    params: any) => void): this;
     removeListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3787,7 +3834,7 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: unknown) => void): this;
+                                    params: any) => void): this;
     /**
      * Attaches the debugger to the `webContents`.
      */
@@ -3818,6 +3865,10 @@ Send given command to the debugging target.
      * Resolves with an array of `DesktopCapturerSource` objects, each
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
+     *
+     * **Note** Capturing the screen contents requires user consent on macOS 10.15
+     * Catalina or higher, which can detected by
+     * `systemPreferences.getMediaAccessStatus`.
      */
     getSources(options: SourcesOptions): Promise<Electron.DesktopCapturerSource[]>;
   }
@@ -4680,11 +4731,11 @@ Retrieves the product descriptions.
     // Docs: http://electronjs.org/docs/api/structures/input-event
 
     /**
-     * An array of modifiers of the event, can be `shift`, `control`, `alt`, `meta`,
-     * `isKeypad`, `isAutoRepeat`, `leftButtonDown`, `middleButtonDown`,
-     * `rightButtonDown`, `capsLock`, `numLock`, `left`, `right`.
+     * An array of modifiers of the event, can be `shift`, `control`, `ctrl`, `alt`,
+     * `meta`, `command`, `cmd`, `isKeypad`, `isAutoRepeat`, `leftButtonDown`,
+     * `middleButtonDown`, `rightButtonDown`, `capsLock`, `numLock`, `left`, `right`.
      */
-    modifiers: Array<'shift' | 'control' | 'alt' | 'meta' | 'isKeypad' | 'isAutoRepeat' | 'leftButtonDown' | 'middleButtonDown' | 'rightButtonDown' | 'capsLock' | 'numLock' | 'left' | 'right'>;
+    modifiers?: Array<'shift' | 'control' | 'ctrl' | 'alt' | 'meta' | 'command' | 'cmd' | 'isKeypad' | 'isAutoRepeat' | 'leftButtonDown' | 'middleButtonDown' | 'rightButtonDown' | 'capsLock' | 'numLock' | 'left' | 'right'>;
   }
 
   interface IOCounters {
@@ -4761,7 +4812,7 @@ Retrieves the product descriptions.
      * Removes the specified `listener` from the listener array for the specified
      * `channel`.
      */
-    removeListener(channel: string, listener: () => void): this;
+    removeListener(channel: string, listener: (...args: any[]) => void): this;
   }
 
   interface IpcMainEvent extends Event {
@@ -4810,9 +4861,15 @@ Retrieves the product descriptions.
     /**
      * Resolves with the response from the main process.
      *
-     * Send a message to the main process asynchronously via `channel` and expect an
-     * asynchronous result. Arguments will be serialized as JSON internally and hence
-     * no functions or prototype chain will be included.
+     * Send a message to the main process via `channel` and expect a result
+     * asynchronously. Arguments will be serialized with the Structured Clone
+     * Algorithm, just like `postMessage`, so prototype chains will not be included.
+     * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
+     * exception.
+     *
+     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects is deprecated, and will begin throwing an exception starting
+     * with Electron 9.
      *
      * The main process should listen for `channel` with `ipcMain.handle()`.
      * 
@@ -4839,9 +4896,14 @@ For example:
      */
     removeListener(channel: string, listener: (...args: any[]) => void): this;
     /**
-     * Send a message to the main process asynchronously via `channel`, you can also
-     * send arbitrary arguments. Arguments will be serialized as JSON internally and
-     * hence no functions or prototype chain will be included.
+     * Send an asynchronous message to the main process via `channel`, along with
+     * arguments. Arguments will be serialized with the Structured Clone Algorithm,
+     * just like `postMessage`, so prototype chains will not be included. Sending
+     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
+     *
+     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects is deprecated, and will begin throwing an exception starting
+     * with Electron 9.
      *
      * The main process handles it by listening for `channel` with the `ipcMain`
      * module.
@@ -4850,15 +4912,21 @@ For example:
     /**
      * The value sent back by the `ipcMain` handler.
      *
-     * Send a message to the main process synchronously via `channel`, you can also
-     * send arbitrary arguments. Arguments will be serialized in JSON internally and
-     * hence no functions or prototype chain will be included.
+     * Send a message to the main process via `channel` and expect a result
+     * synchronously. Arguments will be serialized with the Structured Clone Algorithm,
+     * just like `postMessage`, so prototype chains will not be included. Sending
+     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
+     *
+     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects is deprecated, and will begin throwing an exception starting
+     * with Electron 9.
      *
      * The main process handles it by listening for `channel` with `ipcMain` module,
      * and replies by setting `event.returnValue`.
      *
-     * **Note:** Sending a synchronous message will block the whole renderer process,
-     * unless you know what you are doing you should never use it.
+     * > :warning: **WARNING**: Sending a synchronous message will block the whole
+     * renderer process until the reply is received, so use this method only as a last
+     * resort. It's much better to use the asynchronous version, `invoke()`.
      */
     sendSync(channel: string, ...args: any[]): any;
     /**
@@ -5227,7 +5295,7 @@ For example:
      * Creates a new `NativeImage` instance from the NSImage that maps to the given
      * image name. See `System Icons` for a list of possible values.
      *
-     * The `hslShift` is applied to the image with the following rules
+     * The `hslShift` is applied to the image with the following rules:
      *
      * * `hsl_shift[0]` (hue): The absolute hue value for the image - 0 and 1 map to 0
      * and 360 on the hue color wheel (red).
@@ -5262,15 +5330,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
      */
     static createFromPath(path: string): NativeImage;
     /**
-     * A `Boolean` property that determines whether the image is considered a template
-     * image.
-
-Please note that this property only has an effect on macOS.
-     *
-     * @platform darwin
-     */
-    static isMacTemplateImage: boolean;
-    /**
      * Add an image representation for a specific scale factor. This can be used to
      * explicitly add different scale factor representations to an image. This can be
      * called on empty images.
@@ -5287,9 +5346,9 @@ Please note that this property only has an effect on macOS.
     /**
      * A Buffer that contains the image's raw bitmap pixel data.
      *
-     * The difference between `getBitmap()` and `toBitmap()` is, `getBitmap()` does not
-     * copy the bitmap data, so you have to use the returned Buffer immediately in
-     * current event loop tick, otherwise the data might be changed or destroyed.
+     * The difference between `getBitmap()` and `toBitmap()` is that `getBitmap()` does
+     * not copy the bitmap data, so you have to use the returned Buffer immediately in
+     * current event loop tick; otherwise the data might be changed or destroyed.
      */
     getBitmap(options?: BitmapOptions): Buffer;
     /**
@@ -5343,6 +5402,7 @@ Please note that this property only has an effect on macOS.
      * A Buffer that contains the image's `PNG` encoded data.
      */
     toPNG(options?: ToPNGOptions): Buffer;
+    isMacTemplateImage: boolean;
   }
 
   interface NativeTheme extends NodeJS.EventEmitter {
@@ -5569,7 +5629,9 @@ Starts recording network events to `path`.
     silent: boolean;
     sound: string;
     subtitle: string;
+    timeoutType: ('default' | 'never');
     title: string;
+    urgency: ('normal' | 'critical' | 'low');
   }
 
   interface NotificationAction {
@@ -5827,27 +5889,27 @@ Calculate system idle time in seconds.
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `Buffer` as a response.
      */
-    interceptBufferProtocol(scheme: string, handler: (request: HandlerRequest, callback: (buffer?: Buffer) => void) => void, completion?: (error: Error) => void): void;
+    interceptBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: Buffer) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a file as a response.
      */
-    interceptFileProtocol(scheme: string, handler: (request: HandlerRequest, callback: (filePath: string) => void) => void, completion?: (error: Error) => void): void;
+    interceptFileProtocol(scheme: string, handler: (request: Request, callback: (filePath: string) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a new HTTP request as a response.
      */
-    interceptHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    interceptHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Same as `protocol.registerStreamProtocol`, except that it replaces an existing
      * protocol handler.
      */
-    interceptStreamProtocol(scheme: string, handler: (request: HandlerRequest, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `String` as a response.
      */
-    interceptStringProtocol(scheme: string, handler: (request: HandlerRequest, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * fulfilled with a boolean that indicates whether there is already a handler for
      * `scheme`.
@@ -5862,7 +5924,7 @@ Calculate system idle time in seconds.
 
 Example:
      */
-    registerBufferProtocol(scheme: string, handler: (request: HandlerRequest, callback: (buffer?: (Buffer) | (MimeTypedBuffer)) => void) => void, completion?: (error: Error) => void): void;
+    registerBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: (Buffer) | (MimeTypedBuffer)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send the file as a response. The
      * `handler` will be called with `handler(request, callback)` when a `request` is
@@ -5884,7 +5946,7 @@ Example:
      * By default the `scheme` is treated like `http:`, which is parsed differently
      * than protocols that follow the "generic URI syntax" like `file:`.
      */
-    registerFileProtocol(scheme: string, handler: (request: HandlerRequest, callback: (filePath?: (string) | (FilePathWithHeaders)) => void) => void, completion?: (error: Error) => void): void;
+    registerFileProtocol(scheme: string, handler: (request: Request, callback: (filePath?: (string) | (FilePathWithHeaders)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send an HTTP request as a response.
      *
@@ -5897,7 +5959,7 @@ Example:
      * 
 For POST requests the `uploadData` object must be provided.
      */
-    registerHttpProtocol(scheme: string, handler: (request: HandlerRequest, callback: (redirectRequest: CallbackRedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    registerHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
     /**
      * **Note:** This method can only be used before the `ready` event of the `app`
      * module gets emitted and can be called only once.
@@ -5951,7 +6013,7 @@ For POST requests the `uploadData` object must be provided.
      * It is possible to pass any object that implements the readable stream API (emits
      * `data`/`end`/`error` events). For example, here's how a file could be returned:
      */
-    registerStreamProtocol(scheme: string, handler: (request: HandlerRequest, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Registers a protocol of `scheme` that will send a `String` as a response.
      *
@@ -5959,7 +6021,7 @@ For POST requests the `uploadData` object must be provided.
      * should be called with either a `String` or an object that has the `data`,
      * `mimeType`, and `charset` properties.
      */
-    registerStringProtocol(scheme: string, handler: (request: HandlerRequest, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
     /**
      * Remove the interceptor installed for `scheme` and restore its original handler.
      */
@@ -6057,7 +6119,7 @@ For POST requests the `uploadData` object must be provided.
     /**
      * Content to be sent.
      */
-    data: string;
+    data: (string) | (Buffer);
   }
 
   interface Rectangle {
@@ -6334,8 +6396,6 @@ e.g.
     /**
      * Emitted when a render process requests preconnection to a URL, generally due to
      * a resource hint.
-     *
-     * @experimental
      */
     on(event: 'preconnect', listener: (event: Event,
                                        /**
@@ -6396,6 +6456,13 @@ e.g.
                                           item: DownloadItem,
                                           webContents: WebContents) => void): this;
     /**
+     * Whether the word was successfully written to the custom dictionary.
+     *
+     * **Note:** On macOS and Windows 10 this word will be written to the OS custom
+     * dictionary as well
+     */
+    addWordToSpellCheckerDictionary(word: string): boolean;
+    /**
      * Dynamically sets whether to always send credentials for HTTP NTLM or Negotiate
      * authentication.
      */
@@ -6434,6 +6501,14 @@ Clears the host resolver cache.
      */
     disableNetworkEmulation(): void;
     /**
+     * Initiates a download of the resource at `url`. The API will generate a
+     * DownloadItem that can be accessed with the will-download event.
+     *
+     * **Note:** This does not perform any security checks that relate to a page's
+     * origin, unlike `webContents.downloadURL`.
+     */
+    downloadURL(url: string): void;
+    /**
      * Emulates network with the given configuration for the `session`.
      */
     enableNetworkEmulation(options: EnableNetworkEmulationOptions): void;
@@ -6454,13 +6529,21 @@ Clears the host resolver cache.
      */
     getPreloads(): string[];
     /**
+     * An array of language codes the spellchecker is enabled for.  If this list is
+     * empty the spellchecker will fallback to using `en-US`.  By default on launch if
+     * this setting is an empty list Electron will try to populate this setting with
+     * the current OS locale.  This setting is persisted across restarts.
+     *
+     * **Note:** On macOS the OS spellchecker is used and has it's own list of
+     * languages.  This API is a no-op on macOS.
+     */
+    getSpellCheckerLanguages(): string[];
+    /**
      * The user agent for this session.
      */
     getUserAgent(): string;
     /**
      * Preconnects the given number of sockets to an origin.
-     *
-     * @experimental
      */
     preconnect(options: PreconnectOptions): void;
     /**
@@ -6476,7 +6559,7 @@ Clears the host resolver cache.
      * Calling `setCertificateVerifyProc(null)` will revert back to default certificate
      * verify proc.
      */
-    setCertificateVerifyProc(proc: (request: ProcRequest, callback: (verificationResult: number) => void) => void): void;
+    setCertificateVerifyProc(proc: ((request: CertificateVerifyProcProcRequest, callback: (verificationResult: number) => void) => void) | (null)): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -6487,7 +6570,7 @@ Clears the host resolver cache.
      * `session`. Returning `true` will allow the permission and `false` will reject
      * it. To clear the handler, call `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: Details) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -6556,6 +6639,27 @@ Clears the host resolver cache.
      */
     setProxy(config: Config): Promise<void>;
     /**
+     * By default Electron will download hunspell dictionaries from the Chromium CDN.
+     * If you want to override this behavior you can use this API to point the
+     * dictionary downloader at your own hosted version of the hunspell dictionaries.
+     * We publish a `hunspell_dictionaries.zip` file with each release which contains
+     * the files you need to host here.
+     *
+     * **Note:** On macOS the OS spellchecker is used and therefore we do not download
+     * any dictionary files.  This API is a no-op on macOS.
+     */
+    setSpellCheckerDictionaryDownloadURL(url: string): void;
+    /**
+     * The built in spellchecker does not automatically detect what language a user is
+     * typing in.  In order for the spell checker to correctly check their words you
+     * must call this API with an array of language codes.  You can get the list of
+     * supported language codes with the `ses.availableSpellCheckerLanguages` property.
+     *
+     * **Note:** On macOS the OS spellchecker is used and will detect your language
+     * automatically.  This API is a no-op on macOS.
+     */
+    setSpellCheckerLanguages(languages: string[]): void;
+    /**
      * Overrides the `userAgent` and `acceptLanguages` for this session.
      *
      * The `acceptLanguages` must a comma separated ordered list of language codes, for
@@ -6565,10 +6669,25 @@ Clears the host resolver cache.
      * `webContents.setUserAgent` to override the session-wide user agent.
      */
     setUserAgent(userAgent: string, acceptLanguages?: string): void;
+    readonly availableSpellCheckerLanguages: string[];
     readonly cookies: Cookies;
     readonly netLog: NetLog;
     readonly protocol: Protocol;
     readonly webRequest: WebRequest;
+  }
+
+  interface SharedWorkerInfo {
+
+    // Docs: http://electronjs.org/docs/api/structures/shared-worker-info
+
+    /**
+     * The unique id of the shared worker.
+     */
+    id: string;
+    /**
+     * The url of the shared worker.
+     */
+    url: string;
   }
 
   interface Shell {
@@ -6580,11 +6699,11 @@ Clears the host resolver cache.
      */
     beep(): void;
     /**
-     * Whether the item was successfully moved to the trash.
+     * Whether the item was successfully moved to the trash or otherwise deleted.
      * 
 Move the given file to trash and returns a boolean status for the operation.
      */
-    moveItemToTrash(fullPath: string): boolean;
+    moveItemToTrash(fullPath: string, deleteOnFail?: boolean): boolean;
     /**
      * Open the given external protocol URL in the desktop's default manner. (For
      * example, mailto: URLs in the user's default mail agent).
@@ -6860,9 +6979,14 @@ Returns an object with system animation settings.
      * The system color setting in RGB hexadecimal form (`#ABCDEF`). See the Windows
      * docs and the MacOS docs for more details.
      *
+     * The following colors are only available on macOS 10.14: `find-highlight`,
+     * `selected-content-background`, `separator`,
+     * `unemphasized-selected-content-background`,
+     * `unemphasized-selected-text-background`, and `unemphasized-selected-text`.
+     *
      * @platform win32,darwin
      */
-    getColor(color: '3d-dark-shadow' | '3d-face' | '3d-highlight' | '3d-light' | '3d-shadow' | 'active-border' | 'active-caption' | 'active-caption-gradient' | 'app-workspace' | 'button-text' | 'caption-text' | 'desktop' | 'disabled-text' | 'highlight' | 'highlight-text' | 'hotlight' | 'inactive-border' | 'inactive-caption' | 'inactive-caption-gradient' | 'inactive-caption-text' | 'info-background' | 'info-text' | 'menu' | 'menu-highlight' | 'menubar' | 'menu-text' | 'scrollbar' | 'window' | 'window-frame' | 'window-text' | 'alternate-selected-control-text' | 'control-background' | 'control' | 'control-text' | 'disabled-control-text' | 'find-highlight' | 'grid' | 'header-text' | 'highlight' | 'keyboard-focus-indicator' | 'label' | 'link' | 'placeholder-text' | 'quaternary-label' | 'scrubber-textured-background' | 'secondary-label' | 'selected-content-background' | 'selected-control' | 'selected-control-text' | 'selected-menu-item' | 'selected-text-background' | 'selected-text' | 'separator' | 'shadow' | 'tertiary-label' | 'text-background' | 'text' | 'under-page-background' | 'unemphasized-selected-content-background' | 'unemphasized-selected-text-background' | 'unemphasized-selected-text' | 'window-background' | 'window-frame-text'): string;
+    getColor(color: '3d-dark-shadow' | '3d-face' | '3d-highlight' | '3d-light' | '3d-shadow' | 'active-border' | 'active-caption' | 'active-caption-gradient' | 'app-workspace' | 'button-text' | 'caption-text' | 'desktop' | 'disabled-text' | 'highlight' | 'highlight-text' | 'hotlight' | 'inactive-border' | 'inactive-caption' | 'inactive-caption-gradient' | 'inactive-caption-text' | 'info-background' | 'info-text' | 'menu' | 'menu-highlight' | 'menubar' | 'menu-text' | 'scrollbar' | 'window' | 'window-frame' | 'window-text' | 'alternate-selected-control-text' | 'control-background' | 'control' | 'control-text' | 'disabled-control-text' | 'find-highlight' | 'grid' | 'header-text' | 'highlight' | 'keyboard-focus-indicator' | 'label' | 'link' | 'placeholder-text' | 'quaternary-label' | 'scrubber-textured-background' | 'secondary-label' | 'selected-content-background' | 'selected-control' | 'selected-control-text' | 'selected-menu-item-text' | 'selected-text-background' | 'selected-text' | 'separator' | 'shadow' | 'tertiary-label' | 'text-background' | 'text' | 'under-page-background' | 'unemphasized-selected-content-background' | 'unemphasized-selected-text-background' | 'unemphasized-selected-text' | 'window-background' | 'window-frame-text'): string;
     /**
      * Can be `dark`, `light` or `unknown`.
      *
@@ -6885,12 +7009,14 @@ Returns an object with system animation settings.
     /**
      * Can be `not-determined`, `granted`, `denied`, `restricted` or `unknown`.
      *
-     * This user consent was not required until macOS 10.14 Mojave, so this method will
-     * always return `granted` if your system is running 10.13 High Sierra or lower.
+     * This user consent was not required on macOS 10.13 High Sierra or lower so this
+     * method will always return `granted`. macOS 10.14 Mojave or higher requires
+     * consent for `microphone` and `camera` access. macOS 10.15 Catalina or higher
+     * requires consent for `screen` access.
      *
      * @platform darwin
      */
-    getMediaAccessStatus(mediaType: string): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
+    getMediaAccessStatus(mediaType: 'microphone' | 'camera' | 'screen'): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
     /**
      * The standard system color formatted as `#RRGGBBAA`.
      *
@@ -7228,6 +7354,7 @@ This property is only available on macOS 10.14 Mojave or newer.
      * TouchBarButton
      */
     constructor(options: TouchBarButtonConstructorOptions);
+    accessibilityLabel: string;
     backgroundColor: string;
     icon: NativeImage;
     label: string;
@@ -7263,6 +7390,7 @@ This property is only available on macOS 10.14 Mojave or newer.
      * TouchBarLabel
      */
     constructor(options: TouchBarLabelConstructorOptions);
+    accessibilityLabel: string;
     label: string;
     textColor: string;
   }
@@ -7290,8 +7418,8 @@ This property is only available on macOS 10.14 Mojave or newer.
     continuous: boolean;
     items: ScrubberItem[];
     mode: ('fixed' | 'free');
-    overlayStyle: ('background' | 'outline' | 'null');
-    selectedStyle: ('background' | 'outline' | 'null');
+    overlayStyle: ('background' | 'outline' | 'none');
+    selectedStyle: ('background' | 'outline' | 'none');
     showArrowButtons: boolean;
   }
 
@@ -7740,6 +7868,15 @@ This property is only available on macOS 10.14 Mojave or newer.
      */
     displayBalloon(options: DisplayBalloonOptions): void;
     /**
+     * Returns focus to the taskbar notification area. Notification area icons should
+     * use this message when they have completed their UI operation. For example, if
+     * the icon displays a shortcut menu, but the user presses ESC to cancel it, use
+     * `tray.focus()` to return focus to the notification area.
+     *
+     * @platform win32
+     */
+    focus(): void;
+    /**
      * The `bounds` of this tray icon as `Object`.
      *
      * @platform darwin,win32
@@ -7770,6 +7907,12 @@ The `position` is only available on Windows, and it is (0, 0) by default.
      * @platform darwin,win32
      */
     popUpContextMenu(menu?: Menu, position?: Point): void;
+    /**
+     * Removes a tray balloon.
+     *
+     * @platform win32
+     */
+    removeBalloon(): void;
     /**
      * Sets the context menu for this icon.
      */
@@ -7960,8 +8103,7 @@ The usage is the same with the `certificate-error` event of `app`.
                                               certificate: Certificate,
                                               callback: (isTrusted: boolean) => void) => void): this;
     /**
-     * Emitted when the associated window logs a console message. Will not be emitted
-     * for windows with *offscreen rendering* enabled.
+     * Emitted when the associated window logs a console message.
      */
     on(event: 'console-message', listener: (event: Event,
                                             level: number,
@@ -8536,21 +8678,21 @@ The usage is the same with the `certificate-error` event of `app`.
 The usage is the same with the `login` event of `app`.
      */
     on(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  request: Request,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
-                                  callback: (username: string, password: string) => void) => void): this;
+                                  callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when media is paused or done playing.
      */
@@ -9146,6 +9288,13 @@ Code execution will be suspended until web page stop loading.
      */
     executeJavaScript(code: string, userGesture?: boolean): Promise<any>;
     /**
+     * A promise that resolves with the result of the executed code or is rejected if
+     * the result of the code is a rejected promise.
+     * 
+Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     */
+    executeJavaScriptInIsolatedWorld(worldId: number, scripts: WebSource[], userGesture?: boolean): Promise<any>;
+    /**
      * The request id used for the request.
      *
      * Starts a request to find all matches for the `text` in the web page. The result
@@ -9156,6 +9305,10 @@ Code execution will be suspended until web page stop loading.
      * Focuses the web page.
      */
     focus(): void;
+    /**
+     * Information about all Shared Workers.
+     */
+    getAllSharedWorkers(): SharedWorkerInfo[];
     /**
      * If *offscreen rendering* is enabled returns the current frame rate.
      * 
@@ -9168,10 +9321,8 @@ Code execution will be suspended until web page stop loading.
     getOSProcessId(): number;
     /**
      * Get the system printer list.
-
-Returns `PrinterInfo[]`.
      */
-    getPrinters(): void;
+    getPrinters(): PrinterInfo[];
     /**
      * The Chromium internal `pid` of the associated renderer. Can be compared to the
      * `frameProcessId` passed by frame specific navigation events (e.g.
@@ -9253,6 +9404,10 @@ Returns `PrinterInfo[]`.
      * Opens the developer tools for the shared worker context.
      */
     inspectSharedWorker(): void;
+    /**
+     * Inspects the shared worker based on its ID.
+     */
+    inspectSharedWorkerById(workerId: string): void;
     /**
      * Schedules a full repaint of the window this web contents is in.
      *
@@ -9358,7 +9513,7 @@ Would require code like this
      * 
 Example usage:
      */
-    print(options?: PrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
+    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
     /**
      * Resolves with the generated PDF data.
      *
@@ -9414,9 +9569,14 @@ An example of `webContents.printToPDF`:
      */
     selectAll(): void;
     /**
-     * Send an asynchronous message to renderer process via `channel`, you can also
-     * send arbitrary arguments. Arguments will be serialized in JSON internally and
-     * hence no functions or prototype chain will be included.
+     * Send an asynchronous message to the renderer process via `channel`, along with
+     * arguments. Arguments will be serialized with the Structured Clone Algorithm,
+     * just like `postMessage`, so prototype chains will not be included. Sending
+     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
+     *
+     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects is deprecated, and will begin throwing an exception starting
+     * with Electron 9.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -9431,8 +9591,14 @@ An example of sending messages from the main process to the renderer process:
     sendInputEvent(inputEvent: (MouseInputEvent) | (MouseWheelInputEvent) | (KeyboardInputEvent)): void;
     /**
      * Send an asynchronous message to a specific frame in a renderer process via
-     * `channel`. Arguments will be serialized as JSON internally and as such no
-     * functions or prototype chains will be included.
+     * `channel`, along with arguments. Arguments will be serialized with the
+     * Structured Clone Algorithm, just like `postMessage`, so prototype chains will
+     * not be included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets
+     * will throw an exception.
+     *
+     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects is deprecated, and will begin throwing an exception starting
+     * with Electron 9.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -9489,6 +9655,10 @@ An example of showing devtools in a `BrowserWindow`:
     setIgnoreMenuShortcuts(ignore: boolean): void;
     /**
      * Sets the maximum and minimum layout-based (i.e. non-visual) zoom level.
+     * 
+**Deprecated:** This API is no longer supported by Chromium.
+     *
+     * @deprecated
      */
     setLayoutZoomLevelLimits(minimumLevel: number, maximumLevel: number): Promise<void>;
     /**
@@ -9678,10 +9848,17 @@ This will generate:
     setIsolatedWorldInfo(worldId: number, info: Info): void;
     /**
      * Sets the maximum and minimum layout-based (i.e. non-visual) zoom level.
+     * 
+**Deprecated:** This API is no longer supported by Chromium.
+     *
+     * @deprecated
      */
     setLayoutZoomLevelLimits(minimumLevel: number, maximumLevel: number): void;
     /**
      * Sets a provider for spell checking in input fields and text areas.
+     *
+     * If you want to use this method you must disable the builtin spellchecker when
+     * you construct the window.
      *
      * The `provider` must be an object that has a `spellCheck` method that accepts an
      * array of individual words for spellchecking. The `spellCheck` function runs
@@ -9760,7 +9937,7 @@ An example of using node-spellchecker as provider:
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: OnBeforeRedirectFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(filter: Filter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
@@ -9776,7 +9953,7 @@ An example of using node-spellchecker as provider:
      * 
 Some examples of valid `urls`:
      */
-    onBeforeRequest(filter: OnBeforeRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRequest(filter: Filter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -9793,22 +9970,22 @@ Some examples of valid `urls`:
      * an HTTP request, once the request headers are available. This may occur after a
      * TCP connection is made to the server, but before any http data is sent.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(filter: OnBeforeSendHeadersFilter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(filter: Filter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
      * TCP connection is made to the server, but before any http data is sent.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
      */
-    onCompleted(filter: OnCompletedFilter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
+    onCompleted(filter: Filter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
@@ -9817,7 +9994,7 @@ The `callback` has to be called with an `response` object.
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: OnErrorOccurredFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: Filter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
@@ -9826,22 +10003,22 @@ The `callback` has to be called with an `response` object.
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(filter: OnHeadersReceivedFilter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onHeadersReceived(filter: Filter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
      * 
-The `callback` has to be called with an `response` object.
+The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
+    onHeadersReceived(listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: OnResponseStartedFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: Filter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
@@ -9853,7 +10030,7 @@ The `callback` has to be called with an `response` object.
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
      * response are visible by the time this listener is fired.
      */
-    onSendHeaders(filter: OnSendHeadersFilter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
+    onSendHeaders(filter: Filter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
@@ -10138,6 +10315,8 @@ Calling `event.preventDefault()` does __NOT__ have any effect.
      *
      * It depends on the `remote` module, it is therefore not available when this
      * module is disabled.
+     *
+     * @deprecated
      */
     getWebContents(): WebContents;
     /**
@@ -10249,13 +10428,13 @@ Calling `event.preventDefault()` does __NOT__ have any effect.
     /**
      * Prints `webview`'s web page. Same as `webContents.print([options])`.
      */
-    print(options?: PrintOptions): Promise<void>;
+    print(options?: WebviewTagPrintOptions): Promise<void>;
     /**
      * Resolves with the generated PDF data.
      * 
 Prints `webview`'s web page as PDF, Same as `webContents.printToPDF(options)`.
      */
-    printToPDF(options: PrintToPDFOptions): Promise<Buffer>;
+    printToPDF(options: PrintToPDFOptions): Promise<Uint8Array>;
     /**
      * Executes editing command `redo` in page.
      */
@@ -10307,6 +10486,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     setAudioMuted(muted: boolean): void;
     /**
      * Sets the maximum and minimum layout-based (i.e. non-visual) zoom level.
+     * 
+**Deprecated:** This API is no longer supported by Chromium.
+     *
+     * @deprecated
      */
     setLayoutZoomLevelLimits(minimumLevel: number, maximumLevel: number): Promise<void>;
     /**
@@ -10479,7 +10662,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * Credit information.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     credits?: string;
     /**
@@ -10495,10 +10678,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     website?: string;
     /**
-     * Path to the app's icon. Will be shown as 64x64 pixels while retaining aspect
-     * ratio.
+     * Path to the app's icon. On Linux, will be shown as 64x64 pixels while retaining
+     * aspect ratio.
      *
-     * @platform linux
+     * @platform linux,win32
      */
     iconPath?: string;
   }
@@ -10569,6 +10752,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     relaunchDisplayName?: string;
   }
 
+  interface AuthenticationResponseDetails {
+    url: string;
+  }
+
   interface AuthInfo {
     isProxy: boolean;
     scheme: string;
@@ -10598,6 +10785,14 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * with the window. `false` by default.
      */
     vertical?: boolean;
+  }
+
+  interface BeforeSendResponse {
+    cancel?: boolean;
+    /**
+     * When provided, request will be made with these headers.
+     */
+    requestHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface BitmapOptions {
@@ -10791,8 +10986,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     backgroundColor?: string;
     /**
-     * Whether window should have a shadow. This is only implemented on macOS. Default
-     * is `true`.
+     * Whether window should have a shadow. Default is `true`.
      */
     hasShadow?: boolean;
     /**
@@ -10861,21 +11055,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     webPreferences?: WebPreferences;
   }
 
-  interface CallbackRedirectRequest {
-    url: string;
-    method?: string;
-    session?: (Session) | (null);
-    uploadData?: ProtocolResponseUploadData;
-  }
-
-  interface CallbackResponse {
-    cancel?: boolean;
-    /**
-     * When provided, request will be made with these headers.
-     */
-    requestHeaders?: Record<string, string>;
-  }
-
   interface CertificateTrustDialogOptions {
     /**
      * The certificate to trust/import.
@@ -10885,6 +11064,19 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The message to display to the user.
      */
     message: string;
+  }
+
+  interface CertificateVerifyProcProcRequest {
+    hostname: string;
+    certificate: Certificate;
+    /**
+     * Verification result from chromium.
+     */
+    verificationResult: string;
+    /**
+     * Error code.
+     */
+    errorCode: number;
   }
 
   interface ClearStorageDataOptions {
@@ -10950,9 +11142,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The redirect mode for this request. Should be one of `follow`, `error` or
      * `manual`. Defaults to `follow`. When mode is `error`, any redirection will be
-     * aborted. When mode is `manual` the redirection will be deferred until
-     * `request.followRedirect` is invoked. Listen for the `redirect` event in this
-     * mode to get more details about the redirect request.
+     * aborted. When mode is `manual` the redirection will be cancelled unless
+     * `request.followRedirect` is invoked synchronously during the `redirect` event.
      */
     redirect?: string;
   }
@@ -10961,15 +11152,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The URL associated with the PAC file.
      */
-    pacScript: string;
+    pacScript?: string;
     /**
      * Rules indicating which proxies to use.
      */
-    proxyRules: string;
+    proxyRules?: string;
     /**
      * Rules indicating which URLs should bypass the proxy settings.
      */
-    proxyBypassRules: string;
+    proxyBypassRules?: string;
   }
 
   interface ConsoleMessageEvent extends Event {
@@ -11036,6 +11227,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     misspelledWord: string;
     /**
+     * An array of suggested words to show the user to replace the `misspelledWord`.
+     * Only available if there is a misspelled word and spellchecker is enabled.
+     */
+    dictionarySuggestions: string[];
+    /**
      * The character encoding of the frame on which the menu was invoked.
      */
     frameCharset: string;
@@ -11058,6 +11254,73 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * corresponding action.
      */
     editFlags: EditFlags;
+  }
+
+  interface CookiesGetFilter {
+    /**
+     * Retrieves cookies which are associated with `url`. Empty implies retrieving
+     * cookies of all URLs.
+     */
+    url?: string;
+    /**
+     * Filters cookies by name.
+     */
+    name?: string;
+    /**
+     * Retrieves cookies whose domains match or are subdomains of `domains`.
+     */
+    domain?: string;
+    /**
+     * Retrieves cookies whose path matches `path`.
+     */
+    path?: string;
+    /**
+     * Filters cookies by their Secure property.
+     */
+    secure?: boolean;
+    /**
+     * Filters out session or persistent cookies.
+     */
+    session?: boolean;
+  }
+
+  interface CookiesSetDetails {
+    /**
+     * The URL to associate the cookie with. The promise will be rejected if the URL is
+     * invalid.
+     */
+    url: string;
+    /**
+     * The name of the cookie. Empty by default if omitted.
+     */
+    name?: string;
+    /**
+     * The value of the cookie. Empty by default if omitted.
+     */
+    value?: string;
+    /**
+     * The domain of the cookie; this will be normalized with a preceding dot so that
+     * it's also valid for subdomains. Empty by default if omitted.
+     */
+    domain?: string;
+    /**
+     * The path of the cookie. Empty by default if omitted.
+     */
+    path?: string;
+    /**
+     * Whether the cookie should be marked as Secure. Defaults to false.
+     */
+    secure?: boolean;
+    /**
+     * Whether the cookie should be marked as HTTP only. Defaults to false.
+     */
+    httpOnly?: boolean;
+    /**
+     * The expiration date of the cookie as the number of seconds since the UNIX epoch.
+     * If omitted then the cookie becomes a session cookie and will not be retained
+     * between sessions.
+     */
+    expirationDate?: number;
   }
 
   interface CrashReporterStartOptions {
@@ -11136,11 +11399,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * Last-Modified header value.
      */
-    lastModified: string;
+    lastModified?: string;
     /**
      * ETag header value.
      */
-    eTag: string;
+    eTag?: string;
     /**
      * Time when download was started in number of seconds since UNIX epoch.
      */
@@ -11160,41 +11423,21 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Details {
     /**
-     * The URL to associate the cookie with. The promise will be rejected if the URL is
-     * invalid.
+     * The security orign of the `media` check.
      */
-    url: string;
+    securityOrigin: string;
     /**
-     * The name of the cookie. Empty by default if omitted.
+     * The type of media access being requested, can be `video`, `audio` or `unknown`
      */
-    name?: string;
+    mediaType: ('video' | 'audio' | 'unknown');
     /**
-     * The value of the cookie. Empty by default if omitted.
+     * The last URL the requesting frame loaded
      */
-    value?: string;
+    requestingUrl: string;
     /**
-     * The domain of the cookie; this will be normalized with a preceding dot so that
-     * it's also valid for subdomains. Empty by default if omitted.
+     * Whether the frame making the request is the main frame
      */
-    domain?: string;
-    /**
-     * The path of the cookie. Empty by default if omitted.
-     */
-    path?: string;
-    /**
-     * Whether the cookie should be marked as Secure. Defaults to false.
-     */
-    secure?: boolean;
-    /**
-     * Whether the cookie should be marked as HTTP only. Defaults to false.
-     */
-    httpOnly?: boolean;
-    /**
-     * The expiration date of the cookie as the number of seconds since the UNIX epoch.
-     * If omitted then the cookie becomes a session cookie and will not be retained
-     * between sessions.
-     */
-    expirationDate?: number;
+    isMainFrame: boolean;
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -11222,9 +11465,30 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface DisplayBalloonOptions {
+    /**
+     * Icon to use when `iconType` is `custom`.
+     */
     icon?: (NativeImage) | (string);
+    /**
+     * Can be `none`, `info`, `warning`, `error` or `custom`. Default is `custom`.
+     */
+    iconType?: ('none' | 'info' | 'warning' | 'error' | 'custom');
     title: string;
     content: string;
+    /**
+     * The large version of the icon should be used. Default is `true`. Maps to
+     * `NIIF_LARGE_ICON`.
+     */
+    largeIcon?: boolean;
+    /**
+     * Do not play the associated sound. Default is `false`. Maps to `NIIF_NOSOUND`.
+     */
+    noSound?: boolean;
+    /**
+     * Do not display the balloon notification if the current user is in "quiet time".
+     * Default is `false`. Maps to `NIIF_RESPECT_QUIET_TIME`.
+     */
+    respectQuietTime?: boolean;
   }
 
   interface EnableNetworkEmulationOptions {
@@ -11268,30 +11532,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Filter {
     /**
-     * Retrieves cookies which are associated with `url`. Empty implies retrieving
-     * cookies of all URLs.
+     * Array of URL patterns that will be used to filter out the requests that do not
+     * match the URL patterns.
      */
-    url?: string;
-    /**
-     * Filters cookies by name.
-     */
-    name?: string;
-    /**
-     * Retrieves cookies whose domains match or are subdomains of `domains`.
-     */
-    domain?: string;
-    /**
-     * Retrieves cookies whose path matches `path`.
-     */
-    path?: string;
-    /**
-     * Filters cookies by their Secure property.
-     */
-    secure?: boolean;
-    /**
-     * Filters out session or persistent cookies.
-     */
-    session?: boolean;
+    urls: string[];
   }
 
   interface FindInPageOptions {
@@ -11330,12 +11574,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
     cache: boolean;
   }
 
-  interface HandlerRequest {
-    url: string;
-    headers: Record<string, string>;
-    referrer: string;
-    method: string;
-    uploadData: UploadData[];
+  interface HeadersReceivedResponse {
+    cancel?: boolean;
+    /**
+     * When provided, the server is assumed to have responded with these headers.
+     */
+    responseHeaders?: Record<string, (string) | (string[])>;
+    /**
+     * Should be provided when overriding `responseHeaders` to change header status
+     * otherwise original response header's status will be used.
+     */
+    statusLine?: string;
   }
 
   interface HeapStatistics {
@@ -11443,7 +11692,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The image must be non-empty on macOS.
      */
-    icon: NativeImage;
+    icon: (NativeImage) | (string);
   }
 
   interface JumpListSettings {
@@ -11846,6 +12095,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     hasReply?: boolean;
     /**
+     * The timeout duration of the notification. Can be 'default' or 'never'.
+     *
+     * @platform linux,win32
+     */
+    timeoutType?: ('default' | 'never');
+    /**
      * The placeholder to write in the inline reply input field.
      *
      * @platform darwin
@@ -11857,6 +12112,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * @platform darwin
      */
     sound?: string;
+    /**
+     * The urgency level of the notification. Can be 'normal', 'critical', or 'low'.
+     *
+     * @platform linux
+     */
+    urgency?: ('normal' | 'critical' | 'low');
     /**
      * Actions to add to the notification. Please read the available actions and
      * limitations in the `NotificationAction` documentation.
@@ -11873,14 +12134,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     closeButtonText?: string;
   }
 
-  interface OnBeforeRedirectFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnBeforeRedirectListenerDetails {
     id: number;
     url: string;
@@ -11891,20 +12144,13 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     redirectURL: string;
     statusCode: number;
+    statusLine: string;
     /**
      * The server IP address that the request was actually sent to.
      */
     ip?: string;
     fromCache: boolean;
-    responseHeaders?: Record<string, string>;
-  }
-
-  interface OnBeforeRequestFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
+    responseHeaders?: Record<string, string[]>;
   }
 
   interface OnBeforeRequestListenerDetails {
@@ -11918,14 +12164,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     uploadData: UploadData[];
   }
 
-  interface OnBeforeSendHeadersFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnBeforeSendHeadersListenerDetails {
     id: number;
     url: string;
@@ -11937,14 +12175,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     requestHeaders: Record<string, string>;
   }
 
-  interface OnCompletedFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnCompletedListenerDetails {
     id: number;
     url: string;
@@ -11953,18 +12183,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     resourceType: string;
     referrer: string;
     timestamp: number;
-    responseHeaders?: Record<string, string>;
+    responseHeaders?: Record<string, string[]>;
     fromCache: boolean;
     statusCode: number;
     statusLine: string;
-  }
-
-  interface OnErrorOccurredFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnErrorOccurredListenerDetails {
@@ -11982,14 +12204,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     error: string;
   }
 
-  interface OnHeadersReceivedFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface OnHeadersReceivedListenerDetails {
     id: number;
     url: string;
@@ -12000,15 +12214,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     statusLine: string;
     statusCode: number;
-    responseHeaders?: Record<string, string>;
-  }
-
-  interface OnResponseStartedFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
+    responseHeaders?: Record<string, string[]>;
   }
 
   interface OnResponseStartedListenerDetails {
@@ -12019,21 +12225,13 @@ See webContents.sendInputEvent for detailed description of `event` object.
     resourceType: string;
     referrer: string;
     timestamp: number;
-    responseHeaders?: Record<string, string>;
+    responseHeaders?: Record<string, string[]>;
     /**
      * Indicates whether the response was fetched from disk cache.
      */
     fromCache: boolean;
     statusCode: number;
     statusLine: string;
-  }
-
-  interface OnSendHeadersFilter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
   }
 
   interface OnSendHeadersListenerDetails {
@@ -12074,7 +12272,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Contains which features the dialog should use. The following values are
      * supported:
      */
-    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory'>;
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
     /**
      * Message to display above input boxes.
      *
@@ -12122,7 +12320,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Contains which features the dialog should use. The following values are
      * supported:
      */
-    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory'>;
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
     /**
      * Message to display above input boxes.
      *
@@ -12205,25 +12403,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     quantity: number;
   }
 
-  interface PermissionCheckHandlerHandlerDetails {
-    /**
-     * The security orign of the `media` check.
-     */
-    securityOrigin: string;
-    /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
-     */
-    mediaType: ('video' | 'audio' | 'unknown');
-    /**
-     * The last URL the requesting frame loaded
-     */
-    requestingUrl: string;
-    /**
-     * Whether the frame making the request is the main frame
-     */
-    isMainFrame: boolean;
-  }
-
   interface PermissionRequestHandlerHandlerDetails {
     /**
      * The url of the `openExternal` request.
@@ -12287,57 +12466,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     numSockets?: number;
   }
 
-  interface PrintOptions {
-    /**
-     * Don't ask user for print settings. Default is `false`.
-     */
-    silent?: boolean;
-    /**
-     * Prints the background color and image of the web page. Default is `false`.
-     */
-    printBackground?: boolean;
-    /**
-     * Set the printer device name to use. Default is `''`.
-     */
-    deviceName?: string;
-    /**
-     * Set whether the printed web page will be in color or grayscale. Default is
-     * `true`.
-     */
-    color?: boolean;
-    margins?: Margins;
-    /**
-     * Whether the web page should be printed in landscape mode. Default is `false`.
-     */
-    landscape?: boolean;
-    /**
-     * The scale factor of the web page.
-     */
-    scaleFactor?: number;
-    /**
-     * The number of pages to print per page sheet.
-     */
-    pagesPerSheet?: number;
-    /**
-     * Whether the web page should be collated.
-     */
-    collate?: boolean;
-    /**
-     * The number of copies of the web page to print.
-     */
-    copies?: number;
-    /**
-     * The page range to print. Should have two keys: `from` and `to`.
-     */
-    pageRanges?: Record<string, number>;
-    /**
-     * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
-     * `longEdge`.
-     */
-    duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
-    dpi?: Dpi;
-  }
-
   interface PrintToPDFOptions {
     /**
      * Specifies the type of margins to use. Uses 0 for default margin, 1 for no
@@ -12390,19 +12518,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     corsEnabled?: boolean;
   }
 
-  interface ProcRequest {
-    hostname: string;
-    certificate: Certificate;
-    /**
-     * Verification result from chromium.
-     */
-    verificationResult: string;
-    /**
-     * Error code.
-     */
-    errorCode: number;
-  }
-
   interface ProgressBarOptions {
     /**
      * Mode for the progress bar. Can be `none`, `normal`, `indeterminate`, `error` or
@@ -12426,7 +12541,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method?: string;
     session?: (Session) | (null);
-    uploadData?: UploadData;
+    uploadData?: ProtocolResponseUploadData;
   }
 
   interface RelaunchOptions {
@@ -12435,9 +12550,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface Request {
-    method: string;
     url: string;
+    headers: Record<string, string>;
     referrer: string;
+    method: string;
+    uploadData: UploadData[];
   }
 
   interface ResizeOptions {
@@ -12450,8 +12567,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     height?: number;
     /**
-     * The desired quality of the resize image. Possible values are `good`, `better` or
-     * `best`. The default is `best`. These values express a desired quality/speed
+     * The desired quality of the resize image. Possible values are `good`, `better`,
+     * or `best`. The default is `best`. These values express a desired quality/speed
      * tradeoff. They are translated into an algorithm-specific method that depends on
      * the capabilities (CPU, GPU) of the underlying platform. It is possible for all
      * three methods to be mapped to the same algorithm on a given platform.
@@ -12524,6 +12641,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * @platform darwin
      */
     showsTagField?: boolean;
+    properties?: Array<'showHiddenFiles' | 'createDirectory' | 'treatPackageAsDirectory' | 'showOverwriteConfirmation' | 'dontAddToRecent'>;
     /**
      * Create a security scoped bookmark when packaged for the Mac App Store. If this
      * option is enabled and the file doesn't already exist a blank file will be
@@ -12582,6 +12700,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * @platform darwin
      */
     showsTagField?: boolean;
+    properties?: Array<'showHiddenFiles' | 'createDirectory' | 'treatPackageAsDirectory' | 'showOverwriteConfirmation' | 'dontAddToRecent'>;
     /**
      * Create a security scoped bookmark when packaged for the Mac App Store. If this
      * option is enabled and the file doesn't already exist a blank file will be
@@ -12708,6 +12827,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     label?: string;
     /**
+     * A short description of the button for use by screenreaders like VoiceOver.
+     */
+    accessibilityLabel?: string;
+    /**
      * Button background color in hex format, i.e `#ABCDEF`.
      */
     backgroundColor?: string;
@@ -12716,7 +12839,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     icon?: (NativeImage) | (string);
     /**
-     * Can be `left`, `right` or `overlay`.
+     * Can be `left`, `right` or `overlay`. Defaults to `overlay`.
      */
     iconPosition?: ('left' | 'right' | 'overlay');
     /**
@@ -12758,6 +12881,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     label?: string;
     /**
+     * A short description of the button for use by screenreaders like VoiceOver.
+     */
+    accessibilityLabel?: string;
+    /**
      * Hex color of text, i.e `#ABCDEF`.
      */
     textColor?: string;
@@ -12775,7 +12902,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * Items to display in the popover.
      */
-    items?: TouchBar;
+    items: TouchBar;
     /**
      * `true` to display a close button on the left of the popover, `false` to not show
      * it. Default is `true`.
@@ -12797,21 +12924,23 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     highlight?: (highlightedIndex: number) => void;
     /**
-     * Selected item style. Defaults to `null`.
+     * Selected item style. Can be `background`, `outline` or `none`. Defaults to
+     * `none`.
      */
-    selectedStyle?: string;
+    selectedStyle?: ('background' | 'outline' | 'none');
     /**
-     * Selected overlay item style. Defaults to `null`.
+     * Selected overlay item style. Can be `background`, `outline` or `none`. Defaults
+     * to `none`.
      */
-    overlayStyle?: string;
+    overlayStyle?: ('background' | 'outline' | 'none');
     /**
      * Defaults to `false`.
      */
     showArrowButtons?: boolean;
     /**
-     * Defaults to `free`.
+     * Can be `fixed` or `free`. The default is `free`.
      */
-    mode?: string;
+    mode?: ('fixed' | 'free');
     /**
      * Defaults to `true`.
      */
@@ -12833,7 +12962,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     segments: SegmentedControlSegment[];
     /**
      * The index of the currently selected segment, will update automatically with user
-     * interaction. When the mode is multiple it will be the last selected item.
+     * interaction. When the mode is `multiple` it will be the last selected item.
      */
     selectedIndex?: number;
     /**
@@ -12905,15 +13034,90 @@ See webContents.sendInputEvent for detailed description of `event` object.
   interface VerifyWidevineCdmOptions {
     session?: Session;
     disableUpdate?: boolean;
+    baseDir?: string;
   }
 
   interface VisibleOnAllWorkspacesOptions {
     /**
-     * Sets whether the window should be visible above fullscreen windows
+     * Sets whether the window should be visible above fullscreen windows _deprecated_
      *
      * @platform darwin
      */
     visibleOnFullScreen?: boolean;
+  }
+
+  interface WebContentsPrintOptions {
+    /**
+     * Don't ask user for print settings. Default is `false`.
+     */
+    silent?: boolean;
+    /**
+     * Prints the background color and image of the web page. Default is `false`.
+     */
+    printBackground?: boolean;
+    /**
+     * Set the printer device name to use. Default is `''`.
+     */
+    deviceName?: string;
+    /**
+     * Set whether the printed web page will be in color or grayscale. Default is
+     * `true`.
+     */
+    color?: boolean;
+    margins?: Margins;
+    /**
+     * Whether the web page should be printed in landscape mode. Default is `false`.
+     */
+    landscape?: boolean;
+    /**
+     * The scale factor of the web page.
+     */
+    scaleFactor?: number;
+    /**
+     * The number of pages to print per page sheet.
+     */
+    pagesPerSheet?: number;
+    /**
+     * Whether the web page should be collated.
+     */
+    collate?: boolean;
+    /**
+     * The number of copies of the web page to print.
+     */
+    copies?: number;
+    /**
+     * The page range to print. Should have two keys: `from` and `to`.
+     */
+    pageRanges?: Record<string, number>;
+    /**
+     * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
+     * `longEdge`.
+     */
+    duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
+    dpi?: Dpi;
+    /**
+     * String to be printed as page header.
+     */
+    header?: string;
+    /**
+     * String to be printed as page footer.
+     */
+    footer?: string;
+  }
+
+  interface WebviewTagPrintOptions {
+    /**
+     * Don't ask user for print settings. Default is `false`.
+     */
+    silent?: boolean;
+    /**
+     * Also prints the background color and image of the web page. Default is `false`.
+     */
+    printBackground?: boolean;
+    /**
+     * Set the printer device name to use. Default is `''`.
+     */
+    deviceName?: string;
   }
 
   interface WillNavigateEvent extends Event {
@@ -13253,6 +13457,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Default is `false`.
      */
     disableHtmlFullscreenWindowResize?: boolean;
+    /**
+     * An alternative title string provided only to accessibility tools such as screen
+     * readers. This string is not directly visible to users.
+     */
+    accessibleTitle?: string;
+    /**
+     * Whether to enable the builtin spellchecker. Default is `false`.
+     */
+    spellcheck?: boolean;
   }
 
   interface DefaultFontFamily {
@@ -13395,16 +13608,12 @@ declare namespace NodeJS {
     /**
      * The version of the host operating system.
      * 
-     * Examples:
-     * 
-     * * `macOS` -> `10.13.6`
-     * * `Windows` -> `10.0.17763`
-     * * `Linux` -> `4.15.0-45-generic`
+     * Example:
      * 
      * **Note:** It returns the actual operating system version instead of kernel
      * version on macOS unlike `os.release()`.
      */
-    getSystemVersion(): ('macOS' | 'Windows' | 'Linux');
+    getSystemVersion(): string;
     /**
      * Causes the main thread of the current process hang.
      */
