@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.0.0-beta.7
+// Type definitions for Electron 8.0.0-beta.9
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1328,6 +1328,12 @@ This method can only be called before app is ready.
      * Set the about panel options. This will override the values defined in the app's
      * `.plist` file on MacOS. See the Apple docs for more details. On Linux, values
      * must be set in order to be shown; there are no defaults.
+     *
+     * If you do not set `credits` but still wish to surface them in your app, AppKit
+     * will look for a file named "Credits.html", "Credits.rtf", and "Credits.rtfd", in
+     * that order, in the bundle returned by the NSBundle class method main. The first
+     * file found is used, and if none is found, the info area is left blank. See Apple
+     * documentation for more information.
      */
     setAboutPanelOptions(options: AboutPanelOptionsOptions): void;
     /**
@@ -4015,7 +4021,7 @@ Send given command to the debugging target.
      * * `bookmarks` String[] (optional) _macOS_ _mas_ - An array matching the
      * `filePaths` array of base64 encoded strings which contains security scoped
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
-     * populated.
+     * populated. (For return values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
@@ -4041,7 +4047,7 @@ Send given command to the debugging target.
      * * `bookmarks` String[] (optional) _macOS_ _mas_ - An array matching the
      * `filePaths` array of base64 encoded strings which contains security scoped
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
-     * populated.
+     * populated. (For return values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
@@ -4104,7 +4110,8 @@ Send given command to the debugging target.
      * `undefined`.
      * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
      * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
@@ -4124,7 +4131,8 @@ Send given command to the debugging target.
      * `undefined`.
      * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
      * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
@@ -12300,7 +12308,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * An array matching the `filePaths` array of base64 encoded strings which contains
      * security scoped bookmark data. `securityScopedBookmarks` must be enabled for
-     * this to be populated.
+     * this to be populated. (For return values, see table here.)
      *
      * @platform darwin,mas
      */
@@ -12664,6 +12672,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * Base64 encoded string which contains the security scoped bookmark data for the
      * saved file. `securityScopedBookmarks` must be enabled for this to be present.
+     * (For return values, see table here.)
      *
      * @platform darwin,mas
      */
@@ -13275,9 +13284,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * If set, this will sandbox the renderer associated with the window, making it
      * compatible with the Chromium OS-level sandbox and disabling the Node.js engine.
      * This is not the same as the `nodeIntegration` option and the APIs available to
-     * the preload script are more limited. Read more about the option here. **Note:**
-     * This option is currently experimental and may change or be removed in future
-     * Electron releases.
+     * the preload script are more limited. Read more about the option here.
      */
     sandbox?: boolean;
     /**
