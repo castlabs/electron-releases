@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.0.0-beta.9
+// Type definitions for Electron 8.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9262,6 +9262,13 @@ Calling `event.preventDefault()` will prevent the navigation.
      */
     cut(): void;
     /**
+     * Decrease the capturer count by one. The page will be set to hidden or occluded
+     * state when its browser window is hidden or occluded and the capturer count
+     * reaches zero. If you want to decrease the hidden capturer count instead you
+     * should set `stayHidden` to true.
+     */
+    decrementCapturerCount(stayHidden?: boolean): void;
+    /**
      * Executes the editing command `delete` in web page.
      */
     delete(): void;
@@ -9389,6 +9396,14 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
      */
     goToOffset(offset: number): void;
     /**
+     * Increase the capturer count by one. The page is considered visible when its
+     * browser window is hidden and the capturer count is non-zero. If you would like
+     * the page to stay hidden, you should ensure that `stayHidden` is set to true.
+     * 
+This also affects the Page Visibility API.
+     */
+    incrementCapturerCount(size?: Size, stayHidden?: boolean): void;
+    /**
      * A promise that resolves with a key for the inserted CSS that can later be used
      * to remove the CSS via `contents.removeInsertedCSS(key)`.
      *
@@ -9429,6 +9444,11 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
 **Deprecated**
      */
     isAudioMuted(): boolean;
+    /**
+     * Whether this page is being captured. It returns true when the capturer count is
+     * large then 0.
+     */
+    isBeingCaptured(): boolean;
     /**
      * Whether the renderer process has crashed.
      */
@@ -11020,6 +11040,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The style of window title bar. Default is `default`. Possible values are:
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
+    /**
+     * Set a custom position for the traffic light buttons. Can only be used with
+     * `titleBarStyle` set to `hidden`
+     */
+    trafficLightPosition?: Point;
     /**
      * Shows the title in the title bar in full screen mode on macOS for all
      * `titleBarStyle` options. Default is `false`.
@@ -13065,7 +13090,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     printBackground?: boolean;
     /**
-     * Set the printer device name to use. Default is `''`.
+     * Set the printer device name to use. Must be the system-defined name and not the
+     * 'friendly' name, e.g 'Brother_QL_820NWB' and not 'Brother QL-820NWB'.
      */
     deviceName?: string;
     /**
