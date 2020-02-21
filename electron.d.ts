@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.12
+// Type definitions for Electron 7.1.13
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6832,8 +6832,6 @@ Creates or updates a shortcut link at `shortcutPath`.
      *
      * **NOTE:** This API will return `false` on macOS systems older than Sierra
      * 10.12.2.
-
-**Deprecated**
      *
      * @platform darwin
      */
@@ -11967,6 +11965,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     fromCache: boolean;
     statusCode: number;
     statusLine: string;
+    error: string;
   }
 
   interface OnErrorOccurredListenerDetails {
@@ -11994,6 +11993,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     statusLine: string;
     statusCode: number;
+    requestHeaders: Record<string, string>;
     responseHeaders?: Record<string, string[]>;
   }
 
@@ -12838,7 +12838,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     printBackground?: boolean;
     /**
-     * Set the printer device name to use. Default is `''`.
+     * Set the printer device name to use. Must be the system-defined name and not the
+     * 'friendly' name, e.g 'Brother_QL_820NWB' and not 'Brother QL-820NWB'.
      */
     deviceName?: string;
     /**
