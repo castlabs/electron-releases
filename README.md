@@ -1,4 +1,4 @@
-# castLabs Electron v6.1.7 for Content Security
+# castLabs Electron v6.1.8 for Content Security
 
 Check out the [Wiki](https://github.com/castlabs/electron-releases/wiki) for general news and other updates.
 
@@ -12,7 +12,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v6.1.7/README.md)
+[Electron README](https://github.com/electron/electron/blob/v6.1.8/README.md)
 
 > **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -30,11 +30,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v6.1.7-wvvmp"
+  "electron": "https://github.com/castlabs/electron-releases#v6.1.8-wvvmp"
 }
 ```
 
-The `#v6.1.7-wvvmp` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v6.1.8-wvvmp` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Migrating from an earlier castLabs Electron for Content Security release
 
@@ -83,7 +83,7 @@ Widevine CDM verification/installation/update is normally automatically triggere
 ### `app.verifyWidevineCdm([options])`
 
 * `options` Object (optional)
-  * `session` [Session](https://github.com/electron/electron/blob/v6.1.7/docs/api/session.md) (optional)
+  * `session` [Session](https://github.com/electron/electron/blob/v6.1.8/docs/api/session.md) (optional)
   * `disableUpdate` boolean (optional)
   * `baseDir` string (optional)
 
