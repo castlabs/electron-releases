@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.0.1
+// Type definitions for Electron 8.0.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1188,16 +1188,15 @@ This method can only be called before app is ready.
      */
     isAccessibilitySupportEnabled(): boolean;
     /**
-     * This method checks if the current executable is the default handler for a
-     * protocol (aka URI scheme). If so, it will return true. Otherwise, it will return
-     * false.
+     * Whether the current executable is the default handler for a protocol (aka URI
+     * scheme).
      *
      * **Note:** On macOS, you can use this method to check if the app has been
      * registered as the default protocol handler for a protocol. You can also verify
      * this by checking `~/Library/Preferences/com.apple.LaunchServices.plist` on the
      * macOS machine. Please refer to Apple's documentation for details.
      *
-     * The API uses the Windows Registry and LSCopyDefaultHandlerForURLScheme
+     * The API uses the Windows Registry and `LSCopyDefaultHandlerForURLScheme`
      * internally.
      */
     isDefaultProtocolClient(protocol: string, path?: string, args?: string[]): boolean;
@@ -1369,20 +1368,17 @@ This method can only be called before app is ready.
     /**
      * Whether the call succeeded.
      *
-     * This method sets the current executable as the default handler for a protocol
-     * (aka URI scheme). It allows you to integrate your app deeper into the operating
-     * system. Once registered, all links with `your-protocol://` will be opened with
-     * the current executable. The whole link, including protocol, will be passed to
-     * your application as a parameter.
-     *
-     * On Windows, you can provide optional parameters path, the path to your
-     * executable, and args, an array of arguments to be passed to your executable when
-     * it launches.
+     * Sets the current executable as the default handler for a protocol (aka URI
+     * scheme). It allows you to integrate your app deeper into the operating system.
+     * Once registered, all links with `your-protocol://` will be opened with the
+     * current executable. The whole link, including protocol, will be passed to your
+     * application as a parameter.
      *
      * **Note:** On macOS, you can only register protocols that have been added to your
-     * app's `info.plist`, which can not be modified at runtime. You can however change
-     * the file with a simple text editor or script during build time. Please refer to
-     * Apple's documentation for details.
+     * app's `info.plist`, which cannot be modified at runtime. However, you can change
+     * the file during build time via Electron Forge, Electron Packager, or by editing
+     * `info.plist` with a text editor. Please refer to Apple's documentation for
+     * details.
      *
      * **Note:** In a Windows Store environment (when packaged as an `appx`) this API
      * will return `true` for all calls but the registry key it sets won't be
@@ -1390,7 +1386,7 @@ This method can only be called before app is ready.
      * application as a default protocol handler you must declare the protocol in your
      * manifest.
      *
-     * The API uses the Windows Registry and LSSetDefaultHandlerForURLScheme
+     * The API uses the Windows Registry and `LSSetDefaultHandlerForURLScheme`
      * internally.
      */
     setAsDefaultProtocolClient(protocol: string, path?: string, args?: string[]): boolean;
@@ -6944,8 +6940,6 @@ Creates or updates a shortcut link at `shortcutPath`.
      *
      * **NOTE:** This API will return `false` on macOS systems older than Sierra
      * 10.12.2.
-
-**Deprecated**
      *
      * @platform darwin
      */
