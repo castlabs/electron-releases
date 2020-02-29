@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.3
+// Type definitions for Electron 9.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -47,6 +47,7 @@ declare namespace Electron {
     protocol: Protocol;
     remote: Remote;
     screen: Screen;
+    ServiceWorkers: typeof ServiceWorkers;
     session: typeof Session;
     shell: Shell;
     systemPreferences: SystemPreferences;
@@ -6444,6 +6445,67 @@ e.g.
     label?: string;
   }
 
+  interface ServiceWorkerInfo {
+
+    // Docs: http://electronjs.org/docs/api/structures/service-worker-info
+
+    /**
+     * The virtual ID of the process that this service worker is running in.  This is
+     * not an OS level PID.  This aligns with the ID set used for
+     * `webContents.getProcessId()`.
+     */
+    renderProcessId: number;
+    /**
+     * The base URL that this service worker is active for.
+     */
+    scope: string;
+    /**
+     * The full URL to the script that this service worker runs
+     */
+    scriptUrl: string;
+  }
+
+  class ServiceWorkers extends NodeJS.EventEmitter {
+
+    // Docs: http://electronjs.org/docs/api/service-workers
+
+    /**
+     * Emitted when a service worker logs something to the console.
+     */
+    on(event: 'console-message', listener: (event: Event,
+                                            /**
+                                             * Information about the console message
+                                             */
+                                            messageDetails: MessageDetails) => void): this;
+    once(event: 'console-message', listener: (event: Event,
+                                            /**
+                                             * Information about the console message
+                                             */
+                                            messageDetails: MessageDetails) => void): this;
+    addListener(event: 'console-message', listener: (event: Event,
+                                            /**
+                                             * Information about the console message
+                                             */
+                                            messageDetails: MessageDetails) => void): this;
+    removeListener(event: 'console-message', listener: (event: Event,
+                                            /**
+                                             * Information about the console message
+                                             */
+                                            messageDetails: MessageDetails) => void): this;
+    /**
+     * A ServiceWorkerInfo object where the keys are the service worker version ID and
+     * the values are the information about that service worker.
+     */
+    getAllRunning(): Record<number, ServiceWorkerInfo>;
+    /**
+     * Information about this service worker
+     *
+     * If the service worker does not exist or is not running this method will throw an
+     * exception.
+     */
+    getFromVersionID(versionId: number): ServiceWorkerInfo;
+  }
+
   class Session extends NodeJS.EventEmitter {
 
     // Docs: http://electronjs.org/docs/api/session
@@ -6765,6 +6827,13 @@ Clears the host resolver cache.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
      * the files you need to host here.
      *
+     * If the files present in `hunspell_dictionaries.zip` are available at
+     * `https://example.com/dictionaries/language-code.bdic` then you should call this
+     * api with
+     * `ses.setSpellCheckerDictionaryDownloadURL('https://example.com/dictionaries/')`.
+     *  Please note the trailing slash.  The URL to the dictionaries is formed as
+     * `${url}${filename}`.
+     *
      * **Note:** On macOS the OS spellchecker is used and therefore we do not download
      * any dictionary files.  This API is a no-op on macOS.
      */
@@ -6793,6 +6862,7 @@ Clears the host resolver cache.
     readonly cookies: Cookies;
     readonly netLog: NetLog;
     readonly protocol: Protocol;
+    readonly serviceWorkers: ServiceWorkers;
     readonly webRequest: WebRequest;
   }
 
@@ -12201,6 +12271,36 @@ See webContents.sendInputEvent for detailed description of `event` object.
     normalizeAccessKeys?: boolean;
   }
 
+  interface MessageDetails {
+    /**
+     * The actual console message
+     */
+    message: string;
+    /**
+     * The version ID of the service worker that sent the log message
+     */
+    versionId: number;
+    /**
+     * The type of source for this message.  Can be `javascript`, `xml`, `network`,
+     * `console-api`, `storage`, `app-cache`, `rendering`, `security`, `deprecation`,
+     * `worker`, `violation`, `intervention`, `recommendation` or `other`.
+     */
+    source: ('javascript' | 'xml' | 'network' | 'console-api' | 'storage' | 'app-cache' | 'rendering' | 'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' | 'other');
+    /**
+     * The log level, from 0 to 3.  In order it matches `verbose`, `info`, `warning`
+     * and `error`.
+     */
+    level: number;
+    /**
+     * The URL the message came from
+     */
+    sourceUrl: string;
+    /**
+     * The line number of the source that triggered this console message
+     */
+    lineNumber: number;
+  }
+
   interface MoveToApplicationsFolderOptions {
     /**
      * A handler for potential conflict in move failure.
@@ -13521,7 +13621,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * options will also be shared between the web pages even when you specified
      * different values for them, including but not limited to `preload`, `sandbox` and
      * `nodeIntegration`. So it is suggested to use exact same `webPreferences` for web
-     * pages with the same `affinity`. _This property is experimental_
+     * pages with the same `affinity`. _Deprecated_
      */
     affinity?: string;
     /**
