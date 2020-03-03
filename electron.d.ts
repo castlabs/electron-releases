@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.0.2
+// Type definitions for Electron 8.0.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6648,6 +6648,13 @@ Clears the host resolver cache.
      * dictionary downloader at your own hosted version of the hunspell dictionaries.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
      * the files you need to host here.
+     *
+     * If the files present in `hunspell_dictionaries.zip` are available at
+     * `https://example.com/dictionaries/language-code.bdic` then you should call this
+     * api with
+     * `ses.setSpellCheckerDictionaryDownloadURL('https://example.com/dictionaries/')`.
+     *  Please note the trailing slash.  The URL to the dictionaries is formed as
+     * `${url}${filename}`.
      *
      * **Note:** On macOS the OS spellchecker is used and therefore we do not download
      * any dictionary files.  This API is a no-op on macOS.
