@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.0.3
+// Type definitions for Electron 8.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2404,6 +2404,13 @@ __Note__: On macOS this event is an alias of `moved`.
      */
     getTitle(): string;
     /**
+     * The current position for the traffic light buttons. Can only be used with
+     * `titleBarStyle` set to `hidden`.
+     *
+     * @platform darwin
+     */
+    getTrafficLightPosition(): Point;
+    /**
      * Whether the window has a shadow.
      */
     hasShadow(): boolean;
@@ -2987,6 +2994,13 @@ On macOS it does not remove the focus from the window.
      * @platform darwin
      */
     setTouchBar(touchBar: (TouchBar) | (null)): void;
+    /**
+     * Set a custom position for the traffic light buttons. Can only be used with
+     * `titleBarStyle` set to `hidden`.
+     *
+     * @platform darwin
+     */
+    setTrafficLightPosition(position: Point): void;
     /**
      * Adds a vibrancy effect to the browser window. Passing `null` or an empty string
      * will remove the vibrancy effect on the window.
@@ -6442,6 +6456,100 @@ e.g.
                                         */
                                        allowCredentials: boolean) => void): this;
     /**
+     * Emitted when a hunspell dictionary file starts downloading
+     */
+    on(event: 'spellcheck-dictionary-download-begin', listener: (event: Event,
+                                                                 /**
+                                                                  * The language code of the dictionary file
+                                                                  */
+                                                                 languageCode: string) => void): this;
+    once(event: 'spellcheck-dictionary-download-begin', listener: (event: Event,
+                                                                 /**
+                                                                  * The language code of the dictionary file
+                                                                  */
+                                                                 languageCode: string) => void): this;
+    addListener(event: 'spellcheck-dictionary-download-begin', listener: (event: Event,
+                                                                 /**
+                                                                  * The language code of the dictionary file
+                                                                  */
+                                                                 languageCode: string) => void): this;
+    removeListener(event: 'spellcheck-dictionary-download-begin', listener: (event: Event,
+                                                                 /**
+                                                                  * The language code of the dictionary file
+                                                                  */
+                                                                 languageCode: string) => void): this;
+    /**
+     * Emitted when a hunspell dictionary file download fails.  For details on the
+     * failure you should collect a netlog and inspect the download request.
+     */
+    on(event: 'spellcheck-dictionary-download-failure', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    once(event: 'spellcheck-dictionary-download-failure', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    addListener(event: 'spellcheck-dictionary-download-failure', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    removeListener(event: 'spellcheck-dictionary-download-failure', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    /**
+     * Emitted when a hunspell dictionary file has been successfully downloaded
+     */
+    on(event: 'spellcheck-dictionary-download-success', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    once(event: 'spellcheck-dictionary-download-success', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    addListener(event: 'spellcheck-dictionary-download-success', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    removeListener(event: 'spellcheck-dictionary-download-success', listener: (event: Event,
+                                                                   /**
+                                                                    * The language code of the dictionary file
+                                                                    */
+                                                                   languageCode: string) => void): this;
+    /**
+     * Emitted when a hunspell dictionary file has been successfully initialized. This
+     * occurs after the file has been downloaded.
+     */
+    on(event: 'spellcheck-dictionary-initialized', listener: (event: Event,
+                                                              /**
+                                                               * The language code of the dictionary file
+                                                               */
+                                                              languageCode: string) => void): this;
+    once(event: 'spellcheck-dictionary-initialized', listener: (event: Event,
+                                                              /**
+                                                               * The language code of the dictionary file
+                                                               */
+                                                              languageCode: string) => void): this;
+    addListener(event: 'spellcheck-dictionary-initialized', listener: (event: Event,
+                                                              /**
+                                                               * The language code of the dictionary file
+                                                               */
+                                                              languageCode: string) => void): this;
+    removeListener(event: 'spellcheck-dictionary-initialized', listener: (event: Event,
+                                                              /**
+                                                               * The language code of the dictionary file
+                                                               */
+                                                              languageCode: string) => void): this;
+    /**
      * Emitted when Electron is about to download `item` in `webContents`.
      *
      * Calling `event.preventDefault()` will cancel the download and `item` will not be
@@ -6647,7 +6755,9 @@ Clears the host resolver cache.
      * If you want to override this behavior you can use this API to point the
      * dictionary downloader at your own hosted version of the hunspell dictionaries.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
-     * the files you need to host here.
+     * the files you need to host here, the file server must be **case insensitive**
+     * you must upload each file twice, once with the case it has in the ZIP file and
+     * once with the filename as all lower case.
      *
      * If the files present in `hunspell_dictionaries.zip` are available at
      * `https://example.com/dictionaries/language-code.bdic` then you should call this
@@ -7001,14 +7111,6 @@ Returns an object with system animation settings.
      *
      * Gets the macOS appearance setting that is currently applied to your application,
      * maps to NSApplication.effectiveAppearance
-     *
-     * Please note that until Electron is built targeting the 10.14 SDK, your
-     * application's `effectiveAppearance` will default to 'light' and won't inherit
-     * the OS preference. In the interim in order for your application to inherit the
-     * OS preference you must set the `NSRequiresAquaSystemAppearance` key in your apps
-     * `Info.plist` to `false`.  If you are using `electron-packager` or
-     * `electron-forge` just set the `enableDarwinDarkMode` packager option to `true`.
-     * See the Electron Packager API for more details.
 
 **Deprecated**
      *
@@ -7262,14 +7364,6 @@ This property is only available on macOS 10.14 Mojave or newer.
      *
      * Returns the macOS appearance setting that is currently applied to your
      * application, maps to NSApplication.effectiveAppearance
-     *
-     * Please note that until Electron is built targeting the 10.14 SDK, your
-     * application's `effectiveAppearance` will default to 'light' and won't inherit
-     * the OS preference. In the interim in order for your application to inherit the
-     * OS preference you must set the `NSRequiresAquaSystemAppearance` key in your apps
-     * `Info.plist` to `false`.  If you are using `electron-packager` or
-     * `electron-forge` just set the `enableDarwinDarkMode` packager option to `true`.
-     * See the Electron Packager API for more details.
      *
      * @platform darwin
      */
@@ -9542,7 +9636,7 @@ Would require code like this
      * 
 Example usage:
      */
-    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
+    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: string) => void): void;
     /**
      * Resolves with the generated PDF data.
      *
