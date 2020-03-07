@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.5
+// Type definitions for Electron 9.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6729,6 +6729,13 @@ Clears the host resolver cache.
      */
     removeExtension(extensionId: string): void;
     /**
+     * Whether the word was successfully removed from the custom dictionary.
+     *
+     * **Note:** On macOS and Windows 10 this word will be removed from the OS custom
+     * dictionary as well
+     */
+    removeWordFromSpellCheckerDictionary(word: string): boolean;
+    /**
      * Resolves with the proxy information for `url`.
      */
     resolveProxy(url: string): Promise<string>;
@@ -6825,7 +6832,9 @@ Clears the host resolver cache.
      * If you want to override this behavior you can use this API to point the
      * dictionary downloader at your own hosted version of the hunspell dictionaries.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
-     * the files you need to host here.
+     * the files you need to host here, the file server must be **case insensitive**
+     * you must upload each file twice, once with the case it has in the ZIP file and
+     * once with the filename as all lower case.
      *
      * If the files present in `hunspell_dictionaries.zip` are available at
      * `https://example.com/dictionaries/language-code.bdic` then you should call this
@@ -9769,7 +9778,7 @@ Would require code like this
      * 
 Example usage:
      */
-    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
+    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: string) => void): void;
     /**
      * Resolves with the generated PDF data.
      *
