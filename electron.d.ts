@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.9
+// Type definitions for Electron 9.0.0-beta.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2465,8 +2465,6 @@ __Note__: On macOS this event is an alias of `moved`.
      * Whether the window can be manually closed by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2496,8 +2494,6 @@ On Linux always returns `true`.
     /**
      * Whether the maximize/zoom window button toggles fullscreen mode or maximizes the
      * window.
-
-**Deprecated**
      */
     isFullScreenable(): boolean;
     /**
@@ -2508,8 +2504,6 @@ On Linux always returns `true`.
      * Whether the window can be manually maximized by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2520,8 +2514,6 @@ On Linux always returns `true`.
     isMaximized(): boolean;
     /**
      * Whether menu bar automatically hides itself.
-
-**Deprecated**
      */
     isMenuBarAutoHide(): boolean;
     /**
@@ -2529,11 +2521,9 @@ On Linux always returns `true`.
      */
     isMenuBarVisible(): boolean;
     /**
-     * Whether the window can be manually minimized by user
+     * Whether the window can be manually minimized by the user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2548,10 +2538,8 @@ On Linux always returns `true`.
     isModal(): boolean;
     /**
      * Whether the window can be moved by user.
-     * 
-On Linux always returns `true`.
 
-**Deprecated**
+On Linux always returns `true`.
      *
      * @platform darwin,win32
      */
@@ -2562,9 +2550,7 @@ On Linux always returns `true`.
      */
     isNormal(): boolean;
     /**
-     * Whether the window can be manually resized by user.
-
-**Deprecated**
+     * Whether the window can be manually resized by the user.
      */
     isResizable(): boolean;
     /**
@@ -2728,8 +2714,6 @@ On Linux always returns `true`.
      *
      * If the menu bar is already visible, calling `setAutoHideMenuBar(true)` won't
      * hide it immediately.
-
-**Deprecated**
      */
     setAutoHideMenuBar(hide: boolean): void;
     /**
@@ -2744,8 +2728,6 @@ On Linux always returns `true`.
     setBrowserView(browserView: (BrowserView) | (null)): void;
     /**
      * Sets whether the window can be manually closed by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2794,8 +2776,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the maximize/zoom window button toggles fullscreen mode or
      * maximizes the window.
-
-**Deprecated**
      */
     setFullScreenable(fullscreenable: boolean): void;
     /**
@@ -2822,8 +2802,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually maximized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2848,8 +2826,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually minimized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2860,8 +2836,6 @@ On macOS it does not remove the focus from the window.
     setMinimumSize(width: number, height: number): void;
     /**
      * Sets whether the window can be moved by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2912,9 +2886,7 @@ On macOS it does not remove the focus from the window.
      */
     setRepresentedFilename(filename: string): void;
     /**
-     * Sets whether the window can be manually resized by user.
-
-**Deprecated**
+     * Sets whether the window can be manually resized by the user.
      */
     setResizable(resizable: boolean): void;
     /**
@@ -6700,7 +6672,8 @@ e.g.
                                           item: DownloadItem,
                                           webContents: WebContents) => void): this;
     /**
-     * Whether the word was successfully written to the custom dictionary.
+     * Whether the word was successfully written to the custom dictionary. This API
+     * will not work on non-persistent (in-memory) sessions.
      *
      * **Note:** On macOS and Windows 10 this word will be written to the OS custom
      * dictionary as well
@@ -6837,7 +6810,8 @@ Clears the host resolver cache.
      */
     removeExtension(extensionId: string): void;
     /**
-     * Whether the word was successfully removed from the custom dictionary.
+     * Whether the word was successfully removed from the custom dictionary. This API
+     * will not work on non-persistent (in-memory) sessions.
      *
      * **Note:** On macOS and Windows 10 this word will be removed from the OS custom
      * dictionary as well
@@ -10031,6 +10005,8 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+     * 
+The factor must be greater than 0.0.
 
 **Deprecated**
      */
@@ -10219,6 +10195,8 @@ An example of using node-spellchecker as provider:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+
+The factor must be greater than 0.0.
      */
     setZoomFactor(factor: number): void;
     /**
@@ -13857,6 +13835,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * message is in English and not localized.
      */
     safeDialogsMessage?: string;
+    /**
+     * Whether to disable dialogs completely. Overrides `safeDialogs`. Default is
+     * `false`.
+     */
+    disableDialogs?: boolean;
     /**
      * Whether dragging and dropping a file or link onto the page causes a navigation.
      * Default is `false`.
