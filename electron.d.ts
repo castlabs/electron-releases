@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.1.14
+// Type definitions for Electron 7.2.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9121,6 +9121,12 @@ Calling `event.preventDefault()` will prevent the navigation.
      */
     cut(): void;
     /**
+     * Decrease the capturer count by one. The page will be set to hidden or occluded
+     * state when its browser window is hidden or occluded and the capturer count
+     * reaches zero.
+     */
+    decrementCapturerCount(): void;
+    /**
      * Executes the editing command `delete` in web page.
      */
     delete(): void;
@@ -9237,6 +9243,13 @@ Code execution will be suspended until web page stop loading.
      */
     goToOffset(offset: number): void;
     /**
+     * Increase the capturer count by one. The page is considered visible when its
+     * browser window is hidden and the capturer count is non-zero.
+     * 
+This also affects the Page Visibility API.
+     */
+    incrementCapturerCount(size?: Size): void;
+    /**
      * A promise that resolves with a key for the inserted CSS that can later be used
      * to remove the CSS via `contents.removeInsertedCSS(key)`.
      *
@@ -9273,6 +9286,11 @@ Code execution will be suspended until web page stop loading.
 **Deprecated**
      */
     isAudioMuted(): boolean;
+    /**
+     * Whether this page is being captured. It returns true when the capturer count is
+     * large then 0.
+     */
+    isBeingCaptured(): boolean;
     /**
      * Whether the renderer process has crashed.
      */
@@ -9365,7 +9383,7 @@ Would require code like this
      * 
 Example usage:
      */
-    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: 'cancelled' | 'failed') => void): void;
+    print(options?: WebContentsPrintOptions, callback?: (success: boolean, failureReason: string) => void): void;
     /**
      * Resolves with the generated PDF data.
      *
@@ -10929,6 +10947,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * `session` is explicitly specified, `partition` is ignored.
      */
     partition?: string;
+    /**
+     * Whether to send cookies with this request from the provided session.  This will
+     * make the `net` request's cookie behavior match a `fetch` request. Default is
+     * `false`.
+     */
+    useSessionCookies?: boolean;
     /**
      * The protocol scheme in the form 'scheme:'. Currently supported values are
      * 'http:' or 'https:'. Defaults to 'http:'.
