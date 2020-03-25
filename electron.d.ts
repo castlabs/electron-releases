@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.1.1
+// Type definitions for Electron 8.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9805,6 +9805,8 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+     * 
+The factor must be greater than 0.0.
 
 **Deprecated**
      */
@@ -10001,6 +10003,8 @@ An example of using node-spellchecker as provider:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+
+The factor must be greater than 0.0.
      */
     setZoomFactor(factor: number): void;
     /**
@@ -11245,6 +11249,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * `session` is explicitly specified, `partition` is ignored.
      */
     partition?: string;
+    /**
+     * Whether to send cookies with this request from the provided session.  This will
+     * make the `net` request's cookie behavior match a `fetch` request. Default is
+     * `false`.
+     */
+    useSessionCookies?: boolean;
     /**
      * The protocol scheme in the form 'scheme:'. Currently supported values are
      * 'http:' or 'https:'. Defaults to 'http:'.
@@ -13571,6 +13581,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * message is in English and not localized.
      */
     safeDialogsMessage?: string;
+    /**
+     * Whether to disable dialogs completely. Overrides `safeDialogs`. Default is
+     * `false`.
+     */
+    disableDialogs?: boolean;
     /**
      * Whether dragging and dropping a file or link onto the page causes a navigation.
      * Default is `false`.
