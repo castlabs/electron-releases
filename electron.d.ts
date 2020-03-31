@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.10
+// Type definitions for Electron 9.0.0-beta.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1007,8 +1007,6 @@ This method can only be called before app is ready.
     getAppPath(): string;
     /**
      * The current value displayed in the counter badge.
-
-**Deprecated**
      *
      * @platform linux,darwin
      */
@@ -1113,8 +1111,6 @@ This method can only be called before app is ready.
      * to the npm modules spec. You should usually also specify a `productName` field,
      * which is your application's full capitalized name, and which will be preferred
      * over `name` by Electron.
-
-**Deprecated**
      */
     getName(): string;
     /**
@@ -1166,8 +1162,6 @@ This method can only be called before app is ready.
      * has been detected. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -1330,8 +1324,6 @@ This method can only be called before app is ready.
      *
      * **Note:** Rendering accessibility tree can significantly affect the performance
      * of your app. It should not be enabled by default.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -1402,8 +1394,6 @@ This method can only be called before app is ready.
      *
      * **Note:** Unity launcher requires the existence of a `.desktop` file to work,
      * for more information please read Desktop Environment Integration.
-     * 
-**Deprecated**
      *
      * @platform linux,darwin
      */
@@ -1458,8 +1448,6 @@ Here's a very simple example of creating a custom Jump List:
      *
      * **Note:** This function overrides the name used internally by Electron; it does
      * not affect the name that the OS uses.
-
-**Deprecated**
      */
     setName(name: string): void;
     /**
@@ -4423,8 +4411,6 @@ Send given command to the debugging target.
      * The save path of the download item. This will be either the path set via
      * `downloadItem.setSavePath(path)` or the path selected from the shown save
      * dialog.
-
-**Deprecated: use the `savePath` property instead.**
      */
     getSavePath(): string;
     /**
@@ -4484,8 +4470,6 @@ If the size is unknown, it returns 0.
      * The API is only available in session's `will-download` callback function. If
      * user doesn't set the save path via the API, Electron will use the original
      * routine to determine the save path; this usually prompts a save dialog.
-     * 
-**Deprecated: use the `savePath` property instead.**
      */
     setSavePath(path: string): void;
     savePath: string;
@@ -4503,7 +4487,19 @@ If the size is unknown, it returns 0.
     // Docs: http://electronjs.org/docs/api/structures/extension
 
     id: string;
+    /**
+     * Copy of the extension's manifest data.
+     */
+    manifest: any;
     name: string;
+    /**
+     * The extension's file path.
+     */
+    path: string;
+    /**
+     * The extension's `chrome-extension://` URL.
+     */
+    url: string;
     version: string;
   }
 
@@ -5410,8 +5406,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
     isEmpty(): boolean;
     /**
      * Whether the image is a template image.
-
-**Deprecated**
      */
     isTemplateImage(): boolean;
     /**
@@ -5423,8 +5417,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
     resize(options: ResizeOptions): NativeImage;
     /**
      * Marks the image as a template image.
-
-**Deprecated**
      */
     setTemplateImage(option: boolean): void;
     /**
@@ -7248,8 +7240,6 @@ Returns an object with system animation settings.
      * Gets the macOS appearance setting that you have declared you want for your
      * application, maps to NSApplication.appearance. You can use the
      * `setAppLevelAppearance` API to set this value.
-
-**Deprecated**
      *
      * @deprecated
      * @platform darwin
@@ -7272,8 +7262,6 @@ Returns an object with system animation settings.
      *
      * Gets the macOS appearance setting that is currently applied to your application,
      * maps to NSApplication.effectiveAppearance
-
-**Deprecated**
      *
      * @platform darwin
      */
@@ -7341,7 +7329,7 @@ Returns an object with system animation settings.
     /**
      * `true` if a high contrast theme is active, `false` otherwise.
      *
-     * **Depreacted:** Should use the new `nativeTheme.shouldUseHighContrastColors`
+     * **Deprecated:** Should use the new `nativeTheme.shouldUseHighContrastColors`
      * API.
      *
      * @deprecated
@@ -7425,8 +7413,6 @@ Returns an object with system animation settings.
     /**
      * Sets the appearance setting for your application, this should override the
      * system default and override the value of `getEffectiveAppearance`.
-     * 
-**Deprecated**
      *
      * @deprecated
      * @platform darwin
@@ -9629,8 +9615,6 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getAllSharedWorkers(): SharedWorkerInfo[];
     /**
      * If *offscreen rendering* is enabled returns the current frame rate.
-     * 
-**Deprecated**
      */
     getFrameRate(): number;
     /**
@@ -9662,8 +9646,6 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getURL(): string;
     /**
      * The user agent for this web page.
-
-**Deprecated**
      */
     getUserAgent(): string;
     /**
@@ -9672,14 +9654,10 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getWebRTCIPHandlingPolicy(): string;
     /**
      * the current zoom factor.
-
-**Deprecated**
      */
     getZoomFactor(): number;
     /**
      * the current zoom level.
-
-**Deprecated**
      */
     getZoomLevel(): number;
     /**
@@ -9743,8 +9721,6 @@ This also affects the Page Visibility API.
     invalidate(): void;
     /**
      * Whether this page has been muted.
-
-**Deprecated**
      */
     isAudioMuted(): boolean;
     /**
@@ -9942,8 +9918,6 @@ You can also read `frameId` from all incoming IPC messages in the main process.
     sendToFrame(frameId: number, channel: string, ...args: any[]): void;
     /**
      * Mute the audio on the current web page.
-
-**Deprecated**
      */
     setAudioMuted(muted: boolean): void;
     /**
@@ -9974,8 +9948,6 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * If *offscreen rendering* is enabled sets the frame rate to the specified number.
      * Only values between 1 and 60 are accepted.
-
-**Deprecated**
      */
     setFrameRate(fps: number): void;
     /**
@@ -9986,8 +9958,6 @@ An example of showing devtools in a `BrowserWindow`:
     setIgnoreMenuShortcuts(ignore: boolean): void;
     /**
      * Overrides the user agent for this web page.
-
-**Deprecated**
      */
     setUserAgent(userAgent: string): void;
     /**
@@ -10005,10 +9975,8 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
-     * 
-The factor must be greater than 0.0.
 
-**Deprecated**
+The factor must be greater than 0.0.
      */
     setZoomFactor(factor: number): void;
     /**
@@ -10016,8 +9984,6 @@ The factor must be greater than 0.0.
      * increment above or below represents zooming 20% larger or smaller to default
      * limits of 300% and 50% of original size, respectively. The formula for this is
      * `scale := 1.2 ^ level`.
-
-**Deprecated**
      */
     setZoomLevel(level: number): void;
     /**
@@ -11425,6 +11391,12 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * `session` is explicitly specified, `partition` is ignored.
      */
     partition?: string;
+    /**
+     * Whether to send cookies with this request from the provided session.  This will
+     * make the `net` request's cookie behavior match a `fetch` request. Default is
+     * `false`.
+     */
+    useSessionCookies?: boolean;
     /**
      * The protocol scheme in the form 'scheme:'. Currently supported values are
      * 'http:' or 'https:'. Defaults to 'http:'.
