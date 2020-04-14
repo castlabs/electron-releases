@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.15
+// Type definitions for Electron 9.0.0-beta.16
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
