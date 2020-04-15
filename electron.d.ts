@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.2.1
+// Type definitions for Electron 7.2.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3959,7 +3959,9 @@ Send given command to the debugging target.
      * It returns the index of the clicked button.
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * window, making it modal. If the `browserWindow` is not shown, the dialog will
+     * not be attached to it. In that case it will be displayed as an independent
+     * window.
      */
     showMessageBoxSync(browserWindow: BrowserWindow, options: MessageBoxSyncOptions): number;
     /**
@@ -3969,7 +3971,9 @@ Send given command to the debugging target.
      * It returns the index of the clicked button.
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * window, making it modal. If the `browserWindow` is not shown, the dialog will
+     * not be attached to it. In that case it will be displayed as an independent
+     * window.
      */
     showMessageBoxSync(options: MessageBoxSyncOptions): number;
     /**
@@ -9537,6 +9541,8 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+     * 
+The factor must be greater than 0.0.
 
 **Deprecated**
      */
@@ -9726,6 +9732,8 @@ An example of using node-spellchecker as provider:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
+
+The factor must be greater than 0.0.
      */
     setZoomFactor(factor: number): void;
     /**
