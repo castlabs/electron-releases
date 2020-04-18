@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.2.2
+// Type definitions for Electron 8.2.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2085,6 +2085,13 @@ __Note__: On macOS this event is an alias of `moved`.
     /**
      * Emitted on 3-finger swipe. Possible directions are `up`, `right`, `down`,
      * `left`.
+     *
+     * The method underlying this event is built to handle older macOS-style trackpad
+     * swiping, where the content on the screen doesn't move with the swipe. Most macOS
+     * trackpads are not configured to allow this kind of swiping anymore, so in order
+     * for it to emit properly the 'Swipe between pages' preference in `System
+     * Preferences > Trackpad > More Gestures` must be set to 'Swipe with two or three
+     * fingers'.
      *
      * @platform darwin
      */
