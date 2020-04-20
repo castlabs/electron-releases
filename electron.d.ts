@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.17
+// Type definitions for Electron 9.0.0-beta.18
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4008,7 +4008,8 @@ Send given command to the debugging target.
      * It returns the index of the clicked button.
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * window, making it modal. If `browserWindow` is not shown dialog will not be
+     * attached to it. In such case It will be displayed as independed window.
      */
     showMessageBoxSync(browserWindow: BrowserWindow, options: MessageBoxSyncOptions): number;
     /**
@@ -4018,7 +4019,8 @@ Send given command to the debugging target.
      * It returns the index of the clicked button.
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * window, making it modal. If `browserWindow` is not shown dialog will not be
+     * attached to it. In such case It will be displayed as independed window.
      */
     showMessageBoxSync(options: MessageBoxSyncOptions): number;
     /**
