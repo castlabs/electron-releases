@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.18
+// Type definitions for Electron 9.0.0-beta.19
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10043,7 +10043,7 @@ Takes a V8 heap snapshot and saves it to `filePath`.
     unselect(): void;
     audioMuted: boolean;
     readonly debugger: Debugger;
-    readonly devToolsWebContents: WebContents;
+    readonly devToolsWebContents: (WebContents) | (null);
     frameRate: number;
     readonly hostWebContents: WebContents;
     readonly id: number;
