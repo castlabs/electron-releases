@@ -1,9 +1,10 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: 功能要求
+about: 建議這個專案的想法
 title: ''
-labels: ''
-assignees: ''
+labels: bug, duplicate, enhancement, good first issue, help wanted, invalid, question,
+  wontfix
+assignees: abc52090241
 
 ---
 

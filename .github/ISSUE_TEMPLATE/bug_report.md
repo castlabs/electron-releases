@@ -1,9 +1,10 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: 錯誤報告
+about: 建立報告以說明我們改進
 title: ''
-labels: ''
-assignees: ''
+labels: bug, documentation, duplicate, enhancement, good first issue, help wanted,
+  invalid, question, wontfix
+assignees: abc52090241
 
 ---
 
