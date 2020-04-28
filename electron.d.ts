@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.19
+// Type definitions for Electron 9.0.0-beta.20
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -695,7 +695,7 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when Handoff is about to be resumed on another device. If you need to
      * update the state to be transferred, you should call `event.preventDefault()`
      * immediately, construct a new `userInfo` dictionary and call
-     * `app.updateCurrentActiviy()` in a timely manner. Otherwise, the operation will
+     * `app.updateCurrentActivity()` in a timely manner. Otherwise, the operation will
      * fail and `continue-activity-error` will be called.
      *
      * @platform darwin
@@ -909,8 +909,8 @@ In most cases, you should do everything in the `ready` event handler.
     removeListener(event: 'will-finish-launching', listener: Function): this;
     /**
      * Emitted when all windows have been closed and the application will quit. Calling
-     * `event.preventDefault()` will prevent the default behaviour, which is
-     * terminating the application.
+     * `event.preventDefault()` will prevent the default behavior, which is terminating
+     * the application.
      *
      * See the description of the `window-all-closed` event for the differences between
      * the `will-quit` and `window-all-closed` events.
@@ -954,7 +954,7 @@ In most cases, you should do everything in the `ready` event handler.
     /**
      * By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain
      * basis if the GPU processes crashes too frequently. This function disables that
-     * behaviour.
+     * behavior.
 
 This method can only be called before app is ready.
      */
@@ -1305,7 +1305,7 @@ This method can only be called before app is ready.
     resignCurrentActivity(): void;
     /**
      * Set the about panel options. This will override the values defined in the app's
-     * `.plist` file on MacOS. See the Apple docs for more details. On Linux, values
+     * `.plist` file on macOS. See the Apple docs for more details. On Linux, values
      * must be set in order to be shown; there are no defaults.
      *
      * If you do not set `credits` but still wish to surface them in your app, AppKit
@@ -2791,7 +2791,7 @@ On macOS it does not remove the focus from the window.
      */
     setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
     /**
-     * Enters or leaves the kiosk mode.
+     * Enters or leaves kiosk mode.
      */
     setKiosk(flag: boolean): void;
     /**
@@ -2907,7 +2907,7 @@ On macOS it does not remove the focus from the window.
      * Enters or leaves simple fullscreen mode.
      *
      * Simple fullscreen mode emulates the native fullscreen behavior found in versions
-     * of Mac OS X prior to Lion (10.7).
+     * of macOS prior to Lion (10.7).
      *
      * @platform darwin
      */
@@ -3061,13 +3061,21 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
     accessibleTitle: string;
     autoHideMenuBar: boolean;
     closable: boolean;
+    documentEdited: boolean;
     excludedFromShownWindowsMenu: boolean;
     fullScreenable: boolean;
     readonly id: number;
+    kiosk: boolean;
     maximizable: boolean;
+    menuBarVisible: boolean;
     minimizable: boolean;
     movable: boolean;
+    representedFilename: string;
     resizable: boolean;
+    shadow: boolean;
+    simpleFullScreen: boolean;
+    title: string;
+    visibleOnAllWorkspaces: boolean;
     readonly webContents: WebContents;
   }
 
@@ -7256,7 +7264,7 @@ Returns an object with system animation settings.
     getAppLevelAppearance(): ('dark' | 'light' | 'unknown');
     /**
      * The system color setting in RGB hexadecimal form (`#ABCDEF`). See the Windows
-     * docs and the MacOS docs for more details.
+     * docs and the macOS docs for more details.
      *
      * The following colors are only available on macOS 10.14: `find-highlight`,
      * `selected-content-background`, `separator`,
@@ -11200,7 +11208,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     skipTaskbar?: boolean;
     /**
-     * The kiosk mode. Default is `false`.
+     * Whether the window is in kiosk mode. Default is `false`.
      */
     kiosk?: boolean;
     /**
@@ -11272,7 +11280,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     opacity?: number;
     /**
-     * Forces using dark theme for the window, only works on some GTK+3 desktop
+     * Forces using dark theme for the window, only works on some GTK desktop
      * environments. Default is `false`.
      */
     darkTheme?: boolean;
