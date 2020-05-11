@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.22
+// Type definitions for Electron 9.0.0-beta.23
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5574,6 +5574,13 @@ Starts recording network events to `path`.
     readonly currentlyLoggingPath: string;
   }
 
+  interface NewWindowEvent extends Event {
+
+    // Docs: http://electronjs.org/docs/api/structures/new-window-event
+
+    newGuest?: BrowserWindow;
+  }
+
   class Notification extends NodeJS.EventEmitter {
 
     // Docs: http://electronjs.org/docs/api/notification
@@ -9047,7 +9054,7 @@ The usage is the same with the `login` event of `app`.
      * reference the new `BrowserWindow` instance, failing to do so may result in
      * unexpected behavior. For example:
      */
-    on(event: 'new-window', listener: (event: Event,
+    on(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -9069,7 +9076,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    once(event: 'new-window', listener: (event: Event,
+    once(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -9091,7 +9098,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    addListener(event: 'new-window', listener: (event: Event,
+    addListener(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -9113,7 +9120,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    removeListener(event: 'new-window', listener: (event: Event,
+    removeListener(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
