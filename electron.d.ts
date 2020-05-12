@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0-beta.23
+// Type definitions for Electron 9.0.0-beta.24
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -983,8 +983,10 @@ This method can only be called before app is ready.
     /**
      * On Linux, focuses on the first visible window. On macOS, makes the application
      * the active app. On Windows, focuses on the application's first window.
+     * 
+You should seek to use the `steal` option as sparingly as possible.
      */
-    focus(): void;
+    focus(options?: FocusOptions): void;
     /**
      * Name of the application handling the protocol, or an empty string if there is no
      * handler. For instance, if Electron is the default handler of the URL, this could
@@ -1121,7 +1123,7 @@ This method can only be called before app is ready.
      * called first, a default log directory will be created equivalent to calling
      * `app.setAppLogsPath()` without a `path` parameter.
      */
-    getPath(name: 'home' | 'appData' | 'userData' | 'cache' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'logs' | 'pepperFlashSystemPlugin'): string;
+    getPath(name: 'home' | 'appData' | 'userData' | 'cache' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'logs' | 'pepperFlashSystemPlugin' | 'crashDumps'): string;
     /**
      * The version of the loaded application. If no version is found in the
      * application's `package.json` file, the version of the current bundle or
@@ -3700,79 +3702,92 @@ Sets a cookie with `details`.
     /**
      * Set an extra parameter to be sent with the crash report. The values specified
      * here will be sent in addition to any values set via the `extra` option when
-     * `start` was called. This API is only available on macOS and windows, if you need
-     * to add/update extra parameters on Linux after your first call to `start` you can
-     * call `start` again with the updated `extra` options.
+     * `start` was called.
      *
-     * @platform darwin,win32
+     * Parameters added in this fashion (or via the `extra` parameter to
+     * `crashReporter.start`) are specific to the calling process. Adding extra
+     * parameters in the main process will not cause those parameters to be sent along
+     * with crashes from renderer or other child processes. Similarly, adding extra
+     * parameters in a renderer process will not result in those parameters being sent
+     * with crashes that occur in other renderer processes or in the main process.
+     *
+     * **Note:** Parameters have limits on the length of the keys and values. Key names
+     * must be no longer than 39 bytes, and values must be no longer than 127 bytes.
+     * Keys with names longer than the maximum will be silently ignored. Key values
+     * longer than the maximum length will be truncated.
      */
     addExtraParameter(key: string, value: string): void;
     /**
      * The directory where crashes are temporarily stored before being uploaded.
+     * 
+**Note:** This method is deprecated, use `app.getPath('crashDumps')` instead.
+     *
+     * @deprecated
      */
     getCrashesDirectory(): string;
     /**
-     * Returns the date and ID of the last crash report. Only crash reports that have
-     * been uploaded will be returned; even if a crash report is present on disk it
-     * will not be returned until it is uploaded. In the case that there are no
-     * uploaded reports, `null` is returned.
+     * The date and ID of the last crash report. Only crash reports that have been
+     * uploaded will be returned; even if a crash report is present on disk it will not
+     * be returned until it is uploaded. In the case that there are no uploaded
+     * reports, `null` is returned.
+     * 
+**Note:** Calling this method from the renderer process is deprecated.
      */
     getLastCrashReport(): CrashReport;
     /**
-     * See all of the current parameters being passed to the crash reporter.
+     * The current 'extra' parameters of the crash reporter.
      */
-    getParameters(): void;
+    getParameters(): Record<string, string>;
     /**
      * Returns all uploaded crash reports. Each report contains the date and uploaded
      * ID.
+
+**Note:** Calling this method from the renderer process is deprecated.
      */
     getUploadedReports(): CrashReport[];
     /**
      * Whether reports should be submitted to the server. Set through the `start`
      * method or `setUploadToServer`.
      * 
-**Note:** This API can only be called from the main process.
+**Note:** Calling this method from the renderer process is deprecated.
      */
     getUploadToServer(): boolean;
     /**
-     * Remove a extra parameter from the current set of parameters so that it will not
-     * be sent with the crash report.
-     *
-     * @platform darwin,win32
+     * Remove a extra parameter from the current set of parameters. Future crashes will
+     * not include this parameter.
      */
     removeExtraParameter(key: string): void;
     /**
      * This would normally be controlled by user preferences. This has no effect if
      * called before `start` is called.
      * 
-**Note:** This API can only be called from the main process.
+**Note:** Calling this method from the renderer process is deprecated.
      */
     setUploadToServer(uploadToServer: boolean): void;
     /**
-     * You are required to call this method before using any other `crashReporter` APIs
-     * and in each process (main/renderer) from which you want to collect crash
-     * reports. You can pass different options to `crashReporter.start` when calling
-     * from different processes.
+     * This method must be called before using any other `crashReporter` APIs. Once
+     * initialized this way, the crashpad handler collects crashes from all
+     * subsequently created processes. The crash reporter cannot be disabled once
+     * started.
      *
-     * **Note** Child processes created via the `child_process` module will not have
-     * access to the Electron modules. Therefore, to collect crash reports from them,
-     * use `process.crashReporter.start` instead. Pass the same options as above along
-     * with an additional one called `crashesDirectory` that should point to a
-     * directory to store the crash reports temporarily. You can test this out by
-     * calling `process.crash()` to crash the child process.
+     * This method should be called as early as possible in app startup, preferably
+     * before `app.on('ready')`. If the crash reporter is not initialized at the time a
+     * renderer process is created, then that renderer process will not be monitored by
+     * the crash reporter.
      *
-     * **Note:** If you need send additional/updated `extra` parameters after your
-     * first call `start` you can call `addExtraParameter` on macOS or call `start`
-     * again with the new/updated `extra` parameters on Linux and Windows.
+     * **Note:** You can test out the crash reporter by generating a crash using
+     * `process.crash()`.
      *
-     * **Note:** On macOS and windows, Electron uses a new `crashpad` client for crash
-     * collection and reporting. If you want to enable crash reporting, initializing
-     * `crashpad` from the main process using `crashReporter.start` is required
-     * regardless of which process you want to collect crashes from. Once initialized
-     * this way, the crashpad handler collects crashes from all processes. You still
-     * have to call `crashReporter.start` from the renderer or child process, otherwise
-     * crashes from them will get reported without `companyName`, `productName` or any
-     * of the `extra` information.
+     * **Note:** If you need to send additional/updated `extra` parameters after your
+     * first call `start` you can call `addExtraParameter`.
+     *
+     * **Note:** Parameters passed in `extra`, `globalExtra` or set with
+     * `addExtraParameter` have limits on the length of the keys and values. Key names
+     * must be at most 39 bytes long, and values must be no longer than 127 bytes. Keys
+     * with names longer than the maximum will be silently ignored. Key values longer
+     * than the maximum length will be truncated.
+     * 
+**Note:** Calling this method from the renderer process is deprecated.
      */
     start(options: CrashReporterStartOptions): void;
   }
@@ -11629,7 +11644,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface CrashReporterStartOptions {
-    companyName: string;
     /**
      * URL that crash reports will be sent to as POST.
      */
@@ -11639,24 +11653,53 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     productName?: string;
     /**
-     * Whether crash reports should be sent to the server. Default is `true`.
+     * Deprecated alias for `{ globalExtra: { _companyName: ... } }`.
+     *
+     * @deprecated
+     */
+    companyName?: string;
+    /**
+     * Whether crash reports should be sent to the server. If false, crash reports will
+     * be collected and stored in the crashes directory, but not uploaded. Default is
+     * `true`.
      */
     uploadToServer?: boolean;
     /**
-     * Default is `false`.
+     * If true, crashes generated in the main process will not be forwarded to the
+     * system crash handler. Default is `false`.
      */
     ignoreSystemCrashHandler?: boolean;
     /**
-     * An object you can define that will be sent along with the report. Only string
-     * properties are sent correctly. Nested objects are not supported. When using
-     * Windows, the property names and values must be fewer than 64 characters.
+     * If true, limit the number of crashes uploaded to 1/hour. Default is `false`.
+     *
+     * @platform darwin,win32
+     */
+    rateLimit?: boolean;
+    /**
+     * If true, crash reports will be compressed and uploaded with `Content-Encoding:
+     * gzip`. Not all collection servers support compressed payloads. Default is
+     * `false`.
+     *
+     * @platform darwin,win32
+     */
+    compress?: boolean;
+    /**
+     * Extra string key/value annotations that will be sent along with crash reports
+     * that are generated in the main process. Only string values are supported.
+     * Crashes generated in child processes will not contain these extra parameters to
+     * crash reports generated from child processes, call `addExtraParameter` from the
+     * child process.
      */
     extra?: Record<string, string>;
     /**
-     * Directory to store the crash reports temporarily (only used when the crash
-     * reporter is started via `process.crashReporter.start`).
+     * Extra string key/value annotations that will be sent along with any crash
+     * reports generated in any process. These annotations cannot be changed once the
+     * crash reporter has been started. If a key is present in both the global extra
+     * parameters and the process-specific extra parameters, then the global one will
+     * take precedence. By default, `productName` and the app version are included, as
+     * well as the Electron version.
      */
-    crashesDirectory?: string;
+    globalExtra?: Record<string, string>;
   }
 
   interface CreateFromBitmapOptions {
@@ -11866,6 +11909,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Accepts several other intra-word matches, defaults to `false`.
      */
     medialCapitalAsWordStart?: boolean;
+  }
+
+  interface FocusOptions {
+    /**
+     * Make the receiver the active app even if another app is currently active.
+     *
+     * @platform darwin
+     */
+    steal: boolean;
   }
 
   interface FoundInPageEvent extends Event {
