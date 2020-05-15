@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.2.5
+// Type definitions for Electron 8.3.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -998,8 +998,10 @@ This method can only be called before app is ready.
     /**
      * On Linux, focuses on the first visible window. On macOS, makes the application
      * the active app. On Windows, focuses on the application's first window.
+     * 
+You should seek to use the `steal` option as sparingly as possible.
      */
-    focus(): void;
+    focus(options?: FocusOptions): void;
     /**
      * Name of the application handling the protocol, or an empty string if there is no
      * handler. For instance, if Electron is the default handler of the URL, this could
@@ -5550,6 +5552,13 @@ Starts recording network events to `path`.
     readonly currentlyLoggingPath: string;
   }
 
+  interface NewWindowEvent extends Event {
+
+    // Docs: http://electronjs.org/docs/api/structures/new-window-event
+
+    newGuest?: BrowserWindow;
+  }
+
   class Notification extends NodeJS.EventEmitter {
 
     // Docs: http://electronjs.org/docs/api/notification
@@ -8831,7 +8840,7 @@ The usage is the same with the `login` event of `app`.
      * reference the new `BrowserWindow` instance, failing to do so may result in
      * unexpected behavior. For example:
      */
-    on(event: 'new-window', listener: (event: Event,
+    on(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -8853,7 +8862,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    once(event: 'new-window', listener: (event: Event,
+    once(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -8875,7 +8884,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    addListener(event: 'new-window', listener: (event: Event,
+    addListener(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -8897,7 +8906,7 @@ The usage is the same with the `login` event of `app`.
                                         * `Referer` header being sent, depending on the referrer policy.
                                         */
                                        referrer: Referrer) => void): this;
-    removeListener(event: 'new-window', listener: (event: Event,
+    removeListener(event: 'new-window', listener: (event: NewWindowEvent,
                                        url: string,
                                        frameName: string,
                                        /**
@@ -11710,6 +11719,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
     medialCapitalAsWordStart?: boolean;
   }
 
+  interface FocusOptions {
+    /**
+     * Make the receiver the active app even if another app is currently active.
+     *
+     * @platform darwin
+     */
+    steal: boolean;
+  }
+
   interface FoundInPageEvent extends Event {
     result: FoundInPageResult;
   }
@@ -13620,6 +13638,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether to enable the builtin spellchecker. Default is `false`.
      */
     spellcheck?: boolean;
+    /**
+     * Whether to enable the WebSQL api. Default is `true`.
+     */
+    enableWebSQL?: boolean;
   }
 
   interface DefaultFontFamily {
