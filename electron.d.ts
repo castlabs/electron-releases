@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.0
+// Type definitions for Electron 9.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10112,9 +10112,13 @@ Takes a V8 heap snapshot and saves it to `filePath`.
     executeJavaScript(code: string, userGesture?: boolean, callback?: (result: any, error: Error) => void): Promise<any>;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
-     * execution throws or results in a rejected promise.
-     * 
-Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     * execution could not start.
+     *
+     * Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     *
+     * Note that when the execution of script fails, the returned promise will not
+     * reject and the `result` would be `undefined`. This is because Chromium does not
+     * dispatch errors of isolated worlds to foreign worlds.
      */
     executeJavaScriptInIsolatedWorld(worldId: number, scripts: WebSource[], userGesture?: boolean, callback?: (result: any, error: Error) => void): Promise<any>;
     /**
@@ -13914,6 +13918,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether to enable the builtin spellchecker. Default is `true`.
      */
     spellcheck?: boolean;
+    /**
+     * Whether to enable the WebSQL api. Default is `true`.
+     */
+    enableWebSQL?: boolean;
   }
 
   interface DefaultFontFamily {
