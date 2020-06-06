@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.2
+// Type definitions for Electron 9.0.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1561,7 +1561,7 @@ Here's a very simple example of creating a custom Jump List:
     /**
      * A `Boolean` which when `true` disables the overrides that Electron has in place
      * to ensure renderer processes are restarted on every navigation.  The current
-     * default value for this property is `false`.
+     * default value for this property is `true`.
      *
      * The intention is for these overrides to become disabled by default and then at
      * some point in the future this property will be removed.  This property impacts
@@ -13922,6 +13922,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether to enable the WebSQL api. Default is `true`.
      */
     enableWebSQL?: boolean;
+    /**
+     * Enforces the v8 code caching policy used by blink. Accepted values are
+     */
+    v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
   }
 
   interface DefaultFontFamily {
