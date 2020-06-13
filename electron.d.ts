@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.3
+// Type definitions for Electron 9.0.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12014,6 +12014,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Equivalent to KeyboardEvent.repeat.
      */
     isAutoRepeat: boolean;
+    /**
+     * Equivalent to KeyboardEvent.isComposing.
+     */
+    isComposing: boolean;
     /**
      * Equivalent to KeyboardEvent.shiftKey.
      */
