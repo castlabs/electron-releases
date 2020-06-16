@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.3.1
+// Type definitions for Electron 8.3.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1024,8 +1024,6 @@ You should seek to use the `steal` option as sparingly as possible.
     getAppPath(): string;
     /**
      * The current value displayed in the counter badge.
-
-**Deprecated**
      *
      * @platform linux,darwin
      */
@@ -1130,8 +1128,6 @@ You should seek to use the `steal` option as sparingly as possible.
      * to the npm modules spec. You should usually also specify a `productName` field,
      * which is your application's full capitalized name, and which will be preferred
      * over `name` by Electron.
-
-**Deprecated**
      */
     getName(): string;
     /**
@@ -1183,8 +1179,6 @@ You should seek to use the `steal` option as sparingly as possible.
      * has been detected. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -1346,8 +1340,6 @@ You should seek to use the `steal` option as sparingly as possible.
      *
      * **Note:** Rendering accessibility tree can significantly affect the performance
      * of your app. It should not be enabled by default.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -1402,8 +1394,6 @@ You should seek to use the `steal` option as sparingly as possible.
      *
      * **Note:** Unity launcher requires the existence of a `.desktop` file to work,
      * for more information please read Desktop Environment Integration.
-     * 
-**Deprecated**
      *
      * @platform linux,darwin
      */
@@ -1458,8 +1448,6 @@ Here's a very simple example of creating a custom Jump List:
      *
      * **Note:** This function overrides the name used internally by Electron; it does
      * not affect the name that the OS uses.
-
-**Deprecated**
      */
     setName(name: string): void;
     /**
@@ -2442,8 +2430,6 @@ __Note__: On macOS this event is an alias of `moved`.
      * Whether the window can be manually closed by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2473,8 +2459,6 @@ On Linux always returns `true`.
     /**
      * Whether the maximize/zoom window button toggles fullscreen mode or maximizes the
      * window.
-
-**Deprecated**
      */
     isFullScreenable(): boolean;
     /**
@@ -2485,8 +2469,6 @@ On Linux always returns `true`.
      * Whether the window can be manually maximized by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2497,8 +2479,6 @@ On Linux always returns `true`.
     isMaximized(): boolean;
     /**
      * Whether menu bar automatically hides itself.
-
-**Deprecated**
      */
     isMenuBarAutoHide(): boolean;
     /**
@@ -2506,11 +2486,9 @@ On Linux always returns `true`.
      */
     isMenuBarVisible(): boolean;
     /**
-     * Whether the window can be manually minimized by user
+     * Whether the window can be manually minimized by the user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2525,10 +2503,8 @@ On Linux always returns `true`.
     isModal(): boolean;
     /**
      * Whether the window can be moved by user.
-     * 
-On Linux always returns `true`.
 
-**Deprecated**
+On Linux always returns `true`.
      *
      * @platform darwin,win32
      */
@@ -2539,9 +2515,7 @@ On Linux always returns `true`.
      */
     isNormal(): boolean;
     /**
-     * Whether the window can be manually resized by user.
-
-**Deprecated**
+     * Whether the window can be manually resized by the user.
      */
     isResizable(): boolean;
     /**
@@ -2708,8 +2682,6 @@ On Linux always returns `true`.
      *
      * If the menu bar is already visible, calling `setAutoHideMenuBar(true)` won't
      * hide it immediately.
-
-**Deprecated**
      */
     setAutoHideMenuBar(hide: boolean): void;
     /**
@@ -2724,8 +2696,6 @@ On Linux always returns `true`.
     setBrowserView(browserView: (BrowserView) | (null)): void;
     /**
      * Sets whether the window can be manually closed by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2774,8 +2744,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the maximize/zoom window button toggles fullscreen mode or
      * maximizes the window.
-
-**Deprecated**
      */
     setFullScreenable(fullscreenable: boolean): void;
     /**
@@ -2802,8 +2770,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually maximized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2828,8 +2794,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually minimized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2840,8 +2804,6 @@ On macOS it does not remove the focus from the window.
     setMinimumSize(width: number, height: number): void;
     /**
      * Sets whether the window can be moved by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2892,9 +2854,7 @@ On macOS it does not remove the focus from the window.
      */
     setRepresentedFilename(filename: string): void;
     /**
-     * Sets whether the window can be manually resized by user.
-
-**Deprecated**
+     * Sets whether the window can be manually resized by the user.
      */
     setResizable(resizable: boolean): void;
     /**
@@ -4430,8 +4390,6 @@ Send given command to the debugging target.
      * The save path of the download item. This will be either the path set via
      * `downloadItem.setSavePath(path)` or the path selected from the shown save
      * dialog.
-
-**Deprecated: use the `savePath` property instead.**
      */
     getSavePath(): string;
     /**
@@ -4491,8 +4449,6 @@ If the size is unknown, it returns 0.
      * The API is only available in session's `will-download` callback function. If
      * user doesn't set the save path via the API, Electron will use the original
      * routine to determine the save path; this usually prompts a save dialog.
-     * 
-**Deprecated: use the `savePath` property instead.**
      */
     setSavePath(path: string): void;
     savePath: string;
@@ -5398,8 +5354,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
     isEmpty(): boolean;
     /**
      * Whether the image is a template image.
-
-**Deprecated**
      */
     isTemplateImage(): boolean;
     /**
@@ -5411,8 +5365,6 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
     resize(options: ResizeOptions): NativeImage;
     /**
      * Marks the image as a template image.
-
-**Deprecated**
      */
     setTemplateImage(option: boolean): void;
     /**
@@ -7105,8 +7057,6 @@ Returns an object with system animation settings.
      * Gets the macOS appearance setting that you have declared you want for your
      * application, maps to NSApplication.appearance. You can use the
      * `setAppLevelAppearance` API to set this value.
-
-**Deprecated**
      *
      * @deprecated
      * @platform darwin
@@ -7129,8 +7079,6 @@ Returns an object with system animation settings.
      *
      * Gets the macOS appearance setting that is currently applied to your application,
      * maps to NSApplication.effectiveAppearance
-
-**Deprecated**
      *
      * @platform darwin
      */
@@ -7198,7 +7146,7 @@ Returns an object with system animation settings.
     /**
      * `true` if a high contrast theme is active, `false` otherwise.
      *
-     * **Depreacted:** Should use the new `nativeTheme.shouldUseHighContrastColors`
+     * **Deprecated:** Should use the new `nativeTheme.shouldUseHighContrastColors`
      * API.
      *
      * @deprecated
@@ -7282,8 +7230,6 @@ Returns an object with system animation settings.
     /**
      * Sets the appearance setting for your application, this should override the
      * system default and override the value of `getEffectiveAppearance`.
-     * 
-**Deprecated**
      *
      * @deprecated
      * @platform darwin
@@ -9439,8 +9385,6 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getAllSharedWorkers(): SharedWorkerInfo[];
     /**
      * If *offscreen rendering* is enabled returns the current frame rate.
-     * 
-**Deprecated**
      */
     getFrameRate(): number;
     /**
@@ -9472,8 +9416,6 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getURL(): string;
     /**
      * The user agent for this web page.
-
-**Deprecated**
      */
     getUserAgent(): string;
     /**
@@ -9482,14 +9424,10 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
     getWebRTCIPHandlingPolicy(): string;
     /**
      * the current zoom factor.
-
-**Deprecated**
      */
     getZoomFactor(): number;
     /**
      * the current zoom level.
-
-**Deprecated**
      */
     getZoomLevel(): number;
     /**
@@ -9553,8 +9491,6 @@ This also affects the Page Visibility API.
     invalidate(): void;
     /**
      * Whether this page has been muted.
-
-**Deprecated**
      */
     isAudioMuted(): boolean;
     /**
@@ -9752,8 +9688,6 @@ You can also read `frameId` from all incoming IPC messages in the main process.
     sendToFrame(frameId: number, channel: string, ...args: any[]): void;
     /**
      * Mute the audio on the current web page.
-
-**Deprecated**
      */
     setAudioMuted(muted: boolean): void;
     /**
@@ -9784,8 +9718,6 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * If *offscreen rendering* is enabled sets the frame rate to the specified number.
      * Only values between 1 and 60 are accepted.
-
-**Deprecated**
      */
     setFrameRate(fps: number): void;
     /**
@@ -9804,8 +9736,6 @@ An example of showing devtools in a `BrowserWindow`:
     setLayoutZoomLevelLimits(minimumLevel: number, maximumLevel: number): Promise<void>;
     /**
      * Overrides the user agent for this web page.
-
-**Deprecated**
      */
     setUserAgent(userAgent: string): void;
     /**
@@ -9823,10 +9753,8 @@ An example of showing devtools in a `BrowserWindow`:
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
-     * 
-The factor must be greater than 0.0.
 
-**Deprecated**
+The factor must be greater than 0.0.
      */
     setZoomFactor(factor: number): void;
     /**
@@ -9834,8 +9762,6 @@ The factor must be greater than 0.0.
      * increment above or below represents zooming 20% larger or smaller to default
      * limits of 300% and 50% of original size, respectively. The formula for this is
      * `scale := 1.2 ^ level`.
-
-**Deprecated**
      */
     setZoomLevel(level: number): void;
     /**
@@ -9924,9 +9850,13 @@ Takes a V8 heap snapshot and saves it to `filePath`.
     executeJavaScript(code: string, userGesture?: boolean): Promise<any>;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
-     * the result of the code is a rejected promise.
-     * 
-Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     * execution could not start.
+     *
+     * Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     *
+     * Note that when the execution of script fails, the returned promise will not
+     * reject and the `result` would be `undefined`. This is because Chromium does not
+     * dispatch errors of isolated worlds to foreign worlds.
      */
     executeJavaScriptInIsolatedWorld(worldId: number, scripts: WebSource[], userGesture?: boolean): Promise<any>;
     /**
@@ -11819,6 +11749,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     isAutoRepeat: boolean;
     /**
+     * Equivalent to KeyboardEvent.isComposing.
+     */
+    isComposing: boolean;
+    /**
      * Equivalent to KeyboardEvent.shiftKey.
      */
     shift: boolean;
@@ -13642,6 +13576,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether to enable the WebSQL api. Default is `true`.
      */
     enableWebSQL?: boolean;
+    /**
+     * Enforces the v8 code caching policy used by blink. Accepted values are
+     */
+    v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
   }
 
   interface DefaultFontFamily {
