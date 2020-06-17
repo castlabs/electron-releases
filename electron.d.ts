@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.2
+// Type definitions for Electron 10.0.0-beta.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1505,7 +1505,7 @@ Here's a very simple example of creating a custom Jump List:
     /**
      * A `Boolean` which when `true` disables the overrides that Electron has in place
      * to ensure renderer processes are restarted on every navigation.  The current
-     * default value for this property is `false`.
+     * default value for this property is `true`.
      *
      * The intention is for these overrides to become disabled by default and then at
      * some point in the future this property will be removed.  This property impacts
@@ -6076,97 +6076,101 @@ Calculate system idle time in seconds.
     // Docs: http://electronjs.org/docs/api/protocol
 
     /**
+     * Whether the protocol was successfully intercepted
+     *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `Buffer` as a response.
      */
-    interceptBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: Buffer) => void) => void, completion?: (error: Error) => void): void;
+    interceptBufferProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (Buffer) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully intercepted
+     *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a file as a response.
      */
-    interceptFileProtocol(scheme: string, handler: (request: Request, callback: (filePath: string) => void) => void, completion?: (error: Error) => void): void;
+    interceptFileProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully intercepted
+     *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a new HTTP request as a response.
      */
-    interceptHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    interceptHttpProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: ProtocolResponse) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully intercepted
+     *
      * Same as `protocol.registerStreamProtocol`, except that it replaces an existing
      * protocol handler.
      */
-    interceptStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStreamProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (NodeJS.ReadableStream) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully intercepted
+     *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `String` as a response.
      */
-    interceptStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    interceptStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
-     * fulfilled with a boolean that indicates whether there is already a handler for
-     * `scheme`.
+     * Whether `scheme` is already intercepted.
      */
-    isProtocolHandled(scheme: string): Promise<boolean>;
+    isProtocolIntercepted(scheme: string): boolean;
     /**
+     * Whether `scheme` is already registered.
+     */
+    isProtocolRegistered(scheme: string): boolean;
+    /**
+     * Whether the protocol was successfully registered
+     *
      * Registers a protocol of `scheme` that will send a `Buffer` as a response.
      *
      * The usage is the same with `registerFileProtocol`, except that the `callback`
-     * should be called with either a `Buffer` object or an object that has the `data`,
-     * `mimeType`, and `charset` properties.
+     * should be called with either a `Buffer` object or an object that has the `data`
+     * property.
 
 Example:
      */
-    registerBufferProtocol(scheme: string, handler: (request: Request, callback: (buffer?: (Buffer) | (MimeTypedBuffer)) => void) => void, completion?: (error: Error) => void): void;
+    registerBufferProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (Buffer) | (ProtocolResponse)) => void) => void): boolean;
     /**
-     * Registers a protocol of `scheme` that will send the file as a response. The
-     * `handler` will be called with `handler(request, callback)` when a `request` is
-     * going to be created with `scheme`. `completion` will be called with
-     * `completion(null)` when `scheme` is successfully registered or
-     * `completion(error)` when failed.
+     * Whether the protocol was successfully registered
+     *
+     * Registers a protocol of `scheme` that will send a file as the response. The
+     * `handler` will be called with `request` and `callback` where `request` is an
+     * incoming request for the `scheme`.
      *
      * To handle the `request`, the `callback` should be called with either the file's
      * path or an object that has a `path` property, e.g. `callback(filePath)` or
-     * `callback({ path: filePath })`. The object may also have a `headers` property
-     * which gives a map of headers to values for the response headers, e.g.
-     * `callback({ path: filePath, headers: {"Content-Security-Policy": "default-src
-     * 'none'"]})`.
-     *
-     * When `callback` is called with nothing, a number, or an object that has an
-     * `error` property, the `request` will fail with the `error` number you specified.
-     * For the available error numbers you can use, please see the net error list.
+     * `callback({ path: filePath })`. The `filePath` must be an absolute path.
      *
      * By default the `scheme` is treated like `http:`, which is parsed differently
-     * than protocols that follow the "generic URI syntax" like `file:`.
+     * from protocols that follow the "generic URI syntax" like `file:`.
      */
-    registerFileProtocol(scheme: string, handler: (request: Request, callback: (filePath?: (string) | (FilePathWithHeaders)) => void) => void, completion?: (error: Error) => void): void;
+    registerFileProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully registered
+     *
      * Registers a protocol of `scheme` that will send an HTTP request as a response.
      *
      * The usage is the same with `registerFileProtocol`, except that the `callback`
-     * should be called with a `redirectRequest` object that has the `url`, `method`,
-     * `referrer`, `uploadData` and `session` properties.
-     *
-     * By default the HTTP request will reuse the current session. If you want the
-     * request to have a different session you should set `session` to `null`.
-     * 
-For POST requests the `uploadData` object must be provided.
+     * should be called with an object that has the `url` property.
      */
-    registerHttpProtocol(scheme: string, handler: (request: Request, callback: (redirectRequest: RedirectRequest) => void) => void, completion?: (error: Error) => void): void;
+    registerHttpProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: ProtocolResponse) => void) => void): boolean;
     /**
      * **Note:** This method can only be used before the `ready` event of the `app`
      * module gets emitted and can be called only once.
      *
      * Registers the `scheme` as standard, secure, bypasses content security policy for
-     * resources, allows registering ServiceWorker and supports fetch API.
+     * resources, allows registering ServiceWorker and supports fetch API. Specify a
+     * privilege with the value of `true` to enable the capability.
      *
-     * Specify a privilege with the value of `true` to enable the capability. An
-     * example of registering a privileged scheme, with bypassing Content Security
+     * An example of registering a privileged scheme, that bypasses Content Security
      * Policy:
      *
      * A standard scheme adheres to what RFC 3986 calls generic URI syntax. For example
      * `http` and `https` are standard schemes, while `file` is not.
      *
-     * Registering a scheme as standard, will allow relative and absolute resources to
-     * be resolved correctly when served. Otherwise the scheme will behave like the
-     * `file` protocol, but without the ability to resolve relative URLs.
+     * Registering a scheme as standard allows relative and absolute resources to be
+     * resolved correctly when served. Otherwise the scheme will behave like the `file`
+     * protocol, but without the ability to resolve relative URLs.
      *
      * For example when you load following page with custom protocol without
      * registering it as standard scheme, the image will not be loaded because
@@ -6180,52 +6184,52 @@ For POST requests the `uploadData` object must be provided.
      * cookies) are disabled for non standard schemes. So in general if you want to
      * register a custom protocol to replace the `http` protocol, you have to register
      * it as a standard scheme.
-     *
-     * `protocol.registerSchemesAsPrivileged` can be used to replicate the
-     * functionality of the previous `protocol.registerStandardSchemes`,
-     * `webFrame.registerURLSchemeAs*` and `protocol.registerServiceWorkerSchemes`
-     * functions that existed prior to Electron 5.0.0, for example:
-     * 
-**before (<= v4.x)**
-
-**after (>= v5.x)**
      */
     registerSchemesAsPrivileged(customSchemes: CustomScheme[]): void;
     /**
-     * Registers a protocol of `scheme` that will send a `Readable` as a response.
+     * Whether the protocol was successfully registered
      *
-     * The usage is similar to the other `register{Any}Protocol`, except that the
-     * `callback` should be called with either a `Readable` object or an object that
-     * has the `data`, `statusCode`, and `headers` properties.
+     * Registers a protocol of `scheme` that will send a stream as a response.
+     *
+     * The usage is the same with `registerFileProtocol`, except that the `callback`
+     * should be called with either a `ReadableStream` object or an object that has the
+     * `data` property.
      *
      * Example:
      *
      * It is possible to pass any object that implements the readable stream API (emits
      * `data`/`end`/`error` events). For example, here's how a file could be returned:
      */
-    registerStreamProtocol(scheme: string, handler: (request: Request, callback: (stream?: (NodeJS.ReadableStream) | (StreamProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStreamProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (NodeJS.ReadableStream) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether the protocol was successfully registered
+     *
      * Registers a protocol of `scheme` that will send a `String` as a response.
      *
      * The usage is the same with `registerFileProtocol`, except that the `callback`
-     * should be called with either a `String` or an object that has the `data`,
-     * `mimeType`, and `charset` properties.
+     * should be called with either a `String` or an object that has the `data`
+     * property.
      */
-    registerStringProtocol(scheme: string, handler: (request: Request, callback: (data?: (string) | (StringProtocolResponse)) => void) => void, completion?: (error: Error) => void): void;
+    registerStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
-     * Remove the interceptor installed for `scheme` and restore its original handler.
+     * Whether the protocol was successfully unintercepted
+     * 
+Remove the interceptor installed for `scheme` and restore its original handler.
      */
-    uninterceptProtocol(scheme: string, completion?: (error: Error) => void): void;
+    uninterceptProtocol(scheme: string): boolean;
     /**
-     * Unregisters the custom protocol of `scheme`.
+     * Whether the protocol was successfully unregistered
+     * 
+Unregisters the custom protocol of `scheme`.
      */
-    unregisterProtocol(scheme: string, completion?: (error: Error) => void): void;
+    unregisterProtocol(scheme: string): boolean;
   }
 
   interface ProtocolRequest {
 
     // Docs: http://electronjs.org/docs/api/structures/protocol-request
 
+    headers: Record<string, string>;
     method: string;
     referrer: string;
     uploadData?: UploadData[];
@@ -6923,7 +6927,7 @@ Clears the host resolver cache.
      * Calling `setCertificateVerifyProc(null)` will revert back to default certificate
      * verify proc.
      */
-    setCertificateVerifyProc(proc: ((request: CertificateVerifyProcProcRequest, callback: (verificationResult: number) => void) => void) | (null)): void;
+    setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -11517,20 +11521,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     message: string;
   }
 
-  interface CertificateVerifyProcProcRequest {
-    hostname: string;
-    certificate: Certificate;
-    validatedCertificate: Certificate;
-    /**
-     * Verification result from chromium.
-     */
-    verificationResult: string;
-    /**
-     * Error code.
-     */
-    errorCode: number;
-  }
-
   interface ClearStorageDataOptions {
     /**
      * Should follow `window.location.origin`’s representation `scheme://host:port`.
@@ -12138,6 +12128,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Equivalent to KeyboardEvent.repeat.
      */
     isAutoRepeat: boolean;
+    /**
+     * Equivalent to KeyboardEvent.isComposing.
+     */
+    isComposing: boolean;
     /**
      * Equivalent to KeyboardEvent.shiftKey.
      */
@@ -13093,24 +13087,23 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
   }
 
-  interface RedirectRequest {
-    url: string;
-    method?: string;
-    session?: (Session) | (null);
-    uploadData?: ProtocolResponseUploadData;
-  }
-
   interface RelaunchOptions {
     args?: string[];
     execPath?: string;
   }
 
   interface Request {
-    url: string;
-    headers: Record<string, string>;
-    referrer: string;
-    method: string;
-    uploadData: UploadData[];
+    hostname: string;
+    certificate: Certificate;
+    validatedCertificate: Certificate;
+    /**
+     * Verification result from chromium.
+     */
+    verificationResult: string;
+    /**
+     * Error code.
+     */
+    errorCode: number;
   }
 
   interface ResizeOptions {
@@ -14070,6 +14063,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether to enable the WebSQL api. Default is `true`.
      */
     enableWebSQL?: boolean;
+    /**
+     * Enforces the v8 code caching policy used by blink. Accepted values are
+     */
+    v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
   }
 
   interface DefaultFontFamily {
@@ -14175,7 +14172,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
-    type CertificateVerifyProcProcRequest = Electron.CertificateVerifyProcProcRequest;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -14255,7 +14251,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type ReadBookmark = Electron.ReadBookmark;
-    type RedirectRequest = Electron.RedirectRequest;
     type RelaunchOptions = Electron.RelaunchOptions;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
@@ -14421,7 +14416,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
-    type CertificateVerifyProcProcRequest = Electron.CertificateVerifyProcProcRequest;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -14501,7 +14495,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type ReadBookmark = Electron.ReadBookmark;
-    type RedirectRequest = Electron.RedirectRequest;
     type RelaunchOptions = Electron.RelaunchOptions;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
@@ -14624,7 +14617,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
-    type CertificateVerifyProcProcRequest = Electron.CertificateVerifyProcProcRequest;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -14704,7 +14696,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type ReadBookmark = Electron.ReadBookmark;
-    type RedirectRequest = Electron.RedirectRequest;
     type RelaunchOptions = Electron.RelaunchOptions;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
