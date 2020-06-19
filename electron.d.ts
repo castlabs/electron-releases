@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.3
+// Type definitions for Electron 10.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12290,7 +12290,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Will be called with `click(menuItem, browserWindow, event)` when the menu item
      * is clicked.
      */
-    click?: (menuItem: MenuItem, browserWindow: BrowserWindow, event: KeyboardEvent) => void;
+    click?: (menuItem: MenuItem, browserWindow: (BrowserWindow) | (undefined), event: KeyboardEvent) => void;
     /**
      * Can be `undo`, `redo`, `cut`, `copy`, `paste`, `pasteAndMatchStyle`, `delete`,
      * `selectAll`, `reload`, `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`,
