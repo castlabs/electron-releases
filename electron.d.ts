@@ -1,4 +1,4 @@
-// Type definitions for Electron 7.3.1
+// Type definitions for Electron 7.3.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2412,8 +2412,6 @@ __Note__: On macOS this event is an alias of `moved`.
      * Whether the window can be manually closed by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2443,8 +2441,6 @@ On Linux always returns `true`.
     /**
      * Whether the maximize/zoom window button toggles fullscreen mode or maximizes the
      * window.
-
-**Deprecated**
      */
     isFullScreenable(): boolean;
     /**
@@ -2455,8 +2451,6 @@ On Linux always returns `true`.
      * Whether the window can be manually maximized by user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2467,8 +2461,6 @@ On Linux always returns `true`.
     isMaximized(): boolean;
     /**
      * Whether menu bar automatically hides itself.
-
-**Deprecated**
      */
     isMenuBarAutoHide(): boolean;
     /**
@@ -2476,11 +2468,9 @@ On Linux always returns `true`.
      */
     isMenuBarVisible(): boolean;
     /**
-     * Whether the window can be manually minimized by user
+     * Whether the window can be manually minimized by the user.
      * 
 On Linux always returns `true`.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2495,10 +2485,8 @@ On Linux always returns `true`.
     isModal(): boolean;
     /**
      * Whether the window can be moved by user.
-     * 
-On Linux always returns `true`.
 
-**Deprecated**
+On Linux always returns `true`.
      *
      * @platform darwin,win32
      */
@@ -2509,9 +2497,7 @@ On Linux always returns `true`.
      */
     isNormal(): boolean;
     /**
-     * Whether the window can be manually resized by user.
-
-**Deprecated**
+     * Whether the window can be manually resized by the user.
      */
     isResizable(): boolean;
     /**
@@ -2672,8 +2658,6 @@ On Linux always returns `true`.
      *
      * If the menu bar is already visible, calling `setAutoHideMenuBar(true)` won't
      * hide it immediately.
-
-**Deprecated**
      */
     setAutoHideMenuBar(hide: boolean): void;
     /**
@@ -2688,8 +2672,6 @@ On Linux always returns `true`.
     setBrowserView(browserView: (BrowserView) | (null)): void;
     /**
      * Sets whether the window can be manually closed by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2738,8 +2720,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the maximize/zoom window button toggles fullscreen mode or
      * maximizes the window.
-
-**Deprecated**
      */
     setFullScreenable(fullscreenable: boolean): void;
     /**
@@ -2766,8 +2746,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually maximized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2792,8 +2770,6 @@ On macOS it does not remove the focus from the window.
     /**
      * Sets whether the window can be manually minimized by user. On Linux does
      * nothing.
-
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2804,8 +2780,6 @@ On macOS it does not remove the focus from the window.
     setMinimumSize(width: number, height: number): void;
     /**
      * Sets whether the window can be moved by user. On Linux does nothing.
-     * 
-**Deprecated**
      *
      * @platform darwin,win32
      */
@@ -2856,9 +2830,7 @@ On macOS it does not remove the focus from the window.
      */
     setRepresentedFilename(filename: string): void;
     /**
-     * Sets whether the window can be manually resized by user.
-
-**Deprecated**
+     * Sets whether the window can be manually resized by the user.
      */
     setResizable(resizable: boolean): void;
     /**
@@ -9656,9 +9628,13 @@ Takes a V8 heap snapshot and saves it to `filePath`.
     executeJavaScript(code: string, userGesture?: boolean): Promise<any>;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
-     * the result of the code is a rejected promise.
-     * 
-Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     * execution could not start.
+     *
+     * Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     *
+     * Note that when the execution of script fails, the returned promise will not and
+     * the `result` would be `undefined`. This is because Chromium does not errors of
+     * isolated worlds to foreign worlds.
      */
     executeJavaScriptInIsolatedWorld(worldId: number, scripts: WebSource[], userGesture?: boolean): Promise<any>;
     /**
