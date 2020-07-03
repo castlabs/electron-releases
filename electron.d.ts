@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.4
+// Type definitions for Electron 10.0.0-beta.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5859,6 +5859,8 @@ Starts recording network events to `path`.
     removeListener(event: 'on-battery', listener: Function): this;
     /**
      * Emitted when system is resuming.
+     *
+     * @platform linux,win32
      */
     on(event: 'resume', listener: Function): this;
     once(event: 'resume', listener: Function): this;
@@ -5878,6 +5880,8 @@ Starts recording network events to `path`.
     removeListener(event: 'shutdown', listener: Function): this;
     /**
      * Emitted when the system is suspending.
+     *
+     * @platform linux,win32
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
@@ -7379,7 +7383,11 @@ Returns an object with system animation settings.
      * consent for `microphone` and `camera` access. macOS 10.15 Catalina or higher
      * requires consent for `screen` access.
      *
-     * @platform darwin
+     * Windows 10 has a global setting controlling `microphone` and `camera` access for
+     * all win32 applications. It will always return `granted` for `screen` and for all
+     * media types on older versions of Windows.
+     *
+     * @platform win32,darwin
      */
     getMediaAccessStatus(mediaType: 'microphone' | 'camera' | 'screen'): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
     /**
