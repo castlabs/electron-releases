@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.0.5
+// Type definitions for Electron 9.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -37,6 +37,8 @@ declare namespace Electron {
     ipcRenderer: IpcRenderer;
     MenuItem: typeof MenuItem;
     Menu: typeof Menu;
+    MessageChannelMain: typeof MessageChannelMain;
+    MessagePortMain: typeof MessagePortMain;
     nativeImage: typeof NativeImage;
     nativeTheme: NativeTheme;
     netLog: NetLog;
@@ -592,8 +594,21 @@ You should call `event.preventDefault()` if you want to handle this event.
                                            webContents: WebContents,
                                            moduleName: string) => void): this;
     /**
-     * Emitted when the renderer process of `webContents` crashes or is killed.
+     * Emitted when the renderer process unexpectedly dissapears.  This is normally
+     * because it was crashed or killed.
      */
+    on(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    once(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    addListener(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    removeListener(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
     on(event: 'renderer-process-crashed', listener: (event: Event,
                                                      webContents: WebContents,
                                                      killed: boolean) => void): this;
@@ -3843,7 +3858,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     once(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3853,7 +3873,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     addListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3863,7 +3888,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     removeListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3873,7 +3903,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     /**
      * Attaches the debugger to the `webContents`.
      */
@@ -3893,7 +3928,7 @@ Sets a cookie with `details`.
      * 
 Send given command to the debugging target.
      */
-    sendCommand(method: string, commandParams?: any): Promise<any>;
+    sendCommand(method: string, commandParams?: any, sessionId?: string): Promise<any>;
   }
 
   interface DesktopCapturer {
@@ -4894,6 +4929,10 @@ Retrieves the product descriptions.
      */
     frameId: number;
     /**
+     * A list of MessagePorts that were transferred with this message
+     */
+    ports: MessagePortMain[];
+    /**
      * A function that will send an IPC message to the renderer frame that sent the
      * original message that you are currently handling.  You should use this method to
      * "reply" to the sent message in order to guarantee the reply will go to the
@@ -4933,17 +4972,22 @@ Retrieves the product descriptions.
      *
      * Send a message to the main process via `channel` and expect a result
      * asynchronously. Arguments will be serialized with the Structured Clone
-     * Algorithm, just like `postMessage`, so prototype chains will not be included.
-     * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
-     * exception.
+     * Algorithm, just like `window.postMessage`, so prototype chains will not be
+     * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
+     * an exception.
      *
      * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
      * Electron objects is deprecated, and will begin throwing an exception starting
      * with Electron 9.
      *
      * The main process should listen for `channel` with `ipcMain.handle()`.
+     *
+     * For example:
+     *
+     * If you need to transfer a `MessagePort` to the main process, use
+     * `ipcRenderer.postMessage`.
      * 
-For example:
+If you do not need a respons to the message, consider using `ipcRenderer.send`.
      */
     invoke(channel: string, ...args: any[]): Promise<any>;
     /**
@@ -4957,6 +5001,20 @@ For example:
      */
     once(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
     /**
+     * Send a message to the main process, optionally transferring ownership of zero or
+     * more `MessagePort` objects.
+     *
+     * The transferred `MessagePort` objects will be available in the main process as
+     * `MessagePortMain` objects by accessing the `ports` property of the emitted
+     * event.
+     *
+     * For example:
+     *
+     * For more information on using `MessagePort` and `MessageChannel`, see the MDN
+     * documentation.
+     */
+    postMessage(channel: string, message: any, transfer?: MessagePort[]): void;
+    /**
      * Removes all listeners, or those of the specified `channel`.
      */
     removeAllListeners(channel: string): this;
@@ -4968,8 +5026,9 @@ For example:
     /**
      * Send an asynchronous message to the main process via `channel`, along with
      * arguments. Arguments will be serialized with the Structured Clone Algorithm,
-     * just like `postMessage`, so prototype chains will not be included. Sending
-     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
+     * just like `window.postMessage`, so prototype chains will not be included.
+     * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
+     * exception.
      *
      * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
      * Electron objects is deprecated, and will begin throwing an exception starting
@@ -4977,6 +5036,12 @@ For example:
      *
      * The main process handles it by listening for `channel` with the `ipcMain`
      * module.
+     *
+     * If you need to transfer a `MessagePort` to the main process, use
+     * `ipcRenderer.postMessage`.
+     *
+     * If you want to receive a single response from the main process, like the result
+     * of a method call, consider using `ipcRenderer.invoke`.
      */
     send(channel: string, ...args: any[]): void;
     /**
@@ -4984,8 +5049,9 @@ For example:
      *
      * Send a message to the main process via `channel` and expect a result
      * synchronously. Arguments will be serialized with the Structured Clone Algorithm,
-     * just like `postMessage`, so prototype chains will not be included. Sending
-     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
+     * just like `window.postMessage`, so prototype chains will not be included.
+     * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
+     * exception.
      *
      * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
      * Electron objects is deprecated, and will begin throwing an exception starting
@@ -5014,6 +5080,10 @@ For example:
 
     // Docs: http://electronjs.org/docs/api/structures/ipc-renderer-event
 
+    /**
+     * A list of MessagePorts that were transferred with this message
+     */
+    ports: MessagePort[];
     /**
      * The `IpcRenderer` instance that emitted the event originally
      */
@@ -5283,6 +5353,41 @@ For example:
     toolTip: string;
     type: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
     visible: boolean;
+  }
+
+  class MessageChannelMain extends NodeJS.EventEmitter {
+
+    // Docs: http://electronjs.org/docs/api/message-channel-main
+
+    port1: MessagePortMain;
+    port2: MessagePortMain;
+  }
+
+  class MessagePortMain extends NodeJS.EventEmitter {
+
+    // Docs: http://electronjs.org/docs/api/message-port-main
+
+    /**
+     * Emitted when a MessagePortMain object receives a message.
+     */
+    on(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    once(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    addListener(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    removeListener(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    /**
+     * Disconnects the port, so it is no longer active.
+     */
+    close(): void;
+    /**
+     * Sends a message from the port, and optionally, transfers ownership of objects to
+     * other browsing contexts.
+     */
+    postMessage(message: any, transfer?: MessagePortMain[]): void;
+    /**
+     * Starts the sending of messages queued on the port. Messages will be queued until
+     * this method is called.
+     */
+    start(): void;
   }
 
   interface MimeTypedBuffer {
@@ -5762,6 +5867,8 @@ Starts recording network events to `path`.
     removeListener(event: 'on-battery', listener: Function): this;
     /**
      * Emitted when system is resuming.
+     *
+     * @platform linux,win32
      */
     on(event: 'resume', listener: Function): this;
     once(event: 'resume', listener: Function): this;
@@ -5781,6 +5888,8 @@ Starts recording network events to `path`.
     removeListener(event: 'shutdown', listener: Function): this;
     /**
      * Emitted when the system is suspending.
+     *
+     * @platform linux,win32
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
@@ -6873,7 +6982,7 @@ Clears the host resolver cache.
      * `session`. Returning `true` will allow the permission and `false` will reject
      * it. To clear the handler, call `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: Details) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -7314,7 +7423,11 @@ Returns an object with system animation settings.
      * consent for `microphone` and `camera` access. macOS 10.15 Catalina or higher
      * requires consent for `screen` access.
      *
-     * @platform darwin
+     * Windows 10 has a global setting controlling `microphone` and `camera` access for
+     * all win32 applications. It will always return `granted` for `screen` and for all
+     * media types on older versions of Windows.
+     *
+     * @platform win32,darwin
      */
     getMediaAccessStatus(mediaType: 'microphone' | 'camera' | 'screen'): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
     /**
@@ -8488,6 +8601,13 @@ The usage is the same with the `certificate-error` event of `app`.
                                          params: ContextMenuParams) => void): this;
     /**
      * Emitted when the renderer process crashes or is killed.
+     *
+     * **Deprecated:** This event is superceded by the `render-process-gone` event
+     * which contains more information about why the render process dissapeared. It
+     * isn't always because it crashed.  The `killed` boolean can be replaced by
+     * checking `reason === 'killed'` when you switch to that event.
+     *
+     * @deprecated
      */
     on(event: 'crashed', listener: (event: Event,
                                     killed: boolean) => void): this;
@@ -9313,6 +9433,18 @@ The usage is the same with the `login` event of `app`.
     removeListener(event: 'remote-require', listener: (event: IpcMainEvent,
                                            moduleName: string) => void): this;
     /**
+     * Emitted when the renderer process unexpectedly dissapears.  This is normally
+     * because it was crashed or killed.
+     */
+    on(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    once(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    addListener(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    removeListener(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    /**
      * Emitted when the unresponsive web page becomes responsive again.
      */
     on(event: 'responsive', listener: Function): this;
@@ -9851,6 +9983,17 @@ Would require code like this
      * Executes the editing command `pasteAndMatchStyle` in web page.
      */
     pasteAndMatchStyle(): void;
+    /**
+     * Send a message to the renderer process, optionally transferring ownership of
+     * zero or more [`MessagePortMain`][] objects.
+     *
+     * The transferred `MessagePortMain` objects will be available in the renderer
+     * process by accessing the `ports` property of the emitted event. When they arrive
+     * in the renderer, they will be native DOM `MessagePort` objects.
+
+For example:
+     */
+    postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
     /**
      * Prints window's web page. When `silent` is set to `true`, Electron will pick the
      * system's default printer if `deviceName` is empty and the default settings for
@@ -11775,21 +11918,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Details {
     /**
-     * The security orign of the `media` check.
+     * The reason the render process is gone.  Possible values:
      */
-    securityOrigin: string;
-    /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
-     */
-    mediaType: ('video' | 'audio' | 'unknown');
-    /**
-     * The last URL the requesting frame loaded
-     */
-    requestingUrl: string;
-    /**
-     * Whether the frame making the request is the main frame
-     */
-    isMainFrame: boolean;
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failure' | 'integrity-failure');
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -12437,6 +12568,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
     lineNumber: number;
   }
 
+  interface MessageEvent {
+    data: any;
+    ports: MessagePortMain[];
+  }
+
   interface MoveToApplicationsFolderOptions {
     /**
      * A handler for potential conflict in move failure.
@@ -12801,6 +12937,25 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The quantity purchased.
      */
     quantity: number;
+  }
+
+  interface PermissionCheckHandlerHandlerDetails {
+    /**
+     * The security orign of the `media` check.
+     */
+    securityOrigin: string;
+    /**
+     * The type of media access being requested, can be `video`, `audio` or `unknown`
+     */
+    mediaType: ('video' | 'audio' | 'unknown');
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PermissionRequestHandlerHandlerDetails {
