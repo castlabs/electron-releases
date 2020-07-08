@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.3.4
+// Type definitions for Electron 8.4.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -607,8 +607,21 @@ You should call `event.preventDefault()` if you want to handle this event.
                                            webContents: WebContents,
                                            moduleName: string) => void): this;
     /**
-     * Emitted when the renderer process of `webContents` crashes or is killed.
+     * Emitted when the renderer process unexpectedly dissapears.  This is normally
+     * because it was crashed or killed.
      */
+    on(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    once(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    addListener(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
+    removeListener(event: 'render-process-gone', listener: (event: Event,
+                                                webContents: WebContents,
+                                                details: Details) => void): this;
     on(event: 'renderer-process-crashed', listener: (event: Event,
                                                      webContents: WebContents,
                                                      killed: boolean) => void): this;
@@ -3494,6 +3507,9 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
      *
      * Get a set of category groups. The category groups can change as new code paths
      * are reached. See also the list of built-in tracing categories.
+     *
+     * > **NOTE:** Electron adds a non-default tracing category called `"electron"`.
+     * This category can be used to capture Electron-specific tracing events.
      */
     getCategories(): Promise<string[]>;
     /**
@@ -3789,7 +3805,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     once(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3799,7 +3820,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     addListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3809,7 +3835,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     removeListener(event: 'message', listener: (event: Event,
                                     /**
                                      * Method name.
@@ -3819,7 +3850,12 @@ Sets a cookie with `details`.
                                      * Event parameters defined by the 'parameters' attribute in the remote debugging
                                      * protocol.
                                      */
-                                    params: any) => void): this;
+                                    params: any,
+                                    /**
+                                     * Unique identifier of attached debugging session, will match the value sent from
+                                     * `debugger.sendCommand`.
+                                     */
+                                    sessionId: string) => void): this;
     /**
      * Attaches the debugger to the `webContents`.
      */
@@ -3839,7 +3875,7 @@ Sets a cookie with `details`.
      * 
 Send given command to the debugging target.
      */
-    sendCommand(method: string, commandParams?: any): Promise<any>;
+    sendCommand(method: string, commandParams?: any, sessionId?: string): Promise<any>;
   }
 
   interface DesktopCapturer {
@@ -5677,6 +5713,8 @@ Starts recording network events to `path`.
     removeListener(event: 'on-battery', listener: Function): this;
     /**
      * Emitted when system is resuming.
+     *
+     * @platform linux,win32
      */
     on(event: 'resume', listener: Function): this;
     once(event: 'resume', listener: Function): this;
@@ -5696,6 +5734,8 @@ Starts recording network events to `path`.
     removeListener(event: 'shutdown', listener: Function): this;
     /**
      * Emitted when the system is suspending.
+     *
+     * @platform linux,win32
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
@@ -6652,7 +6692,7 @@ Clears the host resolver cache.
      * `session`. Returning `true` will allow the permission and `false` will reject
      * it. To clear the handler, call `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: Details) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: WebContents, permission: string, requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -7091,7 +7131,11 @@ Returns an object with system animation settings.
      * consent for `microphone` and `camera` access. macOS 10.15 Catalina or higher
      * requires consent for `screen` access.
      *
-     * @platform darwin
+     * Windows 10 has a global setting controlling `microphone` and `camera` access for
+     * all win32 applications. It will always return `granted` for `screen` and for all
+     * media types on older versions of Windows.
+     *
+     * @platform win32,darwin
      */
     getMediaAccessStatus(mediaType: 'microphone' | 'camera' | 'screen'): ('not-determined' | 'granted' | 'denied' | 'restricted' | 'unknown');
     /**
@@ -9042,6 +9086,18 @@ The usage is the same with the `login` event of `app`.
                                            moduleName: string) => void): this;
     removeListener(event: 'remote-require', listener: (event: IpcMainEvent,
                                            moduleName: string) => void): this;
+    /**
+     * Emitted when the renderer process unexpectedly dissapears.  This is normally
+     * because it was crashed or killed.
+     */
+    on(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    once(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    addListener(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
+    removeListener(event: 'render-process-gone', listener: (event: Event,
+                                                details: Details) => void): this;
     /**
      * Emitted when the unresponsive web page becomes responsive again.
      */
@@ -11509,21 +11565,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface Details {
     /**
-     * The security orign of the `media` check.
+     * The reason the render process is gone.  Possible values:
      */
-    securityOrigin: string;
-    /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
-     */
-    mediaType: ('video' | 'audio' | 'unknown');
-    /**
-     * The last URL the requesting frame loaded
-     */
-    requestingUrl: string;
-    /**
-     * Whether the frame making the request is the main frame
-     */
-    isMainFrame: boolean;
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failure' | 'integrity-failure');
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -12502,6 +12546,25 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The quantity purchased.
      */
     quantity: number;
+  }
+
+  interface PermissionCheckHandlerHandlerDetails {
+    /**
+     * The security orign of the `media` check.
+     */
+    securityOrigin: string;
+    /**
+     * The type of media access being requested, can be `video`, `audio` or `unknown`
+     */
+    mediaType: ('video' | 'audio' | 'unknown');
+    /**
+     * The last URL the requesting frame loaded
+     */
+    requestingUrl: string;
+    /**
+     * Whether the frame making the request is the main frame
+     */
+    isMainFrame: boolean;
   }
 
   interface PermissionRequestHandlerHandlerDetails {
