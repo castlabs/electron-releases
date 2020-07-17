@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.11
+// Type definitions for Electron 10.0.0-beta.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2424,9 +2424,9 @@ On Linux always returns `true`.
      */
     isDocumentEdited(): boolean;
     /**
-     * Returns Boolean - whether the window is enabled.
+     * whether the window is enabled.
      */
-    isEnabled(): void;
+    isEnabled(): boolean;
     /**
      * Whether the window is focused.
      */
@@ -10019,6 +10019,11 @@ For example:
      */
     postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
     /**
+     * When a custom `pageSize` is passed, Chromium attempts to validate platform
+     * specific minumum values for `width_microns` and `height_microns`. Width and
+     * height must both be minimum 353 microns but may be higher on some operating
+     * systems.
+     *
      * Prints window's web page. When `silent` is set to `true`, Electron will pick the
      * system's default printer if `deviceName` is empty and the default settings for
      * printing.
