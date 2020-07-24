@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.4.0
+// Type definitions for Electron 8.4.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2458,9 +2458,9 @@ On Linux always returns `true`.
      */
     isDocumentEdited(): boolean;
     /**
-     * Returns Boolean - whether the window is enabled.
+     * whether the window is enabled.
      */
-    isEnabled(): void;
+    isEnabled(): boolean;
     /**
      * Whether the window is focused.
      */
