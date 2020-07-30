@@ -1,4 +1,4 @@
-# castLabs Electron v10.0.0-beta.14 for Content Security
+# castLabs Electron v10.0.0-beta.15 for Content Security
 
 Check out the [Wiki](https://github.com/castlabs/electron-releases/wiki) for general news and other updates.
 
@@ -12,7 +12,7 @@ The provided builds are VMP-signed for development use, i.e. using Widevine UAT 
  
 The sections below will describe the additions to the Electron APIs, for anything else refer to the regular Electron documentation:
 
-[Electron README](https://github.com/electron/electron/blob/v10.0.0-beta.14/README.md)
+[Electron README](https://github.com/electron/electron/blob/v10.0.0-beta.15/README.md)
 
 > **NOTE**: The section about Widevine DRM in the regular Electron documentation does not apply to this fork of Electron since the Widevine components are now automatically installed and configured.
 
@@ -30,11 +30,11 @@ becomes:
 
 ```
 "dependencies": {
-  "electron": "https://github.com/castlabs/electron-releases#v10.0.0-wvvmp-beta.14"
+  "electron": "https://github.com/castlabs/electron-releases#v10.0.0-wvvmp-beta.15"
 }
 ```
 
-The `#v10.0.0-wvvmp-beta.14` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
+The `#v10.0.0-wvvmp-beta.15` part of the URL references a specific release tag for Electron for Content Security, if it is left out the master branch will be tracked instead.
 
 ## Migrating from an earlier castLabs Electron for Content Security release
 
@@ -66,7 +66,7 @@ Widevine CDM verification/installation/update is normally automatically triggere
 ### `app.verifyWidevineCdm([options])`
 
 * `options` Object (optional)
-  * `session` [Session](https://github.com/electron/electron/blob/v10.0.0-beta.14/docs/api/session.md) (optional)
+  * `session` [Session](https://github.com/electron/electron/blob/v10.0.0-beta.15/docs/api/session.md) (optional)
   * `disableUpdate` boolean (optional)
 
 Initiates asynchronous Widevine CDM verify/install/update procedure and returns no value. Once initiated Widevine related events will be emitted as necessary, namely `widevine-ready`, `widevine-update-pending` & `widevine-error`. Unless the `no-verify-widevine-cdm` command line parameter is set this API is automatically triggered on startup and should not be called manually. If customized options are necessary `no-verify-widevine-cdm` should be set and the API call made once, very early, after the app has received the `ready` event (but before loading any media-related content to avoid potentially requiring a restart).
