@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.17
+// Type definitions for Electron 10.0.0-beta.19
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -14030,6 +14030,13 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * top of the Console tab.
      */
     contextIsolation?: boolean;
+    /**
+     * If true, values returned from `webFrame.executeJavaScript` will be sanitized to
+     * ensure JS values can't unsafely cross between worlds when using
+     * `contextIsolation`.  The default is `false`. In Electron 12, the default will be
+     * changed to `true`. _Deprecated_
+     */
+    worldSafeExecuteJavaScript?: boolean;
     /**
      * Whether to use native `window.open()`. Defaults to `false`. Child windows will
      * always have node integration disabled unless `nodeIntegrationInSubFrames` is
