@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.0-beta.24
+// Type definitions for Electron 10.0.0-beta.25
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11485,8 +11485,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     opacity?: number;
     /**
-     * Forces using dark theme for the window, only works on some GTK desktop
-     * environments. Default is `nativeTheme.shouldUseDarkColors`.
+     * Forces using dark theme for the window, only works on some GTK+3 desktop
+     * environments. Default is `false`.
      */
     darkTheme?: boolean;
     /**
@@ -13909,7 +13909,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     sandbox?: boolean;
     /**
-     * Whether to enable the `remote` module. Default is `true`.
+     * Whether to enable the `remote` module. Default is `false`.
      */
     enableRemoteModule?: boolean;
     /**
