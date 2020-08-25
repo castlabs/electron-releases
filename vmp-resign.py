@@ -312,7 +312,7 @@ def mk_authority_key_identifier(entries, val):
 
 def mk_basic_constraints(entries, val):
     entries.append('CA: %s' % val.ca)
-    if val.ca and va.path_length is not None: entries.append('Path Length: %d' % val.path_length)
+    if val.ca and val.path_length is not None: entries.append('Path Length: %d' % val.path_length)
 
 def mk_key_usage(entries, val):
     if val.digital_signature: entries.append('Digital Signature')
@@ -350,7 +350,8 @@ _OID_EXTENSION_MAP = {
     x509.ExtensionOID.BASIC_CONSTRAINTS: ('Basic Constraints', mk_basic_constraints),
     x509.ExtensionOID.KEY_USAGE: ('Key Usage', mk_key_usage),
     x509.ExtensionOID.EXTENDED_KEY_USAGE: ('Extended Key Usage', mk_extended_key_usage),
-    x509.ObjectIdentifier('1.3.6.1.4.1.11129.4.1.2'): ('Google<1.3.6.1.4.1.11129.4.1.2>', mk_binary_extension),
+    x509.ObjectIdentifier('1.3.6.1.4.1.11129.4.1.2'): ('VMP Develpment <1.3.6.1.4.1.11129.4.1.2>', mk_binary_extension),
+    x509.ObjectIdentifier('1.3.6.1.4.1.11129.4.1.3'): ('VMP Persistent <1.3.6.1.4.1.11129.4.1.3>', mk_binary_extension),
 }
 
 def mk_extensions(extensions):
