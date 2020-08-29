@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.0.1
+// Type definitions for Electron 10.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2960,7 +2960,7 @@ On macOS it does not remove the focus from the window.
      * 
 **Note:** This API does nothing on Windows.
      */
-    setVisibleOnAllWorkspaces(visible: boolean): void;
+    setVisibleOnAllWorkspaces(visible: boolean, options?: VisibleOnAllWorkspacesOptions): void;
     /**
      * Sets whether the window traffic light buttons should be visible.
      * 
@@ -5459,6 +5459,12 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
      */
     static createFromPath(path: string): NativeImage;
     /**
+     * fulfilled with the file's thumbnail preview image, which is a NativeImage.
+     *
+     * @platform darwin,win32
+     */
+    static createThumbnailFromPath(path: string, maxSize: Size): Promise<Electron.NativeImage>;
+    /**
      * Add an image representation for a specific scale factor. This can be used to
      * explicitly add different scale factor representations to an image. This can be
      * called on empty images.
@@ -6074,6 +6080,10 @@ Calculate system idle time in seconds.
      * A string that identifies the version of the content.
      */
     contentVersion: string;
+    /**
+     * 3 character code presenting a product's currency based on the ISO 4217 standard.
+     */
+    currencyCode: string;
     /**
      * The locale formatted price of the product.
      */
@@ -11499,6 +11509,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     type?: string;
     /**
+     * Specify how the material appearance should reflect window activity state on
+     * macOS. Must be used with the `vibrancy` property. Possible values are:
+     */
+    visualEffectState?: ('followWindow' | 'active' | 'inactive');
+    /**
      * The style of window title bar. Default is `default`. Possible values are:
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
@@ -13631,6 +13646,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
     baseDir?: string;
   }
 
+  interface VisibleOnAllWorkspacesOptions {
+    /**
+     * Sets whether the window should be visible above fullscreen windows
+     *
+     * @platform darwin
+     */
+    visibleOnFullScreen?: boolean;
+  }
+
   interface WebContentsPrintOptions {
     /**
      * Don't ask user for print settings. Default is `false`.
@@ -14328,6 +14352,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
+    type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
@@ -14572,6 +14597,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
+    type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
@@ -14773,6 +14799,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
+    type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
