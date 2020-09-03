@@ -1,4 +1,4 @@
-// Type definitions for Electron 8.5.0
+// Type definitions for Electron 8.5.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5696,7 +5696,7 @@ Starts recording network events to `path`.
     /**
      * Emitted when the system changes to AC power.
      *
-     * @platform win32
+     * @platform darwin,win32
      */
     on(event: 'on-ac', listener: Function): this;
     once(event: 'on-ac', listener: Function): this;
@@ -5705,7 +5705,7 @@ Starts recording network events to `path`.
     /**
      * Emitted when system changes to battery power.
      *
-     * @platform win32
+     * @platform darwin
      */
     on(event: 'on-battery', listener: Function): this;
     once(event: 'on-battery', listener: Function): this;
@@ -5714,7 +5714,7 @@ Starts recording network events to `path`.
     /**
      * Emitted when system is resuming.
      *
-     * @platform linux,win32
+     * @platform darwin,win32
      */
     on(event: 'resume', listener: Function): this;
     once(event: 'resume', listener: Function): this;
@@ -5735,7 +5735,7 @@ Starts recording network events to `path`.
     /**
      * Emitted when the system is suspending.
      *
-     * @platform linux,win32
+     * @platform darwin,win32
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
