@@ -1,16 +1,16 @@
 # Electron for Content Security
 
-Check out the [Wiki](//github.com/castlabs/electron-releases/wiki) for general news, guides, and other updates.
+Check out the [Wiki](../../wiki) for general news, guides, and other updates.
 
-Electron for Content Security (ECS) is a fork of Electron created by castLabs to facilitate the use of Google's Widevine Content Decryption Module (CDM) for DRM-enabled playback within Electron, including support for Verified Media Path (VMP) and persistent license storage. It is intended to be used as a drop-in replacement for stock Electron and currently has full support for Windows and macOS platforms, with partial support for Linux (which lacks support for persistent licenses due to VMP limitations on the platform).
+Electron for Content Security (ECS) is a fork of Electron created by castLabs to facilitate the use of Google's [Widevine Content Decryption Module (CDM)](../../wiki/CDM) for DRM-enabled playback within Electron, including support for [Verified Media Path (VMP)](../../wiki/VMP) and persistent license storage. It is intended to be used as a drop-in replacement for stock Electron and currently has full support for Windows and macOS platforms, with partial support for Linux (which lacks support for persistent licenses due to VMP limitations on the platform).
 
 The sections below will describe the features/modifications that ECS provides, for anything else refer to the regular [Electron documentation](https://www.electronjs.org/docs).
 
 ## How does it work?
 
-To achieve Widevine support the [Widevine CDM](//github.com/castlabs/electron-releases/wiki/CDM) will be [installed on first launch](#widevine-cdm-installation) and enabled as an option for playback of DRM protected content using common EME APIs. Subsequent launces will trigger a backround update check. If an update is available it will be downloaded and applied on next launch. During this process certain [events](#widevine-events) are emitted, the two most important being [`widevine-ready`](#event-widevine-ready) and [`widevine-error`](#event-widevine-error).
+To achieve Widevine support the [Widevine CDM](../../wiki/CDM) will be [installed on first launch](#widevine-cdm-installation) and enabled as an option for playback of DRM protected content using common EME APIs. Subsequent launces will trigger a backround update check. If an update is available it will be downloaded and applied on next launch. During this process certain [events](#widevine-events) are emitted, the two most important being [`widevine-ready`](#event-widevine-ready) and [`widevine-error`](#event-widevine-error).
 
-The provided builds are VMP-signed for development and can be used with Widevine UAT or other servers accepting development clients. For production use you can sign up for our [EVS service](//github.com/castlabs/electron-releases/wiki/EVS), to obtain production VMP signing capabilities. Previously a license agreement with Google Widevine was required to get your own VMP signing certificate, but with EVS this is no longer necessary.
+The provided builds are VMP-signed for development and can be used with Widevine UAT or other servers accepting development clients. For production use you can sign up for our [EVS service](../../wiki/EVS), to obtain production VMP signing capabilities. Previously a license agreement with Google Widevine was required to get your own VMP signing certificate, but with EVS this is no longer necessary.
 
 ## Installing
 
@@ -111,7 +111,7 @@ Emitted once Widevine has been properly registered and is ready to use to be use
 
 Two arguments are provided indicating the current and last versions of Widevine.
 
-If the `lastVersion` argument is not `null` and is not equal to `version` an update has occured, potentially rendering any persisted licenses unusable, see the [CDM migration](//github.com/castlabs/electron-releases/wiki/CDM#migrating-from-an-earlier-cdm-version) section for more information.
+If the `lastVersion` argument is not `null` and is not equal to `version` an update has occured, potentially rendering any persisted licenses unusable, see the [CDM migration](../../wiki/CDM#migrating-from-an-earlier-cdm-version) section for more information.
 
 ```javascript
 app.on('widevine-ready', (version, lastVersion) => {
