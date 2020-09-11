@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.5
+// Type definitions for Electron 11.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -700,11 +700,11 @@ You should call `event.preventDefault()` if you want to handle this event.
     removeListener(event: 'web-contents-created', listener: (event: Event,
                                                  webContents: WebContents) => void): this;
     /**
-     * Emitted when there is a problem with the Widevine installation that cannot be
-     * automatically handled. If there are no handlers registered for this event it
+     * Emitted when there is a problem with the Widevine CDM installation that cannot
+     * be automatically handled. If there are no handlers registered for this event it
      * will show a dialog with the error and terminate the application when it is
-     * dismissed. If this is not the desired behaviour a handler needs to be registered
-     * to provide customized behaviour. This event is always emitted after the `ready`
+     * dismissed. If this is not the desired behavior a handler needs to be registered
+     * to provide customized behavior. This event is always emitted after the `ready`
      * event.
      */
     on(event: 'widevine-error', listener: (
@@ -732,10 +732,9 @@ You should call `event.preventDefault()` if you want to handle this event.
                                             */
                                            error: Error) => void): this;
     /**
-     * Emitted once Widevine has been properly installed/updated/registered and is
-     * ready to use to be used. Trying to play back protected content prior to the
-     * reception of this event will cause errors. This event is always emitted after
-     * the `ready` event.
+     * Emitted once Widevine has been properly registered and is ready to use to be
+     * used. Trying to play back protected content prior to the reception of this event
+     * will cause errors. This event is always emitted after the `ready` event.
      */
     on(event: 'widevine-ready', listener: (
                                            /**
@@ -778,10 +777,10 @@ You should call `event.preventDefault()` if you want to handle this event.
                                             */
                                            lastVersion: string) => void): this;
     /**
-     * Emitted when there is a Widevine update available that is pending installation.
-     * This event is always emitted after the `ready` event. Once the application is
-     * restarted the update will be automatically applied and a `widevine-ready`-event
-     * emitted, as usual.
+     * Emitted when there is a Widevine CDM update available that is pending
+     * installation. This event is always emitted after the `widevine-ready` event.
+     * Once the application is restarted the update will be automatically applied,
+     * unless updates have been disabled.
      */
     on(event: 'widevine-update-pending', listener: (
                                                     /**
@@ -1523,15 +1522,15 @@ Here's a very simple example of creating a custom Jump List:
      */
     updateCurrentActivity(type: string, userInfo: any): void;
     /**
-     * Initiates asynchronous Widevine CDM verify/install/update procedure and returns
-     * no value. Once initiated Widevine related events will be emitted as necessary,
-     * namely `widevine-ready`, `widevine-update-pending` & `widevine-error`. Unless
-     * the `no-verify-widevine-cdm` command line parameter is set this API is
-     * automatically called on startup and should not be called manually. If customized
-     * options are necessary for some reason `no-verify-widevine-cdm` should be set and
-     * the API call made once (with the custom options), very early, after the app has
-     * received the `ready` event (but before loading any media-related content to
-     * avoid potentially requiring a restart if CDM installation is necessary).
+     * Initiates asynchronous Widevine CDM install/update procedure and returns no
+     * value. Once initiated Widevine events will be emitted as necessary.
+     *
+     * Unless the `no-verify-widevine-cdm` parameter has been set this API is
+     * automatically triggered on startup and **MUST NOT** be called manually. If set,
+     * this API can be used to customize the behavior of the install/update operation.
+     * It **MUST** be called once, very early, after the app has received the `ready`
+     * event, but before loading any media-related content to avoid potentially
+     * requiring a restart.
      */
     verifyWidevineCdm(options?: VerifyWidevineCdmOptions): void;
     /**
