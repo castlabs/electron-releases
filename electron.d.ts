@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.7
+// Type definitions for Electron 11.0.0-beta.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3924,13 +3924,6 @@ Send given command to the debugging target.
     // Docs: http://electronjs.org/docs/api/desktop-capturer
 
     /**
-     * Resolves with the identifier of a WebContents stream, this identifier can be
-     * used with `navigator.mediaDevices.getUserMedia`. The identifier is **only valid
-     * for 10 seconds**. The identifier may be empty if not requested from a renderer
-     * process.
-     */
-    getMediaSourceIdForWebContents(webContentsId: number): Promise<string>;
-    /**
      * Resolves with an array of `DesktopCapturerSource` objects, each
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
@@ -7271,42 +7264,6 @@ Creates or updates a shortcut link at `shortcutPath`.
 
     height: number;
     width: number;
-  }
-
-  interface StreamProtocolResponse {
-
-    // Docs: http://electronjs.org/docs/api/structures/stream-protocol-response
-
-    /**
-     * A Node.js readable stream representing the response body.
-     */
-    data: (NodeJS.ReadableStream) | (null);
-    /**
-     * An object containing the response headers.
-     */
-    headers?: Record<string, (string) | (string[])>;
-    /**
-     * The HTTP response code.
-     */
-    statusCode?: number;
-  }
-
-  interface StringProtocolResponse {
-
-    // Docs: http://electronjs.org/docs/api/structures/string-protocol-response
-
-    /**
-     * Charset of the response.
-     */
-    charset?: string;
-    /**
-     * A string representing the response body.
-     */
-    data: (string) | (null);
-    /**
-     * MIME type of the response.
-     */
-    mimeType?: string;
   }
 
   interface SystemPreferences extends NodeJS.EventEmitter {
@@ -14641,8 +14598,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
@@ -14890,8 +14845,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
@@ -15096,8 +15049,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
