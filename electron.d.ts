@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.1.2
+// Type definitions for Electron 10.1.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7208,42 +7208,6 @@ Creates or updates a shortcut link at `shortcutPath`.
     width: number;
   }
 
-  interface StreamProtocolResponse {
-
-    // Docs: http://electronjs.org/docs/api/structures/stream-protocol-response
-
-    /**
-     * A Node.js readable stream representing the response body.
-     */
-    data: (NodeJS.ReadableStream) | (null);
-    /**
-     * An object containing the response headers.
-     */
-    headers?: Record<string, (string) | (string[])>;
-    /**
-     * The HTTP response code.
-     */
-    statusCode?: number;
-  }
-
-  interface StringProtocolResponse {
-
-    // Docs: http://electronjs.org/docs/api/structures/string-protocol-response
-
-    /**
-     * Charset of the response.
-     */
-    charset?: string;
-    /**
-     * A string representing the response body.
-     */
-    data: (string) | (null);
-    /**
-     * MIME type of the response.
-     */
-    mimeType?: string;
-  }
-
   interface SystemPreferences extends NodeJS.EventEmitter {
 
     // Docs: http://electronjs.org/docs/api/system-preferences
@@ -13695,9 +13659,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     copies?: number;
     /**
-     * The page range to print.
+     * The page range to print. On macOS, only one range is honored.
      */
-    pageRanges?: Record<string, number>;
+    pageRanges?: PageRanges[];
     /**
      * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
      * `longEdge`.
@@ -13760,9 +13724,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     copies?: number;
     /**
-     * The page range to print.
+     * The page range to print. On macOS, only the first range is honored.
      */
-    pageRanges?: Record<string, number>;
+    pageRanges?: PageRanges[];
     /**
      * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
      * `longEdge`.
@@ -13893,6 +13857,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether the media element can be rotated.
      */
     canRotate: boolean;
+  }
+
+  interface PageRanges {
+    /**
+     * Index of the first page to print (0-based).
+     */
+    from: number;
+    /**
+     * Index of the last page to print (inclusive) (0-based).
+     */
+    to: number;
   }
 
   interface WebPreferences {
@@ -14359,6 +14334,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type FoundInPageResult = Electron.FoundInPageResult;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -14410,8 +14386,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
@@ -14604,6 +14578,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type FoundInPageResult = Electron.FoundInPageResult;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -14655,8 +14630,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
@@ -14806,6 +14779,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type FoundInPageResult = Electron.FoundInPageResult;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -14857,8 +14831,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type ShortcutDetails = Electron.ShortcutDetails;
     type Size = Electron.Size;
-    type StreamProtocolResponse = Electron.StreamProtocolResponse;
-    type StringProtocolResponse = Electron.StringProtocolResponse;
     type Task = Electron.Task;
     type ThumbarButton = Electron.ThumbarButton;
     type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
