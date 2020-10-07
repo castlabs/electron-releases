@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.9
+// Type definitions for Electron 11.0.0-beta.11
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12051,7 +12051,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The reason the child process is gone. Possible values:
      */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failure' | 'integrity-failure');
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
     /**
      * The exit code for the process (e.g. status from waitpid if on posix, from
      * GetExitCodeProcess on Windows).
@@ -13269,7 +13269,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The reason the render process is gone.  Possible values:
      */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failure' | 'integrity-failure');
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
   }
 
   interface Request {
