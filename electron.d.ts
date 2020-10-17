@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.11
+// Type definitions for Electron 11.0.0-beta.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9881,6 +9881,18 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
      * Focuses the web page.
      */
     focus(): void;
+    /**
+     * Forcefully terminates the renderer process that is currently hosting this
+     * `webContents`. This will cause the `render-process-gone` event to be emitted
+     * with the `reason=killed || reason=crashed`. Please note that some webContents
+     * share renderer processes and therefore calling this method may also crash the
+     * host process for other webContents as well.
+     *
+     * Calling `reload()` immediately after calling this method will force the reload
+     * to occur in a new process. This should be used when this process is unstable or
+     * unusable, for instance in order to recover from the `unresponsive` event.
+     */
+    forcefullyCrashRenderer(): void;
     /**
      * Information about all Shared Workers.
      */
