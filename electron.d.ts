@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.12
+// Type definitions for Electron 11.0.0-beta.13
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2072,6 +2072,36 @@ __Note__: On macOS this event is an alias of `moved`.
                                   direction: string) => void): this;
     removeListener(event: 'swipe', listener: (event: Event,
                                   direction: string) => void): this;
+    /**
+     * Emitted when the system context menu is triggered on the window, this is
+     * normally only triggered when the user right clicks on the non-client area of
+     * your window.  This is the window titlebar or any area you have declared as
+     * `-webkit-app-region: drag` in a frameless window.
+     * 
+Calling `event.preventDefault()` will prevent the menu from being displayed.
+     *
+     * @platform win32
+     */
+    on(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    once(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    addListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    removeListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
     /**
      * Emitted when the window exits from a maximized state.
      */
