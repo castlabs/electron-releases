@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.13
+// Type definitions for Electron 11.0.0-beta.16
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -15,7 +15,7 @@ declare namespace Electron {
   }
   interface App extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/app
+    // Docs: https://electronjs.org/docs/api/app
 
     /**
      * Emitted when Chrome's accessibility support changes. This event fires when
@@ -1633,7 +1633,7 @@ Here's a very simple example of creating a custom Jump List:
 
   interface AutoUpdater extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/auto-updater
+    // Docs: https://electronjs.org/docs/api/auto-updater
 
     /**
      * This event is emitted after a user calls `quitAndInstall()`.
@@ -1734,7 +1734,7 @@ Here's a very simple example of creating a custom Jump List:
 
   interface BluetoothDevice {
 
-    // Docs: http://electronjs.org/docs/api/structures/bluetooth-device
+    // Docs: https://electronjs.org/docs/api/structures/bluetooth-device
 
     deviceId: string;
     deviceName: string;
@@ -1742,7 +1742,7 @@ Here's a very simple example of creating a custom Jump List:
 
   class BrowserView {
 
-    // Docs: http://electronjs.org/docs/api/browser-view
+    // Docs: https://electronjs.org/docs/api/browser-view
 
     /**
      * BrowserView
@@ -1767,7 +1767,7 @@ Here's a very simple example of creating a custom Jump List:
 
   class BrowserWindow extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/browser-window
+    // Docs: https://electronjs.org/docs/api/browser-window
 
     /**
      * Emitted when the window is set or unset to show always on top of other windows.
@@ -3090,7 +3090,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   class BrowserWindowProxy {
 
-    // Docs: http://electronjs.org/docs/api/browser-window-proxy
+    // Docs: https://electronjs.org/docs/api/browser-window-proxy
 
     /**
      * Removes focus from the child window.
@@ -3125,7 +3125,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   interface Certificate {
 
-    // Docs: http://electronjs.org/docs/api/structures/certificate
+    // Docs: https://electronjs.org/docs/api/structures/certificate
 
     /**
      * PEM encoded data
@@ -3171,7 +3171,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   interface CertificatePrincipal {
 
-    // Docs: http://electronjs.org/docs/api/structures/certificate-principal
+    // Docs: https://electronjs.org/docs/api/structures/certificate-principal
 
     /**
      * Common Name.
@@ -3201,7 +3201,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   class ClientRequest extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/client-request
+    // Docs: https://electronjs.org/docs/api/client-request
 
     /**
      * Emitted when the `request` is aborted. The `abort` event will not be fired if
@@ -3395,7 +3395,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   interface Clipboard {
 
-    // Docs: http://electronjs.org/docs/api/clipboard
+    // Docs: https://electronjs.org/docs/api/clipboard
 
     /**
      * An array of supported formats for the clipboard `type`.
@@ -3510,7 +3510,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   class CommandLine {
 
-    // Docs: http://electronjs.org/docs/api/command-line
+    // Docs: https://electronjs.org/docs/api/command-line
 
     /**
      * Append an argument to Chromium's command line. The argument will be quoted
@@ -3545,7 +3545,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   interface ContentTracing {
 
-    // Docs: http://electronjs.org/docs/api/content-tracing
+    // Docs: https://electronjs.org/docs/api/content-tracing
 
     /**
      * resolves with an array of category groups once all child processes have
@@ -3603,14 +3603,14 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   interface ContextBridge {
 
-    // Docs: http://electronjs.org/docs/api/context-bridge
+    // Docs: https://electronjs.org/docs/api/context-bridge
 
     exposeInMainWorld(apiKey: string, api: Record<string, any>): void;
   }
 
   interface Cookie {
 
-    // Docs: http://electronjs.org/docs/api/structures/cookie
+    // Docs: https://electronjs.org/docs/api/structures/cookie
 
     /**
      * The domain of the cookie; this will be normalized with a preceding dot so that
@@ -3661,7 +3661,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
   class Cookies extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/cookies
+    // Docs: https://electronjs.org/docs/api/cookies
 
     /**
      * Emitted when a cookie is changed because it was added, edited, removed, or
@@ -3700,7 +3700,7 @@ Sets a cookie with `details`.
 
   interface CPUUsage {
 
-    // Docs: http://electronjs.org/docs/api/structures/cpu-usage
+    // Docs: https://electronjs.org/docs/api/structures/cpu-usage
 
     /**
      * The number of average idle CPU wakeups per second since the last call to
@@ -3715,7 +3715,7 @@ Sets a cookie with `details`.
 
   interface CrashReport {
 
-    // Docs: http://electronjs.org/docs/api/structures/crash-report
+    // Docs: https://electronjs.org/docs/api/structures/crash-report
 
     date: Date;
     id: string;
@@ -3723,7 +3723,7 @@ Sets a cookie with `details`.
 
   interface CrashReporter {
 
-    // Docs: http://electronjs.org/docs/api/crash-reporter
+    // Docs: https://electronjs.org/docs/api/crash-reporter
 
     /**
      * Set an extra parameter to be sent with the crash report. The values specified
@@ -3827,7 +3827,7 @@ Sets a cookie with `details`.
 
   interface CustomScheme {
 
-    // Docs: http://electronjs.org/docs/api/structures/custom-scheme
+    // Docs: https://electronjs.org/docs/api/structures/custom-scheme
 
     privileges?: Privileges;
     /**
@@ -3838,7 +3838,7 @@ Sets a cookie with `details`.
 
   class Debugger extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/debugger
+    // Docs: https://electronjs.org/docs/api/debugger
 
     /**
      * Emitted when the debugging session is terminated. This happens either when
@@ -3951,7 +3951,7 @@ Send given command to the debugging target.
 
   interface DesktopCapturer {
 
-    // Docs: http://electronjs.org/docs/api/desktop-capturer
+    // Docs: https://electronjs.org/docs/api/desktop-capturer
 
     /**
      * Resolves with an array of `DesktopCapturerSource` objects, each
@@ -3967,7 +3967,7 @@ Send given command to the debugging target.
 
   interface DesktopCapturerSource {
 
-    // Docs: http://electronjs.org/docs/api/structures/desktop-capturer-source
+    // Docs: https://electronjs.org/docs/api/structures/desktop-capturer-source
 
     /**
      * An icon image of the application that owns the window or null if the source has
@@ -4005,7 +4005,7 @@ Send given command to the debugging target.
 
   interface Dialog {
 
-    // Docs: http://electronjs.org/docs/api/dialog
+    // Docs: https://electronjs.org/docs/api/dialog
 
     /**
      * resolves when the certificate trust dialog is shown.
@@ -4258,7 +4258,7 @@ Send given command to the debugging target.
 
   interface Display {
 
-    // Docs: http://electronjs.org/docs/api/structures/display
+    // Docs: https://electronjs.org/docs/api/structures/display
 
     /**
      * Can be `available`, `unavailable`, `unknown`.
@@ -4309,7 +4309,7 @@ Send given command to the debugging target.
 
   class Dock {
 
-    // Docs: http://electronjs.org/docs/api/dock
+    // Docs: https://electronjs.org/docs/api/dock
 
     /**
      * an ID representing the request.
@@ -4391,7 +4391,7 @@ Send given command to the debugging target.
 
   class DownloadItem extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/download-item
+    // Docs: https://electronjs.org/docs/api/download-item
 
     /**
      * Emitted when the download is in a terminal state. This includes a completed
@@ -4563,14 +4563,14 @@ If the size is unknown, it returns 0.
 
   interface Event extends GlobalEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/event
+    // Docs: https://electronjs.org/docs/api/structures/event
 
     preventDefault: (() => void);
   }
 
   interface Extension {
 
-    // Docs: http://electronjs.org/docs/api/structures/extension
+    // Docs: https://electronjs.org/docs/api/structures/extension
 
     id: string;
     /**
@@ -4591,7 +4591,7 @@ If the size is unknown, it returns 0.
 
   interface ExtensionInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/extension-info
+    // Docs: https://electronjs.org/docs/api/structures/extension-info
 
     name: string;
     version: string;
@@ -4599,7 +4599,7 @@ If the size is unknown, it returns 0.
 
   interface FileFilter {
 
-    // Docs: http://electronjs.org/docs/api/structures/file-filter
+    // Docs: https://electronjs.org/docs/api/structures/file-filter
 
     extensions: string[];
     name: string;
@@ -4607,7 +4607,7 @@ If the size is unknown, it returns 0.
 
   interface FilePathWithHeaders {
 
-    // Docs: http://electronjs.org/docs/api/structures/file-path-with-headers
+    // Docs: https://electronjs.org/docs/api/structures/file-path-with-headers
 
     /**
      * Additional headers to be sent.
@@ -4621,7 +4621,7 @@ If the size is unknown, it returns 0.
 
   interface GlobalShortcut {
 
-    // Docs: http://electronjs.org/docs/api/global-shortcut
+    // Docs: https://electronjs.org/docs/api/global-shortcut
 
     /**
      * Whether this application has registered `accelerator`.
@@ -4680,7 +4680,7 @@ If the size is unknown, it returns 0.
 
   interface GPUFeatureStatus {
 
-    // Docs: http://electronjs.org/docs/api/structures/gpu-feature-status
+    // Docs: https://electronjs.org/docs/api/structures/gpu-feature-status
 
     /**
      * Canvas.
@@ -4738,7 +4738,7 @@ If the size is unknown, it returns 0.
 
   interface InAppPurchase extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/in-app-purchase
+    // Docs: https://electronjs.org/docs/api/in-app-purchase
 
     on(event: 'transactions-updated', listener: Function): this;
     once(event: 'transactions-updated', listener: Function): this;
@@ -4787,7 +4787,7 @@ Retrieves the product descriptions.
 
   class IncomingMessage extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/incoming-message
+    // Docs: https://electronjs.org/docs/api/incoming-message
 
     /**
      * Emitted when a request has been canceled during an ongoing HTTP transaction.
@@ -4851,7 +4851,7 @@ Retrieves the product descriptions.
 
   interface InputEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/input-event
+    // Docs: https://electronjs.org/docs/api/structures/input-event
 
     /**
      * An array of modifiers of the event, can be `shift`, `control`, `ctrl`, `alt`,
@@ -4863,7 +4863,7 @@ Retrieves the product descriptions.
 
   interface IOCounters {
 
-    // Docs: http://electronjs.org/docs/api/structures/io-counters
+    // Docs: https://electronjs.org/docs/api/structures/io-counters
 
     /**
      * Then number of I/O other operations.
@@ -4893,7 +4893,7 @@ Retrieves the product descriptions.
 
   interface IpcMain extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/ipc-main
+    // Docs: https://electronjs.org/docs/api/ipc-main
 
     /**
      * Adds a handler for an `invoke`able IPC. This handler will be called whenever a
@@ -4940,7 +4940,7 @@ Retrieves the product descriptions.
 
   interface IpcMainEvent extends Event {
 
-    // Docs: http://electronjs.org/docs/api/structures/ipc-main-event
+    // Docs: https://electronjs.org/docs/api/structures/ipc-main-event
 
     /**
      * The ID of the renderer frame that sent this message
@@ -4969,7 +4969,7 @@ Retrieves the product descriptions.
 
   interface IpcMainInvokeEvent extends Event {
 
-    // Docs: http://electronjs.org/docs/api/structures/ipc-main-invoke-event
+    // Docs: https://electronjs.org/docs/api/structures/ipc-main-invoke-event
 
     /**
      * The ID of the renderer frame that sent this message
@@ -4983,7 +4983,7 @@ Retrieves the product descriptions.
 
   interface IpcRenderer extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/ipc-renderer
+    // Docs: https://electronjs.org/docs/api/ipc-renderer
 
     /**
      * Resolves with the response from the main process.
@@ -5096,7 +5096,7 @@ Retrieves the product descriptions.
 
   interface IpcRendererEvent extends Event {
 
-    // Docs: http://electronjs.org/docs/api/structures/ipc-renderer-event
+    // Docs: https://electronjs.org/docs/api/structures/ipc-renderer-event
 
     /**
      * A list of MessagePorts that were transferred with this message
@@ -5118,7 +5118,7 @@ Retrieves the product descriptions.
 
   interface JumpListCategory {
 
-    // Docs: http://electronjs.org/docs/api/structures/jump-list-category
+    // Docs: https://electronjs.org/docs/api/structures/jump-list-category
 
     /**
      * Array of `JumpListItem` objects if `type` is `tasks` or `custom`, otherwise it
@@ -5137,7 +5137,7 @@ Retrieves the product descriptions.
 
   interface JumpListItem {
 
-    // Docs: http://electronjs.org/docs/api/structures/jump-list-item
+    // Docs: https://electronjs.org/docs/api/structures/jump-list-item
 
     /**
      * The command line arguments when `program` is executed. Should only be set if
@@ -5188,7 +5188,7 @@ Retrieves the product descriptions.
 
   interface KeyboardEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/keyboard-event
+    // Docs: https://electronjs.org/docs/api/structures/keyboard-event
 
     /**
      * whether an Alt key was used in an accelerator to trigger the Event
@@ -5215,7 +5215,7 @@ Retrieves the product descriptions.
 
   interface KeyboardInputEvent extends InputEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/keyboard-input-event
+    // Docs: https://electronjs.org/docs/api/structures/keyboard-input-event
 
     /**
      * The character that will be sent as the keyboard event. Should only use the valid
@@ -5230,7 +5230,7 @@ Retrieves the product descriptions.
 
   interface MemoryInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/memory-info
+    // Docs: https://electronjs.org/docs/api/structures/memory-info
 
     /**
      * The maximum amount of memory that has ever been pinned to actual physical RAM.
@@ -5251,7 +5251,7 @@ Retrieves the product descriptions.
 
   interface MemoryUsageDetails {
 
-    // Docs: http://electronjs.org/docs/api/structures/memory-usage-details
+    // Docs: https://electronjs.org/docs/api/structures/memory-usage-details
 
     count: number;
     liveSize: number;
@@ -5260,7 +5260,7 @@ Retrieves the product descriptions.
 
   class Menu {
 
-    // Docs: http://electronjs.org/docs/api/menu
+    // Docs: https://electronjs.org/docs/api/menu
 
     /**
      * Emitted when a popup is closed either manually or with `menu.closePopup()`.
@@ -5349,7 +5349,7 @@ Retrieves the product descriptions.
 
   class MenuItem {
 
-    // Docs: http://electronjs.org/docs/api/menu-item
+    // Docs: https://electronjs.org/docs/api/menu-item
 
     /**
      * MenuItem
@@ -5375,7 +5375,7 @@ Retrieves the product descriptions.
 
   class MessageChannelMain extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/message-channel-main
+    // Docs: https://electronjs.org/docs/api/message-channel-main
 
     port1: MessagePortMain;
     port2: MessagePortMain;
@@ -5383,7 +5383,7 @@ Retrieves the product descriptions.
 
   class MessagePortMain extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/message-port-main
+    // Docs: https://electronjs.org/docs/api/message-port-main
 
     /**
      * Emitted when the remote end of a MessagePortMain object becomes disconnected.
@@ -5417,7 +5417,7 @@ Retrieves the product descriptions.
 
   interface MimeTypedBuffer {
 
-    // Docs: http://electronjs.org/docs/api/structures/mime-typed-buffer
+    // Docs: https://electronjs.org/docs/api/structures/mime-typed-buffer
 
     /**
      * Charset of the buffer.
@@ -5435,7 +5435,7 @@ Retrieves the product descriptions.
 
   interface MouseInputEvent extends InputEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/mouse-input-event
+    // Docs: https://electronjs.org/docs/api/structures/mouse-input-event
 
     /**
      * The button pressed, can be `left`, `middle`, `right`.
@@ -5457,7 +5457,7 @@ Retrieves the product descriptions.
 
   interface MouseWheelInputEvent extends MouseInputEvent {
 
-    // Docs: http://electronjs.org/docs/api/structures/mouse-wheel-input-event
+    // Docs: https://electronjs.org/docs/api/structures/mouse-wheel-input-event
 
     accelerationRatioX?: number;
     accelerationRatioY?: number;
@@ -5475,7 +5475,7 @@ Retrieves the product descriptions.
 
   class NativeImage {
 
-    // Docs: http://electronjs.org/docs/api/native-image
+    // Docs: https://electronjs.org/docs/api/native-image
 
     /**
      * Creates an empty `NativeImage` instance.
@@ -5625,7 +5625,7 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
 
   interface NativeTheme extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/native-theme
+    // Docs: https://electronjs.org/docs/api/native-theme
 
     /**
      * Emitted when something in the underlying NativeTheme has changed. This normally
@@ -5700,7 +5700,7 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
 
   interface Net {
 
-    // Docs: http://electronjs.org/docs/api/net
+    // Docs: https://electronjs.org/docs/api/net
 
     /**
      * Creates a `ClientRequest` instance using the provided `options` which are
@@ -5713,7 +5713,7 @@ where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
 
   interface NetLog {
 
-    // Docs: http://electronjs.org/docs/api/net-log
+    // Docs: https://electronjs.org/docs/api/net-log
 
     /**
      * resolves when the net log has begun recording.
@@ -5738,14 +5738,14 @@ Starts recording network events to `path`.
 
   interface NewWindowWebContentsEvent extends Event {
 
-    // Docs: http://electronjs.org/docs/api/structures/new-window-web-contents-event
+    // Docs: https://electronjs.org/docs/api/structures/new-window-web-contents-event
 
     newGuest?: BrowserWindow;
   }
 
   class Notification extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/notification
+    // Docs: https://electronjs.org/docs/api/notification
 
     on(event: 'action', listener: (event: Event,
                                    /**
@@ -5856,7 +5856,7 @@ Starts recording network events to `path`.
 
   interface NotificationAction {
 
-    // Docs: http://electronjs.org/docs/api/structures/notification-action
+    // Docs: https://electronjs.org/docs/api/structures/notification-action
 
     /**
      * The label for the given action.
@@ -5870,7 +5870,7 @@ Starts recording network events to `path`.
 
   interface Point {
 
-    // Docs: http://electronjs.org/docs/api/structures/point
+    // Docs: https://electronjs.org/docs/api/structures/point
 
     x: number;
     y: number;
@@ -5878,7 +5878,7 @@ Starts recording network events to `path`.
 
   interface PostBody {
 
-    // Docs: http://electronjs.org/docs/api/structures/post-body
+    // Docs: https://electronjs.org/docs/api/structures/post-body
 
     /**
      * The boundary used to separate multiple parts of the message. Only valid when
@@ -5899,7 +5899,7 @@ Starts recording network events to `path`.
 
   interface PostData {
 
-    // Docs: http://electronjs.org/docs/api/structures/post-data
+    // Docs: https://electronjs.org/docs/api/structures/post-data
 
     /**
      * The `UUID` of the `Blob` being uploaded. Required for the `blob` type.
@@ -5936,7 +5936,7 @@ Starts recording network events to `path`.
 
   interface PowerMonitor extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/power-monitor
+    // Docs: https://electronjs.org/docs/api/power-monitor
 
     /**
      * Emitted when the system is about to lock the screen.
@@ -6022,7 +6022,7 @@ Calculate system idle time in seconds.
 
   interface PowerSaveBlocker {
 
-    // Docs: http://electronjs.org/docs/api/power-save-blocker
+    // Docs: https://electronjs.org/docs/api/power-save-blocker
 
     /**
      * Whether the corresponding `powerSaveBlocker` has started.
@@ -6052,7 +6052,7 @@ Calculate system idle time in seconds.
 
   interface PrinterInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/printer-info
+    // Docs: https://electronjs.org/docs/api/structures/printer-info
 
     /**
      * a longer description of the printer's type.
@@ -6082,7 +6082,7 @@ Calculate system idle time in seconds.
 
   interface ProcessMemoryInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/process-memory-info
+    // Docs: https://electronjs.org/docs/api/structures/process-memory-info
 
     /**
      * The amount of memory not shared by other processes, such as JS heap or HTML
@@ -6104,7 +6104,7 @@ Calculate system idle time in seconds.
 
   interface ProcessMetric {
 
-    // Docs: http://electronjs.org/docs/api/structures/process-metric
+    // Docs: https://electronjs.org/docs/api/structures/process-metric
 
     /**
      * CPU usage of the process.
@@ -6151,7 +6151,7 @@ Calculate system idle time in seconds.
 
   interface Product {
 
-    // Docs: http://electronjs.org/docs/api/structures/product
+    // Docs: https://electronjs.org/docs/api/structures/product
 
     /**
      * The total size of the content, in bytes.
@@ -6195,7 +6195,7 @@ Calculate system idle time in seconds.
 
   interface Protocol {
 
-    // Docs: http://electronjs.org/docs/api/protocol
+    // Docs: https://electronjs.org/docs/api/protocol
 
     /**
      * Whether the protocol was successfully intercepted
@@ -6355,7 +6355,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface ProtocolRequest {
 
-    // Docs: http://electronjs.org/docs/api/structures/protocol-request
+    // Docs: https://electronjs.org/docs/api/structures/protocol-request
 
     headers: Record<string, string>;
     method: string;
@@ -6366,7 +6366,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface ProtocolResponse {
 
-    // Docs: http://electronjs.org/docs/api/structures/protocol-response
+    // Docs: https://electronjs.org/docs/api/structures/protocol-response
 
     /**
      * The charset of response body, default is `"utf-8"`.
@@ -6432,7 +6432,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface ProtocolResponseUploadData {
 
-    // Docs: http://electronjs.org/docs/api/structures/protocol-response-upload-data
+    // Docs: https://electronjs.org/docs/api/structures/protocol-response-upload-data
 
     /**
      * MIME type of the content.
@@ -6446,7 +6446,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface Rectangle {
 
-    // Docs: http://electronjs.org/docs/api/structures/rectangle
+    // Docs: https://electronjs.org/docs/api/structures/rectangle
 
     /**
      * The height of the rectangle (must be an integer).
@@ -6468,7 +6468,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface Referrer {
 
-    // Docs: http://electronjs.org/docs/api/structures/referrer
+    // Docs: https://electronjs.org/docs/api/structures/referrer
 
     /**
      * Can be `default`, `unsafe-url`, `no-referrer-when-downgrade`, `no-referrer`,
@@ -6484,7 +6484,7 @@ Unregisters the custom protocol of `scheme`.
 
   interface Remote extends RemoteMainInterface {
 
-    // Docs: http://electronjs.org/docs/api/remote
+    // Docs: https://electronjs.org/docs/api/remote
 
     /**
      * The web contents of this web page.
@@ -6520,7 +6520,7 @@ e.g.
 
   interface Screen extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/screen
+    // Docs: https://electronjs.org/docs/api/screen
 
     /**
      * Emitted when `newDisplay` has been added.
@@ -6615,7 +6615,7 @@ e.g.
 
   interface ScrubberItem {
 
-    // Docs: http://electronjs.org/docs/api/structures/scrubber-item
+    // Docs: https://electronjs.org/docs/api/structures/scrubber-item
 
     /**
      * The image to appear in this item.
@@ -6629,7 +6629,7 @@ e.g.
 
   interface SegmentedControlSegment {
 
-    // Docs: http://electronjs.org/docs/api/structures/segmented-control-segment
+    // Docs: https://electronjs.org/docs/api/structures/segmented-control-segment
 
     /**
      * Whether this segment is selectable. Default: true.
@@ -6647,7 +6647,7 @@ e.g.
 
   interface ServiceWorkerInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/service-worker-info
+    // Docs: https://electronjs.org/docs/api/structures/service-worker-info
 
     /**
      * The virtual ID of the process that this service worker is running in.  This is
@@ -6667,7 +6667,7 @@ e.g.
 
   class ServiceWorkers extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/service-workers
+    // Docs: https://electronjs.org/docs/api/service-workers
 
     /**
      * Emitted when a service worker logs something to the console.
@@ -6708,7 +6708,7 @@ e.g.
 
   class Session extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/session
+    // Docs: https://electronjs.org/docs/api/session
 
     /**
      * A session instance from `partition` string. When there is an existing `Session`
@@ -7184,7 +7184,7 @@ Clears the host resolver cache.
 
   interface SharedWorkerInfo {
 
-    // Docs: http://electronjs.org/docs/api/structures/shared-worker-info
+    // Docs: https://electronjs.org/docs/api/structures/shared-worker-info
 
     /**
      * The unique id of the shared worker.
@@ -7198,7 +7198,7 @@ Clears the host resolver cache.
 
   interface Shell {
 
-    // Docs: http://electronjs.org/docs/api/shell
+    // Docs: https://electronjs.org/docs/api/shell
 
     /**
      * Play the beep sound.
@@ -7254,7 +7254,7 @@ Creates or updates a shortcut link at `shortcutPath`.
 
   interface ShortcutDetails {
 
-    // Docs: http://electronjs.org/docs/api/structures/shortcut-details
+    // Docs: https://electronjs.org/docs/api/structures/shortcut-details
 
     /**
      * The Application User Model ID. Default is empty.
@@ -7290,7 +7290,7 @@ Creates or updates a shortcut link at `shortcutPath`.
 
   interface Size {
 
-    // Docs: http://electronjs.org/docs/api/structures/size
+    // Docs: https://electronjs.org/docs/api/structures/size
 
     height: number;
     width: number;
@@ -7298,7 +7298,7 @@ Creates or updates a shortcut link at `shortcutPath`.
 
   interface SystemPreferences extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/system-preferences
+    // Docs: https://electronjs.org/docs/api/system-preferences
 
     on(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -7720,7 +7720,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   interface Task {
 
-    // Docs: http://electronjs.org/docs/api/structures/task
+    // Docs: https://electronjs.org/docs/api/structures/task
 
     /**
      * The command line arguments when `program` is executed.
@@ -7759,7 +7759,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   interface ThumbarButton {
 
-    // Docs: http://electronjs.org/docs/api/structures/thumbar-button
+    // Docs: https://electronjs.org/docs/api/structures/thumbar-button
 
     click: Function;
     /**
@@ -7779,7 +7779,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBar {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar
+    // Docs: https://electronjs.org/docs/api/touch-bar
 
     /**
      * TouchBar
@@ -7800,7 +7800,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarButton {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-button
+    // Docs: https://electronjs.org/docs/api/touch-bar-button
 
     /**
      * TouchBarButton
@@ -7816,7 +7816,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarColorPicker extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-color-picker
+    // Docs: https://electronjs.org/docs/api/touch-bar-color-picker
 
     /**
      * TouchBarColorPicker
@@ -7828,7 +7828,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarGroup extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-group
+    // Docs: https://electronjs.org/docs/api/touch-bar-group
 
     /**
      * TouchBarGroup
@@ -7838,7 +7838,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarLabel extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-label
+    // Docs: https://electronjs.org/docs/api/touch-bar-label
 
     /**
      * TouchBarLabel
@@ -7851,7 +7851,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarOtherItemsProxy extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-other-items-proxy
+    // Docs: https://electronjs.org/docs/api/touch-bar-other-items-proxy
 
     /**
      * TouchBarOtherItemsProxy
@@ -7861,7 +7861,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarPopover extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-popover
+    // Docs: https://electronjs.org/docs/api/touch-bar-popover
 
     /**
      * TouchBarPopover
@@ -7873,7 +7873,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarScrubber extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-scrubber
+    // Docs: https://electronjs.org/docs/api/touch-bar-scrubber
 
     /**
      * TouchBarScrubber
@@ -7889,7 +7889,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarSegmentedControl extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-segmented-control
+    // Docs: https://electronjs.org/docs/api/touch-bar-segmented-control
 
     /**
      * TouchBarSegmentedControl
@@ -7903,7 +7903,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarSlider extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-slider
+    // Docs: https://electronjs.org/docs/api/touch-bar-slider
 
     /**
      * TouchBarSlider
@@ -7917,7 +7917,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class TouchBarSpacer extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/touch-bar-spacer
+    // Docs: https://electronjs.org/docs/api/touch-bar-spacer
 
     /**
      * TouchBarSpacer
@@ -7928,7 +7928,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   interface TraceCategoriesAndOptions {
 
-    // Docs: http://electronjs.org/docs/api/structures/trace-categories-and-options
+    // Docs: https://electronjs.org/docs/api/structures/trace-categories-and-options
 
     /**
      * A filter to control what category groups should be traced. A filter can have an
@@ -7955,7 +7955,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   interface TraceConfig {
 
-    // Docs: http://electronjs.org/docs/api/structures/trace-config
+    // Docs: https://electronjs.org/docs/api/structures/trace-config
 
     /**
      * if true, filter event data according to a specific list of events that have been
@@ -8007,7 +8007,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   interface Transaction {
 
-    // Docs: http://electronjs.org/docs/api/structures/transaction
+    // Docs: https://electronjs.org/docs/api/structures/transaction
 
     /**
      * The error code if an error occurred while processing the transaction.
@@ -8039,7 +8039,7 @@ This property is only available on macOS 10.14 Mojave or newer.
 
   class Tray extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/tray
+    // Docs: https://electronjs.org/docs/api/tray
 
     /**
      * Emitted when the tray balloon is clicked.
@@ -8476,7 +8476,7 @@ This value is set to false by default.
 
   interface UploadBlob {
 
-    // Docs: http://electronjs.org/docs/api/structures/upload-blob
+    // Docs: https://electronjs.org/docs/api/structures/upload-blob
 
     /**
      * UUID of blob data to upload.
@@ -8490,7 +8490,7 @@ This value is set to false by default.
 
   interface UploadData {
 
-    // Docs: http://electronjs.org/docs/api/structures/upload-data
+    // Docs: https://electronjs.org/docs/api/structures/upload-data
 
     /**
      * UUID of blob data. Use ses.getBlobData method to retrieve the data.
@@ -8508,7 +8508,7 @@ This value is set to false by default.
 
   interface UploadFile {
 
-    // Docs: http://electronjs.org/docs/api/structures/upload-file
+    // Docs: https://electronjs.org/docs/api/structures/upload-file
 
     /**
      * Path of file to be uploaded.
@@ -8534,7 +8534,7 @@ This value is set to false by default.
 
   interface UploadRawData {
 
-    // Docs: http://electronjs.org/docs/api/structures/upload-raw-data
+    // Docs: https://electronjs.org/docs/api/structures/upload-raw-data
 
     /**
      * Data to be uploaded.
@@ -8548,7 +8548,7 @@ This value is set to false by default.
 
   class WebContents extends NodeEventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/web-contents
+    // Docs: https://electronjs.org/docs/api/web-contents
 
     /**
      * A WebContents instance with the given ID.
@@ -10380,7 +10380,7 @@ Takes a V8 heap snapshot and saves it to `filePath`.
 
   interface WebFrame extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/web-frame
+    // Docs: https://electronjs.org/docs/api/web-frame
 
     /**
      * Attempts to free memory that is no longer being used (like images from a
@@ -10554,7 +10554,7 @@ The factor must be greater than 0.0.
 
   class WebRequest {
 
-    // Docs: http://electronjs.org/docs/api/web-request
+    // Docs: https://electronjs.org/docs/api/web-request
 
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
@@ -10664,7 +10664,7 @@ The `callback` has to be called with a `response` object.
 
   interface WebSource {
 
-    // Docs: http://electronjs.org/docs/api/structures/web-source
+    // Docs: https://electronjs.org/docs/api/structures/web-source
 
     code: string;
     /**
@@ -10676,7 +10676,7 @@ The `callback` has to be called with a `response` object.
 
   interface WebviewTag extends HTMLElement {
 
-    // Docs: http://electronjs.org/docs/api/webview-tag
+    // Docs: https://electronjs.org/docs/api/webview-tag
 
     /**
      * Fired when a load has committed. This includes navigation within the current
@@ -15175,7 +15175,7 @@ interface Document {
 declare namespace NodeJS {
   interface Process extends NodeJS.EventEmitter {
 
-    // Docs: http://electronjs.org/docs/api/process
+    // Docs: https://electronjs.org/docs/api/process
 
     /**
      * Emitted when Electron has loaded its internal initialization script and is
