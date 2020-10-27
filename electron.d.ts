@@ -1,4 +1,4 @@
-// Type definitions for Electron 9.3.2
+// Type definitions for Electron 9.3.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11935,7 +11935,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The reason the render process is gone.  Possible values:
      */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failure' | 'integrity-failure');
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
   }
 
   interface DidChangeThemeColorEvent extends Event {
