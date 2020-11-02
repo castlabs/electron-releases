@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.17
+// Type definitions for Electron 11.0.0-beta.18
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -446,10 +446,14 @@ You should call `event.preventDefault()` if you want to handle this event.
      * `app.isReady()` to check if this event has already fired and `app.whenReady()`
      * to get a Promise that is fulfilled when Electron is initialized.
      */
-    on(event: 'ready', listener: (launchInfo: unknown) => void): this;
-    once(event: 'ready', listener: (launchInfo: unknown) => void): this;
-    addListener(event: 'ready', listener: (launchInfo: unknown) => void): this;
-    removeListener(event: 'ready', listener: (launchInfo: unknown) => void): this;
+    on(event: 'ready', listener: (event: Event,
+                                  launchInfo: Record<string, any>) => void): this;
+    once(event: 'ready', listener: (event: Event,
+                                  launchInfo: Record<string, any>) => void): this;
+    addListener(event: 'ready', listener: (event: Event,
+                                  launchInfo: Record<string, any>) => void): this;
+    removeListener(event: 'ready', listener: (event: Event,
+                                  launchInfo: Record<string, any>) => void): this;
     /**
      * Emitted when `remote.getBuiltin()` is called in the renderer process of
      * `webContents`. Calling `event.preventDefault()` will prevent the module from
