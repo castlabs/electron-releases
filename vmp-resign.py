@@ -46,6 +46,12 @@ SIGNATURE_PADDING = padding.PSS(mgf=padding.MGF1(SIGNATURE_HASHER), salt_length=
 ################################################################################
 
 def to_hex(data):
+    """
+    Convert a hex string to hexadecimal.
+
+    Args:
+        data: (todo): write your description
+    """
     if isinstance(data, str):
         return data.encode('hex')
     else:
@@ -54,6 +60,12 @@ def to_hex(data):
 ################################################################################
 
 def compute_digest(hasher, *args):
+    """
+    Computes the digest of a list of arguments.
+
+    Args:
+        hasher: (todo): write your description
+    """
     for arg in args:
         if (type(arg) is not list):
             hasher.update(arg)
@@ -61,16 +73,33 @@ def compute_digest(hasher, *args):
             compute_digest(hasher, *arg)
 
 def compute_sha512(*args):
+    """
+    Compute sha512 hash.
+
+    Args:
+    """
     hasher = hashes.Hash(hashes.SHA512(), CRYPTO_BACKEND)
     compute_digest(hasher, *args)
     return hasher.finalize()
 
 def verify_sha512(v, *args):
+    """
+    Verify a sha512 signature.
+
+    Args:
+        v: (str): write your description
+    """
     return constant_time.bytes_eq(v, compute_sha256(*args))
 
 ################################################################################
 
 def hash_macho0(exe):
+    """
+    Compute the sha512 hash of - hash.
+
+    Args:
+        exe: (str): write your description
+    """
     headers = MachO.MachO(exe).headers
     if len(headers) > 1:
         logging.debug('Mach-O binary is FAT')
@@ -99,6 +128,13 @@ def hash_macho0(exe):
         return compute_sha512(data)
 
 def hash_macho(exe, version):
+    """
+    Return the hash of the given version.
+
+    Args:
+        exe: (str): write your description
+        version: (str): write your description
+    """
     if (0 == version):
         return hash_macho0(exe)
     else:
@@ -108,11 +144,24 @@ def hash_macho(exe, version):
 ################################################################################
 
 def hash_pe0(exe):
+    """
+    Hash the hash of the sh0 hash.
+
+    Args:
+        exe: (str): write your description
+    """
     with open(exe, 'rb') as f:
         data = f.read()
         return compute_sha512(data)
 
 def hash_pe(exe, version):
+    """
+    Hash the hash of the given version.
+
+    Args:
+        exe: (str): write your description
+        version: (str): write your description
+    """
     if (0 == version):
         return hash_pe0(exe)
     else:
@@ -122,11 +171,24 @@ def hash_pe(exe, version):
 ################################################################################
 
 def hash_elf0(exe):
+    """
+    Compute the hash of the hash.
+
+    Args:
+        exe: (int): write your description
+    """
     with open(exe, 'rb') as f:
         data = f.read()
         return compute_sha512(data)
 
 def hash_elf(exe, version):
+    """
+    Return the hash of the hash.
+
+    Args:
+        exe: (int): write your description
+        version: (str): write your description
+    """
     if (0 == version):
         return hash_elf0(exe)
     else:
@@ -137,6 +199,12 @@ def hash_elf(exe, version):
 
 class Signature:
     def __init__(self):
+        """
+        Initialize the connection
+
+        Args:
+            self: (todo): write your description
+        """
         self.version = None
         self.flags = None
         self.cert = None
@@ -145,9 +213,21 @@ class Signature:
 ################################################################################
 
 def encode_byte(val):
+    """
+    Encode a single byte string.
+
+    Args:
+        val: (str): write your description
+    """
     return bytes(bytearray([val]))
 
 def encode_leb128(val):
+    """
+    Encode a single byte string.
+
+    Args:
+        val: (str): write your description
+    """
     out = b''
     while 0x7f < val:
         out += encode_byte(0x80 | (val & 0x7f))
@@ -156,9 +236,22 @@ def encode_leb128(val):
     return out
 
 def encode_bytes(tag, data):
+    """
+    Encode a single string.
+
+    Args:
+        tag: (todo): write your description
+        data: (todo): write your description
+    """
     return tag + encode_leb128(len(data)) + data
 
 def encode_signature(sig):
+    """
+    Encode a signature.
+
+    Args:
+        sig: (todo): write your description
+    """
     out = encode_byte(sig.version)
     out += encode_bytes(CERT_TAG, sig.cert)
     out += encode_bytes(SIG_TAG, sig.sig)
@@ -168,10 +261,28 @@ def encode_signature(sig):
 ################################################################################
 
 def sign_bytes(data, key):
+    """
+    Signs a message using the secret key.
+
+    Args:
+        data: (todo): write your description
+        key: (str): write your description
+    """
     logging.debug('Signing data: %s', to_hex(data))
     return key.sign(data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def sign_file(file, version, key, cert, hash_func, flags):
+    """
+    Generate a signature.
+
+    Args:
+        file: (str): write your description
+        version: (str): write your description
+        key: (str): write your description
+        cert: (todo): write your description
+        hash_func: (todo): write your description
+        flags: (str): write your description
+    """
     sig = Signature()
     sig.version = version
     sig.flags = encode_byte(flags)
@@ -186,6 +297,12 @@ def sign_file(file, version, key, cert, hash_func, flags):
 ################################################################################
 
 def decode_byte(io):
+    """
+    Decode a byte string.
+
+    Args:
+        io: (todo): write your description
+    """
     b = io.read(1)
     if (not b):
         logging.error('Unsupported EOF while reading VMP signature file')
@@ -193,6 +310,12 @@ def decode_byte(io):
     return ord(b)
 
 def decode_leb128(io):
+    """
+    Decode a leb128 string.
+
+    Args:
+        io: (str): write your description
+    """
     shift = 0
     val = 0
     while True:
@@ -204,12 +327,31 @@ def decode_leb128(io):
     return val
 
 def decode_bytes(io):
+    """
+    Decode a byte array.
+
+    Args:
+        io: (todo): write your description
+    """
     return io.read(decode_leb128(io))
 
 def decode_entry(io):
+    """
+    Decode a single byte string.
+
+    Args:
+        io: (todo): write your description
+    """
     return io.read(1), decode_bytes(io)
 
 def decode_signature(io, end):
+    """
+    Decode a signature.
+
+    Args:
+        io: (todo): write your description
+        end: (int): write your description
+    """
     sig = Signature()
     sig.version = decode_byte(io)
     logging.debug('Decoding signature file with version: %d', sig.version)
@@ -244,12 +386,30 @@ def decode_signature(io, end):
 ################################################################################
 
 def load_pem_cert(data):
+    """
+    Load x509 x509 certificate.
+
+    Args:
+        data: (array): write your description
+    """
     return x509.load_pem_x509_certificate(data, backend=CRYPTO_BACKEND)
 
 def load_der_cert(data):
+    """
+    Load a certificate from an x509 certificate object.
+
+    Args:
+        data: (array): write your description
+    """
     return x509.load_der_x509_certificate(data, backend=CRYPTO_BACKEND)
 
 def load_cert(file):
+    """
+    Load certificate from file.
+
+    Args:
+        file: (str): write your description
+    """
     with open(file, 'rb') as f:
         data = f.read()
     type, loader = ('PEM', load_pem_cert) if (data.startswith(b'-----BEGIN ')) else ('DER', load_der_cert)
@@ -257,12 +417,34 @@ def load_cert(file):
     return loader(data)
 
 def load_pem_key(data, password=None):
+    """
+    Load a private key from a pem - formatted private key.
+
+    Args:
+        data: (str): write your description
+        password: (str): write your description
+    """
     return serialization.load_pem_private_key(data, password=password, backend=CRYPTO_BACKEND)
 
 def load_der_key(data, password=None):
+    """
+    Load a private key
+
+    Args:
+        data: (array): write your description
+        password: (str): write your description
+    """
     return serialization.load_der_private_key(data, password=password, backend=CRYPTO_BACKEND)
 
 def load_key(file, password=None, prompt_password=False):
+    """
+    Load a password from a file.
+
+    Args:
+        file: (str): write your description
+        password: (str): write your description
+        prompt_password: (str): write your description
+    """
     password_provided = password is not None
     with open(file, 'rb') as f:
         data = f.read()
@@ -291,6 +473,12 @@ _OID_NAME_MAP = {
 }
 
 def mk_names(names):
+    """
+    Convert a list of oid names.
+
+    Args:
+        names: (str): write your description
+    """
     entries = []
     for i in names:
         name = _OID_NAME_MAP.get(i.oid, None)
@@ -298,23 +486,58 @@ def mk_names(names):
     return entries
 
 def mk_extension_values(func, val):
+    """
+    Create a list of values to a list of values.
+
+    Args:
+        func: (todo): write your description
+        val: (str): write your description
+    """
     entries = []
     func(entries, val)
     return entries
 
 def mk_subject_key_identifier(entries, val):
+    """
+    Generate a subject identifier for a given value.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     if val.digest: entries.append('Digest: %s' % to_hex(val.digest))
 
 def mk_authority_key_identifier(entries, val):
+    """
+    Generate a certificate identifier.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     if val.key_identifier: entries.append('Key ID: %s' % to_hex(val.key_identifier))
     if val.authority_cert_issuer is not None: entries.append('Issuer: %s' % ', '.join(mk_names(val.authority_cert_issuer)))
     if val.authority_cert_serial_number: entries.append('Serial Number: %x' % val.authority_cert_serial_number)
 
 def mk_basic_constraints(entries, val):
+    """
+    Ensure that the given path.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     entries.append('CA: %s' % val.ca)
     if val.ca and val.path_length is not None: entries.append('Path Length: %d' % val.path_length)
 
 def mk_key_usage(entries, val):
+    """
+    Creates a private key.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     if val.digital_signature: entries.append('Digital Signature')
     if val.content_commitment: entries.append('Content Commitment')
     if val.key_encipherment: entries.append('Key Encipherment')
@@ -336,12 +559,33 @@ _OID_EXT_KEY_USAGE_MAP = {
 }
 
 def mk_extended_key_usage(entries, val):
+    """
+    Generate an extended usage string.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     for i in val: entries.append(_OID_EXT_KEY_USAGE_MAP.get(i, i.dotted_string))
 
 def mk_binary_extension(entries, val):
+    """
+    Convert a binary extension to binary.
+
+    Args:
+        entries: (list): write your description
+        val: (str): write your description
+    """
     entries.append(to_hex(val.value))
 
 def mk_unknown_extension(entries, val):
+    """
+    Convert a list of a list
+
+    Args:
+        entries: (list): write your description
+        val: (float): write your description
+    """
     entries.append('...')
 
 _OID_EXTENSION_MAP = {
@@ -355,6 +599,12 @@ _OID_EXTENSION_MAP = {
 }
 
 def mk_extensions(extensions):
+    """
+    Convert a list of extensions.
+
+    Args:
+        extensions: (str): write your description
+    """
     entries = []
     for i in extensions:
         name, func = _OID_EXTENSION_MAP.get(i.oid, (i.oid.dotted_string, mk_unknown_extension))
@@ -363,6 +613,12 @@ def mk_extensions(extensions):
     return entries
 
 def validate_cert(cert):
+    """
+    Validates that the certificate.
+
+    Args:
+        cert: (str): write your description
+    """
     logging.debug('Certificate:')
     logging.debug('  Version: %s' % cert.version.name)
     logging.debug('  Serial Number: %x' % cert.serial_number)
@@ -382,6 +638,13 @@ def validate_cert(cert):
     logging.debug('Public Key: RSA %d bit' % cpk.key_size)
 
 def validate_cert_and_key(cert, key):
+    """
+    Validate a public key and return true.
+
+    Args:
+        cert: (todo): write your description
+        key: (str): write your description
+    """
     validate_cert(cert)
     if (not isinstance(key, RSAPrivateKey)):
         logging.error('Unsupported private key type, only RSA keys are allowed')
@@ -394,11 +657,28 @@ def validate_cert_and_key(cert, key):
 ################################################################################
 
 def verify_signature(cert, sig, data):
+    """
+    Verifies the signature of the signature.
+
+    Args:
+        cert: (str): write your description
+        sig: (todo): write your description
+        data: (dict): write your description
+    """
     logging.debug('Verifying data: %s', to_hex(data))
     key = cert.public_key()
     key.verify(sig, data, SIGNATURE_PADDING, SIGNATURE_HASHER)
 
 def verify_file(file, sigdata, hash_func, flags=None):
+    """
+    Verify the signature of a file.
+
+    Args:
+        file: (str): write your description
+        sigdata: (todo): write your description
+        hash_func: (todo): write your description
+        flags: (todo): write your description
+    """
     with BytesIO(sigdata) as io:
         sig = decode_signature(io, len(sigdata))
     cert = load_der_cert(sig.cert)
@@ -414,6 +694,13 @@ def verify_file(file, sigdata, hash_func, flags=None):
 ################################################################################
 
 def match_name(dir, names):
+    """
+    Match a file name.
+
+    Args:
+        dir: (str): write your description
+        names: (str): write your description
+    """
     for name in names:
         file = path.join(dir, name)
         if (path.exists(file)):
@@ -422,6 +709,13 @@ def match_name(dir, names):
     raise ValueError('Could not find a valid Electron package in: %s' % dir)
 
 def package_config(dir, names):
+    """
+    Return the path to the package config.
+
+    Args:
+        dir: (str): write your description
+        names: (str): write your description
+    """
     name = match_name(dir, names)
     if ('.app' == path.splitext(name)[1]):
         app_dir = path.join(dir, name)
@@ -443,22 +737,60 @@ def package_config(dir, names):
 ################################################################################
 
 def sign(bin_path, sig_path, version, key, cert, hash_func, bless=False):
+    """
+    Signs a binary message using the given signature.
+
+    Args:
+        bin_path: (str): write your description
+        sig_path: (str): write your description
+        version: (str): write your description
+        key: (str): write your description
+        cert: (str): write your description
+        hash_func: (todo): write your description
+        bless: (str): write your description
+    """
     sig = sign_file(bin_path, version, key, cert, hash_func, 1 if bless else 0)
     logging.info('Writing signature to: %s', sig_path)
     with open(sig_path, 'wb') as file:
         file.write(sig)
 
 def sign_package(dir, version, key, cert, names):
+    """
+    Signs a signature.
+
+    Args:
+        dir: (str): write your description
+        version: (str): write your description
+        key: (str): write your description
+        cert: (todo): write your description
+        names: (str): write your description
+    """
     bin_path, sig_path, hash_func = package_config(dir, names)
     sign(bin_path, sig_path, version, key, cert, hash_func, True)
 
 def verify(bin_path, sig_path, hash_func, bless=False):
+    """
+    Verify a binary signature.
+
+    Args:
+        bin_path: (str): write your description
+        sig_path: (str): write your description
+        hash_func: (todo): write your description
+        bless: (str): write your description
+    """
     logging.info('Reading signature from: %s', sig_path)
     with open(sig_path, 'rb') as file:
         sig = file.read()
     verify_file(bin_path, sig, hash_func, 1 if bless else 0)
 
 def verify_package(dir, names):
+    """
+    Verify that the given package.
+
+    Args:
+        dir: (str): write your description
+        names: (str): write your description
+    """
     bin_path, sig_path, hash_func = package_config(dir, names)
     verify(bin_path, sig_path, hash_func, True)
 
@@ -466,6 +798,11 @@ def verify_package(dir, names):
 
 if (__name__ == "__main__"):
     def main():
+        """
+        Main function.
+
+        Args:
+        """
         import argparse
         parser = argparse.ArgumentParser(description='Generate VMP signatures for Electron packages')
         parser.add_argument('-v', '--verbose', action='count', default=0, help='Increase log verbosity level')
