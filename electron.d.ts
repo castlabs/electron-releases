@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.20
+// Type definitions for Electron 11.0.0-beta.22
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1901,8 +1901,6 @@ Here's a very simple example of creating a custom Jump List:
     removeListener(event: 'minimize', listener: Function): this;
     /**
      * Emitted when the window is being moved to a new position.
-     * 
-__Note__: On macOS this event is an alias of `moved`.
      */
     on(event: 'move', listener: Function): this;
     once(event: 'move', listener: Function): this;
@@ -1910,8 +1908,10 @@ __Note__: On macOS this event is an alias of `moved`.
     removeListener(event: 'move', listener: Function): this;
     /**
      * Emitted once when the window is moved to a new position.
+     * 
+__Note__: On macOS this event is an alias of `move`.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     on(event: 'moved', listener: Function): this;
     once(event: 'moved', listener: Function): this;
@@ -1962,6 +1962,19 @@ __Note__: On macOS this event is an alias of `moved`.
     once(event: 'resize', listener: Function): this;
     addListener(event: 'resize', listener: Function): this;
     removeListener(event: 'resize', listener: Function): this;
+    /**
+     * Emitted once when the window has finished being resized.
+     *
+     * This is usually emitted when the window has been resized manually. On macOS,
+     * resizing the window with `setBounds`/`setSize` and setting the `animate`
+     * parameter to `true` will also emit this event once resizing has finished.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'resized', listener: Function): this;
+    once(event: 'resized', listener: Function): this;
+    addListener(event: 'resized', listener: Function): this;
+    removeListener(event: 'resized', listener: Function): this;
     /**
      * Emitted when the unresponsive web page becomes responsive again.
      */
@@ -7077,7 +7090,7 @@ Clears the host resolver cache.
      * `callback(false)` will reject it. To clear the handler, call
      * `setPermissionRequestHandler(null)`.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'media' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -13890,9 +13903,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     copies?: number;
     /**
-     * The page range to print.
+     * The page range to print. On macOS, only one range is honored.
      */
-    pageRanges?: Record<string, number>;
+    pageRanges?: PageRanges[];
     /**
      * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
      * `longEdge`.
@@ -13957,7 +13970,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * The page range to print.
      */
-    pageRanges?: Record<string, number>;
+    pageRanges?: PageRanges[];
     /**
      * Set the duplex mode of the printed web page. Can be `simplex`, `shortEdge`, or
      * `longEdge`.
@@ -14123,6 +14136,17 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Whether the media element can be rotated.
      */
     canRotate: boolean;
+  }
+
+  interface PageRanges {
+    /**
+     * Index of the first page to print (0-based).
+     */
+    from: number;
+    /**
+     * Index of the last page to print (inclusive) (0-based).
+     */
+    to: number;
   }
 
   interface WebPreferences {
@@ -14593,6 +14617,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -14840,6 +14865,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -15044,6 +15070,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
