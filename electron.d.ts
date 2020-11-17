@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.0.0-beta.22
+// Type definitions for Electron 11.0.0-beta.23
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1623,6 +1623,16 @@ Here's a very simple example of creating a custom Jump List:
      * over `name` by Electron.
      */
     name: string;
+    /**
+     * A `Boolean` which when `true` indicates that the app is currently running under
+     * the Rosetta Translator Environment.
+     *
+     * You can use this property to prompt users to download the arm64 version of your
+     * application when they are running the x64 version under Rosetta incorrectly.
+     *
+     * @platform darwin
+     */
+    readonly runningUnderRosettaTranslation: boolean;
     /**
      * A `String` which is the user agent string Electron will use as a global
      * fallback.
