@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.3
+// Type definitions for Electron 12.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8949,7 +8949,8 @@ This value is set to false by default.
     // Docs: https://electronjs.org/docs/api/web-contents
 
     /**
-     * A WebContents instance with the given ID.
+     * | undefined - A WebContents instance with the given ID, or `undefined` if there
+     * is no WebContents associated with the given ID.
      */
     static fromId(id: number): WebContents;
     /**
