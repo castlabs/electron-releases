@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.4
+// Type definitions for Electron 12.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3804,20 +3804,12 @@ Sets a cookie with `details`.
      */
     addExtraParameter(key: string, value: string): void;
     /**
-     * The directory where crashes are temporarily stored before being uploaded.
-     * 
-**Note:** This method is deprecated, use `app.getPath('crashDumps')` instead.
-     *
-     * @deprecated
-     */
-    getCrashesDirectory(): string;
-    /**
      * The date and ID of the last crash report. Only crash reports that have been
      * uploaded will be returned; even if a crash report is present on disk it will not
      * be returned until it is uploaded. In the case that there are no uploaded
      * reports, `null` is returned.
      * 
-**Note:** Calling this method from the renderer process is deprecated.
+**Note:** This method is only available in the main process.
      */
     getLastCrashReport(): CrashReport;
     /**
@@ -3828,14 +3820,14 @@ Sets a cookie with `details`.
      * Returns all uploaded crash reports. Each report contains the date and uploaded
      * ID.
 
-**Note:** Calling this method from the renderer process is deprecated.
+**Note:** This method is only available in the main process.
      */
     getUploadedReports(): CrashReport[];
     /**
      * Whether reports should be submitted to the server. Set through the `start`
      * method or `setUploadToServer`.
      * 
-**Note:** Calling this method from the renderer process is deprecated.
+**Note:** This method is only available in the main process.
      */
     getUploadToServer(): boolean;
     /**
@@ -3847,7 +3839,7 @@ Sets a cookie with `details`.
      * This would normally be controlled by user preferences. This has no effect if
      * called before `start` is called.
      * 
-**Note:** Calling this method from the renderer process is deprecated.
+**Note:** This method is only available in the main process.
      */
     setUploadToServer(uploadToServer: boolean): void;
     /**
@@ -3873,7 +3865,7 @@ Sets a cookie with `details`.
      * with names longer than the maximum will be silently ignored. Key values longer
      * than the maximum length will be truncated.
      * 
-**Note:** Calling this method from the renderer process is deprecated.
+**Note:** This method is only available in the main process.
      */
     start(options: CrashReporterStartOptions): void;
   }
