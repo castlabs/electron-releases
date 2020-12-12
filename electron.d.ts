@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.1.7
+// Type definitions for Electron 10.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4879,6 +4879,10 @@ Retrieves the product descriptions.
      */
     ports: MessagePortMain[];
     /**
+     * The internal ID of the renderer process that sent this message
+     */
+    processId: number;
+    /**
      * A function that will send an IPC message to the renderer frame that sent the
      * original message that you are currently handling.  You should use this method to
      * "reply" to the sent message in order to guarantee the reply will go to the
@@ -4903,6 +4907,10 @@ Retrieves the product descriptions.
      * The ID of the renderer frame that sent this message
      */
     frameId: number;
+    /**
+     * The internal ID of the renderer process that sent this message
+     */
+    processId: number;
     /**
      * Returns the `webContents` that sent the message
      */
@@ -10111,7 +10119,7 @@ An example of sending messages from the main process to the renderer process:
      * 
 You can also read `frameId` from all incoming IPC messages in the main process.
      */
-    sendToFrame(frameId: number, channel: string, ...args: any[]): void;
+    sendToFrame(frameId: (number) | ([number, number]), channel: string, ...args: any[]): void;
     /**
      * Mute the audio on the current web page.
      */
