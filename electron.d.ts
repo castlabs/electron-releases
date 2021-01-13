@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.1.1
+// Type definitions for Electron 11.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2730,7 +2730,8 @@ On Linux always returns `true`.
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * @platform darwin,linux
+     * The aspect ratio is not respected when window is resized programmingly with APIs
+     * like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
