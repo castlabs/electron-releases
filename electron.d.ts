@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.12
+// Type definitions for Electron 12.0.0-beta.14
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2754,7 +2754,8 @@ On Linux always returns `true`.
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * @platform darwin,linux
+     * The aspect ratio is not respected when window is resized programmingly with APIs
+     * like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
@@ -5019,6 +5020,11 @@ Retrieves the product descriptions.
      * Returns the `webContents` that sent the message
      */
     sender: WebContents;
+    /**
+     * The frame that sent this message
+     *
+     */
+    readonly senderFrame: WebFrameMain;
   }
 
   interface IpcMainInvokeEvent extends Event {
@@ -5037,6 +5043,11 @@ Retrieves the product descriptions.
      * Returns the `webContents` that sent the message
      */
     sender: WebContents;
+    /**
+     * The frame that sent this message
+     *
+     */
+    readonly senderFrame: WebFrameMain;
   }
 
   interface IpcRenderer extends NodeJS.EventEmitter {
@@ -11043,9 +11054,10 @@ The factor must be greater than 0.0.
     // Docs: https://electronjs.org/docs/api/web-frame-main
 
     /**
-     * A frame with the given process and routing IDs.
+     * A frame with the given process and routing IDs, or `undefined` if there is no
+     * WebFrameMain associated with the given IDs.
      */
-    static fromId(processId: number, routingId: number): WebFrameMain;
+    static fromId(processId: number, routingId: number): (WebFrameMain) | (undefined);
     /**
      * A promise that resolves with the result of the executed code or is rejected if
      * execution throws or results in a rejected promise.
@@ -11057,6 +11069,13 @@ The factor must be greater than 0.0.
      * this limitation.
      */
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
+    /**
+     * A promise that resolves with the result of the executed code or is rejected if
+     * execution throws or results in a rejected promise.
+     * 
+Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
+     */
+    executeJavaScriptInIsolatedWorld(worldId: number, code: string, userGesture?: boolean): Promise<unknown>;
     /**
      * Whether the reload was initiated successfully. Only results in `false` when the
      * frame has no history.
