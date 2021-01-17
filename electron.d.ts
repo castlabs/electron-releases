@@ -1,4 +1,4 @@
-// Type definitions for Electron 10.2.0
+// Type definitions for Electron 10.3.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10151,7 +10151,7 @@ An example of showing devtools in a `BrowserWindow`:
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
      * If *offscreen rendering* is enabled sets the frame rate to the specified number.
-     * Only values between 1 and 60 are accepted.
+     * Only values between 1 and 240 are accepted.
      */
     setFrameRate(fps: number): void;
     /**
