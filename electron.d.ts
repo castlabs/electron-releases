@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.16
+// Type definitions for Electron 12.0.0-beta.18
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1400,7 +1400,7 @@ By default this API will return `false`.
      *
      * @platform linux,darwin
      */
-    setBadgeCount(count: number): boolean;
+    setBadgeCount(count?: number): boolean;
     /**
      * Sets or removes a custom Jump List for the application, and returns one of the
      * following strings:
@@ -3659,7 +3659,7 @@ This cannot be called when `titleBarStyle` is set to `customButtonsOnHover`.
 
     // Docs: https://electronjs.org/docs/api/context-bridge
 
-    exposeInMainWorld(apiKey: string, api: Record<string, any>): void;
+    exposeInMainWorld(apiKey: string, api: any): void;
   }
 
   interface Cookie {
@@ -11077,10 +11077,32 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
      */
     executeJavaScriptInIsolatedWorld(worldId: number, code: string, userGesture?: boolean): Promise<unknown>;
     /**
+     * Send a message to the renderer process, optionally transferring ownership of
+     * zero or more [`MessagePortMain`][] objects.
+     *
+     * The transferred `MessagePortMain` objects will be available in the renderer
+     * process by accessing the `ports` property of the emitted event. When they arrive
+     * in the renderer, they will be native DOM `MessagePort` objects.
+
+For example:
+     */
+    postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
+    /**
      * Whether the reload was initiated successfully. Only results in `false` when the
      * frame has no history.
      */
     reload(): boolean;
+    /**
+     * Send an asynchronous message to the renderer process via `channel`, along with
+     * arguments. Arguments will be serialized with the [Structured Clone
+     * Algorithm][SCA], just like [`postMessage`][], so prototype chains will not be
+     * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
+     * an exception.
+     *
+     * The renderer process can handle the message by listening to `channel` with the
+     * `ipcRenderer` module.
+     */
+    send(channel: string, ...args: any[]): void;
     readonly frames: WebFrameMain[];
     readonly framesInSubtree: WebFrameMain[];
     readonly frameTreeNodeId: number;
@@ -13499,6 +13521,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13518,6 +13542,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13529,6 +13555,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13540,6 +13568,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13555,6 +13585,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13570,6 +13602,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13584,6 +13618,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
@@ -13601,6 +13637,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     url: string;
     method: string;
     webContentsId?: number;
+    webContents?: WebContents;
+    frame?: WebFrameMain;
     resourceType: string;
     referrer: string;
     timestamp: number;
