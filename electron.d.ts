@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.18
+// Type definitions for Electron 12.0.0-beta.19
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5063,11 +5063,10 @@ Retrieves the product descriptions.
      * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
      * an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
      *
-     * > **NOTE:** Since the main process does not have support for DOM objects such as
+     * Since the main process does not have support for DOM objects such as
      * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
      * Electron's IPC to the main process, as the main process would have no way to
      * decode them. Attempting to send such objects over IPC will result in an error.
@@ -5123,10 +5122,9 @@ Retrieves the product descriptions.
      * exception.
      *
      * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * Electron objects will throw an exception.
      *
-     * > **NOTE:** Since the main process does not have support for DOM objects such as
+     * Since the main process does not have support for DOM objects such as
      * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
      * Electron's IPC to the main process, as the main process would have no way to
      * decode them. Attempting to send such objects over IPC will result in an error.
@@ -5150,11 +5148,10 @@ Retrieves the product descriptions.
      * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
      * exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
      *
-     * > **NOTE:** Since the main process does not have support for DOM objects such as
+     * Since the main process does not have support for DOM objects such as
      * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
      * Electron's IPC to the main process, as the main process would have no way to
      * decode them. Attempting to send such objects over IPC will result in an error.
@@ -10687,8 +10684,7 @@ An example of `webContents.printToPDF`:
      * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
      *
      * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * Electron objects will throw an exception.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -10708,9 +10704,8 @@ An example of sending messages from the main process to the renderer process:
      * not be included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets
      * will throw an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -10752,7 +10747,7 @@ An example of showing devtools in a `BrowserWindow`:
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
      * If *offscreen rendering* is enabled sets the frame rate to the specified number.
-     * Only values between 1 and 60 are accepted.
+     * Only values between 1 and 240 are accepted.
      */
     setFrameRate(fps: number): void;
     /**
