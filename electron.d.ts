@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.2.1
+// Type definitions for Electron 11.2.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5030,9 +5030,13 @@ Retrieves the product descriptions.
      * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
      * an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
+     *
+     * Since the main process does not have support for DOM objects such as
+     * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
+     * Electron's IPC to the main process, as the main process would have no way to
+     * decode them. Attempting to send such objects over IPC will result in an error.
      *
      * The main process should listen for `channel` with `ipcMain.handle()`.
      *
@@ -5084,9 +5088,13 @@ Retrieves the product descriptions.
      * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
      * exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
+     *
+     * Since the main process does not have support for DOM objects such as
+     * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
+     * Electron's IPC to the main process, as the main process would have no way to
+     * decode them. Attempting to send such objects over IPC will result in an error.
      *
      * The main process handles it by listening for `channel` with the `ipcMain`
      * module.
@@ -5107,9 +5115,13 @@ Retrieves the product descriptions.
      * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
      * exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
+     *
+     * Since the main process does not have support for DOM objects such as
+     * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
+     * Electron's IPC to the main process, as the main process would have no way to
+     * decode them. Attempting to send such objects over IPC will result in an error.
      *
      * The main process handles it by listening for `channel` with `ipcMain` module,
      * and replies by setting `event.returnValue`.
@@ -10254,8 +10266,7 @@ An example of `webContents.printToPDF`:
      * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
      *
      * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * Electron objects will throw an exception.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -10275,9 +10286,8 @@ An example of sending messages from the main process to the renderer process:
      * not be included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets
      * will throw an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects is deprecated, and will begin throwing an exception starting
-     * with Electron 9.
+     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
