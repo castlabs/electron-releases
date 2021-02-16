@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.25
+// Type definitions for Electron 12.0.0-beta.26
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13980,6 +13980,11 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The reason the render process is gone.  Possible values:
      */
     reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
+    /**
+     * The exit code of the process, unless `reason` is `launch-failed`, in which case
+     * `exitCode` will be a platform-specific launch failure error code.
+     */
+    exitCode: number;
   }
 
   interface Request {
