@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.26
+// Type definitions for Electron 12.0.0-beta.27
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3041,6 +3041,13 @@ On macOS it does not remove the focus from the window.
      * Changes the title of native window to `title`.
      */
     setTitle(title: string): void;
+    /**
+     * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
+     * error if `browserView` is not attached to `win`.
+     *
+     * @experimental
+     */
+    setTopBrowserView(browserView: BrowserView): void;
     /**
      * Sets the touchBar layout for the current window. Specifying `null` or
      * `undefined` clears the touch bar. This method only has an effect if the machine
@@ -7376,7 +7383,7 @@ Clears the host resolver cache.
      * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
      * supported and will throw an error.
      */
-    loadExtension(path: string): Promise<Electron.Extension>;
+    loadExtension(path: string, options?: LoadExtensionOptions): Promise<Electron.Extension>;
     /**
      * Preconnects the given number of sockets to an origin.
      */
@@ -7429,7 +7436,7 @@ Clears the host resolver cache.
      * `callback(false)` will reject it. To clear the handler, call
      * `setPermissionRequestHandler(null)`.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -13035,6 +13042,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
     isMainFrame: boolean;
   }
 
+  interface LoadExtensionOptions {
+    /**
+     * Whether to allow the extension to read local files over `file://` protocol and
+     * inject content scripts into `file://` pages. This is required e.g. for loading
+     * devtools extensions on `file://` URLs. Defaults to false.
+     */
+    allowFileAccess: boolean;
+  }
+
   interface LoadFileOptions {
     /**
      * Passed to `url.format()`.
@@ -15225,6 +15241,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
@@ -15482,6 +15499,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
@@ -15692,6 +15710,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
