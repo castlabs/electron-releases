@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.2.3
+// Type definitions for Electron 11.3.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -458,6 +458,8 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when `remote.getBuiltin()` is called in the renderer process of
      * `webContents`. Calling `event.preventDefault()` will prevent the module from
      * being returned. Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-builtin', listener: (event: Event,
                                                webContents: WebContents,
@@ -475,6 +477,8 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when `remote.getCurrentWebContents()` is called in the renderer process
      * of `webContents`. Calling `event.preventDefault()` will prevent the object from
      * being returned. Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-current-web-contents', listener: (event: Event,
                                                             webContents: WebContents) => void): this;
@@ -488,6 +492,8 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when `remote.getCurrentWindow()` is called in the renderer process of
      * `webContents`. Calling `event.preventDefault()` will prevent the object from
      * being returned. Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-current-window', listener: (event: Event,
                                                       webContents: WebContents) => void): this;
@@ -501,6 +507,8 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when `remote.getGlobal()` is called in the renderer process of
      * `webContents`. Calling `event.preventDefault()` will prevent the global from
      * being returned. Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-global', listener: (event: Event,
                                               webContents: WebContents,
@@ -518,6 +526,8 @@ You should call `event.preventDefault()` if you want to handle this event.
      * Emitted when `remote.require()` is called in the renderer process of
      * `webContents`. Calling `event.preventDefault()` will prevent the module from
      * being returned. Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-require', listener: (event: Event,
                                            webContents: WebContents,
@@ -3016,6 +3026,13 @@ On macOS it does not remove the focus from the window.
      */
     setTitle(title: string): void;
     /**
+     * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
+     * error if `browserView` is not attached to `win`.
+     *
+     * @experimental
+     */
+    setTopBrowserView(browserView: BrowserView): void;
+    /**
      * Sets the touchBar layout for the current window. Specifying `null` or
      * `undefined` clears the touch bar. This method only has an effect if the machine
      * has a touch bar and is running on macOS 10.12.1+.
@@ -5361,8 +5378,11 @@ Retrieves the product descriptions.
      * Also on Windows and Linux, you can use a `&` in the top-level item name to
      * indicate which letter should get a generated accelerator. For example, using
      * `&File` for the file menu would result in a generated `Alt-F` accelerator that
-     * opens the associated menu. The indicated character in the button label gets an
-     * underline. The `&` character is not displayed on the button label.
+     * opens the associated menu. The indicated character in the button label then gets
+     * an underline, and the `&` character is not displayed on the button label.
+     *
+     * In order to escape the `&` character in an item name, add a proceeding `&`. For
+     * example, `&&File` would result in `&File` displayed on the button label.
      *
      * Passing `null` will suppress the default menu. On Windows and Linux, this has
      * the additional effect of removing the menu bar from the window.
@@ -7070,7 +7090,7 @@ Clears the host resolver cache.
      * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
      * supported and will throw an error.
      */
-    loadExtension(path: string): Promise<Electron.Extension>;
+    loadExtension(path: string, options?: LoadExtensionOptions): Promise<Electron.Extension>;
     /**
      * Preconnects the given number of sockets to an origin.
      */
@@ -9558,6 +9578,8 @@ The usage is the same with the `login` event of `app`.
      * Emitted when `remote.getBuiltin()` is called in the renderer process. Calling
      * `event.preventDefault()` will prevent the module from being returned. Custom
      * value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-builtin', listener: (event: IpcMainEvent,
                                                moduleName: string) => void): this;
@@ -9571,6 +9593,8 @@ The usage is the same with the `login` event of `app`.
      * Emitted when `remote.getCurrentWebContents()` is called in the renderer process.
      * Calling `event.preventDefault()` will prevent the object from being returned.
      * Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-current-web-contents', listener: (event: IpcMainEvent) => void): this;
     once(event: 'remote-get-current-web-contents', listener: (event: IpcMainEvent) => void): this;
@@ -9580,6 +9604,8 @@ The usage is the same with the `login` event of `app`.
      * Emitted when `remote.getCurrentWindow()` is called in the renderer process.
      * Calling `event.preventDefault()` will prevent the object from being returned.
      * Custom value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-current-window', listener: (event: IpcMainEvent) => void): this;
     once(event: 'remote-get-current-window', listener: (event: IpcMainEvent) => void): this;
@@ -9589,6 +9615,8 @@ The usage is the same with the `login` event of `app`.
      * Emitted when `remote.getGlobal()` is called in the renderer process. Calling
      * `event.preventDefault()` will prevent the global from being returned. Custom
      * value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-get-global', listener: (event: IpcMainEvent,
                                               globalName: string) => void): this;
@@ -9602,6 +9630,8 @@ The usage is the same with the `login` event of `app`.
      * Emitted when `remote.require()` is called in the renderer process. Calling
      * `event.preventDefault()` will prevent the module from being returned. Custom
      * value can be returned by setting `event.returnValue`.
+     *
+     * @deprecated
      */
     on(event: 'remote-require', listener: (event: IpcMainEvent,
                                            moduleName: string) => void): this;
@@ -11211,7 +11241,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     enableblinkfeatures: string;
     /**
      * A `Boolean`. When this attribute is `false` the guest page in `webview` will not
-     * have access to the `remote` module. The remote module is available by default.
+     * have access to the `remote` module. The remote module is unavailable by default.
      */
     enableremotemodule: boolean;
     /**
@@ -12441,6 +12471,15 @@ See webContents.sendInputEvent for detailed description of `event` object.
   interface LoadCommitEvent extends Event {
     url: string;
     isMainFrame: boolean;
+  }
+
+  interface LoadExtensionOptions {
+    /**
+     * Whether to allow the extension to read local files over `file://` protocol and
+     * inject content scripts into `file://` pages. This is required e.g. for loading
+     * devtools extensions on `file://` URLs. Defaults to false.
+     */
+    allowFileAccess: boolean;
   }
 
   interface LoadFileOptions {
@@ -14565,6 +14604,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
@@ -14813,6 +14853,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
@@ -15018,6 +15059,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type Item = Electron.Item;
     type JumpListSettings = Electron.JumpListSettings;
     type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
