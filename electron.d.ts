@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0-beta.31
+// Type definitions for Electron 12.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11081,13 +11081,6 @@ The factor must be greater than 0.0.
      * this limitation.
      */
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
-    /**
-     * A promise that resolves with the result of the executed code or is rejected if
-     * execution throws or results in a rejected promise.
-     * 
-Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
-     */
-    executeJavaScriptInIsolatedWorld(worldId: number, code: string, userGesture?: boolean): Promise<unknown>;
     /**
      * Send a message to the renderer process, optionally transferring ownership of
      * zero or more [`MessagePortMain`][] objects.
