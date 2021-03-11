@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.0
+// Type definitions for Electron 12.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2352,7 +2352,7 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
      * Resolves with a NativeImage
      *
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
-     * whole visible page.
+     * whole visible page. If the page is not visible, `rect` may be empty.
      */
     capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
     /**
@@ -14999,7 +14999,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     offscreen?: boolean;
     /**
      * Whether to run Electron APIs and the specified `preload` script in a separate
-     * JavaScript context. Defaults to `false`. The context that the `preload` script
+     * JavaScript context. Defaults to `true`. The context that the `preload` script
      * runs in will only have access to its own dedicated `document` and `window`
      * globals, as well as its own set of JavaScript builtins (`Array`, `Object`,
      * `JSON`, etc.), which are all invisible to the loaded content. The Electron API
@@ -15015,8 +15015,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * If true, values returned from `webFrame.executeJavaScript` will be sanitized to
      * ensure JS values can't unsafely cross between worlds when using
-     * `contextIsolation`.  The default is `false`. In Electron 12, the default will be
-     * changed to `true`. _Deprecated_
+     * `contextIsolation`. Defaults to `true`. _Deprecated_
      */
     worldSafeExecuteJavaScript?: boolean;
     /**
