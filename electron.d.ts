@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.3
+// Type definitions for Electron 13.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2269,7 +2269,7 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
      * Resolves with a NativeImage
      *
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
-     * whole visible page.
+     * whole visible page. If the page is not visible, `rect` may be empty.
      */
     capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
     /**
