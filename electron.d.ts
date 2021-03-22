@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.5
+// Type definitions for Electron 13.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2424,7 +2424,7 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
      *
      * @platform win32
      */
-    hookWindowMessage(message: number, callback: () => void): void;
+    hookWindowMessage(message: number, callback: (wParam: any, lParam: any) => void): void;
     /**
      * Whether the window is always on top of other windows.
      */
@@ -16139,6 +16139,14 @@ Takes a V8 heap snapshot and saves it to `filePath`.
      *
      */
     readonly chrome: string;
+    /**
+     * A `String` (optional) representing a globally unique ID of the current
+     * JavaScript context. Each frame has its own JavaScript context. When
+     * contextIsolation is enabled, the isolated world also has a separate JavaScript
+     * context. This property is only available in the renderer process.
+     *
+     */
+    readonly contextId?: string;
     /**
      * A `Boolean`. When app is started by being passed as parameter to the default
      * app, this property is `true` in the main process, otherwise it is `undefined`.
