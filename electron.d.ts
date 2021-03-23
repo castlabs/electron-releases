@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.6
+// Type definitions for Electron 13.0.0-beta.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -16147,6 +16147,12 @@ Takes a V8 heap snapshot and saves it to `filePath`.
      *
      */
     readonly contextId?: string;
+    /**
+     * A `Boolean` that indicates whether the current renderer context has
+     * `contextIsolation` enabled. It is `undefined` in the main process.
+     *
+     */
+    readonly contextIsolated: boolean;
     /**
      * A `Boolean`. When app is started by being passed as parameter to the default
      * app, this property is `true` in the main process, otherwise it is `undefined`.
