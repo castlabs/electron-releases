@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.7
+// Type definitions for Electron 13.0.0-beta.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12586,9 +12586,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
 
   interface CrashReporterStartOptions {
     /**
-     * URL that crash reports will be sent to as POST.
+     * URL that crash reports will be sent to as POST. Required unless `uploadToServer`
+     * is `false`.
      */
-    submitURL: string;
+    submitURL?: string;
     /**
      * Defaults to `app.name`.
      */
@@ -16032,9 +16033,6 @@ declare namespace NodeJS {
     /**
      * Emitted when Electron has loaded its internal initialization script and is
      * beginning to load the web page or the main script.
-     * 
-     * It can be used by the preload script to add removed Node global symbols back to
-     * the global scope when node integration is turned off:
      */
     on(event: 'loaded', listener: Function): this;
     once(event: 'loaded', listener: Function): this;
