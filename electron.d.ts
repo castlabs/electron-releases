@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.8
+// Type definitions for Electron 13.0.0-beta.9
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12918,14 +12918,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     frameName: string;
     /**
-     * Comma separated list of window features provided to `window.open()`. Returns
-     * `{action: 'deny'} | {action: 'allow', overrideBrowserWindowOptions?:
-     * BrowserWindowConstructorOptions}` - `deny` cancels the creation of the new
-     * window. `allow` will allow the new window to be created. Specifying
-     * `overrideBrowserWindowOptions` allows customization of the created window.
-     * Returning an unrecognized value such as a null, undefined, or an object without
-     * a recognized 'action' value will result in a console error and have the same
-     * effect as returning `{action: 'deny'}`.
+     * Comma separated list of window features provided to `window.open()`.
      */
     features: string;
   }
