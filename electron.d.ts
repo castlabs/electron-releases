@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.11
+// Type definitions for Electron 13.0.0-beta.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1440,6 +1440,10 @@ By default this API will return `false`.
      * removed item to a custom category earlier than that will result in the entire
      * custom category being omitted from the Jump List. The list of removed items can
      * be obtained using `app.getJumpListSettings()`.
+     *
+     * **Note:** The maximum length of a Jump List item's `description` property is 260
+     * characters. Beyond this limit, the item will not be added to the Jump List, nor
+     * will it be displayed.
      * 
 Here's a very simple example of creating a custom Jump List:
      *
@@ -5217,7 +5221,7 @@ Retrieves the product descriptions.
     args?: string;
     /**
      * Description of the task (displayed in a tooltip). Should only be set if `type`
-     * is `task`.
+     * is `task`. Maximum length 260 characters.
      */
     description?: string;
     /**
@@ -8950,7 +8954,7 @@ This value is set to false by default.
     /**
      * `file`.
      */
-    type: string;
+    type: 'file';
   }
 
   interface UploadRawData {
@@ -8964,7 +8968,7 @@ This value is set to false by default.
     /**
      * `rawData`.
      */
-    type: string;
+    type: 'rawData';
   }
 
   class WebContents extends NodeEventEmitter {
