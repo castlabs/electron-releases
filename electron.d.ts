@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.17
+// Type definitions for Electron 13.0.0-beta.18
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2350,7 +2350,7 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
     getMaximumSize(): number[];
     /**
      * Window id in the format of DesktopCapturerSource's id. For example
-     * "window:1234:0".
+     * "window:1324:0".
      *
      * More precisely the format is `window:id:other_id` where `id` is `HWND` on
      * Windows, `CGWindowID` (`uint64_t`) on macOS and `Window` (`unsigned long`) on
