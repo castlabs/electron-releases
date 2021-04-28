@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.4.2
+// Type definitions for Electron 11.4.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1439,6 +1439,10 @@ By default this API will return `false`.
      * removed item to a custom category earlier than that will result in the entire
      * custom category being omitted from the Jump List. The list of removed items can
      * be obtained using `app.getJumpListSettings()`.
+     *
+     * **Note:** The maximum length of a Jump List item's `description` property is 260
+     * characters. Beyond this limit, the item will not be added to the Jump List, nor
+     * will it be displayed.
      * 
 Here's a very simple example of creating a custom Jump List:
      *
@@ -5269,7 +5273,7 @@ Retrieves the product descriptions.
     args?: string;
     /**
      * Description of the task (displayed in a tooltip). Should only be set if `type`
-     * is `task`.
+     * is `task`. Maximum length 260 characters.
      */
     description?: string;
     /**
@@ -7792,13 +7796,15 @@ Some popular `key` and `type`s are:
      */
     subscribeNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
     /**
+     * The ID of this subscription
+     *
      * Same as `subscribeNotification`, but uses
      * `NSWorkspace.sharedWorkspace.notificationCenter`. This is necessary for events
      * such as `NSWorkspaceDidActivateApplicationNotification`.
      *
      * @platform darwin
      */
-    subscribeWorkspaceNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): void;
+    subscribeWorkspaceNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
     /**
      * Same as `unsubscribeNotification`, but removes the subscriber from
      * `NSNotificationCenter`.
