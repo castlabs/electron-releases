@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.5
+// Type definitions for Electron 12.0.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1055,7 +1055,8 @@ You should seek to use the `steal` option as sparingly as possible.
      */
     getJumpListSettings(): JumpListSettings;
     /**
-     * The current application locale. Possible return values are documented here.
+     * The current application locale, fetched using Chromium's `l10n_util` library.
+     * Possible return values are documented here.
      *
      * To set the locale, you'll want to use a command line switch at app startup,
      * which may be found here.
@@ -2433,7 +2434,7 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
     getMaximumSize(): number[];
     /**
      * Window id in the format of DesktopCapturerSource's id. For example
-     * "window:1234:0".
+     * "window:1324:0".
      *
      * More precisely the format is `window:id:other_id` where `id` is `HWND` on
      * Windows, `CGWindowID` (`uint64_t`) on macOS and `Window` (`unsigned long`) on
