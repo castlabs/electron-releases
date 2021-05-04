@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.18
+// Type definitions for Electron 13.0.0-beta.20
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1055,7 +1055,8 @@ You should seek to use the `steal` option as sparingly as possible.
      */
     getJumpListSettings(): JumpListSettings;
     /**
-     * The current application locale. Possible return values are documented here.
+     * The current application locale, fetched using Chromium's `l10n_util` library.
+     * Possible return values are documented here.
      *
      * To set the locale, you'll want to use a command line switch at app startup,
      * which may be found here.
