@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.20
+// Type definitions for Electron 13.0.0-beta.21
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7359,6 +7359,11 @@ Clears the host resolver cache.
      */
     getSpellCheckerLanguages(): string[];
     /**
+     * A `String | null` indicating the absolute file system path where data for this
+     * session is persisted on disk.  For in memory sessions this returns `null`.
+     */
+    getStoragePath(): void;
+    /**
      * The user agent for this session.
      */
     getUserAgent(): string;
@@ -7581,6 +7586,7 @@ Clears the host resolver cache.
     readonly protocol: Protocol;
     readonly serviceWorkers: ServiceWorkers;
     spellCheckerEnabled: boolean;
+    readonly storagePath: (string) | (null);
     readonly webRequest: WebRequest;
   }
 
@@ -10347,7 +10353,7 @@ Calling `event.preventDefault()` will prevent the navigation.
      * reaches zero. If you want to decrease the hidden capturer count instead you
      * should set `stayHidden` to true.
      */
-    decrementCapturerCount(stayHidden?: boolean): void;
+    decrementCapturerCount(stayHidden?: boolean, stayAwake?: boolean): void;
     /**
      * Executes the editing command `delete` in web page.
      */
@@ -10491,7 +10497,7 @@ Works like `executeJavaScript` but evaluates `scripts` in an isolated context.
      * 
 This also affects the Page Visibility API.
      */
-    incrementCapturerCount(size?: Size, stayHidden?: boolean): void;
+    incrementCapturerCount(size?: Size, stayHidden?: boolean, stayAwake?: boolean): void;
     /**
      * A promise that resolves with a key for the inserted CSS that can later be used
      * to remove the CSS via `contents.removeInsertedCSS(key)`.
