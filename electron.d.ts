@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.26
+// Type definitions for Electron 13.0.0-beta.27
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12248,11 +12248,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Add a type of vibrancy effect to the window, only on macOS. Can be
      * `appearance-based`, `light`, `dark`, `titlebar`, `selection`, `menu`, `popover`,
      * `sidebar`, `medium-light`, `ultra-dark`, `header`, `sheet`, `window`, `hud`,
-     * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`.  Please
-     * note that using `frame: false` in combination with a vibrancy value requires
-     * that you use a non-default `titleBarStyle` as well. Also note that
-     * `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark` are
-     * deprecated and have been removed in macOS Catalina (10.15).
+     * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`. Please
+     * note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
+     * are deprecated and have been removed in macOS Catalina (10.15).
      */
     vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
     /**
