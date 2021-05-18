@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.7
+// Type definitions for Electron 12.0.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12901,7 +12901,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     forward?: boolean;
     /**
-     * Whether the operation is first request or a follow up, defaults to `false`.
+     * Whether to begin a new text finding session with this request. Should be `true`
+     * for initial requests, and `false` for follow-up requests. Defaults to `false`.
      */
     findNext?: boolean;
     /**
