@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.0.0-beta.28
+// Type definitions for Electron 13.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6046,44 +6046,7 @@ Starts recording network events to `path`.
     /**
      * The post data to be sent to the new window.
      */
-    data: Array<PostData>;
-  }
-
-  interface PostData {
-
-    // Docs: https://electronjs.org/docs/api/structures/post-data
-
-    /**
-     * The `UUID` of the `Blob` being uploaded. Required for the `blob` type.
-     */
-    blobUUID?: string;
-    /**
-     * The raw bytes of the post data in a `Buffer`. Required for the `rawData` type.
-     */
-    bytes?: string;
-    /**
-     * The path of the file being uploaded. Required for the `file` type.
-     */
-    filePath?: string;
-    /**
-     * The length of the file being uploaded, in bytes. If set to `-1`, the whole file
-     * will be uploaded. Only valid for `file` types.
-     */
-    length?: number;
-    /**
-     * The modification time of the file represented by a double, which is the number
-     * of seconds since the `UNIX Epoch` (Jan 1, 1970). Only valid for `file` types.
-     */
-    modificationTime?: number;
-    /**
-     * The offset from the beginning of the file being uploaded, in bytes. Only valid
-     * for `file` types.
-     */
-    offset?: number;
-    /**
-     * One of the following:
-     */
-    type: ('rawData' | 'file' | 'blob');
+    data: Array<(UploadRawData) | (UploadFile)>;
   }
 
   interface PowerMonitor extends NodeJS.EventEmitter {
@@ -12933,6 +12896,23 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Comma separated list of window features provided to `window.open()`.
      */
     features: string;
+    /**
+     * Can be `default`, `foreground-tab`, `background-tab`, `new-window`,
+     * `save-to-disk` or `other`.
+     */
+    disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'save-to-disk' | 'other');
+    /**
+     * The referrer that will be passed to the new window. May or may not result in the
+     * `Referer` header being sent, depending on the referrer policy.
+     */
+    referrer: Referrer;
+    /**
+     * The post data that will be sent to the new window, along with the appropriate
+     * headers that will be set. If no post data is to be sent, the value will be
+     * `null`. Only defined when the window is being created by a form that set
+     * `target=_blank`.
+     */
+    postBody?: PostBody;
   }
 
   interface HeadersReceivedResponse {
@@ -13118,7 +13098,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Extra headers separated by "\n"
      */
     extraHeaders?: string;
-    postData?: (UploadRawData[]) | (UploadFile[]);
+    postData?: Array<(UploadRawData) | (UploadFile)>;
     /**
      * Base url (with trailing path separator) for files to be loaded by the data url.
      * This is needed only if the specified `url` is a data url and needs to load other
@@ -15455,7 +15435,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NotificationResponse = Electron.NotificationResponse;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
-    type PostData = Electron.PostData;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -15714,7 +15693,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NotificationResponse = Electron.NotificationResponse;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
-    type PostData = Electron.PostData;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -15926,7 +15904,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NotificationResponse = Electron.NotificationResponse;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
-    type PostData = Electron.PostData;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
