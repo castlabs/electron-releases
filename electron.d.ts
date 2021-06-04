@@ -1,4 +1,4 @@
-// Type definitions for Electron 11.4.7
+// Type definitions for Electron 11.4.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13535,6 +13535,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface SaveDialogOptions {
+    /**
+     * The dialog title. Cannot be displayed on some _Linux_ desktop environments.
+     */
     title?: string;
     /**
      * Absolute directory path, absolute file path, or file name to use by default.
@@ -13595,6 +13598,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
   }
 
   interface SaveDialogSyncOptions {
+    /**
+     * The dialog title. Cannot be displayed on some _Linux_ desktop environments.
+     */
     title?: string;
     /**
      * Absolute directory path, absolute file path, or file name to use by default.
