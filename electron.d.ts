@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.1.2
+// Type definitions for Electron 13.1.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10972,6 +10972,11 @@ An example of using node-spellchecker as provider:
      *
      * > **NOTE**: Visual zoom is disabled by default in Electron. To re-enable it,
      * call:
+     *
+     * > **NOTE**: Visual zoom only applies to pinch-to-zoom behavior. Cmd+/-/0 zoom
+     * shortcuts are controlled by the 'zoomIn', 'zoomOut', and 'resetZoom' MenuItem
+     * roles in the application Menu. To disable shortcuts, manually define the Menu
+     * and omit zoom roles from the definition.
      */
     setVisualZoomLevelLimits(minimumLevel: number, maximumLevel: number): void;
     /**
@@ -15068,7 +15073,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     offscreen?: boolean;
     /**
      * Whether to run Electron APIs and the specified `preload` script in a separate
-     * JavaScript context. Defaults to `false`. The context that the `preload` script
+     * JavaScript context. Defaults to `true`. The context that the `preload` script
      * runs in will only have access to its own dedicated `document` and `window`
      * globals, as well as its own set of JavaScript builtins (`Array`, `Object`,
      * `JSON`, etc.), which are all invisible to the loaded content. The Electron API
@@ -15084,8 +15089,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     /**
      * If true, values returned from `webFrame.executeJavaScript` will be sanitized to
      * ensure JS values can't unsafely cross between worlds when using
-     * `contextIsolation`.  The default is `false`. In Electron 12, the default will be
-     * changed to `true`. _Deprecated_
+     * `contextIsolation`. Defaults to `true`. _Deprecated_
      */
     worldSafeExecuteJavaScript?: boolean;
     /**
