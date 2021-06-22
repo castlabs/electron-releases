@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.11
+// Type definitions for Electron 12.0.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4380,6 +4380,9 @@ Send given command to the debugging target.
      * Can be `available`, `unavailable`, `unknown`.
      */
     accelerometerSupport: ('available' | 'unavailable' | 'unknown');
+    /**
+     * the bounds of the display in DIP points.
+     */
     bounds: Rectangle;
     /**
      * The number of bits per pixel.
@@ -4423,6 +4426,9 @@ Send given command to the debugging target.
      * Can be `available`, `unavailable`, `unknown`.
      */
     touchSupport: ('available' | 'unavailable' | 'unknown');
+    /**
+     * the work area of the display in DIP points.
+     */
     workArea: Rectangle;
     workAreaSize: Size;
   }
