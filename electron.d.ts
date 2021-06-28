@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.9
+// Type definitions for Electron 14.0.0-beta.10
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -15518,9 +15518,9 @@ declare namespace Electron {
      */
     contextIsolation?: boolean;
     /**
-     * Whether to use native `window.open()`. Defaults to `true`. Child windows will
+     * Whether to use native `window.open()`. Defaults to `false`. Child windows will
      * always have node integration disabled unless `nodeIntegrationInSubFrames` is
-     * true.
+     * true. **Note:** The default value will be changing to `true` in Electron 15.
      */
     nativeWindowOpen?: boolean;
     /**
