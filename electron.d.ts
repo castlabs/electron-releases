@@ -1,4 +1,4 @@
-// Type definitions for Electron 12.0.13
+// Type definitions for Electron 12.0.14
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13678,7 +13678,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     statusLine: string;
     statusCode: number;
-    requestHeaders: Record<string, string>;
     responseHeaders?: Record<string, string[]>;
   }
 
