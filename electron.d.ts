@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.12
+// Type definitions for Electron 14.0.0-beta.13
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3446,6 +3446,9 @@ declare namespace Electron {
     has(format: string, type?: 'selection' | 'clipboard'): boolean;
     /**
      * Reads `format` type from the clipboard.
+     *
+     * `format` should contain valid ASCII characters and have `/` separator. `a/c`,
+     * `a/bc` are valid formats while `/abc`, `abc/`, `a/`, `/a`, `a` are not valid.
      *
      * @experimental
      */
@@ -12697,6 +12700,13 @@ declare namespace Electron {
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
+    /**
+     *  On macOS, when using a frameless window in conjunction with
+     * `win.setWindowButtonVisibility(true)` or using a `titleBarStyle` so that the
+     * traffic lights are visible, this property enables the Window Controls Overlay
+     * JavaScript APIs and CSS Environment Variables.  Default is `false`.
+     */
+    titleBarOverlay?: boolean;
   }
 
   interface CertificateTrustDialogOptions {
@@ -14002,7 +14012,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     redirectURL: string;
@@ -14023,7 +14037,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     uploadData: UploadData[];
@@ -14036,7 +14054,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     requestHeaders: Record<string, string>;
@@ -14049,7 +14071,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     responseHeaders?: Record<string, string[]>;
@@ -14066,7 +14092,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     fromCache: boolean;
@@ -14083,12 +14113,15 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     statusLine: string;
     statusCode: number;
-    requestHeaders: Record<string, string>;
     responseHeaders?: Record<string, string[]>;
   }
 
@@ -14099,7 +14132,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     responseHeaders?: Record<string, string[]>;
@@ -14118,7 +14155,11 @@ declare namespace Electron {
     webContentsId?: number;
     webContents?: WebContents;
     frame?: WebFrameMain;
-    resourceType: string;
+    /**
+     * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
+     * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
+     */
+    resourceType: ('mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket' | 'other');
     referrer: string;
     timestamp: number;
     requestHeaders: Record<string, string>;
