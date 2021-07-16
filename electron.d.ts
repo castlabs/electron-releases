@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.13
+// Type definitions for Electron 14.0.0-beta.14
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11724,6 +11724,11 @@ declare namespace Electron {
      */
     addEventListener(event: 'did-stop-loading', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'did-stop-loading', listener: (event: Event) => void): this;
+    /**
+     * Fired when attached to the embedder web contents.
+     */
+    addEventListener(event: 'did-attach', listener: (event: Event) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-attach', listener: (event: Event) => void): this;
     /**
      * Fired when document in the given frame is loaded.
      */
