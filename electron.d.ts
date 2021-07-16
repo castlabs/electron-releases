@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.1.6
+// Type definitions for Electron 13.1.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11260,6 +11260,11 @@ The `callback` has to be called with a `response` object.
     addEventListener(event: 'did-stop-loading', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'did-stop-loading', listener: (event: Event) => void): this;
     /**
+     * Fired when attached to the embedder web contents.
+     */
+    addEventListener(event: 'did-attach', listener: (event: Event) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-attach', listener: (event: Event) => void): this;
+    /**
      * Fired when document in the given frame is loaded.
      */
     addEventListener(event: 'dom-ready', listener: (event: Event) => void, useCapture?: boolean): this;
@@ -13644,7 +13649,6 @@ See webContents.sendInputEvent for detailed description of `event` object.
     timestamp: number;
     statusLine: string;
     statusCode: number;
-    requestHeaders: Record<string, string>;
     responseHeaders?: Record<string, string[]>;
   }
 
