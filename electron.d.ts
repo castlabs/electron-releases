@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.17
+// Type definitions for Electron 14.0.0-beta.18
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5588,13 +5588,14 @@ declare namespace Electron {
      * A `String` (optional) indicating the item's role, if set. Can be `undo`, `redo`,
      * `cut`, `copy`, `paste`, `pasteAndMatchStyle`, `delete`, `selectAll`, `reload`,
      * `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`, `zoomOut`,
-     * `togglefullscreen`, `window`, `minimize`, `close`, `help`, `about`, `services`,
-     * `hide`, `hideOthers`, `unhide`, `quit`, `startSpeaking`, `stopSpeaking`, `zoom`,
-     * `front`, `appMenu`, `fileMenu`, `editMenu`, `viewMenu`, `recentDocuments`,
-     * `toggleTabBar`, `selectNextTab`, `selectPreviousTab`, `mergeAllWindows`,
-     * `clearRecentDocuments`, `moveTabToNewWindow` or `windowMenu`
+     * `toggleSpellChecker`, `togglefullscreen`, `window`, `minimize`, `close`, `help`,
+     * `about`, `services`, `hide`, `hideOthers`, `unhide`, `quit`, `startSpeaking`,
+     * `stopSpeaking`, `zoom`, `front`, `appMenu`, `fileMenu`, `editMenu`, `viewMenu`,
+     * `shareMenu`, `recentDocuments`, `toggleTabBar`, `selectNextTab`,
+     * `selectPreviousTab`, `mergeAllWindows`, `clearRecentDocuments`,
+     * `moveTabToNewWindow` or `windowMenu`
      */
-    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
+    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
     /**
      * A `SharingItem` indicating the item to share when the `role` is `shareMenu`.
      *
@@ -7235,12 +7236,6 @@ declare namespace Electron {
      * `portId` to be selected, passing an empty string to `callback` will cancel the
      * request.  Additionally, permissioning on `navigator.serial` can be managed by
      * using ses.setPermissionCheckHandler(handler) with the `serial` permission.
-     *
-     * Because this is an experimental feature it is disabled by default.  To enable
-     * this feature, you will need to use the `--enable-features=ElectronSerialChooser`
-     * command line switch.
-     *
-     * @experimental
      */
     on(event: 'select-serial-port', listener: (event: Event,
                                                portList: SerialPort[],
@@ -7262,8 +7257,6 @@ declare namespace Electron {
      * Emitted after `navigator.serial.requestPort` has been called and
      * `select-serial-port` has fired if a new serial port becomes available.  For
      * example, this event will fire when a new USB device is plugged in.
-     *
-     * @experimental
      */
     on(event: 'serial-port-added', listener: (event: Event,
                                               port: SerialPort,
@@ -7281,8 +7274,6 @@ declare namespace Electron {
      * Emitted after `navigator.serial.requestPort` has been called and
      * `select-serial-port` has fired if a serial port has been removed.  For example,
      * this event will fire when a USB device is unplugged.
-     *
-     * @experimental
      */
     on(event: 'serial-port-removed', listener: (event: Event,
                                                 port: SerialPort,
@@ -13651,15 +13642,15 @@ declare namespace Electron {
     /**
      * Can be `undo`, `redo`, `cut`, `copy`, `paste`, `pasteAndMatchStyle`, `delete`,
      * `selectAll`, `reload`, `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`,
-     * `zoomOut`, `togglefullscreen`, `window`, `minimize`, `close`, `help`, `about`,
-     * `services`, `hide`, `hideOthers`, `unhide`, `quit`, `startSpeaking`,
-     * `stopSpeaking`, `zoom`, `front`, `appMenu`, `fileMenu`, `editMenu`, `viewMenu`,
-     * `shareMenu`, `recentDocuments`, `toggleTabBar`, `selectNextTab`,
-     * `selectPreviousTab`, `mergeAllWindows`, `clearRecentDocuments`,
+     * `zoomOut`, `toggleSpellChecker`, `togglefullscreen`, `window`, `minimize`,
+     * `close`, `help`, `about`, `services`, `hide`, `hideOthers`, `unhide`, `quit`,
+     * `startSpeaking`, `stopSpeaking`, `zoom`, `front`, `appMenu`, `fileMenu`,
+     * `editMenu`, `viewMenu`, `shareMenu`, `recentDocuments`, `toggleTabBar`,
+     * `selectNextTab`, `selectPreviousTab`, `mergeAllWindows`, `clearRecentDocuments`,
      * `moveTabToNewWindow` or `windowMenu` - Define the action of the menu item, when
      * specified the `click` property will be ignored. See roles.
      */
-    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
+    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
     /**
      * Can be `normal`, `separator`, `submenu`, `checkbox` or `radio`.
      */
