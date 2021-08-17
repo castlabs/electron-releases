@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.1.9
+// Type definitions for Electron 13.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11326,6 +11326,12 @@ Calling `event.preventDefault()` does __NOT__ have any effect.
     addEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void): this;
     /**
+     * Emitted when any frame (including main) starts navigating. `isInPlace` will be
+     * `true` for in-page navigations.
+     */
+    addEventListener(event: 'did-start-navigation', listener: (event: DidStartNavigationEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-start-navigation', listener: (event: DidStartNavigationEvent) => void): this;
+    /**
      * Emitted when a navigation is done.
      *
      * This event is not emitted for in-page navigations, such as clicking anchor links
@@ -11334,6 +11340,15 @@ Calling `event.preventDefault()` does __NOT__ have any effect.
      */
     addEventListener(event: 'did-navigate', listener: (event: DidNavigateEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'did-navigate', listener: (event: DidNavigateEvent) => void): this;
+    /**
+     * Emitted when any frame navigation is done.
+     *
+     * This event is not emitted for in-page navigations, such as clicking anchor links
+     * or updating the `window.location.hash`. Use `did-navigate-in-page` event for
+     * this purpose.
+     */
+    addEventListener(event: 'did-frame-navigate', listener: (event: DidFrameNavigateEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-frame-navigate', listener: (event: DidFrameNavigateEvent) => void): this;
     /**
      * Emitted when an in-page navigation happened.
      *
@@ -12140,8 +12155,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     modal?: boolean;
     /**
-     * Whether the web view accepts a single mouse-down event that simultaneously
-     * activates the window. Default is `false`.
+     * Whether clicking an inactive window will also click through to the web contents.
+     * Default is `false` on macOS. This option is not configurable on other platforms.
      */
     acceptFirstMouse?: boolean;
     /**
@@ -12772,6 +12787,21 @@ See webContents.sendInputEvent for detailed description of `event` object.
     isMainFrame: boolean;
   }
 
+  interface DidFrameNavigateEvent extends Event {
+    url: string;
+    /**
+     * -1 for non HTTP navigations
+     */
+    httpResponseCode: number;
+    /**
+     * empty for non HTTP navigations,
+     */
+    httpStatusText: string;
+    isMainFrame: boolean;
+    frameProcessId: number;
+    frameRoutingId: number;
+  }
+
   interface DidNavigateEvent extends Event {
     url: string;
   }
@@ -12779,6 +12809,14 @@ See webContents.sendInputEvent for detailed description of `event` object.
   interface DidNavigateInPageEvent extends Event {
     isMainFrame: boolean;
     url: string;
+  }
+
+  interface DidStartNavigationEvent extends Event {
+    url: string;
+    isInPlace: boolean;
+    isMainFrame: boolean;
+    frameProcessId: number;
+    frameRoutingId: number;
   }
 
   interface DisplayBalloonOptions {
@@ -15298,8 +15336,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
     type DidFrameFinishLoadEvent = Electron.DidFrameFinishLoadEvent;
+    type DidFrameNavigateEvent = Electron.DidFrameNavigateEvent;
     type DidNavigateEvent = Electron.DidNavigateEvent;
     type DidNavigateInPageEvent = Electron.DidNavigateInPageEvent;
+    type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
@@ -15556,8 +15596,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
     type DidFrameFinishLoadEvent = Electron.DidFrameFinishLoadEvent;
+    type DidFrameNavigateEvent = Electron.DidFrameNavigateEvent;
     type DidNavigateEvent = Electron.DidNavigateEvent;
     type DidNavigateInPageEvent = Electron.DidNavigateInPageEvent;
+    type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
@@ -15767,8 +15809,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
     type DidFrameFinishLoadEvent = Electron.DidFrameFinishLoadEvent;
+    type DidFrameNavigateEvent = Electron.DidFrameNavigateEvent;
     type DidNavigateEvent = Electron.DidNavigateEvent;
     type DidNavigateInPageEvent = Electron.DidNavigateInPageEvent;
+    type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
