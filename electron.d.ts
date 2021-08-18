@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.21
+// Type definitions for Electron 14.0.0-beta.22
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12606,8 +12606,8 @@ declare namespace Electron {
      */
     modal?: boolean;
     /**
-     * Whether the web view accepts a single mouse-down event that simultaneously
-     * activates the window. Default is `false`.
+     * Whether clicking an inactive window will also click through to the web contents.
+     * Default is `false` on macOS. This option is not configurable on other platforms.
      */
     acceptFirstMouse?: boolean;
     /**
