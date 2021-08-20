@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.22
+// Type definitions for Electron 14.0.0-beta.23
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1319,8 +1319,8 @@ declare namespace Electron {
      *
      * On macOS, it shows on the dock icon. On Linux, it only works for Unity launcher.
      *
-     * **Note:** Unity launcher requires the existence of a `.desktop` file to work,
-     * for more information please read Desktop Environment Integration.
+     * **Note:** Unity launcher requires a `.desktop` file to work. For more
+     * information, please read the Unity integration documentation.
      *
      * @platform linux,darwin
      */
@@ -1511,8 +1511,8 @@ declare namespace Electron {
      * On macOS, setting this with any nonzero integer shows on the dock icon. On
      * Linux, this property only works for Unity launcher.
      *
-     * **Note:** Unity launcher requires the existence of a `.desktop` file to work,
-     * for more information please read Desktop Environment Integration.
+     * **Note:** Unity launcher requires a `.desktop` file to work. For more
+     * information, please read the Unity integration documentation.
      *
      * **Note:** On macOS, you need to ensure that your application has the permission
      * to display notifications for this property to take effect.
