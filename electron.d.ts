@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.2.2
+// Type definitions for Electron 13.2.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -14530,7 +14530,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
      */
     overlayStyle?: ('background' | 'outline' | 'none');
     /**
-     * Defaults to `false`.
+     * Whether to show arrow buttons. Defaults to `false` and is only shown if `items`
+     * is non-empty.
      */
     showArrowButtons?: boolean;
     /**
