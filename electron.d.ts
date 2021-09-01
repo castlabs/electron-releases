@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.25
+// Type definitions for Electron 14.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6260,6 +6260,26 @@ declare namespace Electron {
     userText?: string;
   }
 
+  interface OverlayOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/overlay-options
+
+    /**
+     * The CSS color of the Window Controls Overlay when enabled. Default is the system
+     * color.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     * Default is the system color.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
+  }
+
   interface Point {
 
     // Docs: https://electronjs.org/docs/api/structures/point
@@ -9348,6 +9368,14 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/web-contents
 
+    /**
+     * | undefined - A WebContents instance with the given TargetID, or `undefined` if
+     * there is no WebContents associated with the given TargetID.
+     *
+     * When communicating with the Chrome DevTools Protocol, it can be useful to lookup
+     * a WebContents instance based on its assigned TargetID.
+     */
+    static fromDevToolsTargetId(targetId: string): WebContents;
     /**
      * | undefined - A WebContents instance with the given ID, or `undefined` if there
      * is no WebContents associated with the given ID.
@@ -12659,6 +12687,8 @@ declare namespace Electron {
     visualEffectState?: ('followWindow' | 'active' | 'inactive');
     /**
      * The style of window title bar. Default is `default`. Possible values are:
+     *
+     * @platform darwin,win32
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
     /**
@@ -12712,12 +12742,15 @@ declare namespace Electron {
      */
     webPreferences?: WebPreferences;
     /**
-     *  On macOS, when using a frameless window in conjunction with
-     * `win.setWindowButtonVisibility(true)` or using a `titleBarStyle` so that the
-     * traffic lights are visible, this property enables the Window Controls Overlay
-     * JavaScript APIs and CSS Environment Variables.  Default is `false`.
+     *  When using a frameless window in conjuction with
+     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
+     * that the standard window controls ("traffic lights" on macOS) are visible, this
+     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
+     * Variables. Specifying `true` will result in an overlay with default system
+     * colors. Default is `false`.  On Windows, the OverlayOptions can be used instead
+     * of a boolean to specify colors for the overlay.
      */
-    titleBarOverlay?: boolean;
+    titleBarOverlay?: (OverlayOptions) | (boolean);
   }
 
   interface CertificateTrustDialogOptions {
@@ -15940,6 +15973,7 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -16201,6 +16235,7 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -16414,6 +16449,7 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
