@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0-beta.25
+// Type definitions for Electron 15.0.0-beta.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -225,7 +225,8 @@ declare namespace Electron {
                                               /**
                                                * Contains app-specific state stored by the activity on another device.
                                                */
-                                              userInfo: unknown) => void): this;
+                                              userInfo: unknown,
+                                              details: ContinueActivityDetails) => void): this;
     once(event: 'continue-activity', listener: (event: Event,
                                               /**
                                                * A string identifying the activity. Maps to `NSUserActivity.activityType`.
@@ -234,7 +235,8 @@ declare namespace Electron {
                                               /**
                                                * Contains app-specific state stored by the activity on another device.
                                                */
-                                              userInfo: unknown) => void): this;
+                                              userInfo: unknown,
+                                              details: ContinueActivityDetails) => void): this;
     addListener(event: 'continue-activity', listener: (event: Event,
                                               /**
                                                * A string identifying the activity. Maps to `NSUserActivity.activityType`.
@@ -243,7 +245,8 @@ declare namespace Electron {
                                               /**
                                                * Contains app-specific state stored by the activity on another device.
                                                */
-                                              userInfo: unknown) => void): this;
+                                              userInfo: unknown,
+                                              details: ContinueActivityDetails) => void): this;
     removeListener(event: 'continue-activity', listener: (event: Event,
                                               /**
                                                * A string identifying the activity. Maps to `NSUserActivity.activityType`.
@@ -252,7 +255,8 @@ declare namespace Electron {
                                               /**
                                                * Contains app-specific state stored by the activity on another device.
                                                */
-                                              userInfo: unknown) => void): this;
+                                              userInfo: unknown,
+                                              details: ContinueActivityDetails) => void): this;
     /**
      * Emitted during Handoff when an activity from a different device fails to be
      * resumed.
@@ -1552,11 +1556,27 @@ declare namespace Electron {
     name: string;
     /**
      * A `Boolean` which when `true` indicates that the app is currently running under
+     * an ARM64 translator (like the macOS Rosetta Translator Environment or Windows
+     * WOW).
+     *
+     * You can use this property to prompt users to download the arm64 version of your
+     * application when they are running the x64 version under Rosetta incorrectly.
+     *
+     * @platform darwin,win32
+     */
+    readonly runningUnderARM64Translation: boolean;
+    /**
+     * A `Boolean` which when `true` indicates that the app is currently running under
      * the Rosetta Translator Environment.
      *
      * You can use this property to prompt users to download the arm64 version of your
      * application when they are running the x64 version under Rosetta incorrectly.
      *
+     * **Deprecated:** This property is superceded by the
+     * `runningUnderARM64Translation` property which detects when the app is being
+     * translated to ARM64 in both macOS and Windows.
+     *
+     * @deprecated
      * @platform darwin
      */
     readonly runningUnderRosettaTranslation: boolean;
@@ -2114,28 +2134,41 @@ declare namespace Electron {
      * Note that this is only emitted when the window is being resized manually.
      * Resizing the window with `setBounds`/`setSize` will not emit this event.
      *
+     * The possible values and behaviors of the `edge` option are platform dependent.
+     * Possible values are:
+     *
+     * * On Windows, possible values are `bottom`, `top`, `left`, `right`, `top-left`,
+     * `top-right`, `bottom-left`, `bottom-right`.
+     * * On macOS, possible values are `bottom` and `right`.
+     *   * The value `bottom` is used to denote vertical resizing.
+     *   * The value `right` is used to denote horizontal resizing.
+     *
      * @platform darwin,win32
      */
     on(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: Rectangle) => void): this;
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
     once(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: Rectangle) => void): this;
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
     addListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: Rectangle) => void): this;
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
     removeListener(event: 'will-resize', listener: (event: Event,
                                         /**
                                          * Size the window is being resized to.
                                          */
-                                        newBounds: Rectangle) => void): this;
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
     /**
      * BrowserWindow
      */
@@ -5526,7 +5559,7 @@ declare namespace Electron {
      */
     constructor(options: MenuItemConstructorOptions);
     /**
-     * A `Accelerator` (optional) indicating the item's accelerator, if set.
+     * An `Accelerator` (optional) indicating the item's accelerator, if set.
      */
     accelerator?: Accelerator;
     /**
@@ -5623,6 +5656,18 @@ declare namespace Electron {
      * `submenu`, `checkbox` or `radio`.
      */
     type: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
+    /**
+     * An `Accelerator | null` indicating the item's user-assigned accelerator for the
+     * menu item.
+     *
+     * **Note:** This property is only initialized after the `MenuItem` has been added
+     * to a `Menu`. Either via `Menu.buildFromTemplate` or via
+     * `Menu.append()/insert()`.  Accessing before initialization will just return
+     * `null`.
+     *
+     * @platform darwin
+     */
+    readonly userAccelerator: (Accelerator) | (null);
     /**
      * A `Boolean` indicating whether the item is visible, this property can be
      * dynamically changed.
@@ -6867,6 +6912,32 @@ declare namespace Electron {
      * HTTP Referrer URL.
      */
     url: string;
+  }
+
+  interface SafeStorage extends NodeJS.EventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/safe-storage
+
+    /**
+     * the decrypted string. Decrypts the encrypted buffer obtained  with
+     * `safeStorage.encryptString` back into a string.
+     *
+     * This function will throw an error if decryption fails.
+     */
+    decryptString(encrypted: Buffer): string;
+    /**
+     * An array of bytes representing the encrypted string.
+     *
+     * This function will throw an error if encryption fails.
+     */
+    encryptString(plainText: string): Buffer;
+    /**
+     * Whether encryption is available.
+     *
+     * On Linux, returns true if the secret key is available. On MacOS, returns true if
+     * Keychain is available. On Windows, returns true with no other preconditions.
+     */
+    isEncryptionAvailable(): boolean;
   }
 
   interface Screen extends NodeJS.EventEmitter {
@@ -11084,6 +11155,16 @@ declare namespace Electron {
      */
     setIgnoreMenuShortcuts(ignore: boolean): void;
     /**
+     * Sets the image animation policy for this webContents.  The policy only affects
+     * _new_ images, existing images that are currently being animated are unaffected.
+     * This is a known limitation in Chromium, you can force image animation to be
+     * recalculated with `img.src = img.src` which will result in no network traffic
+     * but will update the animation policy.
+     *
+     * This corresponds to the animationPolicy accessibility feature in Chromium.
+     */
+    setImageAnimationPolicy(policy: 'animate' | 'animateOnce' | 'noAnimation'): void;
+    /**
      * Overrides the user agent for this web page.
      */
     setUserAgent(userAgent: string): void;
@@ -11563,7 +11644,7 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: Filter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
@@ -11579,7 +11660,7 @@ declare namespace Electron {
      *
      * Some examples of valid `urls`:
      */
-    onBeforeRequest(filter: Filter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -11598,7 +11679,7 @@ declare namespace Electron {
      *
      * The `callback` has to be called with a `response` object.
      */
-    onBeforeSendHeaders(filter: Filter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
+    onBeforeSendHeaders(filter: WebRequestFilter, listener: ((details: OnBeforeSendHeadersListenerDetails, callback: (beforeSendResponse: BeforeSendResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -11611,7 +11692,7 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
      */
-    onCompleted(filter: Filter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
+    onCompleted(filter: WebRequestFilter, listener: ((details: OnCompletedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a request is
      * completed.
@@ -11620,7 +11701,7 @@ declare namespace Electron {
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: Filter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
@@ -11631,7 +11712,7 @@ declare namespace Electron {
      *
      * The `callback` has to be called with a `response` object.
      */
-    onHeadersReceived(filter: Filter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
+    onHeadersReceived(filter: WebRequestFilter, listener: ((details: OnHeadersReceivedListenerDetails, callback: (headersReceivedResponse: HeadersReceivedResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
@@ -11644,7 +11725,7 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: Filter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
@@ -11656,13 +11737,24 @@ declare namespace Electron {
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
      * response are visible by the time this listener is fired.
      */
-    onSendHeaders(filter: Filter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
+    onSendHeaders(filter: WebRequestFilter, listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
      * response are visible by the time this listener is fired.
      */
     onSendHeaders(listener: ((details: OnSendHeadersListenerDetails) => void) | (null)): void;
+  }
+
+  interface WebRequestFilter {
+
+    // Docs: https://electronjs.org/docs/api/structures/web-request-filter
+
+    /**
+     * Array of URL patterns that will be used to filter out the requests that do not
+     * match the URL patterns.
+     */
+    urls: string[];
   }
 
   interface WebSource {
@@ -12659,6 +12751,8 @@ declare namespace Electron {
     visualEffectState?: ('followWindow' | 'active' | 'inactive');
     /**
      * The style of window title bar. Default is `default`. Possible values are:
+     *
+     * @platform darwin,win32
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
     /**
@@ -12712,12 +12806,14 @@ declare namespace Electron {
      */
     webPreferences?: WebPreferences;
     /**
-     *  On macOS, when using a frameless window in conjunction with
-     * `win.setWindowButtonVisibility(true)` or using a `titleBarStyle` so that the
-     * traffic lights are visible, this property enables the Window Controls Overlay
-     * JavaScript APIs and CSS Environment Variables.  Default is `false`.
+     *  When using a frameless window in conjuction with
+     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
+     * that the standard window controls ("traffic lights" on macOS) are visible, this
+     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
+     * Variables. Specifying `true` will result in an overlay with default system
+     * colors. Default is `false`.
      */
-    titleBarOverlay?: boolean;
+    titleBarOverlay?: (TitleBarOverlay) | (boolean);
   }
 
   interface CertificateTrustDialogOptions {
@@ -12969,6 +13065,14 @@ declare namespace Electron {
     editFlags: EditFlags;
   }
 
+  interface ContinueActivityDetails {
+    /**
+     * A string identifying the URL of the webpage accessed by the activity on another
+     * device, if available.
+     */
+    webpageURL?: string;
+  }
+
   interface CookiesGetFilter {
     /**
      * Retrieves cookies which are associated with `url`. Empty implies retrieving
@@ -13021,7 +13125,8 @@ declare namespace Electron {
      */
     path?: string;
     /**
-     * Whether the cookie should be marked as Secure. Defaults to false.
+     * Whether the cookie should be marked as Secure. Defaults to false unless Same
+     * Site=None attribute is used.
      */
     secure?: boolean;
     /**
@@ -13338,14 +13443,6 @@ declare namespace Electron {
     size: ('small' | 'normal' | 'large');
   }
 
-  interface Filter {
-    /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
-     */
-    urls: string[];
-  }
-
   interface FindInPageOptions {
     /**
      * Whether to search forward or backward, defaults to `true`.
@@ -13515,6 +13612,14 @@ declare namespace Electron {
      * Equivalent to KeyboardEvent.metaKey.
      */
     meta: boolean;
+    /**
+     * Equivalent to KeyboardEvent.location.
+     */
+    location: number;
+    /**
+     * See InputEvent.modifiers.
+     */
+    modifiers: string[];
   }
 
   interface InsertCSSOptions {
@@ -13794,6 +13899,13 @@ declare namespace Electron {
      * the message box opens.
      */
     defaultId?: number;
+    /**
+     * Pass an instance of AbortSignal to optionally close the message box, the message
+     * box will behave as if it was cancelled by the user. On macOS, `signal` does not
+     * work with message boxes that do not have a parent window, since those message
+     * boxes run synchronously due to platform limitations.
+     */
+    signal?: AbortSignal;
     /**
      * Title of the message box, some platforms will not show it.
      */
@@ -15264,6 +15376,14 @@ declare namespace Electron {
     url: string;
   }
 
+  interface WillResizeDetails {
+    /**
+     * The edge of the window being dragged for resizing. Can be `bottom`, `left`,
+     * `right`, `top-left`, `top-right`, `bottom-left` or `bottom-right`.
+     */
+    edge: ('bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right');
+  }
+
   interface EditFlags {
     /**
      * Whether the renderer believes it can undo.
@@ -15441,6 +15561,23 @@ declare namespace Electron {
     to: number;
   }
 
+  interface TitleBarOverlay {
+    /**
+     * The CSS color of the Window Controls Overlay when enabled. Default is the system
+     * color.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     * Default is the system color.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
+  }
+
   interface WebPreferences {
     /**
      * Whether to enable DevTools. If it is set to `false`, can not use
@@ -15516,6 +15653,11 @@ declare namespace Electron {
      * Enables image support. Default is `true`.
      */
     images?: boolean;
+    /**
+     * Specifies how to run image animations (E.g. GIFs).  Can be `animate`,
+     * `animateOnce` or `noAnimation`.  Default is `animate`.
+     */
+    imageAnimationPolicy?: ('animate' | 'animateOnce' | 'noAnimation');
     /**
      * Make TextArea elements resizable. Default is `true`.
      */
@@ -15594,9 +15736,9 @@ declare namespace Electron {
      */
     contextIsolation?: boolean;
     /**
-     * Whether to use native `window.open()`. Defaults to `false`. Child windows will
+     * Whether to use native `window.open()`. Defaults to `true`. Child windows will
      * always have node integration disabled unless `nodeIntegrationInSubFrames` is
-     * true. **Note:** The default value will be changing to `true` in Electron 15.
+     * true.
      */
     nativeWindowOpen?: boolean;
     /**
@@ -15704,25 +15846,17 @@ declare namespace Electron {
     autoUpdater: AutoUpdater;
     BrowserView: typeof BrowserView;
     BrowserWindow: typeof BrowserWindow;
-    ClientRequest: typeof ClientRequest;
     clipboard: Clipboard;
-    CommandLine: typeof CommandLine;
     contentTracing: ContentTracing;
-    Cookies: typeof Cookies;
     crashReporter: CrashReporter;
-    Debugger: typeof Debugger;
     desktopCapturer: DesktopCapturer;
     dialog: Dialog;
-    Dock: typeof Dock;
-    DownloadItem: typeof DownloadItem;
     globalShortcut: GlobalShortcut;
     inAppPurchase: InAppPurchase;
-    IncomingMessage: typeof IncomingMessage;
     ipcMain: IpcMain;
     Menu: typeof Menu;
     MenuItem: typeof MenuItem;
     MessageChannelMain: typeof MessageChannelMain;
-    MessagePortMain: typeof MessagePortMain;
     nativeImage: typeof NativeImage;
     nativeTheme: NativeTheme;
     net: Net;
@@ -15731,39 +15865,31 @@ declare namespace Electron {
     powerMonitor: PowerMonitor;
     powerSaveBlocker: PowerSaveBlocker;
     protocol: Protocol;
+    safeStorage: SafeStorage;
     screen: Screen;
-    ServiceWorkers: typeof ServiceWorkers;
     session: typeof Session;
     ShareMenu: typeof ShareMenu;
     shell: Shell;
     systemPreferences: SystemPreferences;
     TouchBar: typeof TouchBar;
-    TouchBarButton: typeof TouchBarButton;
-    TouchBarColorPicker: typeof TouchBarColorPicker;
-    TouchBarGroup: typeof TouchBarGroup;
-    TouchBarLabel: typeof TouchBarLabel;
-    TouchBarOtherItemsProxy: typeof TouchBarOtherItemsProxy;
-    TouchBarPopover: typeof TouchBarPopover;
-    TouchBarScrubber: typeof TouchBarScrubber;
-    TouchBarSegmentedControl: typeof TouchBarSegmentedControl;
-    TouchBarSlider: typeof TouchBarSlider;
-    TouchBarSpacer: typeof TouchBarSpacer;
     Tray: typeof Tray;
     webContents: typeof WebContents;
     webFrameMain: typeof WebFrameMain;
-    WebRequest: typeof WebRequest;
   }
 
 
 
   namespace Common {
     const clipboard: Clipboard;
+    type Clipboard = Electron.Clipboard;
     const crashReporter: CrashReporter;
+    type CrashReporter = Electron.CrashReporter;
     const desktopCapturer: DesktopCapturer;
-    class NativeImage extends Electron.NativeImage {}
-    type nativeImage = NativeImage;
+    type DesktopCapturer = Electron.DesktopCapturer;
     const nativeImage: typeof NativeImage;
+    type NativeImage = Electron.NativeImage;
     const shell: Shell;
+    type Shell = Electron.Shell;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AnimationSettings = Electron.AnimationSettings;
@@ -15783,6 +15909,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
+    type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
     type CookiesSetDetails = Electron.CookiesSetDetails;
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
@@ -15803,7 +15930,6 @@ declare namespace Electron {
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
-    type Filter = Electron.Filter;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
@@ -15900,12 +16026,14 @@ declare namespace Electron {
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
+    type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -15968,63 +16096,78 @@ declare namespace Electron {
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
 
   namespace Main {
     const app: App;
+    type App = Electron.App;
     const autoUpdater: AutoUpdater;
+    type AutoUpdater = Electron.AutoUpdater;
     class BrowserView extends Electron.BrowserView {}
     class BrowserWindow extends Electron.BrowserWindow {}
-    class ClientRequest extends Electron.ClientRequest {}
-    class CommandLine extends Electron.CommandLine {}
+    type ClientRequest = Electron.ClientRequest;
+    type CommandLine = Electron.CommandLine;
     const contentTracing: ContentTracing;
-    class Cookies extends Electron.Cookies {}
-    class Debugger extends Electron.Debugger {}
+    type ContentTracing = Electron.ContentTracing;
+    type Cookies = Electron.Cookies;
+    type Debugger = Electron.Debugger;
     const dialog: Dialog;
-    class Dock extends Electron.Dock {}
-    class DownloadItem extends Electron.DownloadItem {}
+    type Dialog = Electron.Dialog;
+    type Dock = Electron.Dock;
+    type DownloadItem = Electron.DownloadItem;
     const globalShortcut: GlobalShortcut;
+    type GlobalShortcut = Electron.GlobalShortcut;
     const inAppPurchase: InAppPurchase;
-    class IncomingMessage extends Electron.IncomingMessage {}
+    type InAppPurchase = Electron.InAppPurchase;
+    type IncomingMessage = Electron.IncomingMessage;
     const ipcMain: IpcMain;
+    type IpcMain = Electron.IpcMain;
     class Menu extends Electron.Menu {}
     class MenuItem extends Electron.MenuItem {}
     class MessageChannelMain extends Electron.MessageChannelMain {}
-    class MessagePortMain extends Electron.MessagePortMain {}
+    type MessagePortMain = Electron.MessagePortMain;
     const nativeTheme: NativeTheme;
+    type NativeTheme = Electron.NativeTheme;
     const net: Net;
+    type Net = Electron.Net;
     const netLog: NetLog;
+    type NetLog = Electron.NetLog;
     class Notification extends Electron.Notification {}
     const powerMonitor: PowerMonitor;
+    type PowerMonitor = Electron.PowerMonitor;
     const powerSaveBlocker: PowerSaveBlocker;
+    type PowerSaveBlocker = Electron.PowerSaveBlocker;
     const protocol: Protocol;
+    type Protocol = Electron.Protocol;
+    const safeStorage: SafeStorage;
+    type SafeStorage = Electron.SafeStorage;
     const screen: Screen;
-    class ServiceWorkers extends Electron.ServiceWorkers {}
-    class Session extends Electron.Session {}
-    type session = Session;
+    type Screen = Electron.Screen;
+    type ServiceWorkers = Electron.ServiceWorkers;
     const session: typeof Session;
+    type Session = Electron.Session;
     class ShareMenu extends Electron.ShareMenu {}
     const systemPreferences: SystemPreferences;
+    type SystemPreferences = Electron.SystemPreferences;
     class TouchBar extends Electron.TouchBar {}
-    class TouchBarButton extends Electron.TouchBarButton {}
-    class TouchBarColorPicker extends Electron.TouchBarColorPicker {}
-    class TouchBarGroup extends Electron.TouchBarGroup {}
-    class TouchBarLabel extends Electron.TouchBarLabel {}
-    class TouchBarOtherItemsProxy extends Electron.TouchBarOtherItemsProxy {}
-    class TouchBarPopover extends Electron.TouchBarPopover {}
-    class TouchBarScrubber extends Electron.TouchBarScrubber {}
-    class TouchBarSegmentedControl extends Electron.TouchBarSegmentedControl {}
-    class TouchBarSlider extends Electron.TouchBarSlider {}
-    class TouchBarSpacer extends Electron.TouchBarSpacer {}
+    type TouchBarButton = Electron.TouchBarButton;
+    type TouchBarColorPicker = Electron.TouchBarColorPicker;
+    type TouchBarGroup = Electron.TouchBarGroup;
+    type TouchBarLabel = Electron.TouchBarLabel;
+    type TouchBarOtherItemsProxy = Electron.TouchBarOtherItemsProxy;
+    type TouchBarPopover = Electron.TouchBarPopover;
+    type TouchBarScrubber = Electron.TouchBarScrubber;
+    type TouchBarSegmentedControl = Electron.TouchBarSegmentedControl;
+    type TouchBarSlider = Electron.TouchBarSlider;
+    type TouchBarSpacer = Electron.TouchBarSpacer;
     class Tray extends Electron.Tray {}
-    class WebContents extends Electron.WebContents {}
-    type webContents = WebContents;
     const webContents: typeof WebContents;
-    class WebFrameMain extends Electron.WebFrameMain {}
-    type webFrameMain = WebFrameMain;
+    type WebContents = Electron.WebContents;
     const webFrameMain: typeof WebFrameMain;
-    class WebRequest extends Electron.WebRequest {}
+    type WebFrameMain = Electron.WebFrameMain;
+    type WebRequest = Electron.WebRequest;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AnimationSettings = Electron.AnimationSettings;
@@ -16044,6 +16187,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
+    type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
     type CookiesSetDetails = Electron.CookiesSetDetails;
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
@@ -16064,7 +16208,6 @@ declare namespace Electron {
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
-    type Filter = Electron.Filter;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
@@ -16161,12 +16304,14 @@ declare namespace Electron {
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
+    type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -16229,15 +16374,18 @@ declare namespace Electron {
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
 
   namespace Renderer {
-    class BrowserWindowProxy extends Electron.BrowserWindowProxy {}
+    type BrowserWindowProxy = Electron.BrowserWindowProxy;
     const contextBridge: ContextBridge;
+    type ContextBridge = Electron.ContextBridge;
     const ipcRenderer: IpcRenderer;
+    type IpcRenderer = Electron.IpcRenderer;
     const webFrame: WebFrame;
-    const webviewTag: WebviewTag;
+    type WebFrame = Electron.WebFrame;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AnimationSettings = Electron.AnimationSettings;
@@ -16257,6 +16405,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
+    type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
     type CookiesSetDetails = Electron.CookiesSetDetails;
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
@@ -16277,7 +16426,6 @@ declare namespace Electron {
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
-    type Filter = Electron.Filter;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
@@ -16374,12 +16522,14 @@ declare namespace Electron {
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
     type WillNavigateEvent = Electron.WillNavigateEvent;
+    type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
@@ -16442,6 +16592,302 @@ declare namespace Electron {
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSource = Electron.WebSource;
+  }
+
+  namespace CrossProcessExports {
+    const app: App;
+    type App = Electron.App;
+    const autoUpdater: AutoUpdater;
+    type AutoUpdater = Electron.AutoUpdater;
+    class BrowserView extends Electron.BrowserView {}
+    class BrowserWindow extends Electron.BrowserWindow {}
+    type BrowserWindowProxy = Electron.BrowserWindowProxy;
+    type ClientRequest = Electron.ClientRequest;
+    const clipboard: Clipboard;
+    type Clipboard = Electron.Clipboard;
+    type CommandLine = Electron.CommandLine;
+    const contentTracing: ContentTracing;
+    type ContentTracing = Electron.ContentTracing;
+    const contextBridge: ContextBridge;
+    type ContextBridge = Electron.ContextBridge;
+    type Cookies = Electron.Cookies;
+    const crashReporter: CrashReporter;
+    type CrashReporter = Electron.CrashReporter;
+    type Debugger = Electron.Debugger;
+    const desktopCapturer: DesktopCapturer;
+    type DesktopCapturer = Electron.DesktopCapturer;
+    const dialog: Dialog;
+    type Dialog = Electron.Dialog;
+    type Dock = Electron.Dock;
+    type DownloadItem = Electron.DownloadItem;
+    const globalShortcut: GlobalShortcut;
+    type GlobalShortcut = Electron.GlobalShortcut;
+    const inAppPurchase: InAppPurchase;
+    type InAppPurchase = Electron.InAppPurchase;
+    type IncomingMessage = Electron.IncomingMessage;
+    const ipcMain: IpcMain;
+    type IpcMain = Electron.IpcMain;
+    const ipcRenderer: IpcRenderer;
+    type IpcRenderer = Electron.IpcRenderer;
+    class Menu extends Electron.Menu {}
+    class MenuItem extends Electron.MenuItem {}
+    class MessageChannelMain extends Electron.MessageChannelMain {}
+    type MessagePortMain = Electron.MessagePortMain;
+    const nativeImage: typeof NativeImage;
+    type NativeImage = Electron.NativeImage;
+    const nativeTheme: NativeTheme;
+    type NativeTheme = Electron.NativeTheme;
+    const net: Net;
+    type Net = Electron.Net;
+    const netLog: NetLog;
+    type NetLog = Electron.NetLog;
+    class Notification extends Electron.Notification {}
+    const powerMonitor: PowerMonitor;
+    type PowerMonitor = Electron.PowerMonitor;
+    const powerSaveBlocker: PowerSaveBlocker;
+    type PowerSaveBlocker = Electron.PowerSaveBlocker;
+    const protocol: Protocol;
+    type Protocol = Electron.Protocol;
+    const safeStorage: SafeStorage;
+    type SafeStorage = Electron.SafeStorage;
+    const screen: Screen;
+    type Screen = Electron.Screen;
+    type ServiceWorkers = Electron.ServiceWorkers;
+    const session: typeof Session;
+    type Session = Electron.Session;
+    class ShareMenu extends Electron.ShareMenu {}
+    const shell: Shell;
+    type Shell = Electron.Shell;
+    const systemPreferences: SystemPreferences;
+    type SystemPreferences = Electron.SystemPreferences;
+    class TouchBar extends Electron.TouchBar {}
+    type TouchBarButton = Electron.TouchBarButton;
+    type TouchBarColorPicker = Electron.TouchBarColorPicker;
+    type TouchBarGroup = Electron.TouchBarGroup;
+    type TouchBarLabel = Electron.TouchBarLabel;
+    type TouchBarOtherItemsProxy = Electron.TouchBarOtherItemsProxy;
+    type TouchBarPopover = Electron.TouchBarPopover;
+    type TouchBarScrubber = Electron.TouchBarScrubber;
+    type TouchBarSegmentedControl = Electron.TouchBarSegmentedControl;
+    type TouchBarSlider = Electron.TouchBarSlider;
+    type TouchBarSpacer = Electron.TouchBarSpacer;
+    class Tray extends Electron.Tray {}
+    const webContents: typeof WebContents;
+    type WebContents = Electron.WebContents;
+    const webFrame: WebFrame;
+    type WebFrame = Electron.WebFrame;
+    const webFrameMain: typeof WebFrameMain;
+    type WebFrameMain = Electron.WebFrameMain;
+    type WebRequest = Electron.WebRequest;
+    type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
+    type AddRepresentationOptions = Electron.AddRepresentationOptions;
+    type AnimationSettings = Electron.AnimationSettings;
+    type AppDetailsOptions = Electron.AppDetailsOptions;
+    type ApplicationInfoForProtocolReturnValue = Electron.ApplicationInfoForProtocolReturnValue;
+    type AuthenticationResponseDetails = Electron.AuthenticationResponseDetails;
+    type AuthInfo = Electron.AuthInfo;
+    type AutoResizeOptions = Electron.AutoResizeOptions;
+    type BeforeSendResponse = Electron.BeforeSendResponse;
+    type BitmapOptions = Electron.BitmapOptions;
+    type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
+    type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
+    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
+    type Config = Electron.Config;
+    type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuParams = Electron.ContextMenuParams;
+    type ContinueActivityDetails = Electron.ContinueActivityDetails;
+    type CookiesGetFilter = Electron.CookiesGetFilter;
+    type CookiesSetDetails = Electron.CookiesSetDetails;
+    type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
+    type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
+    type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
+    type Data = Electron.Data;
+    type Details = Electron.Details;
+    type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
+    type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
+    type DidFailLoadEvent = Electron.DidFailLoadEvent;
+    type DidFrameFinishLoadEvent = Electron.DidFrameFinishLoadEvent;
+    type DidFrameNavigateEvent = Electron.DidFrameNavigateEvent;
+    type DidNavigateEvent = Electron.DidNavigateEvent;
+    type DidNavigateInPageEvent = Electron.DidNavigateInPageEvent;
+    type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
+    type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
+    type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type FeedURLOptions = Electron.FeedURLOptions;
+    type FileIconOptions = Electron.FileIconOptions;
+    type FindInPageOptions = Electron.FindInPageOptions;
+    type FocusOptions = Electron.FocusOptions;
+    type FoundInPageEvent = Electron.FoundInPageEvent;
+    type FromPartitionOptions = Electron.FromPartitionOptions;
+    type HandlerDetails = Electron.HandlerDetails;
+    type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
+    type HeapStatistics = Electron.HeapStatistics;
+    type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
+    type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type Info = Electron.Info;
+    type Input = Electron.Input;
+    type InsertCSSOptions = Electron.InsertCSSOptions;
+    type IpcMessageEvent = Electron.IpcMessageEvent;
+    type Item = Electron.Item;
+    type JumpListSettings = Electron.JumpListSettings;
+    type LoadCommitEvent = Electron.LoadCommitEvent;
+    type LoadExtensionOptions = Electron.LoadExtensionOptions;
+    type LoadFileOptions = Electron.LoadFileOptions;
+    type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginItemSettings = Electron.LoginItemSettings;
+    type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
+    type MessageBoxOptions = Electron.MessageBoxOptions;
+    type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
+    type MessageBoxSyncOptions = Electron.MessageBoxSyncOptions;
+    type MessageDetails = Electron.MessageDetails;
+    type MessageEvent = Electron.MessageEvent;
+    type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NewWindowEvent = Electron.NewWindowEvent;
+    type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
+    type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
+    type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
+    type OnCompletedListenerDetails = Electron.OnCompletedListenerDetails;
+    type OnErrorOccurredListenerDetails = Electron.OnErrorOccurredListenerDetails;
+    type OnHeadersReceivedListenerDetails = Electron.OnHeadersReceivedListenerDetails;
+    type OnResponseStartedListenerDetails = Electron.OnResponseStartedListenerDetails;
+    type OnSendHeadersListenerDetails = Electron.OnSendHeadersListenerDetails;
+    type OpenDevToolsOptions = Electron.OpenDevToolsOptions;
+    type OpenDialogOptions = Electron.OpenDialogOptions;
+    type OpenDialogReturnValue = Electron.OpenDialogReturnValue;
+    type OpenDialogSyncOptions = Electron.OpenDialogSyncOptions;
+    type OpenExternalOptions = Electron.OpenExternalOptions;
+    type Options = Electron.Options;
+    type PageFaviconUpdatedEvent = Electron.PageFaviconUpdatedEvent;
+    type PageTitleUpdatedEvent = Electron.PageTitleUpdatedEvent;
+    type Parameters = Electron.Parameters;
+    type Payment = Electron.Payment;
+    type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
+    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
+    type PluginCrashedEvent = Electron.PluginCrashedEvent;
+    type PopupOptions = Electron.PopupOptions;
+    type PreconnectOptions = Electron.PreconnectOptions;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
+    type Privileges = Electron.Privileges;
+    type ProgressBarOptions = Electron.ProgressBarOptions;
+    type Provider = Electron.Provider;
+    type ReadBookmark = Electron.ReadBookmark;
+    type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
+    type RelaunchOptions = Electron.RelaunchOptions;
+    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
+    type Request = Electron.Request;
+    type ResizeOptions = Electron.ResizeOptions;
+    type ResourceUsage = Electron.ResourceUsage;
+    type Response = Electron.Response;
+    type Result = Electron.Result;
+    type SaveDialogOptions = Electron.SaveDialogOptions;
+    type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
+    type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type Settings = Electron.Settings;
+    type SourcesOptions = Electron.SourcesOptions;
+    type SSLConfigConfig = Electron.SSLConfigConfig;
+    type StartLoggingOptions = Electron.StartLoggingOptions;
+    type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleOptions = Electron.TitleOptions;
+    type ToBitmapOptions = Electron.ToBitmapOptions;
+    type ToDataURLOptions = Electron.ToDataURLOptions;
+    type ToPNGOptions = Electron.ToPNGOptions;
+    type TouchBarButtonConstructorOptions = Electron.TouchBarButtonConstructorOptions;
+    type TouchBarColorPickerConstructorOptions = Electron.TouchBarColorPickerConstructorOptions;
+    type TouchBarConstructorOptions = Electron.TouchBarConstructorOptions;
+    type TouchBarGroupConstructorOptions = Electron.TouchBarGroupConstructorOptions;
+    type TouchBarLabelConstructorOptions = Electron.TouchBarLabelConstructorOptions;
+    type TouchBarPopoverConstructorOptions = Electron.TouchBarPopoverConstructorOptions;
+    type TouchBarScrubberConstructorOptions = Electron.TouchBarScrubberConstructorOptions;
+    type TouchBarSegmentedControlConstructorOptions = Electron.TouchBarSegmentedControlConstructorOptions;
+    type TouchBarSliderConstructorOptions = Electron.TouchBarSliderConstructorOptions;
+    type TouchBarSpacerConstructorOptions = Electron.TouchBarSpacerConstructorOptions;
+    type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
+    type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
+    type UploadProgress = Electron.UploadProgress;
+    type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
+    type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
+    type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
+    type WillNavigateEvent = Electron.WillNavigateEvent;
+    type WillResizeDetails = Electron.WillResizeDetails;
+    type EditFlags = Electron.EditFlags;
+    type FoundInPageResult = Electron.FoundInPageResult;
+    type LaunchItems = Electron.LaunchItems;
+    type Margins = Electron.Margins;
+    type MediaFlags = Electron.MediaFlags;
+    type PageRanges = Electron.PageRanges;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
+    type WebPreferences = Electron.WebPreferences;
+    type DefaultFontFamily = Electron.DefaultFontFamily;
+    type BluetoothDevice = Electron.BluetoothDevice;
+    type Certificate = Electron.Certificate;
+    type CertificatePrincipal = Electron.CertificatePrincipal;
+    type Cookie = Electron.Cookie;
+    type CPUUsage = Electron.CPUUsage;
+    type CrashReport = Electron.CrashReport;
+    type CustomScheme = Electron.CustomScheme;
+    type DesktopCapturerSource = Electron.DesktopCapturerSource;
+    type Display = Electron.Display;
+    type Event = Electron.Event;
+    type Extension = Electron.Extension;
+    type ExtensionInfo = Electron.ExtensionInfo;
+    type FileFilter = Electron.FileFilter;
+    type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type InputEvent = Electron.InputEvent;
+    type IOCounters = Electron.IOCounters;
+    type IpcMainEvent = Electron.IpcMainEvent;
+    type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcRendererEvent = Electron.IpcRendererEvent;
+    type JumpListCategory = Electron.JumpListCategory;
+    type JumpListItem = Electron.JumpListItem;
+    type KeyboardEvent = Electron.KeyboardEvent;
+    type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MemoryInfo = Electron.MemoryInfo;
+    type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MimeTypedBuffer = Electron.MimeTypedBuffer;
+    type MouseInputEvent = Electron.MouseInputEvent;
+    type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
+    type NotificationAction = Electron.NotificationAction;
+    type NotificationResponse = Electron.NotificationResponse;
+    type Point = Electron.Point;
+    type PostBody = Electron.PostBody;
+    type PrinterInfo = Electron.PrinterInfo;
+    type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
+    type ProcessMetric = Electron.ProcessMetric;
+    type Product = Electron.Product;
+    type ProtocolRequest = Electron.ProtocolRequest;
+    type ProtocolResponse = Electron.ProtocolResponse;
+    type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type Rectangle = Electron.Rectangle;
+    type Referrer = Electron.Referrer;
+    type ScrubberItem = Electron.ScrubberItem;
+    type SegmentedControlSegment = Electron.SegmentedControlSegment;
+    type SerialPort = Electron.SerialPort;
+    type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedWorkerInfo = Electron.SharedWorkerInfo;
+    type SharingItem = Electron.SharingItem;
+    type ShortcutDetails = Electron.ShortcutDetails;
+    type Size = Electron.Size;
+    type Task = Electron.Task;
+    type ThumbarButton = Electron.ThumbarButton;
+    type TraceCategoriesAndOptions = Electron.TraceCategoriesAndOptions;
+    type TraceConfig = Electron.TraceConfig;
+    type Transaction = Electron.Transaction;
+    type UploadData = Electron.UploadData;
+    type UploadFile = Electron.UploadFile;
+    type UploadRawData = Electron.UploadRawData;
+    type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
 
@@ -16457,7 +16903,6 @@ declare namespace Electron {
   const inAppPurchase: InAppPurchase;
   const ipcMain: IpcMain;
   const ipcRenderer: IpcRenderer;
-  type nativeImage = NativeImage;
   const nativeImage: typeof NativeImage;
   const nativeTheme: NativeTheme;
   const net: Net;
@@ -16465,22 +16910,19 @@ declare namespace Electron {
   const powerMonitor: PowerMonitor;
   const powerSaveBlocker: PowerSaveBlocker;
   const protocol: Protocol;
+  const safeStorage: SafeStorage;
   const screen: Screen;
-  type session = Session;
   const session: typeof Session;
   const shell: Shell;
   const systemPreferences: SystemPreferences;
-  type webContents = WebContents;
   const webContents: typeof WebContents;
   const webFrame: WebFrame;
-  type webFrameMain = WebFrameMain;
   const webFrameMain: typeof WebFrameMain;
-  const webviewTag: WebviewTag;
 
 }
 
 declare module 'electron' {
-  export = Electron;
+  export = Electron.CrossProcessExports;
 }
 
 declare module 'electron/main' {
@@ -16496,14 +16938,14 @@ declare module 'electron/renderer' {
 }
 
 interface NodeRequireFunction {
-  (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron'): typeof Electron.CrossProcessExports;
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
 }
 
 interface NodeRequire {
-  (moduleName: 'electron'): typeof Electron;
+  (moduleName: 'electron'): typeof Electron.CrossProcessExports;
   (moduleName: 'electron/main'): typeof Electron.Main;
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
