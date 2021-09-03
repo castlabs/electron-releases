@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.0.0-beta.1
+// Type definitions for Electron 15.0.0-beta.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -844,6 +844,26 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     clearRecentDocuments(): void;
+    /**
+     * Configures host resolution (DNS and DNS-over-HTTPS). By default, the following
+     * resolvers will be used, in order:
+     *
+     * * DNS-over-HTTPS, if the DNS provider supports it, then
+     * * the built-in resolver (enabled on macOS only by default), then
+     * * the system's resolver (e.g. `getaddrinfo`).
+     *
+     * This can be configured to either restrict usage of non-encrypted DNS
+     * (`secureDnsMode: "secure"`), or disable DNS-over-HTTPS (`secureDnsMode: "off"`).
+     * It is also possible to enable or disable the built-in resolver.
+     *
+     * To disable insecure DNS, you can specify a `secureDnsMode` of `"secure"`. If you
+     * do so, you should make sure to provide a list of DNS-over-HTTPS servers to use,
+     * in case the user's DNS configuration does not include a provider that supports
+     * DoH.
+     *
+     * This API must be called after the `ready` event is emitted.
+     */
+    configureHostResolver(options: ConfigureHostResolverOptions): void;
     /**
      * By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain
      * basis if the GPU processes crashes too frequently. This function disables that
@@ -4281,7 +4301,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
+    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4300,28 +4320,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
-    /**
-     * Resolve with an object containing the following:
-     *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
-     * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
-     * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present. (For return
-     * values, see table here.)
-     *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
-     *
-     * The `filters` specifies an array of file types that can be displayed, see
-     * `dialog.showOpenDialog` for an example.
-     *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
-     * issues when expanding and collapsing the dialog.
-     */
-    showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * Resolve with an object containing the following:
      *
@@ -4344,16 +4343,26 @@ declare namespace Electron {
      */
     showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
-     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * Resolve with an object containing the following:
+     *
+     * * `canceled` Boolean - whether or not the dialog was canceled.
+     * * `filePath` String (optional) - If the dialog is canceled, this will be
      * `undefined`.
+     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * contains the security scoped bookmark data for the saved file.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
+     *
+     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * issues when expanding and collapsing the dialog.
      */
-    showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
+    showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4365,6 +4374,17 @@ declare namespace Electron {
      * `dialog.showOpenDialog` for an example.
      */
     showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
+    /**
+     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
+     * The `browserWindow` argument allows the dialog to attach itself to a parent
+     * window, making it modal.
+     *
+     * The `filters` specifies an array of file types that can be displayed, see
+     * `dialog.showOpenDialog` for an example.
+     */
+    showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
   }
 
   interface Display {
@@ -10067,7 +10087,7 @@ declare namespace Electron {
     addListener(event: 'did-stop-loading', listener: Function): this;
     removeListener(event: 'did-stop-loading', listener: Function): this;
     /**
-     * Emitted when the document in the given frame is loaded.
+     * Emitted when the document in the top-level frame is loaded.
      */
     on(event: 'dom-ready', listener: (event: Event) => void): this;
     once(event: 'dom-ready', listener: (event: Event) => void): this;
@@ -10091,6 +10111,18 @@ declare namespace Electron {
                                           result: Result) => void): this;
     removeListener(event: 'found-in-page', listener: (event: Event,
                                           result: Result) => void): this;
+    /**
+     * Emitted when the mainFrame, an `<iframe>`, or a nested `<iframe>` is loaded
+     * within the page.
+     */
+    on(event: 'frame-created', listener: (event: Event,
+                                          details: FrameCreatedDetails) => void): this;
+    once(event: 'frame-created', listener: (event: Event,
+                                          details: FrameCreatedDetails) => void): this;
+    addListener(event: 'frame-created', listener: (event: Event,
+                                          details: FrameCreatedDetails) => void): this;
+    removeListener(event: 'frame-created', listener: (event: Event,
+                                          details: FrameCreatedDetails) => void): this;
     /**
      * Emitted when the renderer process sends an asynchronous message via
      * `ipcRenderer.send()`.
@@ -10667,7 +10699,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the `callback`
      * will be called with `callback(image, dirtyRect)` when there is a presentation
@@ -10679,7 +10711,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Whether the browser can go back to previous web page.
      */
@@ -11529,6 +11561,13 @@ declare namespace Electron {
      */
     static fromId(processId: number, routingId: number): (WebFrameMain) | (undefined);
     /**
+     * Emitted when the document is loaded.
+     */
+    on(event: 'dom-ready', listener: Function): this;
+    once(event: 'dom-ready', listener: Function): this;
+    addListener(event: 'dom-ready', listener: Function): this;
+    removeListener(event: 'dom-ready', listener: Function): this;
+    /**
      * A promise that resolves with the result of the executed code or is rejected if
      * execution throws or results in a rejected promise.
      *
@@ -11644,23 +11683,12 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
-    /**
-     * The `listener` will be called with `listener(details, callback)` when a request
-     * is about to occur.
-     *
-     * The `uploadData` is an array of `UploadData` objects.
-     *
-     * The `callback` has to be called with an `response` object.
-     *
-     * Some examples of valid `urls`:
-     */
-    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -11672,6 +11700,17 @@ declare namespace Electron {
      * Some examples of valid `urls`:
      */
     onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    /**
+     * The `listener` will be called with `listener(details, callback)` when a request
+     * is about to occur.
+     *
+     * The `uploadData` is an array of `UploadData` objects.
+     *
+     * The `callback` has to be called with an `response` object.
+     *
+     * Some examples of valid `urls`:
+     */
+    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -11701,11 +11740,11 @@ declare namespace Electron {
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
@@ -11725,13 +11764,13 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
@@ -12209,6 +12248,14 @@ declare namespace Electron {
      * See webContents.sendInputEvent for detailed description of `event` object.
      */
     sendInputEvent(event: (MouseInputEvent) | (MouseWheelInputEvent) | (KeyboardInputEvent)): Promise<void>;
+    /**
+     * Send an asynchronous message to renderer process via `channel`, you can also
+     * send arbitrary arguments. The renderer process can handle the message by
+     * listening to the `channel` event with the `ipcRenderer` module.
+     *
+     * See webContents.sendToFrame for examples.
+     */
+    sendToFrame(frameId: [number, number], channel: string, ...args: any[]): Promise<void>;
     /**
      * Set guest page muted.
      */
@@ -12936,6 +12983,39 @@ declare namespace Electron {
     proxyBypassRules?: string;
   }
 
+  interface ConfigureHostResolverOptions {
+    /**
+     * Whether the built-in host resolver is used in preference to getaddrinfo. When
+     * enabled, the built-in resolver will attempt to use the system's DNS settings to
+     * do DNS lookups itself. Enabled by default on macOS, disabled by default on
+     * Windows and Linux.
+     */
+    enableBuiltInResolver?: boolean;
+    /**
+     * Can be "off", "automatic" or "secure". Configures the DNS-over-HTTP mode. When
+     * "off", no DoH lookups will be performed. When "automatic", DoH lookups will be
+     * peformed first if DoH is available, and insecure DNS lookups will be performed
+     * as a fallback. When "secure", only DoH lookups will be performed. Defaults to
+     * "automatic".
+     */
+    secureDnsMode?: string;
+    /**
+     * A list of DNS-over-HTTP server templates. See RFC8484 § 3 for details on the
+     * template format. Most servers support the POST method; the template for such
+     * servers is simply a URI. Note that for some DNS providers, the resolver will
+     * automatically upgrade to DoH unless DoH is explicitly disabled, even if there
+     * are no DoH servers provided in this list.
+     */
+    secureDnsServers?: string[];
+    /**
+     * Controls whether additional DNS query types, e.g. HTTPS (DNS type 65) will be
+     * allowed besides the traditional A and AAAA queries when a request is being made
+     * via insecure DNS. Has no effect on Secure DNS which always allows additional
+     * types. Defaults to true.
+     */
+    enableAdditionalDnsQueryTypes?: boolean;
+  }
+
   interface ConsoleMessageEvent extends Event {
     /**
      * The log level, from 0 to 3. In order it matches `verbose`, `info`, `warning` and
@@ -13472,6 +13552,10 @@ declare namespace Electron {
     result: FoundInPageResult;
   }
 
+  interface FrameCreatedDetails {
+    frame: WebFrameMain;
+  }
+
   interface FromPartitionOptions {
     /**
      * Whether to enable cache.
@@ -13631,6 +13715,10 @@ declare namespace Electron {
   }
 
   interface IpcMessageEvent extends Event {
+    /**
+     * pair of `[processId, frameId]`.
+     */
+    frameId: [number, number];
     channel: string;
     args: any[];
   }
@@ -15907,6 +15995,7 @@ declare namespace Electron {
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
+    type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
@@ -15933,6 +16022,7 @@ declare namespace Electron {
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
+    type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
@@ -16185,6 +16275,7 @@ declare namespace Electron {
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
+    type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
@@ -16211,6 +16302,7 @@ declare namespace Electron {
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
+    type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
@@ -16403,6 +16495,7 @@ declare namespace Electron {
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
+    type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
@@ -16429,6 +16522,7 @@ declare namespace Electron {
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
+    type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
@@ -16698,6 +16792,7 @@ declare namespace Electron {
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
+    type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
@@ -16724,6 +16819,7 @@ declare namespace Electron {
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
+    type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
