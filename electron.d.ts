@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.0.0-beta.4
+// Type definitions for Electron 15.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4301,7 +4301,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
+    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4320,28 +4320,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
-    /**
-     * Resolve with an object containing the following:
-     *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
-     * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
-     * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present. (For return
-     * values, see table here.)
-     *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
-     *
-     * The `filters` specifies an array of file types that can be displayed, see
-     * `dialog.showOpenDialog` for an example.
-     *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
-     * issues when expanding and collapsing the dialog.
-     */
-    showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * Resolve with an object containing the following:
      *
@@ -4364,16 +4343,26 @@ declare namespace Electron {
      */
     showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
-     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * Resolve with an object containing the following:
+     *
+     * * `canceled` Boolean - whether or not the dialog was canceled.
+     * * `filePath` String (optional) - If the dialog is canceled, this will be
      * `undefined`.
+     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * contains the security scoped bookmark data for the saved file.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
+     *
+     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * issues when expanding and collapsing the dialog.
      */
-    showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
+    showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4385,6 +4374,17 @@ declare namespace Electron {
      * `dialog.showOpenDialog` for an example.
      */
     showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
+    /**
+     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
+     * The `browserWindow` argument allows the dialog to attach itself to a parent
+     * window, making it modal.
+     *
+     * The `filters` specifies an array of file types that can be displayed, see
+     * `dialog.showOpenDialog` for an example.
+     */
+    showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
   }
 
   interface Display {
@@ -10707,7 +10707,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the `callback`
      * will be called with `callback(image, dirtyRect)` when there is a presentation
@@ -10719,7 +10719,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Whether the browser can go back to previous web page.
      */
@@ -11691,23 +11691,12 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
-    /**
-     * The `listener` will be called with `listener(details, callback)` when a request
-     * is about to occur.
-     *
-     * The `uploadData` is an array of `UploadData` objects.
-     *
-     * The `callback` has to be called with an `response` object.
-     *
-     * Some examples of valid `urls`:
-     */
-    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -11719,6 +11708,17 @@ declare namespace Electron {
      * Some examples of valid `urls`:
      */
     onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    /**
+     * The `listener` will be called with `listener(details, callback)` when a request
+     * is about to occur.
+     *
+     * The `uploadData` is an array of `UploadData` objects.
+     *
+     * The `callback` has to be called with an `response` object.
+     *
+     * Some examples of valid `urls`:
+     */
+    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -11748,11 +11748,11 @@ declare namespace Electron {
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
@@ -11772,13 +11772,13 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
