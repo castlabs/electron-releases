@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.0
+// Type definitions for Electron 14.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12256,8 +12256,9 @@ declare namespace Electron {
     plugins: boolean;
     /**
      * A `String` that specifies a script that will be loaded before other scripts run
-     * in the guest page. The protocol of script's URL must be either `file:` or
-     * `asar:`, because it will be loaded by `require` in guest page under the hood.
+     * in the guest page. The protocol of script's URL must be `file:` (even when using
+     * `asar:` archives) because it will be loaded by Node's `require` under the hood,
+     * which treats `asar:` archives as virtual directories.
      *
      * When the guest page doesn't have node integration this script will still have
      * access to all Node APIs, but global objects injected by Node will be deleted
