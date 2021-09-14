@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.2.3
+// Type definitions for Electron 13.4.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8948,6 +8948,14 @@ This value is set to false by default.
     // Docs: https://electronjs.org/docs/api/web-contents
 
     /**
+     * | undefined - A WebContents instance with the given TargetID, or `undefined` if
+     * there is no WebContents associated with the given TargetID.
+     *
+     * When communicating with the Chrome DevTools Protocol, it can be useful to lookup
+     * a WebContents instance based on its assigned TargetID.
+     */
+    static fromDevToolsTargetId(targetId: string): WebContents;
+    /**
      * | undefined - A WebContents instance with the given ID, or `undefined` if there
      * is no WebContents associated with the given ID.
      */
@@ -11777,8 +11785,9 @@ See webContents.sendInputEvent for detailed description of `event` object.
     plugins: boolean;
     /**
      * A `String` that specifies a script that will be loaded before other scripts run
-     * in the guest page. The protocol of script's URL must be either `file:` or
-     * `asar:`, because it will be loaded by `require` in guest page under the hood.
+     * in the guest page. The protocol of script's URL must be `file:` (even when using
+     * `asar:` archives) because it will be loaded by Node's `require` under the hood,
+     * which treats `asar:` archives as virtual directories.
      *
      * When the guest page doesn't have node integration this script will still have
      * access to all Node APIs, but global objects injected by Node will be deleted
