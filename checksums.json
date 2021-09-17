@@ -1,0 +1,18 @@
+{
+  "electron-api.json": "894c8deea88f9a980ed258764c2f8fbbf0716a3a178c7c078098c24245e29637",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-arm64-dsym.zip": "8b67bcde6826eb6f93ff3f0101a0fb2f649460793005164ff7a06f78ae656dcc",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-arm64-symbols.zip": "88cf376e0218b901b0343ae91f295e20c789839268c941380f26c6903b63b5a6",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-arm64.zip": "8e641f0bb56261376b5e39838f419fa2a0b52cae65032bfb1da6b19df2a6bb11",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-x64-dsym.zip": "a681f60914aa5eb71e02a3208fb465b3ad909676e5a292c70154ee6d13266e66",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-x64-symbols.zip": "f3b928ac14c8958adbb1b549f03f611a1ff1b2e4ea38f34971d958d516e0c033",
+  "electron-v15.0.0-wvvmp-beta.7-darwin-x64.zip": "9224e502a881f82fd371afb3d75ac781fbfe926912a4d6afff879d68b1dfd021",
+  "electron-v15.0.0-wvvmp-beta.7-linux-x64-symbols.zip": "22fb75a3a09158bfb861142337c01254299662439b560f3de10ea583b7eff617",
+  "electron-v15.0.0-wvvmp-beta.7-linux-x64.zip": "08438a3b35623c1e3376d44bf73e3701ed84fb05bf93bb1e1e1180ed83517468",
+  "electron-v15.0.0-wvvmp-beta.7-win32-ia32-pdb.zip": "0965eadf11c63da4032268e706c12cce613d3aad65240a7a656ebdaabef1281b",
+  "electron-v15.0.0-wvvmp-beta.7-win32-ia32-symbols.zip": "cf94b59b700b5a76438f09a5020aae033098d97af9c66030633ec7829ddb72e8",
+  "electron-v15.0.0-wvvmp-beta.7-win32-ia32.zip": "1716667e289cbe2679b8abae130d0139bdb360d9f5b466fa2f4387ea003f2b71",
+  "electron-v15.0.0-wvvmp-beta.7-win32-x64-pdb.zip": "ba0a2716a338880087974930ff43faa3df4d0ff311a386d91e407592f7db1cb8",
+  "electron-v15.0.0-wvvmp-beta.7-win32-x64-symbols.zip": "37cd584565ad5ae88e6278d368cf5fa1bd3f065f813516a1d7789329c490f436",
+  "electron-v15.0.0-wvvmp-beta.7-win32-x64.zip": "a95c09d902c469b97f6d885faa06408075ddd8dfa6cad7be53d63aa18185da73",
+  "electron.d.ts": "231c099592bfeb1eac45fb9b7df6c46fad087bf8cfd961935023d54e7b7e9874"
+}

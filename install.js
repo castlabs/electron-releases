@@ -42,6 +42,7 @@ downloadArtifact({
   mirrorOptions: { mirror: "https://github.com/castlabs/electron-releases/releases/download/" },
   force: process.env.force_no_cache === 'true',
   cacheRoot: process.env.electron_config_cache,
+  checksums: process.env.electron_use_remote_checksums ? undefined : require('./checksums.json'),
   platform,
   arch
 }).then(extractFile).catch(err => {
