@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.4.0
+// Type definitions for Electron 13.5.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2685,8 +2685,8 @@ On Linux always returns `true`.
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * The aspect ratio is not respected when window is resized programmingly with APIs
-     * like `win.setSize`.
+     * The aspect ratio is not respected when window is resized programmatically with
+     * APIs like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
@@ -6018,6 +6018,26 @@ Starts recording network events to `path`.
      * The text entered or chosen by the user.
      */
     userText?: string;
+  }
+
+  interface OverlayOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/overlay-options
+
+    /**
+     * The CSS color of the Window Controls Overlay when enabled. Default is the system
+     * color.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     * Default is the system color.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
   }
 
   interface Point {
@@ -12217,6 +12237,8 @@ See webContents.sendInputEvent for detailed description of `event` object.
     visualEffectState?: ('followWindow' | 'active' | 'inactive');
     /**
      * The style of window title bar. Default is `default`. Possible values are:
+     *
+     * @platform darwin,win32
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
     /**
@@ -12269,6 +12291,16 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
+    /**
+     * When using a frameless window in conjuction with
+     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
+     * that the standard window controls ("traffic lights" on macOS) are visible, this
+     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
+     * Variables. Specifying `true` will result in an overlay with default system
+     * colors. Default is `false`.  On Windows, the OverlayOptions can be used instead
+     * of a boolean to specify colors for the overlay.
+     */
+    titleBarOverlay?: (OverlayOptions) | (boolean);
   }
 
   interface CertificateTrustDialogOptions {
@@ -15491,6 +15523,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -15751,6 +15784,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -15964,6 +15998,7 @@ See webContents.sendInputEvent for detailed description of `event` object.
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OverlayOptions = Electron.OverlayOptions;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
