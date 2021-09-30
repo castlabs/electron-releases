@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.1
+// Type definitions for Electron 14.0.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2600,8 +2600,8 @@ declare namespace Electron {
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * The aspect ratio is not respected when window is resized programmingly with APIs
-     * like `win.setSize`.
+     * The aspect ratio is not respected when window is resized programmatically with
+     * APIs like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
@@ -13566,9 +13566,13 @@ declare namespace Electron {
 
   interface Item {
     /**
-     * The path(s) to the file(s) being dragged.
+     * The path to the file being dragged.
      */
-    file: (string[]) | (string);
+    file: string;
+    /**
+     * The paths to the files being dragged. (`files` will override `file` field)
+     */
+    files?: string[];
     /**
      * The image must be non-empty on macOS.
      */
