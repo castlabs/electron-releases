@@ -1,4 +1,4 @@
-// Type definitions for Electron 14.0.2
+// Type definitions for Electron 14.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4832,6 +4832,37 @@ declare namespace Electron {
     webgl2: string;
   }
 
+  interface HIDDevice {
+
+    // Docs: https://electronjs.org/docs/api/structures/hid-device
+
+    /**
+     * Unique identifier for the device.
+     */
+    deviceId: string;
+    /**
+     * Unique identifier for the HID interface.  A device may have multiple HID
+     * interfaces.
+     */
+    guid?: string;
+    /**
+     * Name of the device.
+     */
+    name: string;
+    /**
+     * The USB product ID.
+     */
+    productId: number;
+    /**
+     * The USB device serial number.
+     */
+    serialNumber?: string;
+    /**
+     * The USB vendor ID.
+     */
+    vendorId: number;
+  }
+
   interface InAppPurchase extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/in-app-purchase
@@ -7207,6 +7238,36 @@ declare namespace Electron {
     removeListener(event: 'extension-unloaded', listener: (event: Event,
                                                extension: Extension) => void): this;
     /**
+     * Emitted when a new HID device becomes available. For example, when a new USB
+     * device is plugged in.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    once(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    addListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    removeListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    /**
+     * Emitted when a HID device has been removed.  For example, this event will fire
+     * when a USB device is unplugged.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    once(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    addListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    removeListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    /**
      * Emitted when a render process requests preconnection to a URL, generally due to
      * a resource hint.
      */
@@ -7250,6 +7311,26 @@ declare namespace Electron {
                                         * the spec for more details.)
                                         */
                                        allowCredentials: boolean) => void): this;
+    /**
+     * Emitted when a HID device needs to be selected when a call to
+     * `navigator.hid.requestDevice` is made. `callback` should be called with
+     * `deviceId` to be selected; passing no arguments to `callback` will cancel the
+     * request.  Additionally, permissioning on `navigator.hid` can be further managed
+     * by using ses.setPermissionCheckHandler(handler) and
+     * ses.setDevicePermissionHandler(handler)`.
+     */
+    on(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    once(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    addListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    removeListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
     /**
      * Emitted when a serial port needs to be selected when a call to
      * `navigator.serial.requestPort` is made. `callback` should be called with
@@ -7613,6 +7694,21 @@ declare namespace Electron {
      * > **NOTE:** The result of this procedure is cached by the network service.
      */
     setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
+    /**
+     * Sets the handler which can be used to respond to device permission checks for
+     * the `session`. Returning `true` will allow the device to be permitted and
+     * `false` will reject it. To clear the handler, call
+     * `setDevicePermissionHandler(null)`. This handler can be used to provide default
+     * permissioning to devices without first calling for permission to devices (eg via
+     * `navigator.hid.requestDevice`).  If this handler is not defined, the default
+     * device permissions as granted through device selection (eg via
+     * `navigator.hid.requestDevice`) will be used. Additionally, the default behavior
+     * of Electron is to store granted device permision through the lifetime of the
+     * corresponding WebContents.  If longer term storage is needed, a developer can
+     * store granted device permissions (eg when handling the `select-hid-device`
+     * event) and then read from that storage with `setDevicePermissionHandler`.
+     */
+    setDevicePermissionHandler(handler: ((details: DevicePermissionHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -13224,6 +13320,25 @@ declare namespace Electron {
     name?: string;
   }
 
+  interface DevicePermissionHandlerHandlerDetails {
+    /**
+     * The type of device that permission is being requested on, can be `hid`.
+     */
+    deviceType: ('hid');
+    /**
+     * The origin URL of the device permission check.
+     */
+    origin: string;
+    /**
+     * the device that permission is being requested for.
+     */
+    device: HIDDevice;
+    /**
+     * WebFrameMain checking the device permission.
+     */
+    frame: WebFrameMain;
+  }
+
   interface DidChangeThemeColorEvent extends Event {
     themeColor: string;
   }
@@ -13473,6 +13588,16 @@ declare namespace Electron {
     mallocedMemory: number;
     peakMallocedMemory: number;
     doesZapGarbage: boolean;
+  }
+
+  interface HidDeviceAddedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
+  interface HidDeviceRemovedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
   }
 
   interface IgnoreMouseEventsOptions {
@@ -14772,6 +14897,11 @@ declare namespace Electron {
     securityScopedBookmarks?: boolean;
   }
 
+  interface SelectHidDeviceDetails {
+    deviceList: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
   interface Settings {
     /**
      * `true` to open the app at login, `false` to remove the app as a login item.
@@ -15829,6 +15959,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -15849,6 +15980,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -15911,6 +16044,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -15961,6 +16095,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16091,6 +16226,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16111,6 +16247,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16173,6 +16311,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16223,6 +16362,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16305,6 +16445,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16325,6 +16466,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16387,6 +16530,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16437,6 +16581,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
