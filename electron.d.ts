@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.0.0
+// Type definitions for Electron 15.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -165,7 +165,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     once(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -174,7 +175,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     addListener(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -183,7 +185,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     removeListener(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -192,7 +195,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     /**
      * Emitted when the child process unexpectedly disappears. This is normally because
      * it was crashed or killed. It does not include renderer processes.
@@ -2653,8 +2657,8 @@ declare namespace Electron {
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * The aspect ratio is not respected when window is resized programmingly with APIs
-     * like `win.setSize`.
+     * The aspect ratio is not respected when window is resized programmatically with
+     * APIs like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
@@ -4301,7 +4305,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
+    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4320,28 +4324,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
-    /**
-     * Resolve with an object containing the following:
-     *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
-     * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
-     * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present. (For return
-     * values, see table here.)
-     *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
-     *
-     * The `filters` specifies an array of file types that can be displayed, see
-     * `dialog.showOpenDialog` for an example.
-     *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
-     * issues when expanding and collapsing the dialog.
-     */
-    showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * Resolve with an object containing the following:
      *
@@ -4364,16 +4347,26 @@ declare namespace Electron {
      */
     showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
-     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * Resolve with an object containing the following:
+     *
+     * * `canceled` Boolean - whether or not the dialog was canceled.
+     * * `filePath` String (optional) - If the dialog is canceled, this will be
      * `undefined`.
+     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * contains the security scoped bookmark data for the saved file.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
+     *
+     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * issues when expanding and collapsing the dialog.
      */
-    showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
+    showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4385,6 +4378,17 @@ declare namespace Electron {
      * `dialog.showOpenDialog` for an example.
      */
     showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
+    /**
+     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
+     * The `browserWindow` argument allows the dialog to attach itself to a parent
+     * window, making it modal.
+     *
+     * The `filters` specifies an array of file types that can be displayed, see
+     * `dialog.showOpenDialog` for an example.
+     */
+    showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
   }
 
   interface Display {
@@ -4883,6 +4887,37 @@ declare namespace Electron {
      * WebGL2.
      */
     webgl2: string;
+  }
+
+  interface HIDDevice {
+
+    // Docs: https://electronjs.org/docs/api/structures/hid-device
+
+    /**
+     * Unique identifier for the device.
+     */
+    deviceId: string;
+    /**
+     * Unique identifier for the HID interface.  A device may have multiple HID
+     * interfaces.
+     */
+    guid?: string;
+    /**
+     * Name of the device.
+     */
+    name: string;
+    /**
+     * The USB product ID.
+     */
+    productId: number;
+    /**
+     * The USB device serial number.
+     */
+    serialNumber?: string;
+    /**
+     * The USB vendor ID.
+     */
+    vendorId: number;
   }
 
   interface InAppPurchase extends NodeJS.EventEmitter {
@@ -7278,6 +7313,36 @@ declare namespace Electron {
     removeListener(event: 'extension-unloaded', listener: (event: Event,
                                                extension: Extension) => void): this;
     /**
+     * Emitted when a new HID device becomes available. For example, when a new USB
+     * device is plugged in.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    once(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    addListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    removeListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    /**
+     * Emitted when a HID device has been removed.  For example, this event will fire
+     * when a USB device is unplugged.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    once(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    addListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    removeListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    /**
      * Emitted when a render process requests preconnection to a URL, generally due to
      * a resource hint.
      */
@@ -7321,6 +7386,26 @@ declare namespace Electron {
                                         * the spec for more details.)
                                         */
                                        allowCredentials: boolean) => void): this;
+    /**
+     * Emitted when a HID device needs to be selected when a call to
+     * `navigator.hid.requestDevice` is made. `callback` should be called with
+     * `deviceId` to be selected; passing no arguments to `callback` will cancel the
+     * request.  Additionally, permissioning on `navigator.hid` can be further managed
+     * by using ses.setPermissionCheckHandler(handler) and
+     * ses.setDevicePermissionHandler(handler)`.
+     */
+    on(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    once(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    addListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    removeListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
     /**
      * Emitted when a serial port needs to be selected when a call to
      * `navigator.serial.requestPort` is made. `callback` should be called with
@@ -7684,6 +7769,21 @@ declare namespace Electron {
      * > **NOTE:** The result of this procedure is cached by the network service.
      */
     setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
+    /**
+     * Sets the handler which can be used to respond to device permission checks for
+     * the `session`. Returning `true` will allow the device to be permitted and
+     * `false` will reject it. To clear the handler, call
+     * `setDevicePermissionHandler(null)`. This handler can be used to provide default
+     * permissioning to devices without first calling for permission to devices (eg via
+     * `navigator.hid.requestDevice`).  If this handler is not defined, the default
+     * device permissions as granted through device selection (eg via
+     * `navigator.hid.requestDevice`) will be used. Additionally, the default behavior
+     * of Electron is to store granted device permision through the lifetime of the
+     * corresponding WebContents.  If longer term storage is needed, a developer can
+     * store granted device permissions (eg when handling the `select-hid-device`
+     * event) and then read from that storage with `setDevicePermissionHandler`.
+     */
+    setDevicePermissionHandler(handler: ((details: DevicePermissionHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -9500,7 +9600,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     once(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9508,7 +9609,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     addListener(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9516,7 +9618,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     removeListener(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9524,7 +9627,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     /**
      * Emitted when the associated window logs a console message.
      */
@@ -10707,7 +10811,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the `callback`
      * will be called with `callback(image, dirtyRect)` when there is a presentation
@@ -10719,7 +10823,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Whether the browser can go back to previous web page.
      */
@@ -11691,23 +11795,12 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
-    /**
-     * The `listener` will be called with `listener(details, callback)` when a request
-     * is about to occur.
-     *
-     * The `uploadData` is an array of `UploadData` objects.
-     *
-     * The `callback` has to be called with an `response` object.
-     *
-     * Some examples of valid `urls`:
-     */
-    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -11719,6 +11812,17 @@ declare namespace Electron {
      * Some examples of valid `urls`:
      */
     onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    /**
+     * The `listener` will be called with `listener(details, callback)` when a request
+     * is about to occur.
+     *
+     * The `uploadData` is an array of `UploadData` objects.
+     *
+     * The `callback` has to be called with an `response` object.
+     *
+     * Some examples of valid `urls`:
+     */
+    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -11748,11 +11852,11 @@ declare namespace Electron {
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
@@ -11772,13 +11876,13 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
@@ -13058,6 +13162,10 @@ declare namespace Electron {
      */
     y: number;
     /**
+     * Frame from which the context menu was invoked.
+     */
+    frame: WebFrameMain;
+    /**
      * URL of the link that encloses the node the context menu was invoked on.
      */
     linkURL: string;
@@ -13390,6 +13498,25 @@ declare namespace Electron {
     name?: string;
   }
 
+  interface DevicePermissionHandlerHandlerDetails {
+    /**
+     * The type of device that permission is being requested on, can be `hid`.
+     */
+    deviceType: ('hid');
+    /**
+     * The origin URL of the device permission check.
+     */
+    origin: string;
+    /**
+     * the device that permission is being requested for.
+     */
+    device: HIDDevice;
+    /**
+     * WebFrameMain checking the device permission.
+     */
+    frame: WebFrameMain;
+  }
+
   interface DidChangeThemeColorEvent extends Event {
     themeColor: string;
   }
@@ -13645,6 +13772,16 @@ declare namespace Electron {
     doesZapGarbage: boolean;
   }
 
+  interface HidDeviceAddedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
+  interface HidDeviceRemovedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
   interface IgnoreMouseEventsOptions {
     /**
      * If true, forwards mouse move messages to Chromium, enabling mouse related events
@@ -13748,9 +13885,13 @@ declare namespace Electron {
 
   interface Item {
     /**
-     * The path(s) to the file(s) being dragged.
+     * The path to the file being dragged.
      */
-    file: (string[]) | (string);
+    file: string;
+    /**
+     * The paths to the files being dragged. (`files` will override `file` field)
+     */
+    files?: string[];
     /**
      * The image must be non-empty on macOS.
      */
@@ -14035,6 +14176,12 @@ declare namespace Electron {
     checkboxChecked?: boolean;
     icon?: NativeImage;
     /**
+     * Custom width of the text in the message box.
+     *
+     * @platform darwin
+     */
+    textWidth?: number;
+    /**
      * The index of the button to be used to cancel the dialog, via the `Esc` key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
      * If no such labeled buttons exist and this option is not set, `0` will be used as
@@ -14102,6 +14249,12 @@ declare namespace Electron {
      */
     detail?: string;
     icon?: (NativeImage) | (string);
+    /**
+     * Custom width of the text in the message box.
+     *
+     * @platform darwin
+     */
+    textWidth?: number;
     /**
      * The index of the button to be used to cancel the dialog, via the `Esc` key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
@@ -14955,6 +15108,11 @@ declare namespace Electron {
      * @platform darwin,mas
      */
     securityScopedBookmarks?: boolean;
+  }
+
+  interface SelectHidDeviceDetails {
+    deviceList: HIDDevice[];
+    frame: WebFrameMain;
   }
 
   interface Settings {
@@ -16030,6 +16188,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16051,6 +16210,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16113,6 +16274,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16165,6 +16327,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16311,6 +16474,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16332,6 +16496,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16394,6 +16560,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16446,6 +16613,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16532,6 +16700,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16553,6 +16722,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16615,6 +16786,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16667,6 +16839,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16830,6 +17003,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16851,6 +17025,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16913,6 +17089,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16965,6 +17142,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
