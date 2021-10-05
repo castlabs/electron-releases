@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.1.0
+// Type definitions for Electron 15.1.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13113,7 +13113,7 @@ declare namespace Electron {
     /**
      * Can be "off", "automatic" or "secure". Configures the DNS-over-HTTP mode. When
      * "off", no DoH lookups will be performed. When "automatic", DoH lookups will be
-     * peformed first if DoH is available, and insecure DNS lookups will be performed
+     * performed first if DoH is available, and insecure DNS lookups will be performed
      * as a fallback. When "secure", only DoH lookups will be performed. Defaults to
      * "automatic".
      */
