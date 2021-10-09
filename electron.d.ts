@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.1.1
+// Type definitions for Electron 15.1.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12130,6 +12130,11 @@ declare namespace Electron {
      */
     addEventListener(event: 'devtools-focused', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-focused', listener: (event: Event) => void): this;
+    /**
+     * Emitted when there is a new context menu that needs to be handled.
+     */
+    addEventListener(event: 'context-menu', listener: (event: ContextMenuEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'context-menu', listener: (event: ContextMenuEvent) => void): this;
     addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
     removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
@@ -13150,6 +13155,10 @@ declare namespace Electron {
      */
     line: number;
     sourceId: string;
+  }
+
+  interface ContextMenuEvent extends Event {
+    params: Params;
   }
 
   interface ContextMenuParams {
@@ -15830,6 +15839,118 @@ declare namespace Electron {
     to: number;
   }
 
+  interface Params {
+    /**
+     * x coordinate.
+     */
+    x: number;
+    /**
+     * y coordinate.
+     */
+    y: number;
+    /**
+     * URL of the link that encloses the node the context menu was invoked on.
+     */
+    linkURL: string;
+    /**
+     * Text associated with the link. May be an empty string if the contents of the
+     * link are an image.
+     */
+    linkText: string;
+    /**
+     * URL of the top level page that the context menu was invoked on.
+     */
+    pageURL: string;
+    /**
+     * URL of the subframe that the context menu was invoked on.
+     */
+    frameURL: string;
+    /**
+     * Source URL for the element that the context menu was invoked on. Elements with
+     * source URLs are images, audio and video.
+     */
+    srcURL: string;
+    /**
+     * Type of the node the context menu was invoked on. Can be `none`, `image`,
+     * `audio`, `video`, `canvas`, `file` or `plugin`.
+     */
+    mediaType: ('none' | 'image' | 'audio' | 'video' | 'canvas' | 'file' | 'plugin');
+    /**
+     * Whether the context menu was invoked on an image which has non-empty contents.
+     */
+    hasImageContents: boolean;
+    /**
+     * Whether the context is editable.
+     */
+    isEditable: boolean;
+    /**
+     * Text of the selection that the context menu was invoked on.
+     */
+    selectionText: string;
+    /**
+     * Title text of the selection that the context menu was invoked on.
+     */
+    titleText: string;
+    /**
+     * Alt text of the selection that the context menu was invoked on.
+     */
+    altText: string;
+    /**
+     * Suggested filename to be used when saving file through 'Save Link As' option of
+     * context menu.
+     */
+    suggestedFilename: string;
+    /**
+     * Rect representing the coordinates in the document space of the selection.
+     */
+    selectionRect: Rectangle;
+    /**
+     * Start position of the selection text.
+     */
+    selectionStartOffset: number;
+    /**
+     * The referrer policy of the frame on which the menu is invoked.
+     */
+    referrerPolicy: Referrer;
+    /**
+     * The misspelled word under the cursor, if any.
+     */
+    misspelledWord: string;
+    /**
+     * An array of suggested words to show the user to replace the `misspelledWord`.
+     * Only available if there is a misspelled word and spellchecker is enabled.
+     */
+    dictionarySuggestions: string[];
+    /**
+     * The character encoding of the frame on which the menu was invoked.
+     */
+    frameCharset: string;
+    /**
+     * If the context menu was invoked on an input field, the type of that field.
+     * Possible values are `none`, `plainText`, `password`, `other`.
+     */
+    inputFieldType: string;
+    /**
+     * If the context is editable, whether or not spellchecking is enabled.
+     */
+    spellcheckEnabled: boolean;
+    /**
+     * Input source that invoked the context menu. Can be `none`, `mouse`, `keyboard`,
+     * `touch`, `touchMenu`, `longPress`, `longTap`, `touchHandle`, `stylus`,
+     * `adjustSelection`, or `adjustSelectionReset`.
+     */
+    menuSourceType: ('none' | 'mouse' | 'keyboard' | 'touch' | 'touchMenu' | 'longPress' | 'longTap' | 'touchHandle' | 'stylus' | 'adjustSelection' | 'adjustSelectionReset');
+    /**
+     * The flags for the media element the context menu was invoked on.
+     */
+    mediaFlags: MediaFlags;
+    /**
+     * These flags indicate whether the renderer believes it is able to perform the
+     * corresponding action.
+     */
+    editFlags: EditFlags;
+  }
+
   interface TitleBarOverlay {
     /**
      * The CSS color of the Window Controls Overlay when enabled. Default is the system
@@ -16178,6 +16299,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16309,6 +16431,7 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
@@ -16464,6 +16587,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16595,6 +16719,7 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
@@ -16690,6 +16815,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16821,6 +16947,7 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
@@ -16993,6 +17120,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -17124,6 +17252,7 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
