@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.1.2
+// Type definitions for Electron 15.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3634,6 +3634,13 @@ declare namespace Electron {
      * Whether the command-line switch is present.
      */
     hasSwitch(the_switch: string): boolean;
+    /**
+     * Removes the specified switch from Chromium's command line.
+     *
+     * **Note:** This will not affect `process.argv`. The intended usage of this
+     * function is to control Chromium's behavior.
+     */
+    removeSwitch(the_switch: string): void;
   }
 
   interface ContentTracing {
