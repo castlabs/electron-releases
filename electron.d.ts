@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.5.2
+// Type definitions for Electron 13.6.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13963,6 +13963,10 @@ See webContents.sendInputEvent for detailed description of `event` object.
      * The url of the `openExternal` request.
      */
     externalURL?: string;
+    /**
+     * The security origin of the `media` request.
+     */
+    securityOrigin?: string;
     /**
      * The types of media access being requested, elements can be `video` or `audio`
      */
