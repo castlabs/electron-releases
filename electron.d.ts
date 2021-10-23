@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.2.0
+// Type definitions for Electron 15.3.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13516,9 +13516,10 @@ declare namespace Electron {
 
   interface DevicePermissionHandlerHandlerDetails {
     /**
-     * The type of device that permission is being requested on, can be `hid`.
+     * The type of device that permission is being requested on, can be `hid` or
+     * `serial`.
      */
-    deviceType: ('hid');
+    deviceType: ('hid' | 'serial');
     /**
      * The origin URL of the device permission check.
      */
@@ -13526,7 +13527,7 @@ declare namespace Electron {
     /**
      * the device that permission is being requested for.
      */
-    device: HIDDevice;
+    device: (HIDDevice) | (SerialPort);
     /**
      * WebFrameMain checking the device permission.
      */
@@ -14782,6 +14783,10 @@ declare namespace Electron {
      * The url of the `openExternal` request.
      */
     externalURL?: string;
+    /**
+     * The security origin of the `media` request.
+     */
+    securityOrigin?: string;
     /**
      * The types of media access being requested, elements can be `video` or `audio`
      */
