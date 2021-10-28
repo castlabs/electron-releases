@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.6.0
+// Type definitions for Electron 13.6.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2385,9 +2385,9 @@ Calling `event.preventDefault()` will prevent the menu from being displayed.
      */
     getOpacity(): number;
     /**
-     * The parent window.
+     * The parent window or `null` if there is no parent.
      */
-    getParentWindow(): BrowserWindow;
+    getParentWindow(): (BrowserWindow) | (null);
     /**
      * Contains the window's current position.
      */
