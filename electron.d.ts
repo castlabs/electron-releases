@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.0.0
+// Type definitions for Electron 16.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -165,7 +165,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     once(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -174,7 +175,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     addListener(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -183,7 +185,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     removeListener(event: 'certificate-error', listener: (event: Event,
                                               webContents: WebContents,
                                               url: string,
@@ -192,7 +195,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     /**
      * Emitted when the child process unexpectedly disappears. This is normally because
      * it was crashed or killed. It does not include renderer processes.
@@ -522,7 +526,11 @@ declare namespace Electron {
                                             /**
                                              * The second instance's working directory
                                              */
-                                            workingDirectory: string) => void): this;
+                                            workingDirectory: string,
+                                            /**
+                                             * A JSON object of additional data passed from the second instance
+                                             */
+                                            additionalData: unknown) => void): this;
     once(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -531,7 +539,11 @@ declare namespace Electron {
                                             /**
                                              * The second instance's working directory
                                              */
-                                            workingDirectory: string) => void): this;
+                                            workingDirectory: string,
+                                            /**
+                                             * A JSON object of additional data passed from the second instance
+                                             */
+                                            additionalData: unknown) => void): this;
     addListener(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -540,7 +552,11 @@ declare namespace Electron {
                                             /**
                                              * The second instance's working directory
                                              */
-                                            workingDirectory: string) => void): this;
+                                            workingDirectory: string,
+                                            /**
+                                             * A JSON object of additional data passed from the second instance
+                                             */
+                                            additionalData: unknown) => void): this;
     removeListener(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -549,7 +565,11 @@ declare namespace Electron {
                                             /**
                                              * The second instance's working directory
                                              */
-                                            workingDirectory: string) => void): this;
+                                            workingDirectory: string,
+                                            /**
+                                             * A JSON object of additional data passed from the second instance
+                                             */
+                                            additionalData: unknown) => void): this;
     /**
      * Emitted when a client certificate is requested.
      *
@@ -641,125 +661,6 @@ declare namespace Electron {
                                                  webContents: WebContents) => void): this;
     removeListener(event: 'web-contents-created', listener: (event: Event,
                                                  webContents: WebContents) => void): this;
-    /**
-     * Emitted when there is a problem with the Widevine CDM installation that cannot
-     * be automatically handled. If there are no handlers registered for this event it
-     * will show a dialog with the error and terminate the application when it is
-     * dismissed. If this is not the desired behavior a handler needs to be registered
-     * to provide customized behavior. This event is always emitted after the `ready`
-     * event.
-     */
-    on(event: 'widevine-error', listener: (
-                                           /**
-                                            * An `Error` instance indicating what went wrong during the Widevine CDM
-                                            * installation.
-                                            */
-                                           error: Error) => void): this;
-    once(event: 'widevine-error', listener: (
-                                           /**
-                                            * An `Error` instance indicating what went wrong during the Widevine CDM
-                                            * installation.
-                                            */
-                                           error: Error) => void): this;
-    addListener(event: 'widevine-error', listener: (
-                                           /**
-                                            * An `Error` instance indicating what went wrong during the Widevine CDM
-                                            * installation.
-                                            */
-                                           error: Error) => void): this;
-    removeListener(event: 'widevine-error', listener: (
-                                           /**
-                                            * An `Error` instance indicating what went wrong during the Widevine CDM
-                                            * installation.
-                                            */
-                                           error: Error) => void): this;
-    /**
-     * Emitted once Widevine has been properly registered and is ready to use to be
-     * used. Trying to play back protected content prior to the reception of this event
-     * will cause errors. This event is always emitted after the `ready` event.
-     */
-    on(event: 'widevine-ready', listener: (
-                                           /**
-                                            * A string indicating the version of the Widevine CDM in use.
-                                            */
-                                           version: string,
-                                           /**
-                                            * If a pending update was applied, contains a string indicating the last CDM
-                                            * version, otherwise `null`.
-                                            */
-                                           lastVersion: string) => void): this;
-    once(event: 'widevine-ready', listener: (
-                                           /**
-                                            * A string indicating the version of the Widevine CDM in use.
-                                            */
-                                           version: string,
-                                           /**
-                                            * If a pending update was applied, contains a string indicating the last CDM
-                                            * version, otherwise `null`.
-                                            */
-                                           lastVersion: string) => void): this;
-    addListener(event: 'widevine-ready', listener: (
-                                           /**
-                                            * A string indicating the version of the Widevine CDM in use.
-                                            */
-                                           version: string,
-                                           /**
-                                            * If a pending update was applied, contains a string indicating the last CDM
-                                            * version, otherwise `null`.
-                                            */
-                                           lastVersion: string) => void): this;
-    removeListener(event: 'widevine-ready', listener: (
-                                           /**
-                                            * A string indicating the version of the Widevine CDM in use.
-                                            */
-                                           version: string,
-                                           /**
-                                            * If a pending update was applied, contains a string indicating the last CDM
-                                            * version, otherwise `null`.
-                                            */
-                                           lastVersion: string) => void): this;
-    /**
-     * Emitted when there is a Widevine CDM update available that is pending
-     * installation. This event is always emitted after the `widevine-ready` event.
-     * Once the application is restarted the update will be automatically applied,
-     * unless updates have been disabled.
-     */
-    on(event: 'widevine-update-pending', listener: (
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM in use.
-                                                     */
-                                                    currentVersion: string,
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM pending installation.
-                                                     */
-                                                    pendingVersion: string) => void): this;
-    once(event: 'widevine-update-pending', listener: (
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM in use.
-                                                     */
-                                                    currentVersion: string,
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM pending installation.
-                                                     */
-                                                    pendingVersion: string) => void): this;
-    addListener(event: 'widevine-update-pending', listener: (
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM in use.
-                                                     */
-                                                    currentVersion: string,
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM pending installation.
-                                                     */
-                                                    pendingVersion: string) => void): this;
-    removeListener(event: 'widevine-update-pending', listener: (
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM in use.
-                                                     */
-                                                    currentVersion: string,
-                                                    /**
-                                                     * A string indicating the version of the Widevine CDM pending installation.
-                                                     */
-                                                    pendingVersion: string) => void): this;
     /**
      * Emitted during Handoff before an activity from a different device wants to be
      * resumed. You should call `event.preventDefault()` if you want to handle this
@@ -1228,6 +1129,10 @@ declare namespace Electron {
      */
     removeAsDefaultProtocolClient(protocol: string, path?: string, args?: string[]): boolean;
     /**
+     * * `additionalData` unknown (optional) - A JSON object containing additional data
+     * to send to the first instance.
+     *
+     *
      * The return value of this method indicates whether or not this instance of your
      * application successfully obtained the lock.  If it failed to obtain the lock,
      * you can assume that another instance of your application is already running with
@@ -1488,18 +1393,6 @@ declare namespace Electron {
      * @platform darwin
      */
     updateCurrentActivity(type: string, userInfo: any): void;
-    /**
-     * Initiates asynchronous Widevine CDM install/update procedure and returns no
-     * value. Once initiated Widevine events will be emitted as necessary.
-     *
-     * Unless the `no-verify-widevine-cdm` parameter has been set this API is
-     * automatically triggered on startup and **MUST NOT** be called manually. If set,
-     * this API can be used to customize the behavior of the install/update operation.
-     * It **MUST** be called once, very early, after the app has received the `ready`
-     * event, but before loading any media-related content to avoid potentially
-     * requiring a restart.
-     */
-    verifyWidevineCdm(options?: VerifyWidevineCdmOptions): void;
     /**
      * fulfilled when Electron is initialized. May be used as a convenient alternative
      * to checking `app.isReady()` and subscribing to the `ready` event if the app is
@@ -2347,9 +2240,9 @@ declare namespace Electron {
      */
     getOpacity(): number;
     /**
-     * The parent window.
+     * The parent window or `null` if there is no parent.
      */
-    getParentWindow(): BrowserWindow;
+    getParentWindow(): (BrowserWindow) | (null);
     /**
      * Contains the window's current position.
      */
@@ -2653,8 +2546,8 @@ declare namespace Electron {
      * and height are within the content view--only that they exist. Sum any extra
      * width and height areas you have within the overall content view.
      *
-     * The aspect ratio is not respected when window is resized programmingly with APIs
-     * like `win.setSize`.
+     * The aspect ratio is not respected when window is resized programmatically with
+     * APIs like `win.setSize`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
@@ -3512,7 +3405,7 @@ declare namespace Electron {
      *
      * Returns an Object containing `title` and `url` keys representing the bookmark in
      * the clipboard. The `title` and `url` values will be empty strings when the
-     * bookmark is unavailable.
+     * bookmark is unavailable.  The `title` value will always be empty on Windows.
      *
      * @platform darwin,win32
      */
@@ -3555,7 +3448,7 @@ declare namespace Electron {
      */
     write(data: Data, type?: 'selection' | 'clipboard'): void;
     /**
-     * Writes the `title` and `url` into the clipboard as a bookmark.
+     * Writes the `title` (macOS only) and `url` into the clipboard as a bookmark.
      *
      * **Note:** Most apps on Windows don't support pasting bookmarks into them so you
      * can use `clipboard.write` to write both a bookmark and fallback text to the
@@ -3630,6 +3523,84 @@ declare namespace Electron {
      * Whether the command-line switch is present.
      */
     hasSwitch(the_switch: string): boolean;
+    /**
+     * Removes the specified switch from Chromium's command line.
+     *
+     * **Note:** This will not affect `process.argv`. The intended usage of this
+     * function is to control Chromium's behavior.
+     */
+    removeSwitch(the_switch: string): void;
+  }
+
+  interface Components extends NodeJS.EventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/components
+
+    /**
+     * A record of ComponentStatus objects where the keys are component identifiers.
+     *
+     * This method can be used to check the state of any registered components.
+     * Supported component identifiers are provided as readonly properties (see below).
+     *
+     * This API must be called after the `ready` event is emitted.
+     */
+    status(): Record<string, ComponentStatus>;
+    /**
+     * Fulfilled when all components are ready to be used.
+     *
+     * If the components are already installed this will happen as soon as they are
+     * registered, otherwise an immediate installation will be triggered and the
+     * promise will fulfill once the missing components have been properly installed.
+     * The promise will be rejected if the installation fails.
+     *
+     * This API must be called after the `ready` event is emitted.
+     */
+    whenReady(): Promise<void[]>;
+    /**
+     * A `String` which is the identifier of the Google Widevine Windows CDM (a.k.a.
+     * the Media Foundation Widewine CDM).
+     *
+     */
+    readonly MEDIA_FOUNDATION_WIDEVINE_CDM_ID: string;
+    /**
+     * A `Boolean` property that is `true` if component updates are enabled, `false`
+     * otherwise. The value is persisted in the local state, using the key
+     * `component_updates.component_updates_enabled`, and is thus remembered across
+     * launches.
+     *
+     * If updates are disabled before a component is installed, it will never be
+     * installed. If it is disabled after, the component will never be updated. This
+     * can be used to create an "offline" mode for component updates by disabling
+     * updates after `components.whenReady()` completes. Disabling updates should
+     * typically be time limited to avoid outdated components that could stop to
+     * function properly.
+     *
+     * This API must be called after the `ready` event is emitted.
+     */
+    uppdatesEnabled: boolean;
+    /**
+     * A `String` which is the identifier of the Widevine Content Decryption Module.
+     *
+     */
+    readonly WIDEVINE_CDM_ID: string;
+  }
+
+  interface ComponentStatus {
+
+    // Docs: https://electronjs.org/docs/api/structures/component-status
+
+    /**
+     * Name of component.
+     */
+    name?: string;
+    /**
+     * Status of component.
+     */
+    status: string;
+    /**
+     * Version of component (or `null` if not installed).
+     */
+    version?: (string) | (null);
   }
 
   interface ContentTracing {
@@ -3878,13 +3849,6 @@ declare namespace Electron {
      * must be no longer than 39 bytes, and values must be no longer than 20320 bytes.
      * Keys with names longer than the maximum will be silently ignored. Key values
      * longer than the maximum length will be truncated.
-     *
-     * **Note:** On linux values that are longer than 127 bytes will be chunked into
-     * multiple keys, each 127 bytes in length.  E.g. `addExtraParameter('foo',
-     * 'a'.repeat(130))` will result in two chunked keys `foo__1` and `foo__2`, the
-     * first will contain the first 127 bytes and the second will contain the remaining
-     * 3 bytes.  On your crash reporting backend you should stitch together keys in
-     * this format.
      */
     addExtraParameter(key: string, value: string): void;
     /**
@@ -4301,7 +4265,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
+    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4320,28 +4284,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
-    /**
-     * Resolve with an object containing the following:
-     *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
-     * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
-     * contains the security scoped bookmark data for the saved file.
-     * `securityScopedBookmarks` must be enabled for this to be present. (For return
-     * values, see table here.)
-     *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
-     *
-     * The `filters` specifies an array of file types that can be displayed, see
-     * `dialog.showOpenDialog` for an example.
-     *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
-     * issues when expanding and collapsing the dialog.
-     */
-    showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * Resolve with an object containing the following:
      *
@@ -4364,16 +4307,26 @@ declare namespace Electron {
      */
     showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
-     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * Resolve with an object containing the following:
+     *
+     * * `canceled` Boolean - whether or not the dialog was canceled.
+     * * `filePath` String (optional) - If the dialog is canceled, this will be
      * `undefined`.
+     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * contains the security scoped bookmark data for the saved file.
+     * `securityScopedBookmarks` must be enabled for this to be present. (For return
+     * values, see table here.)
      *
      * The `browserWindow` argument allows the dialog to attach itself to a parent
      * window, making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
+     *
+     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * issues when expanding and collapsing the dialog.
      */
-    showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
+    showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
@@ -4385,6 +4338,17 @@ declare namespace Electron {
      * `dialog.showOpenDialog` for an example.
      */
     showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): (string) | (undefined);
+    /**
+     * the path of the file chosen by the user; if the dialog is cancelled it returns
+     * `undefined`.
+     *
+     * The `browserWindow` argument allows the dialog to attach itself to a parent
+     * window, making it modal.
+     *
+     * The `filters` specifies an array of file types that can be displayed, see
+     * `dialog.showOpenDialog` for an example.
+     */
+    showSaveDialogSync(options: SaveDialogSyncOptions): (string) | (undefined);
   }
 
   interface Display {
@@ -4883,6 +4847,37 @@ declare namespace Electron {
      * WebGL2.
      */
     webgl2: string;
+  }
+
+  interface HIDDevice {
+
+    // Docs: https://electronjs.org/docs/api/structures/hid-device
+
+    /**
+     * Unique identifier for the device.
+     */
+    deviceId: string;
+    /**
+     * Unique identifier for the HID interface.  A device may have multiple HID
+     * interfaces.
+     */
+    guid?: string;
+    /**
+     * Name of the device.
+     */
+    name: string;
+    /**
+     * The USB product ID.
+     */
+    productId: number;
+    /**
+     * The USB device serial number.
+     */
+    serialNumber?: string;
+    /**
+     * The USB vendor ID.
+     */
+    vendorId: number;
   }
 
   interface InAppPurchase extends NodeJS.EventEmitter {
@@ -7278,6 +7273,36 @@ declare namespace Electron {
     removeListener(event: 'extension-unloaded', listener: (event: Event,
                                                extension: Extension) => void): this;
     /**
+     * Emitted when a new HID device becomes available. For example, when a new USB
+     * device is plugged in.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    once(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    addListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    removeListener(event: 'hid-device-added', listener: (event: Event,
+                                             details: HidDeviceAddedDetails) => void): this;
+    /**
+     * Emitted when a HID device has been removed.  For example, this event will fire
+     * when a USB device is unplugged.
+     *
+     * This event will only be emitted after `navigator.hid.requestDevice` has been
+     * called and `select-hid-device` has fired.
+     */
+    on(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    once(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    addListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    removeListener(event: 'hid-device-removed', listener: (event: Event,
+                                               details: HidDeviceRemovedDetails) => void): this;
+    /**
      * Emitted when a render process requests preconnection to a URL, generally due to
      * a resource hint.
      */
@@ -7321,6 +7346,26 @@ declare namespace Electron {
                                         * the spec for more details.)
                                         */
                                        allowCredentials: boolean) => void): this;
+    /**
+     * Emitted when a HID device needs to be selected when a call to
+     * `navigator.hid.requestDevice` is made. `callback` should be called with
+     * `deviceId` to be selected; passing no arguments to `callback` will cancel the
+     * request.  Additionally, permissioning on `navigator.hid` can be further managed
+     * by using ses.setPermissionCheckHandler(handler) and
+     * ses.setDevicePermissionHandler(handler)`.
+     */
+    on(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    once(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    addListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
+    removeListener(event: 'select-hid-device', listener: (event: Event,
+                                              details: SelectHidDeviceDetails,
+                                              callback: (deviceId?: (string) | (null)) => void) => void): this;
     /**
      * Emitted when a serial port needs to be selected when a call to
      * `navigator.serial.requestPort` is made. `callback` should be called with
@@ -7684,6 +7729,21 @@ declare namespace Electron {
      * > **NOTE:** The result of this procedure is cached by the network service.
      */
     setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
+    /**
+     * Sets the handler which can be used to respond to device permission checks for
+     * the `session`. Returning `true` will allow the device to be permitted and
+     * `false` will reject it. To clear the handler, call
+     * `setDevicePermissionHandler(null)`. This handler can be used to provide default
+     * permissioning to devices without first calling for permission to devices (eg via
+     * `navigator.hid.requestDevice`).  If this handler is not defined, the default
+     * device permissions as granted through device selection (eg via
+     * `navigator.hid.requestDevice`) will be used. Additionally, the default behavior
+     * of Electron is to store granted device permision through the lifetime of the
+     * corresponding WebContents.  If longer term storage is needed, a developer can
+     * store granted device permissions (eg when handling the `select-hid-device`
+     * event) and then read from that storage with `setDevicePermissionHandler`.
+     */
+    setDevicePermissionHandler(handler: ((details: DevicePermissionHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -9500,7 +9560,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     once(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9508,7 +9569,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     addListener(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9516,7 +9578,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     removeListener(event: 'certificate-error', listener: (event: Event,
                                               url: string,
                                               /**
@@ -9524,7 +9587,8 @@ declare namespace Electron {
                                                */
                                               error: string,
                                               certificate: Certificate,
-                                              callback: (isTrusted: boolean) => void) => void): this;
+                                              callback: (isTrusted: boolean) => void,
+                                              isMainFrame: boolean) => void): this;
     /**
      * Emitted when the associated window logs a console message.
      */
@@ -10707,7 +10771,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Begin subscribing for presentation events and captured frames, the `callback`
      * will be called with `callback(image, dirtyRect)` when there is a presentation
@@ -10719,7 +10783,7 @@ declare namespace Electron {
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
      * `image` will only contain the repainted area. `onlyDirty` defaults to `false`.
      */
-    beginFrameSubscription(onlyDirty: boolean, callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
+    beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Whether the browser can go back to previous web page.
      */
@@ -11691,23 +11755,12 @@ declare namespace Electron {
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
+    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when a server initiated
      * redirect is about to occur.
      */
-    onBeforeRedirect(filter: WebRequestFilter, listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
-    /**
-     * The `listener` will be called with `listener(details, callback)` when a request
-     * is about to occur.
-     *
-     * The `uploadData` is an array of `UploadData` objects.
-     *
-     * The `callback` has to be called with an `response` object.
-     *
-     * Some examples of valid `urls`:
-     */
-    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRedirect(listener: ((details: OnBeforeRedirectListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -11719,6 +11772,17 @@ declare namespace Electron {
      * Some examples of valid `urls`:
      */
     onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    /**
+     * The `listener` will be called with `listener(details, callback)` when a request
+     * is about to occur.
+     *
+     * The `uploadData` is an array of `UploadData` objects.
+     *
+     * The `callback` has to be called with an `response` object.
+     *
+     * Some examples of valid `urls`:
+     */
+    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -11748,11 +11812,11 @@ declare namespace Electron {
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when an error occurs.
      */
-    onErrorOccurred(filter: WebRequestFilter, listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
+    onErrorOccurred(listener: ((details: OnErrorOccurredListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when HTTP
      * response headers of a request have been received.
@@ -11772,13 +11836,13 @@ declare namespace Electron {
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` when first byte of the
      * response body is received. For HTTP requests, this means that the status line
      * and response headers are available.
      */
-    onResponseStarted(filter: WebRequestFilter, listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
+    onResponseStarted(listener: ((details: OnResponseStartedListenerDetails) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details)` just before a request is
      * going to be sent to the server, modifications of previous `onBeforeSendHeaders`
@@ -12026,6 +12090,11 @@ declare namespace Electron {
      */
     addEventListener(event: 'devtools-focused', listener: (event: Event) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-focused', listener: (event: Event) => void): this;
+    /**
+     * Emitted when there is a new context menu that needs to be handled.
+     */
+    addEventListener(event: 'context-menu', listener: (event: ContextMenuEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'context-menu', listener: (event: ContextMenuEvent) => void): this;
     addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
     removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
@@ -12747,7 +12816,7 @@ declare namespace Electron {
      */
     paintWhenInitiallyHidden?: boolean;
     /**
-     * Specify `false` to create a Frameless Window. Default is `true`.
+     * Specify `false` to create a frameless window. Default is `true`.
      */
     frame?: boolean;
     /**
@@ -13009,7 +13078,7 @@ declare namespace Electron {
     /**
      * Can be "off", "automatic" or "secure". Configures the DNS-over-HTTP mode. When
      * "off", no DoH lookups will be performed. When "automatic", DoH lookups will be
-     * peformed first if DoH is available, and insecure DNS lookups will be performed
+     * performed first if DoH is available, and insecure DNS lookups will be performed
      * as a fallback. When "secure", only DoH lookups will be performed. Defaults to
      * "automatic".
      */
@@ -13048,6 +13117,10 @@ declare namespace Electron {
     sourceId: string;
   }
 
+  interface ContextMenuEvent extends Event {
+    params: Params;
+  }
+
   interface ContextMenuParams {
     /**
      * x coordinate.
@@ -13057,6 +13130,10 @@ declare namespace Electron {
      * y coordinate.
      */
     y: number;
+    /**
+     * Frame from which the context menu was invoked.
+     */
+    frame: WebFrameMain;
     /**
      * URL of the link that encloses the node the context menu was invoked on.
      */
@@ -13390,6 +13467,26 @@ declare namespace Electron {
     name?: string;
   }
 
+  interface DevicePermissionHandlerHandlerDetails {
+    /**
+     * The type of device that permission is being requested on, can be `hid` or
+     * `serial`.
+     */
+    deviceType: ('hid' | 'serial');
+    /**
+     * The origin URL of the device permission check.
+     */
+    origin: string;
+    /**
+     * the device that permission is being requested for.
+     */
+    device: (HIDDevice) | (SerialPort);
+    /**
+     * WebFrameMain checking the device permission.
+     */
+    frame: WebFrameMain;
+  }
+
   interface DidChangeThemeColorEvent extends Event {
     themeColor: string;
   }
@@ -13645,6 +13742,16 @@ declare namespace Electron {
     doesZapGarbage: boolean;
   }
 
+  interface HidDeviceAddedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
+  interface HidDeviceRemovedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
   interface IgnoreMouseEventsOptions {
     /**
      * If true, forwards mouse move messages to Chromium, enabling mouse related events
@@ -13748,9 +13855,13 @@ declare namespace Electron {
 
   interface Item {
     /**
-     * The path(s) to the file(s) being dragged.
+     * The path to the file being dragged.
      */
-    file: (string[]) | (string);
+    file: string;
+    /**
+     * The paths to the files being dragged. (`files` will override `file` field)
+     */
+    files?: string[];
     /**
      * The image must be non-empty on macOS.
      */
@@ -14035,6 +14146,12 @@ declare namespace Electron {
     checkboxChecked?: boolean;
     icon?: NativeImage;
     /**
+     * Custom width of the text in the message box.
+     *
+     * @platform darwin
+     */
+    textWidth?: number;
+    /**
      * The index of the button to be used to cancel the dialog, via the `Esc` key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
      * If no such labeled buttons exist and this option is not set, `0` will be used as
@@ -14102,6 +14219,12 @@ declare namespace Electron {
      */
     detail?: string;
     icon?: (NativeImage) | (string);
+    /**
+     * Custom width of the text in the message box.
+     *
+     * @platform darwin
+     */
+    textWidth?: number;
     /**
      * The index of the button to be used to cancel the dialog, via the `Esc` key. By
      * default this is assigned to the first button with "cancel" or "no" as the label.
@@ -14614,6 +14737,10 @@ declare namespace Electron {
      */
     externalURL?: string;
     /**
+     * The security origin of the `media` request.
+     */
+    securityOrigin?: string;
+    /**
      * The types of media access being requested, elements can be `video` or `audio`
      */
     mediaTypes?: Array<'video' | 'audio'>;
@@ -14787,7 +14914,14 @@ declare namespace Electron {
     certificate: Certificate;
     validatedCertificate: Certificate;
     /**
-     * Verification result from chromium.
+     * `true` if Chromium recognises the root CA as a standard root. If it isn't then
+     * it's probably the case that this certificate was generated by a MITM proxy whose
+     * root has been installed locally (for example, by a corporate proxy). This should
+     * not be trusted if the `verificationResult` is not `OK`.
+     */
+    isIssuedByKnownRoot: boolean;
+    /**
+     * `OK` if the certificate is trusted, otherwise an error like `CERT_REVOKED`.
      */
     verificationResult: string;
     /**
@@ -14955,6 +15089,11 @@ declare namespace Electron {
      * @platform darwin,mas
      */
     securityScopedBookmarks?: boolean;
+  }
+
+  interface SelectHidDeviceDetails {
+    deviceList: HIDDevice[];
+    frame: WebFrameMain;
   }
 
   interface Settings {
@@ -15328,12 +15467,6 @@ declare namespace Electron {
     total: number;
   }
 
-  interface VerifyWidevineCdmOptions {
-    session?: Session;
-    disableUpdate?: boolean;
-    baseDir?: string;
-  }
-
   interface VisibleOnAllWorkspacesOptions {
     /**
      * Sets whether the window should be visible above fullscreen windows.
@@ -15672,6 +15805,118 @@ declare namespace Electron {
     to: number;
   }
 
+  interface Params {
+    /**
+     * x coordinate.
+     */
+    x: number;
+    /**
+     * y coordinate.
+     */
+    y: number;
+    /**
+     * URL of the link that encloses the node the context menu was invoked on.
+     */
+    linkURL: string;
+    /**
+     * Text associated with the link. May be an empty string if the contents of the
+     * link are an image.
+     */
+    linkText: string;
+    /**
+     * URL of the top level page that the context menu was invoked on.
+     */
+    pageURL: string;
+    /**
+     * URL of the subframe that the context menu was invoked on.
+     */
+    frameURL: string;
+    /**
+     * Source URL for the element that the context menu was invoked on. Elements with
+     * source URLs are images, audio and video.
+     */
+    srcURL: string;
+    /**
+     * Type of the node the context menu was invoked on. Can be `none`, `image`,
+     * `audio`, `video`, `canvas`, `file` or `plugin`.
+     */
+    mediaType: ('none' | 'image' | 'audio' | 'video' | 'canvas' | 'file' | 'plugin');
+    /**
+     * Whether the context menu was invoked on an image which has non-empty contents.
+     */
+    hasImageContents: boolean;
+    /**
+     * Whether the context is editable.
+     */
+    isEditable: boolean;
+    /**
+     * Text of the selection that the context menu was invoked on.
+     */
+    selectionText: string;
+    /**
+     * Title text of the selection that the context menu was invoked on.
+     */
+    titleText: string;
+    /**
+     * Alt text of the selection that the context menu was invoked on.
+     */
+    altText: string;
+    /**
+     * Suggested filename to be used when saving file through 'Save Link As' option of
+     * context menu.
+     */
+    suggestedFilename: string;
+    /**
+     * Rect representing the coordinates in the document space of the selection.
+     */
+    selectionRect: Rectangle;
+    /**
+     * Start position of the selection text.
+     */
+    selectionStartOffset: number;
+    /**
+     * The referrer policy of the frame on which the menu is invoked.
+     */
+    referrerPolicy: Referrer;
+    /**
+     * The misspelled word under the cursor, if any.
+     */
+    misspelledWord: string;
+    /**
+     * An array of suggested words to show the user to replace the `misspelledWord`.
+     * Only available if there is a misspelled word and spellchecker is enabled.
+     */
+    dictionarySuggestions: string[];
+    /**
+     * The character encoding of the frame on which the menu was invoked.
+     */
+    frameCharset: string;
+    /**
+     * If the context menu was invoked on an input field, the type of that field.
+     * Possible values are `none`, `plainText`, `password`, `other`.
+     */
+    inputFieldType: string;
+    /**
+     * If the context is editable, whether or not spellchecking is enabled.
+     */
+    spellcheckEnabled: boolean;
+    /**
+     * Input source that invoked the context menu. Can be `none`, `mouse`, `keyboard`,
+     * `touch`, `touchMenu`, `longPress`, `longTap`, `touchHandle`, `stylus`,
+     * `adjustSelection`, or `adjustSelectionReset`.
+     */
+    menuSourceType: ('none' | 'mouse' | 'keyboard' | 'touch' | 'touchMenu' | 'longPress' | 'longTap' | 'touchHandle' | 'stylus' | 'adjustSelection' | 'adjustSelectionReset');
+    /**
+     * The flags for the media element the context menu was invoked on.
+     */
+    mediaFlags: MediaFlags;
+    /**
+     * These flags indicate whether the renderer believes it is able to perform the
+     * corresponding action.
+     */
+    editFlags: EditFlags;
+  }
+
   interface TitleBarOverlay {
     /**
      * The CSS color of the Window Controls Overlay when enabled. Default is the system
@@ -15958,6 +16203,7 @@ declare namespace Electron {
     BrowserView: typeof BrowserView;
     BrowserWindow: typeof BrowserWindow;
     clipboard: Clipboard;
+    components: Components;
     contentTracing: ContentTracing;
     crashReporter: CrashReporter;
     desktopCapturer: DesktopCapturer;
@@ -16020,6 +16266,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16030,6 +16277,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16051,6 +16299,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16113,6 +16363,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16135,7 +16386,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -16147,12 +16397,14 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
     type CrashReport = Electron.CrashReport;
@@ -16165,6 +16417,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16223,6 +16476,8 @@ declare namespace Electron {
     class BrowserWindow extends Electron.BrowserWindow {}
     type ClientRequest = Electron.ClientRequest;
     type CommandLine = Electron.CommandLine;
+    const components: Components;
+    type Components = Electron.Components;
     const contentTracing: ContentTracing;
     type ContentTracing = Electron.ContentTracing;
     type Cookies = Electron.Cookies;
@@ -16301,6 +16556,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16311,6 +16567,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16332,6 +16589,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16394,6 +16653,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16416,7 +16676,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -16428,12 +16687,14 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
     type CrashReport = Electron.CrashReport;
@@ -16446,6 +16707,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16522,6 +16784,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16532,6 +16795,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16553,6 +16817,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16615,6 +16881,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16637,7 +16904,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -16649,12 +16915,14 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
     type CrashReport = Electron.CrashReport;
@@ -16667,6 +16935,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -16728,6 +16997,8 @@ declare namespace Electron {
     const clipboard: Clipboard;
     type Clipboard = Electron.Clipboard;
     type CommandLine = Electron.CommandLine;
+    const components: Components;
+    type Components = Electron.Components;
     const contentTracing: ContentTracing;
     type ContentTracing = Electron.ContentTracing;
     const contextBridge: ContextBridge;
@@ -16820,6 +17091,7 @@ declare namespace Electron {
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
+    type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
     type ContinueActivityDetails = Electron.ContinueActivityDetails;
     type CookiesGetFilter = Electron.CookiesGetFilter;
@@ -16830,6 +17102,7 @@ declare namespace Electron {
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type Details = Electron.Details;
+    type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -16851,6 +17124,8 @@ declare namespace Electron {
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
+    type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
+    type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16913,6 +17188,7 @@ declare namespace Electron {
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
+    type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -16935,7 +17211,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type VerifyWidevineCdmOptions = Electron.VerifyWidevineCdmOptions;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -16947,12 +17222,14 @@ declare namespace Electron {
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
+    type Params = Electron.Params;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type WebPreferences = Electron.WebPreferences;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
     type CrashReport = Electron.CrashReport;
@@ -16965,6 +17242,7 @@ declare namespace Electron {
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
+    type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
     type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
@@ -17017,6 +17295,7 @@ declare namespace Electron {
   const app: App;
   const autoUpdater: AutoUpdater;
   const clipboard: Clipboard;
+  const components: Components;
   const contentTracing: ContentTracing;
   const contextBridge: ContextBridge;
   const crashReporter: CrashReporter;
