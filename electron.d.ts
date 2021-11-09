@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.3.0
+// Type definitions for Electron 15.3.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2351,9 +2351,9 @@ declare namespace Electron {
      */
     getOpacity(): number;
     /**
-     * The parent window.
+     * The parent window or `null` if there is no parent.
      */
-    getParentWindow(): BrowserWindow;
+    getParentWindow(): (BrowserWindow) | (null);
     /**
      * Contains the window's current position.
      */
@@ -12863,7 +12863,7 @@ declare namespace Electron {
      */
     paintWhenInitiallyHidden?: boolean;
     /**
-     * Specify `false` to create a Frameless Window. Default is `true`.
+     * Specify `false` to create a frameless window. Default is `true`.
      */
     frame?: boolean;
     /**
