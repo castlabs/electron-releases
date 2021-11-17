@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.0.0-beta.9
+// Type definitions for Electron 16.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13313,7 +13313,7 @@ declare namespace Electron {
     expirationDate?: number;
     /**
      * The Same Site policy to apply to this cookie.  Can be `unspecified`,
-     * `no_restriction`, `lax` or `strict`.  Default is `no_restriction`.
+     * `no_restriction`, `lax` or `strict`.  Default is `lax`.
      */
     sameSite?: ('unspecified' | 'no_restriction' | 'lax' | 'strict');
   }
