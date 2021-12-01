@@ -43,7 +43,7 @@ This API must be called after the `ready` event is emitted.
 
 The `components` object has the following properties:
 
-### `components.uppdatesEnabled`
+### `components.updatesEnabled`
 
 A `Boolean` property that is `true` if component updates are enabled, `false` otherwise. The value is persisted in the local state, using the key `component_updates.component_updates_enabled`, and is thus remembered across launches.
 
