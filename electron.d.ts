@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.0.2
+// Type definitions for Electron 16.0.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -3577,7 +3577,7 @@ declare namespace Electron {
      *
      * This API must be called after the `ready` event is emitted.
      */
-    uppdatesEnabled: boolean;
+    uppatesEnabled: boolean;
     /**
      * A `String` which is the identifier of the Widevine Content Decryption Module.
      *
