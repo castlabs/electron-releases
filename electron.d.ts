@@ -3577,7 +3577,7 @@ declare namespace Electron {
      *
      * This API must be called after the `ready` event is emitted.
      */
-    uppatesEnabled: boolean;
+    updatesEnabled: boolean;
     /**
      * A `String` which is the identifier of the Widevine Content Decryption Module.
      *
