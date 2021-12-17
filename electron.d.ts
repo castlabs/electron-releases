@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.3.3
+// Type definitions for Electron 15.3.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10601,6 +10601,9 @@ declare namespace Electron {
      * `webBluetooth` should be enabled. If `event.preventDefault` is not called, first
      * available device will be selected. `callback` should be called with `deviceId`
      * to be selected, passing empty string to `callback` will cancel the request.
+     *
+     * If no event listener is added for this event, all bluetooth requests will be
+     * cancelled.
      */
     on(event: 'select-bluetooth-device', listener: (event: Event,
                                                     devices: BluetoothDevice[],
