@@ -1,4 +1,4 @@
-// Type definitions for Electron 13.6.3
+// Type definitions for Electron 13.6.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10073,6 +10073,9 @@ The usage is the same with the `login` event of `app`.
      * `webBluetooth` should be enabled. If `event.preventDefault` is not called, first
      * available device will be selected. `callback` should be called with `deviceId`
      * to be selected, passing empty string to `callback` will cancel the request.
+     *
+     * If no event listener is added for this event, all bluetooth requests will be
+     * cancelled.
      */
     on(event: 'select-bluetooth-device', listener: (event: Event,
                                                     devices: BluetoothDevice[],
