@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.0.0
+// Type definitions for Electron 17.0.0-beta.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -303,19 +303,6 @@ declare namespace Electron {
                                                      * A string with the error's localized description.
                                                      */
                                                     error: string) => void): this;
-    /**
-     * Emitted when `desktopCapturer.getSources()` is called in the renderer process of
-     * `webContents`. Calling `event.preventDefault()` will make it return empty
-     * sources.
-     */
-    on(event: 'desktop-capturer-get-sources', listener: (event: Event,
-                                                         webContents: WebContents) => void): this;
-    once(event: 'desktop-capturer-get-sources', listener: (event: Event,
-                                                         webContents: WebContents) => void): this;
-    addListener(event: 'desktop-capturer-get-sources', listener: (event: Event,
-                                                         webContents: WebContents) => void): this;
-    removeListener(event: 'desktop-capturer-get-sources', listener: (event: Event,
-                                                         webContents: WebContents) => void): this;
     /**
      * Emitted when mac application become active. Difference from `activate` event is
      * that `did-become-active` is emitted every time the app becomes active, not only
@@ -805,8 +792,8 @@ declare namespace Electron {
      * Resolve with an object containing the following:
      *
      * * `icon` NativeImage - the display icon of the app handling the protocol.
-     * * `path` String  - installation path of the app handling the protocol.
-     * * `name` String - display name of the app handling the protocol.
+     * * `path` string  - installation path of the app handling the protocol.
+     * * `name` string - display name of the app handling the protocol.
      *
      * This method returns a promise that contains the application name, icon and path
      * of the default handler for the protocol (aka URI scheme) of a URL.
@@ -917,31 +904,31 @@ declare namespace Electron {
      * you need to pass the same arguments here for `openAtLogin` to be set correctly.
      *
      *
-     * * `openAtLogin` Boolean - `true` if the app is set to open at login.
-     * * `openAsHidden` Boolean _macOS_ - `true` if the app is set to open as hidden at
+     * * `openAtLogin` boolean - `true` if the app is set to open at login.
+     * * `openAsHidden` boolean _macOS_ - `true` if the app is set to open as hidden at
      * login. This setting is not available on MAS builds.
-     * * `wasOpenedAtLogin` Boolean _macOS_ - `true` if the app was opened at login
+     * * `wasOpenedAtLogin` boolean _macOS_ - `true` if the app was opened at login
      * automatically. This setting is not available on MAS builds.
-     * * `wasOpenedAsHidden` Boolean _macOS_ - `true` if the app was opened as a hidden
+     * * `wasOpenedAsHidden` boolean _macOS_ - `true` if the app was opened as a hidden
      * login item. This indicates that the app should not open any windows at startup.
      * This setting is not available on MAS builds.
-     * * `restoreState` Boolean _macOS_ - `true` if the app was opened as a login item
+     * * `restoreState` boolean _macOS_ - `true` if the app was opened as a login item
      * that should restore the state from the previous session. This indicates that the
      * app should restore the windows that were open the last time the app was closed.
      * This setting is not available on MAS builds.
-     * * `executableWillLaunchAtLogin` Boolean _Windows_ - `true` if app is set to open
+     * * `executableWillLaunchAtLogin` boolean _Windows_ - `true` if app is set to open
      * at login and its run key is not deactivated. This differs from `openAtLogin` as
      * it ignores the `args` option, this property will be true if the given executable
      * would be launched at login with **any** arguments.
      * * `launchItems` Object[] _Windows_
-     *   * `name` String _Windows_ - name value of a registry entry.
-     *   * `path` String _Windows_ - The executable to an app that corresponds to a
+     *   * `name` string _Windows_ - name value of a registry entry.
+     *   * `path` string _Windows_ - The executable to an app that corresponds to a
      * registry entry.
-     *   * `args` String[] _Windows_ - the command-line arguments to pass to the
+     *   * `args` string[] _Windows_ - the command-line arguments to pass to the
      * executable.
-     *   * `scope` String _Windows_ - one of `user` or `machine`. Indicates whether the
+     *   * `scope` string _Windows_ - one of `user` or `machine`. Indicates whether the
      * registry entry is under `HKEY_CURRENT USER` or `HKEY_LOCAL_MACHINE`.
-     *   * `enabled` Boolean _Windows_ - `true` if the app registry key is startup
+     *   * `enabled` boolean _Windows_ - `true` if the app registry key is startup
      * approved and therefore shows as `enabled` in Task Manager and Windows settings.
      *
      * @platform darwin,win32
@@ -1400,7 +1387,7 @@ declare namespace Electron {
      */
     whenReady(): Promise<void>;
     /**
-     * A `Boolean` property that's `true` if Chrome's accessibility support is enabled,
+     * A `boolean` property that's `true` if Chrome's accessibility support is enabled,
      * `false` otherwise. This property will be `true` if the use of assistive
      * technologies, such as screen readers, has been detected. Setting this property
      * to `true` manually enables Chrome's accessibility support, allowing developers
@@ -1451,14 +1438,14 @@ declare namespace Electron {
      */
     readonly dock: Dock;
     /**
-     * A `Boolean` property that returns  `true` if the app is packaged, `false`
+     * A `boolean` property that returns  `true` if the app is packaged, `false`
      * otherwise. For many apps, this property can be used to distinguish development
      * and production environments.
      *
      */
     readonly isPackaged: boolean;
     /**
-     * A `String` property that indicates the current application's name, which is the
+     * A `string` property that indicates the current application's name, which is the
      * name in the application's `package.json` file.
      *
      * Usually the `name` field of `package.json` is a short lowercase name, according
@@ -1468,7 +1455,7 @@ declare namespace Electron {
      */
     name: string;
     /**
-     * A `Boolean` which when `true` indicates that the app is currently running under
+     * A `boolean` which when `true` indicates that the app is currently running under
      * an ARM64 translator (like the macOS Rosetta Translator Environment or Windows
      * WOW).
      *
@@ -1479,7 +1466,7 @@ declare namespace Electron {
      */
     readonly runningUnderARM64Translation: boolean;
     /**
-     * A `Boolean` which when `true` indicates that the app is currently running under
+     * A `boolean` which when `true` indicates that the app is currently running under
      * the Rosetta Translator Environment.
      *
      * You can use this property to prompt users to download the arm64 version of your
@@ -1494,7 +1481,7 @@ declare namespace Electron {
      */
     readonly runningUnderRosettaTranslation: boolean;
     /**
-     * A `String` which is the user agent string Electron will use as a global
+     * A `string` which is the user agent string Electron will use as a global
      * fallback.
      *
      * This is the user agent that will be used when no user agent is set at the
@@ -2780,7 +2767,7 @@ declare namespace Electron {
      * Whether the buttons were added successfully
      *
      * Add a thumbnail toolbar with a specified set of buttons to the thumbnail image
-     * of a window in a taskbar button layout. Returns a `Boolean` object indicates
+     * of a window in a taskbar button layout. Returns a `boolean` object indicates
      * whether the thumbnail has been added successfully.
      *
      * The number of buttons in thumbnail toolbar should be no greater than 7 due to
@@ -2793,11 +2780,11 @@ declare namespace Electron {
      * * `Button` Object
      *   * `icon` NativeImage - The icon showing in thumbnail toolbar.
      *   * `click` Function
-     *   * `tooltip` String (optional) - The text of the button's tooltip.
-     *   * `flags` String[] (optional) - Control specific states and behaviors of the
+     *   * `tooltip` string (optional) - The text of the button's tooltip.
+     *   * `flags` string[] (optional) - Control specific states and behaviors of the
      * button. By default, it is `['enabled']`.
      *
-     * The `flags` is an array that can include following `String`s:
+     * The `flags` is an array that can include following `string`s:
      *
      * * `enabled` - The button is active and available to the user.
      * * `disabled` - The button is disabled. It is present, but has a visual state
@@ -2917,13 +2904,13 @@ declare namespace Electron {
      */
     unmaximize(): void;
     /**
-     * A `String` property that defines an alternative title provided only to
+     * A `string` property that defines an alternative title provided only to
      * accessibility tools such as screen readers. This string is not directly visible
      * to users.
      */
     accessibleTitle: string;
     /**
-     * A `Boolean` property that determines whether the window menu bar should hide
+     * A `boolean` property that determines whether the window menu bar should hide
      * itself automatically. Once set, the menu bar will only show when users press the
      * single `Alt` key.
      *
@@ -2932,14 +2919,14 @@ declare namespace Electron {
      */
     autoHideMenuBar: boolean;
     /**
-     * A `Boolean` property that determines whether the window can be manually closed
+     * A `boolean` property that determines whether the window can be manually closed
      * by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
      */
     closable: boolean;
     /**
-     * A `Boolean` property that specifies whether the window’s document has been
+     * A `boolean` property that specifies whether the window’s document has been
      * edited.
      *
      * The icon in title bar will become gray when set to `true`.
@@ -2948,24 +2935,24 @@ declare namespace Electron {
      */
     documentEdited: boolean;
     /**
-     * A `Boolean` property that determines whether the window is excluded from the
+     * A `boolean` property that determines whether the window is excluded from the
      * application’s Windows menu. `false` by default.
      *
      * @platform darwin
      */
     excludedFromShownWindowsMenu: boolean;
     /**
-     * A `Boolean` property that determines whether the window is focusable.
+     * A `boolean` property that determines whether the window is focusable.
      *
      * @platform win32,darwin
      */
     focusable: boolean;
     /**
-     * A `Boolean` property that determines whether the window is in fullscreen mode.
+     * A `boolean` property that determines whether the window is in fullscreen mode.
      */
     fullScreen: boolean;
     /**
-     * A `Boolean` property that determines whether the maximize/zoom window button
+     * A `boolean` property that determines whether the maximize/zoom window button
      * toggles fullscreen mode or maximizes the window.
      */
     fullScreenable: boolean;
@@ -2976,18 +2963,18 @@ declare namespace Electron {
      */
     readonly id: number;
     /**
-     * A `Boolean` property that determines whether the window is in kiosk mode.
+     * A `boolean` property that determines whether the window is in kiosk mode.
      */
     kiosk: boolean;
     /**
-     * A `Boolean` property that determines whether the window can be manually
+     * A `boolean` property that determines whether the window can be manually
      * maximized by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
      */
     maximizable: boolean;
     /**
-     * A `Boolean` property that determines whether the menu bar should be visible.
+     * A `boolean` property that determines whether the menu bar should be visible.
      *
      * **Note:** If the menu bar is auto-hide, users can still bring up the menu bar by
      * pressing the single `Alt` key.
@@ -2996,48 +2983,48 @@ declare namespace Electron {
      */
     menuBarVisible: boolean;
     /**
-     * A `Boolean` property that determines whether the window can be manually
+     * A `boolean` property that determines whether the window can be manually
      * minimized by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
      */
     minimizable: boolean;
     /**
-     * A `Boolean` property that determines Whether the window can be moved by user.
+     * A `boolean` property that determines Whether the window can be moved by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
      */
     movable: boolean;
     /**
-     * A `String` property that determines the pathname of the file the window
+     * A `string` property that determines the pathname of the file the window
      * represents, and the icon of the file will show in window's title bar.
      *
      * @platform darwin
      */
     representedFilename: string;
     /**
-     * A `Boolean` property that determines whether the window can be manually resized
+     * A `boolean` property that determines whether the window can be manually resized
      * by user.
      */
     resizable: boolean;
     /**
-     * A `Boolean` property that determines whether the window has a shadow.
+     * A `boolean` property that determines whether the window has a shadow.
      */
     shadow: boolean;
     /**
-     * A `Boolean` property that determines whether the window is in simple (pre-Lion)
+     * A `boolean` property that determines whether the window is in simple (pre-Lion)
      * fullscreen mode.
      */
     simpleFullScreen: boolean;
     /**
-     * A `String` property that determines the title of the native window.
+     * A `string` property that determines the title of the native window.
      *
      * **Note:** The title of the web page can be different from the title of the
      * native window.
      */
     title: string;
     /**
-     * A `Boolean` property that determines whether the window is visible on all
+     * A `boolean` property that determines whether the window is visible on all
      * workspaces.
      *
      * **Note:** Always returns false on Windows.
@@ -3086,7 +3073,7 @@ declare namespace Electron {
      */
     print(): void;
     /**
-     * A `Boolean` that is set to true after the child window gets closed.
+     * A `boolean` that is set to true after the child window gets closed.
      */
     closed: boolean;
   }
@@ -3226,8 +3213,8 @@ declare namespace Electron {
      *
      * The `callback` function is expected to be called back with user credentials:
      *
-     * * `username` String
-     * * `password` String
+     * * `username` string
+     * * `password` string
      *
      * Providing empty credentials will cancel the request and report an authentication
      * error on the response object:
@@ -3308,9 +3295,9 @@ declare namespace Electron {
      */
     getHeader(name: string): string;
     /**
-     * * `active` Boolean - Whether the request is currently active. If this is false
+     * * `active` boolean - Whether the request is currently active. If this is false
      * no other properties will be set
-     * * `started` Boolean - Whether the upload has started. If this is false both
+     * * `started` boolean - Whether the upload has started. If this is false both
      * `current` and `total` will be set to 0.
      * * `current` Integer - The number of bytes that have been uploaded so far
      * * `total` Integer - The number of bytes that will be uploaded this request
@@ -3327,7 +3314,7 @@ declare namespace Electron {
     /**
      * Adds an extra HTTP header. The header name will be issued as-is without
      * lowercasing. It can be called only before first write. Calling this method after
-     * the first write will throw an error. If the passed value is not a `String`, its
+     * the first write will throw an error. If the passed value is not a `string`, its
      * `toString()` method will be called to obtain the final value.
      *
      * Certain headers are restricted from being set by apps. These headers are listed
@@ -3359,7 +3346,7 @@ declare namespace Electron {
      */
     write(chunk: (string) | (Buffer), encoding?: string, callback?: () => void): void;
     /**
-     * A `Boolean` specifying whether the request will use HTTP chunked transfer
+     * A `boolean` specifying whether the request will use HTTP chunked transfer
      * encoding or not. Defaults to false. The property is readable and writable,
      * however it can be set only before the first write operation as the HTTP headers
      * are not yet put on the wire. Trying to set the `chunkedEncoding` property after
@@ -3400,8 +3387,8 @@ declare namespace Electron {
      */
     read(format: string): string;
     /**
-     * * `title` String
-     * * `url` String
+     * * `title` string
+     * * `url` string
      *
      * Returns an Object containing `title` and `url` keys representing the bookmark in
      * the clipboard. The `title` and `url` values will be empty strings when the
@@ -3622,8 +3609,8 @@ declare namespace Electron {
      * Resolves with an object containing the `value` and `percentage` of trace buffer
      * maximum usage
      *
-     * * `value` Number
-     * * `percentage` Number
+     * * `value` number
+     * * `percentage` number
      *
      * Get the maximum usage across processes of trace buffer as a percentage of the
      * full state.
@@ -4150,8 +4137,8 @@ declare namespace Electron {
     /**
      * resolves with a promise containing the following properties:
      *
-     * * `response` Number - The index of the clicked button.
-     * * `checkboxChecked` Boolean - The checked state of the checkbox if
+     * * `response` number - The index of the clicked button.
+     * * `checkboxChecked` boolean - The checked state of the checkbox if
      * `checkboxLabel` was set. Otherwise `false`.
      *
      * Shows a message box.
@@ -4163,8 +4150,8 @@ declare namespace Electron {
     /**
      * resolves with a promise containing the following properties:
      *
-     * * `response` Number - The index of the clicked button.
-     * * `checkboxChecked` Boolean - The checked state of the checkbox if
+     * * `response` number - The index of the clicked button.
+     * * `checkboxChecked` boolean - The checked state of the checkbox if
      * `checkboxLabel` was set. Otherwise `false`.
      *
      * Shows a message box.
@@ -4198,10 +4185,10 @@ declare namespace Electron {
     /**
      * Resolve with an object containing the following:
      *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePaths` String[] - An array of file paths chosen by the user. If the
+     * * `canceled` boolean - whether or not the dialog was canceled.
+     * * `filePaths` string[] - An array of file paths chosen by the user. If the
      * dialog is cancelled this will be an empty array.
-     * * `bookmarks` String[] (optional) _macOS_ _mas_ - An array matching the
+     * * `bookmarks` string[] (optional) _macOS_ _mas_ - An array matching the
      * `filePaths` array of base64 encoded strings which contains security scoped
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
      * populated. (For return values, see table here.)
@@ -4224,10 +4211,10 @@ declare namespace Electron {
     /**
      * Resolve with an object containing the following:
      *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePaths` String[] - An array of file paths chosen by the user. If the
+     * * `canceled` boolean - whether or not the dialog was canceled.
+     * * `filePaths` string[] - An array of file paths chosen by the user. If the
      * dialog is cancelled this will be an empty array.
-     * * `bookmarks` String[] (optional) _macOS_ _mas_ - An array matching the
+     * * `bookmarks` string[] (optional) _macOS_ _mas_ - An array matching the
      * `filePaths` array of base64 encoded strings which contains security scoped
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
      * populated. (For return values, see table here.)
@@ -4288,10 +4275,10 @@ declare namespace Electron {
     /**
      * Resolve with an object containing the following:
      *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
+     * * `canceled` boolean - whether or not the dialog was canceled.
+     * * `filePath` string (optional) - If the dialog is canceled, this will be
      * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * * `bookmark` string (optional) _macOS_ _mas_ - Base64 encoded string which
      * contains the security scoped bookmark data for the saved file.
      * `securityScopedBookmarks` must be enabled for this to be present. (For return
      * values, see table here.)
@@ -4309,10 +4296,10 @@ declare namespace Electron {
     /**
      * Resolve with an object containing the following:
      *
-     * * `canceled` Boolean - whether or not the dialog was canceled.
-     * * `filePath` String (optional) - If the dialog is canceled, this will be
+     * * `canceled` boolean - whether or not the dialog was canceled.
+     * * `filePath` string (optional) - If the dialog is canceled, this will be
      * `undefined`.
-     * * `bookmark` String (optional) _macOS_ _mas_ - Base64 encoded string which
+     * * `bookmark` string (optional) _macOS_ _mas_ - Base64 encoded string which
      * contains the security scoped bookmark data for the saved file.
      * `securityScopedBookmarks` must be enabled for this to be present. (For return
      * values, see table here.)
@@ -4665,7 +4652,7 @@ declare namespace Electron {
      */
     setSavePath(path: string): void;
     /**
-     * A `String` property that determines the save file path of the download item.
+     * A `string` property that determines the save file path of the download item.
      *
      * The property is only available in session's `will-download` callback function.
      * If user doesn't set the save path via the property, Electron will use the
@@ -5000,7 +4987,7 @@ declare namespace Electron {
      */
     headers: Record<string, (string) | (string[])>;
     /**
-     * A `String` indicating the HTTP protocol version number. Typical values are '1.0'
+     * A `string` indicating the HTTP protocol version number. Typical values are '1.0'
      * or '1.1'. Additionally `httpVersionMajor` and `httpVersionMinor` are two
      * Integer-valued readable properties that return respectively the HTTP major and
      * minor version numbers.
@@ -5019,7 +5006,7 @@ declare namespace Electron {
      */
     statusCode: number;
     /**
-     * A `String` representing the HTTP status message.
+     * A `string` representing the HTTP status message.
      */
     statusMessage: string;
   }
@@ -5578,7 +5565,7 @@ declare namespace Electron {
      */
     accelerator?: Accelerator;
     /**
-     * A `Boolean` indicating whether the item is checked, this property can be
+     * A `boolean` indicating whether the item is checked, this property can be
      * dynamically changed.
      *
      * A `checkbox` menu item will toggle the `checked` property on and off when
@@ -5600,25 +5587,25 @@ declare namespace Electron {
      */
     click: Function;
     /**
-     * A `Number` indicating an item's sequential unique id.
+     * A `number` indicating an item's sequential unique id.
      */
     commandId: number;
     /**
-     * A `Boolean` indicating whether the item is enabled, this property can be
+     * A `boolean` indicating whether the item is enabled, this property can be
      * dynamically changed.
      */
     enabled: boolean;
     /**
-     * A `NativeImage | String` (optional) indicating the item's icon, if set.
+     * A `NativeImage | string` (optional) indicating the item's icon, if set.
      */
     icon?: (NativeImage) | (string);
     /**
-     * A `String` indicating the item's unique id, this property can be dynamically
+     * A `string` indicating the item's unique id, this property can be dynamically
      * changed.
      */
     id: string;
     /**
-     * A `String` indicating the item's visible label.
+     * A `string` indicating the item's visible label.
      */
     label: string;
     /**
@@ -5626,14 +5613,14 @@ declare namespace Electron {
      */
     menu: Menu;
     /**
-     * A `Boolean` indicating if the accelerator should be registered with the system
+     * A `boolean` indicating if the accelerator should be registered with the system
      * or just displayed.
      *
      * This property can be dynamically changed.
      */
     registerAccelerator: boolean;
     /**
-     * A `String` (optional) indicating the item's role, if set. Can be `undo`, `redo`,
+     * A `string` (optional) indicating the item's role, if set. Can be `undo`, `redo`,
      * `cut`, `copy`, `paste`, `pasteAndMatchStyle`, `delete`, `selectAll`, `reload`,
      * `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`, `zoomOut`,
      * `toggleSpellChecker`, `togglefullscreen`, `window`, `minimize`, `close`, `help`,
@@ -5653,7 +5640,7 @@ declare namespace Electron {
      */
     sharingItem: SharingItem;
     /**
-     * A `String` indicating the item's sublabel.
+     * A `string` indicating the item's sublabel.
      */
     sublabel: string;
     /**
@@ -5661,13 +5648,13 @@ declare namespace Electron {
      */
     submenu?: Menu;
     /**
-     * A `String` indicating the item's hover text.
+     * A `string` indicating the item's hover text.
      *
      * @platform darwin
      */
     toolTip: string;
     /**
-     * A `String` indicating the type of the item. Can be `normal`, `separator`,
+     * A `string` indicating the type of the item. Can be `normal`, `separator`,
      * `submenu`, `checkbox` or `radio`.
      */
     type: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
@@ -5684,7 +5671,7 @@ declare namespace Electron {
      */
     readonly userAccelerator: (Accelerator) | (null);
     /**
-     * A `Boolean` indicating whether the item is visible, this property can be
+     * A `boolean` indicating whether the item is visible, this property can be
      * dynamically changed.
      */
     visible: boolean;
@@ -5944,7 +5931,7 @@ declare namespace Electron {
      */
     toPNG(options?: ToPNGOptions): Buffer;
     /**
-     * A `Boolean` property that determines whether the image is considered a template
+     * A `boolean` property that determines whether the image is considered a template
      * image.
      *
      * Please note that this property only has an effect on macOS.
@@ -5969,28 +5956,28 @@ declare namespace Electron {
     addListener(event: 'updated', listener: Function): this;
     removeListener(event: 'updated', listener: Function): this;
     /**
-     * A `Boolean` for if the OS / Chromium currently has a dark mode enabled or is
+     * A `boolean` for if the OS / Chromium currently has a dark mode enabled or is
      * being instructed to show a dark-style UI.  If you want to modify this value you
      * should use `themeSource` below.
      *
      */
     readonly shouldUseDarkColors: boolean;
     /**
-     * A `Boolean` for if the OS / Chromium currently has high-contrast mode enabled or
+     * A `boolean` for if the OS / Chromium currently has high-contrast mode enabled or
      * is being instructed to show a high-contrast UI.
      *
      * @platform darwin,win32
      */
     readonly shouldUseHighContrastColors: boolean;
     /**
-     * A `Boolean` for if the OS / Chromium currently has an inverted color scheme or
+     * A `boolean` for if the OS / Chromium currently has an inverted color scheme or
      * is being instructed to use an inverted color scheme.
      *
      * @platform darwin,win32
      */
     readonly shouldUseInvertedColorScheme: boolean;
     /**
-     * A `String` property that can be `system`, `light` or `dark`.  It is used to
+     * A `string` property that can be `system`, `light` or `dark`.  It is used to
      * override and supersede the value that Chromium has chosen to use internally.
      *
      * Setting this property to `system` will remove the override and everything will
@@ -6050,7 +6037,7 @@ declare namespace Electron {
      */
     request(options: (ClientRequestConstructorOptions) | (string)): ClientRequest;
     /**
-     * A `Boolean` property. Whether there is currently internet connection.
+     * A `boolean` property. Whether there is currently internet connection.
      *
      * A return value of `false` is a pretty strong indicator that the user won't be
      * able to connect to remote sites. However, a return value of `true` is
@@ -6079,7 +6066,7 @@ declare namespace Electron {
      */
     stopLogging(): Promise<void>;
     /**
-     * A `Boolean` property that indicates whether network logs are currently being
+     * A `boolean` property that indicates whether network logs are currently being
      * recorded.
      *
      */
@@ -6222,35 +6209,35 @@ declare namespace Electron {
      */
     actions: NotificationAction[];
     /**
-     * A `String` property representing the body of the notification.
+     * A `string` property representing the body of the notification.
      */
     body: string;
     /**
-     * A `String` property representing the close button text of the notification.
+     * A `string` property representing the close button text of the notification.
      */
     closeButtonText: string;
     /**
-     * A `Boolean` property representing whether the notification has a reply action.
+     * A `boolean` property representing whether the notification has a reply action.
      */
     hasReply: boolean;
     /**
-     * A `String` property representing the reply placeholder of the notification.
+     * A `string` property representing the reply placeholder of the notification.
      */
     replyPlaceholder: string;
     /**
-     * A `Boolean` property representing whether the notification is silent.
+     * A `boolean` property representing whether the notification is silent.
      */
     silent: boolean;
     /**
-     * A `String` property representing the sound of the notification.
+     * A `string` property representing the sound of the notification.
      */
     sound: string;
     /**
-     * A `String` property representing the subtitle of the notification.
+     * A `string` property representing the subtitle of the notification.
      */
     subtitle: string;
     /**
-     * A `String` property representing the type of timeout duration for the
+     * A `string` property representing the type of timeout duration for the
      * notification. Can be 'default' or 'never'.
      *
      * If `timeoutType` is set to 'never', the notification never expires. It stays
@@ -6260,17 +6247,17 @@ declare namespace Electron {
      */
     timeoutType: ('default' | 'never');
     /**
-     * A `String` property representing the title of the notification.
+     * A `string` property representing the title of the notification.
      */
     title: string;
     /**
-     * A `String` property representing the custom Toast XML of the notification.
+     * A `string` property representing the custom Toast XML of the notification.
      *
      * @platform win32
      */
     toastXml: string;
     /**
-     * A `String` property representing the urgency level of the notification. Can be
+     * A `string` property representing the urgency level of the notification. Can be
      * 'normal', 'critical', or 'low'.
      *
      * Default is 'low' - see NotifyUrgency for more information.
@@ -6457,7 +6444,7 @@ declare namespace Electron {
      */
     isOnBatteryPower(): boolean;
     /**
-     * A `Boolean` property. True if the system is on battery power.
+     * A `boolean` property. True if the system is on battery power.
      *
      * See `powerMonitor.isOnBatteryPower()`.
      */
@@ -6617,7 +6604,7 @@ declare namespace Electron {
      */
     formattedPrice: string;
     /**
-     * A Boolean value that indicates whether the App Store has downloadable content
+     * A boolean value that indicates whether the App Store has downloadable content
      * for this product. `true` if at least one file has been associated with the
      * product.
      */
@@ -6676,7 +6663,7 @@ declare namespace Electron {
      * Whether the protocol was successfully intercepted
      *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
-     * which sends a `String` as a response.
+     * which sends a `string` as a response.
      */
     interceptStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -6779,10 +6766,10 @@ declare namespace Electron {
     /**
      * Whether the protocol was successfully registered
      *
-     * Registers a protocol of `scheme` that will send a `String` as a response.
+     * Registers a protocol of `scheme` that will send a `string` as a response.
      *
      * The usage is the same with `registerFileProtocol`, except that the `callback`
-     * should be called with either a `String` or an object that has the `data`
+     * should be called with either a `string` or an object that has the `data`
      * property.
      */
     registerStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
@@ -6822,7 +6809,7 @@ declare namespace Electron {
     /**
      * The response body. When returning stream as response, this is a Node.js readable
      * stream representing the response body. When returning `Buffer` as response, this
-     * is a `Buffer`. When returning `String` as response, this is a `String`. This is
+     * is a `Buffer`. When returning `string` as response, this is a `string`. This is
      * ignored for other types of responses.
      */
     data?: (Buffer) | (string) | (NodeJS.ReadableStream);
@@ -6832,8 +6819,8 @@ declare namespace Electron {
      */
     error?: number;
     /**
-     * An object containing the response headers. The keys must be String, and values
-     * must be either String or Array of String.
+     * An object containing the response headers. The keys must be string, and values
+     * must be either string or Array of string.
      */
     headers?: Record<string, (string) | (string[])>;
     /**
@@ -7646,7 +7633,7 @@ declare namespace Electron {
      */
     getSpellCheckerLanguages(): string[];
     /**
-     * A `String | null` indicating the absolute file system path where data for this
+     * A `string | null` indicating the absolute file system path where data for this
      * session is persisted on disk.  For in memory sessions this returns `null`.
      */
     getStoragePath(): void;
@@ -7883,7 +7870,7 @@ declare namespace Electron {
      */
     setUserAgent(userAgent: string, acceptLanguages?: string): void;
     /**
-     * A `String[]` array which consists of all the known available spell checker
+     * A `string[]` array which consists of all the known available spell checker
      * languages.  Providing a language code to the `setSpellCheckerLanguages` API that
      * isn't in this array will result in an error.
      *
@@ -7910,11 +7897,11 @@ declare namespace Electron {
      */
     readonly serviceWorkers: ServiceWorkers;
     /**
-     * A `Boolean` indicating whether builtin spell checker is enabled.
+     * A `boolean` indicating whether builtin spell checker is enabled.
      */
     spellCheckerEnabled: boolean;
     /**
-     * A `String | null` indicating the absolute file system path where data for this
+     * A `string | null` indicating the absolute file system path where data for this
      * session is persisted on disk.  For in memory sessions this returns `null`.
      *
      */
@@ -8207,12 +8194,12 @@ declare namespace Electron {
      */
     getAccentColor(): string;
     /**
-     * * `shouldRenderRichAnimation` Boolean - Returns true if rich animations should
+     * * `shouldRenderRichAnimation` boolean - Returns true if rich animations should
      * be rendered. Looks at session type (e.g. remote desktop) and accessibility
      * settings to give guidance for heavy animations.
-     * * `scrollAnimationsEnabledBySystem` Boolean - Determines on a per-platform basis
+     * * `scrollAnimationsEnabledBySystem` boolean - Determines on a per-platform basis
      * whether scroll animations (e.g. produced by home/end key) should be enabled.
-     * * `prefersReducedMotion` Boolean - Determines whether the user desires reduced
+     * * `prefersReducedMotion` boolean - Determines whether the user desires reduced
      * motion based on platform APIs.
      *
      * Returns an object with system animation settings.
@@ -8478,7 +8465,7 @@ declare namespace Electron {
      */
     unsubscribeWorkspaceNotification(id: number): void;
     /**
-     * A `String` property that can be `dark`, `light` or `unknown`. It determines the
+     * A `string` property that can be `dark`, `light` or `unknown`. It determines the
      * macOS appearance setting for your application. This maps to values in:
      * NSApplication.appearance. Setting this will override the system default as well
      * as the value of `getEffectiveAppearance`.
@@ -8492,7 +8479,7 @@ declare namespace Electron {
      */
     appLevelAppearance: ('dark' | 'light' | 'unknown');
     /**
-     * A `String` property that can be `dark`, `light` or `unknown`.
+     * A `string` property that can be `dark`, `light` or `unknown`.
      *
      * Returns the macOS appearance setting that is currently applied to your
      * application, maps to NSApplication.effectiveAppearance
@@ -8628,17 +8615,17 @@ declare namespace Electron {
      */
     constructor(options: TouchBarButtonConstructorOptions);
     /**
-     * A `String` representing the description of the button to be read by a screen
+     * A `string` representing the description of the button to be read by a screen
      * reader. Will only be read by screen readers if no label is set.
      */
     accessibilityLabel: string;
     /**
-     * A `String` hex code representing the button's current background color. Changing
+     * A `string` hex code representing the button's current background color. Changing
      * this value immediately updates the button in the touch bar.
      */
     backgroundColor: string;
     /**
-     * A `Boolean` representing whether the button is in an enabled state.
+     * A `boolean` representing whether the button is in an enabled state.
      */
     enabled: boolean;
     /**
@@ -8647,11 +8634,11 @@ declare namespace Electron {
      */
     icon: NativeImage;
     /**
-     * A `String` - Can be `left`, `right` or `overlay`.  Defaults to `overlay`.
+     * A `string` - Can be `left`, `right` or `overlay`.  Defaults to `overlay`.
      */
     iconPosition: ('left' | 'right' | 'overlay');
     /**
-     * A `String` representing the button's current text. Changing this value
+     * A `string` representing the button's current text. Changing this value
      * immediately updates the button in the touch bar.
      */
     label: string;
@@ -8666,12 +8653,12 @@ declare namespace Electron {
      */
     constructor(options: TouchBarColorPickerConstructorOptions);
     /**
-     * A `String[]` array representing the color picker's available colors to select.
+     * A `string[]` array representing the color picker's available colors to select.
      * Changing this value immediately updates the color picker in the touch bar.
      */
     availableColors: string[];
     /**
-     * A `String` hex code representing the color picker's currently selected color.
+     * A `string` hex code representing the color picker's currently selected color.
      * Changing this value immediately updates the color picker in the touch bar.
      */
     selectedColor: string;
@@ -8696,17 +8683,17 @@ declare namespace Electron {
      */
     constructor(options: TouchBarLabelConstructorOptions);
     /**
-     * A `String` representing the description of the label to be read by a screen
+     * A `string` representing the description of the label to be read by a screen
      * reader.
      */
     accessibilityLabel: string;
     /**
-     * A `String` representing the label's current text. Changing this value
+     * A `string` representing the label's current text. Changing this value
      * immediately updates the label in the touch bar.
      */
     label: string;
     /**
-     * A `String` hex code representing the label's current text color. Changing this
+     * A `string` hex code representing the label's current text color. Changing this
      * value immediately updates the label in the touch bar.
      */
     textColor: string;
@@ -8736,7 +8723,7 @@ declare namespace Electron {
      */
     icon: NativeImage;
     /**
-     * A `String` representing the popover's current button text. Changing this value
+     * A `string` representing the popover's current button text. Changing this value
      * immediately updates the popover in the touch bar.
      */
     label: string;
@@ -8751,7 +8738,7 @@ declare namespace Electron {
      */
     constructor(options: TouchBarScrubberConstructorOptions);
     /**
-     * A `Boolean` representing whether this scrubber is continuous or not. Updating
+     * A `boolean` representing whether this scrubber is continuous or not. Updating
      * this value immediately updates the control in the touch bar.
      */
     continuous: boolean;
@@ -8762,7 +8749,7 @@ declare namespace Electron {
      */
     items: ScrubberItem[];
     /**
-     * A `String` representing the mode of this scrubber. Updating this value
+     * A `string` representing the mode of this scrubber. Updating this value
      * immediately updates the control in the touch bar. Possible values:
      *
      * * `fixed` - Maps to `NSScrubberModeFixed`.
@@ -8770,7 +8757,7 @@ declare namespace Electron {
      */
     mode: ('fixed' | 'free');
     /**
-     * A `String` representing the style that selected items in the scrubber should
+     * A `string` representing the style that selected items in the scrubber should
      * have. This style is overlayed on top of the scrubber item instead of being
      * placed behind it. Updating this value immediately updates the control in the
      * touch bar. Possible values:
@@ -8781,7 +8768,7 @@ declare namespace Electron {
      */
     overlayStyle: ('background' | 'outline' | 'none');
     /**
-     * A `String` representing the style that selected items in the scrubber should
+     * A `string` representing the style that selected items in the scrubber should
      * have. Updating this value immediately updates the control in the touch bar.
      * Possible values:
      *
@@ -8791,7 +8778,7 @@ declare namespace Electron {
      */
     selectedStyle: ('background' | 'outline' | 'none');
     /**
-     * A `Boolean` representing whether to show the left / right selection arrows in
+     * A `boolean` representing whether to show the left / right selection arrows in
      * this scrubber. Updating this value immediately updates the control in the touch
      * bar.
      */
@@ -8807,7 +8794,7 @@ declare namespace Electron {
      */
     constructor(options: TouchBarSegmentedControlConstructorOptions);
     /**
-     * A `String` representing the current selection mode of the control.  Can be
+     * A `string` representing the current selection mode of the control.  Can be
      * `single`, `multiple` or `buttons`.
      */
     mode: ('single' | 'multiple' | 'buttons');
@@ -8818,7 +8805,7 @@ declare namespace Electron {
      */
     segments: SegmentedControlSegment[];
     /**
-     * A `String` representing the controls current segment style. Updating this value
+     * A `string` representing the controls current segment style. Updating this value
      * immediately updates the control in the touch bar.
      */
     segmentStyle: string;
@@ -8839,22 +8826,22 @@ declare namespace Electron {
      */
     constructor(options: TouchBarSliderConstructorOptions);
     /**
-     * A `String` representing the slider's current text. Changing this value
+     * A `string` representing the slider's current text. Changing this value
      * immediately updates the slider in the touch bar.
      */
     label: string;
     /**
-     * A `Number` representing the slider's current maximum value. Changing this value
+     * A `number` representing the slider's current maximum value. Changing this value
      * immediately updates the slider in the touch bar.
      */
     maxValue: number;
     /**
-     * A `Number` representing the slider's current minimum value. Changing this value
+     * A `number` representing the slider's current minimum value. Changing this value
      * immediately updates the slider in the touch bar.
      */
     minValue: number;
     /**
-     * A `Number` representing the slider's current value. Changing this value
+     * A `number` representing the slider's current value. Changing this value
      * immediately updates the slider in the touch bar.
      */
     value: number;
@@ -8869,7 +8856,7 @@ declare namespace Electron {
      */
     constructor(options: TouchBarSpacerConstructorOptions);
     /**
-     * A `String` representing the size of the spacer.  Can be `small`, `large` or
+     * A `string` representing the size of the spacer.  Can be `small`, `large` or
      * `flexible`.
      */
     size: ('small' | 'large' | 'flexible');
@@ -9756,14 +9743,6 @@ declare namespace Electron {
                                             */
                                            hotspot: Point) => void): this;
     /**
-     * Emitted when `desktopCapturer.getSources()` is called in the renderer process.
-     * Calling `event.preventDefault()` will make it return empty sources.
-     */
-    on(event: 'desktop-capturer-get-sources', listener: (event: Event) => void): this;
-    once(event: 'desktop-capturer-get-sources', listener: (event: Event) => void): this;
-    addListener(event: 'desktop-capturer-get-sources', listener: (event: Event) => void): this;
-    removeListener(event: 'desktop-capturer-get-sources', listener: (event: Event) => void): this;
-    /**
      * Emitted when `webContents` is destroyed.
      */
     on(event: 'destroyed', listener: Function): this;
@@ -10554,6 +10533,9 @@ declare namespace Electron {
      * `webBluetooth` should be enabled. If `event.preventDefault` is not called, first
      * available device will be selected. `callback` should be called with `deviceId`
      * to be selected, passing empty string to `callback` will cancel the request.
+     *
+     * If no event listener is added for this event, all bluetooth requests will be
+     * cancelled.
      */
     on(event: 'select-bluetooth-device', listener: (event: Event,
                                                     devices: BluetoothDevice[],
@@ -10908,13 +10890,31 @@ declare namespace Electron {
      */
     getFrameRate(): number;
     /**
+     * The identifier of a WebContents stream. This identifier can be used with
+     * `navigator.mediaDevices.getUserMedia` using a `chromeMediaSource` of `tab`. The
+     * identifier is restricted to the web contents that it is registered to and is
+     * only valid for 10 seconds.
+     */
+    getMediaSourceId(requestWebContents: WebContents): string;
+    /**
      * The operating system `pid` of the associated renderer process.
      */
     getOSProcessId(): number;
     /**
      * Get the system printer list.
+     *
+     *
+     * **Deprecated:** Should use the new `contents.getPrintersAsync` API.
+     *
+     * @deprecated
      */
     getPrinters(): PrinterInfo[];
+    /**
+     * Get the system printer list.
+     *
+     * Resolves with a `PrinterInfo[]`
+     */
+    getPrintersAsync(): Promise<Electron.PrinterInfo[]>;
     /**
      * The Chromium internal `pid` of the associated renderer. Can be compared to the
      * `frameProcessId` passed by frame specific navigation events (e.g.
@@ -11357,11 +11357,11 @@ declare namespace Electron {
      */
     unselect(): void;
     /**
-     * A `Boolean` property that determines whether this page is muted.
+     * A `boolean` property that determines whether this page is muted.
      */
     audioMuted: boolean;
     /**
-     * A `Boolean` property that determines whether or not this WebContents will
+     * A `boolean` property that determines whether or not this WebContents will
      * throttle animations and timers when the page becomes backgrounded. This also
      * affects the Page Visibility API.
      */
@@ -11410,17 +11410,17 @@ declare namespace Electron {
      */
     readonly session: Session;
     /**
-     * A `String` property that determines the user agent for this web page.
+     * A `string` property that determines the user agent for this web page.
      */
     userAgent: string;
     /**
-     * A `Number` property that determines the zoom factor for this web contents.
+     * A `number` property that determines the zoom factor for this web contents.
      *
      * The zoom factor is the zoom percent divided by 100, so 300% = 3.0.
      */
     zoomFactor: number;
     /**
-     * A `Number` property that determines the zoom level for this web contents.
+     * A `number` property that determines the zoom level for this web contents.
      *
      * The original size is 0 and each increment above or below represents zooming 20%
      * larger or smaller to default limits of 300% and 50% of original size,
@@ -11697,7 +11697,7 @@ declare namespace Electron {
      */
     readonly frameTreeNodeId: number;
     /**
-     * A `String` representing the frame name.
+     * A `string` representing the frame name.
      *
      */
     readonly name: string;
@@ -12391,47 +12391,47 @@ declare namespace Electron {
      */
     unselect(): void;
     /**
-     * A `Boolean`. When this attribute is present the guest page will be allowed to
+     * A `boolean`. When this attribute is present the guest page will be allowed to
      * open new windows. Popups are disabled by default.
      */
     allowpopups: boolean;
     /**
-     * A `String` which is a list of strings which specifies the blink features to be
+     * A `string` which is a list of strings which specifies the blink features to be
      * disabled separated by `,`. The full list of supported feature strings can be
      * found in the RuntimeEnabledFeatures.json5 file.
      */
     disableblinkfeatures: string;
     /**
-     * A `Boolean`. When this attribute is present the guest page will have web
+     * A `boolean`. When this attribute is present the guest page will have web
      * security disabled. Web security is enabled by default.
      */
     disablewebsecurity: boolean;
     /**
-     * A `String` which is a list of strings which specifies the blink features to be
+     * A `string` which is a list of strings which specifies the blink features to be
      * enabled separated by `,`. The full list of supported feature strings can be
      * found in the RuntimeEnabledFeatures.json5 file.
      */
     enableblinkfeatures: string;
     /**
-     * A `String` that sets the referrer URL for the guest page.
+     * A `string` that sets the referrer URL for the guest page.
      */
     httpreferrer: string;
     /**
-     * A `Boolean`. When this attribute is present the guest page in `webview` will
+     * A `boolean`. When this attribute is present the guest page in `webview` will
      * have node integration and can use node APIs like `require` and `process` to
      * access low level system resources. Node integration is disabled by default in
      * the guest page.
      */
     nodeintegration: boolean;
     /**
-     * A `Boolean` for the experimental option for enabling NodeJS support in
+     * A `boolean` for the experimental option for enabling NodeJS support in
      * sub-frames such as iframes inside the `webview`. All your preloads will load for
      * every iframe, you can use `process.isMainFrame` to determine if you are in the
      * main frame or not. This option is disabled by default in the guest page.
      */
     nodeintegrationinsubframes: boolean;
     /**
-     * A `String` that sets the session used by the page. If `partition` starts with
+     * A `string` that sets the session used by the page. If `partition` starts with
      * `persist:`, the page will use a persistent session available to all pages in the
      * app with the same `partition`. if there is no `persist:` prefix, the page will
      * use an in-memory session. By assigning the same `partition`, multiple pages can
@@ -12444,12 +12444,12 @@ declare namespace Electron {
      */
     partition: string;
     /**
-     * A `Boolean`. When this attribute is present the guest page in `webview` will be
+     * A `boolean`. When this attribute is present the guest page in `webview` will be
      * able to use browser plugins. Plugins are disabled by default.
      */
     plugins: boolean;
     /**
-     * A `String` that specifies a script that will be loaded before other scripts run
+     * A `string` that specifies a script that will be loaded before other scripts run
      * in the guest page. The protocol of script's URL must be `file:` (even when using
      * `asar:` archives) because it will be loaded by Node's `require` under the hood,
      * which treats `asar:` archives as virtual directories.
@@ -12463,7 +12463,7 @@ declare namespace Electron {
      */
     preload: string;
     /**
-     * A `String` representing the visible URL. Writing to this attribute initiates
+     * A `string` representing the visible URL. Writing to this attribute initiates
      * top-level navigation.
      *
      * Assigning `src` its own value will reload the current page.
@@ -12473,13 +12473,13 @@ declare namespace Electron {
      */
     src: string;
     /**
-     * A `String` that sets the user agent for the guest page before the page is
+     * A `string` that sets the user agent for the guest page before the page is
      * navigated to. Once the page is loaded, use the `setUserAgent` method to change
      * the user agent.
      */
     useragent: string;
     /**
-     * A `String` which is a comma separated list of strings which specifies the web
+     * A `string` which is a comma separated list of strings which specifies the web
      * preferences to be set on the webview. The full list of supported preference
      * strings can be found in BrowserWindow.
      *
@@ -15142,7 +15142,7 @@ declare namespace Electron {
 
   interface SourcesOptions {
     /**
-     * An array of Strings that lists the types of desktop sources to be captured,
+     * An array of strings that lists the types of desktop sources to be captured,
      * available types are `screen` and `window`.
      */
     types: string[];
@@ -15537,11 +15537,11 @@ declare namespace Electron {
     duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
     dpi?: Record<string, number>;
     /**
-     * String to be printed as page header.
+     * string to be printed as page header.
      */
     header?: string;
     /**
-     * String to be printed as page footer.
+     * string to be printed as page footer.
      */
     footer?: string;
     /**
@@ -15602,11 +15602,11 @@ declare namespace Electron {
     duplexMode?: ('simplex' | 'shortEdge' | 'longEdge');
     dpi?: Record<string, number>;
     /**
-     * String to be printed as page header.
+     * string to be printed as page header.
      */
     header?: string;
     /**
-     * String to be printed as page footer.
+     * string to be printed as page footer.
      */
     footer?: string;
     /**
@@ -16241,8 +16241,6 @@ declare namespace Electron {
     type Clipboard = Electron.Clipboard;
     const crashReporter: CrashReporter;
     type CrashReporter = Electron.CrashReporter;
-    const desktopCapturer: DesktopCapturer;
-    type DesktopCapturer = Electron.DesktopCapturer;
     const nativeImage: typeof NativeImage;
     type NativeImage = Electron.NativeImage;
     const shell: Shell;
@@ -16482,6 +16480,8 @@ declare namespace Electron {
     type ContentTracing = Electron.ContentTracing;
     type Cookies = Electron.Cookies;
     type Debugger = Electron.Debugger;
+    const desktopCapturer: DesktopCapturer;
+    type DesktopCapturer = Electron.DesktopCapturer;
     const dialog: Dialog;
     type Dialog = Electron.Dialog;
     type Dock = Electron.Dock;
@@ -17415,7 +17415,7 @@ declare namespace NodeJS {
      * * `heapSizeLimit` Integer
      * * `mallocedMemory` Integer
      * * `peakMallocedMemory` Integer
-     * * `doesZapGarbage` Boolean
+     * * `doesZapGarbage` boolean
      * 
      * Returns an object with V8 heap statistics. Note that all statistics are reported
      * in Kilobytes.
@@ -17477,12 +17477,12 @@ declare namespace NodeJS {
      */
     takeHeapSnapshot(filePath: string): boolean;
     /**
-     * A `String` representing Chrome's version string.
+     * A `string` representing Chrome's version string.
      *
      */
     readonly chrome: string;
     /**
-     * A `String` (optional) representing a globally unique ID of the current
+     * A `string` (optional) representing a globally unique ID of the current
      * JavaScript context. Each frame has its own JavaScript context. When
      * contextIsolation is enabled, the isolated world also has a separate JavaScript
      * context. This property is only available in the renderer process.
@@ -17490,79 +17490,79 @@ declare namespace NodeJS {
      */
     readonly contextId?: string;
     /**
-     * A `Boolean` that indicates whether the current renderer context has
+     * A `boolean` that indicates whether the current renderer context has
      * `contextIsolation` enabled. It is `undefined` in the main process.
      *
      */
     readonly contextIsolated: boolean;
     /**
-     * A `Boolean`. When app is started by being passed as parameter to the default
+     * A `boolean`. When app is started by being passed as parameter to the default
      * app, this property is `true` in the main process, otherwise it is `undefined`.
      *
      */
     readonly defaultApp: boolean;
     /**
-     * A `String` representing Electron's version string.
+     * A `string` representing Electron's version string.
      *
      */
     readonly electron: string;
     /**
-     * A `Boolean`, `true` when the current renderer context is the "main" renderer
+     * A `boolean`, `true` when the current renderer context is the "main" renderer
      * frame. If you want the ID of the current frame you should use
      * `webFrame.routingId`.
      *
      */
     readonly isMainFrame: boolean;
     /**
-     * A `Boolean`. For Mac App Store build, this property is `true`, for other builds
+     * A `boolean`. For Mac App Store build, this property is `true`, for other builds
      * it is `undefined`.
      *
      */
     readonly mas: boolean;
     /**
-     * A `Boolean` that controls ASAR support inside your application. Setting this to
+     * A `boolean` that controls ASAR support inside your application. Setting this to
      * `true` will disable the support for `asar` archives in Node's built-in modules.
      */
     noAsar: boolean;
     /**
-     * A `Boolean` that controls whether or not deprecation warnings are printed to
+     * A `boolean` that controls whether or not deprecation warnings are printed to
      * `stderr`. Setting this to `true` will silence deprecation warnings. This
      * property is used instead of the `--no-deprecation` command line flag.
      */
     noDeprecation: boolean;
     /**
-     * A `String` representing the path to the resources directory.
+     * A `string` representing the path to the resources directory.
      *
      */
     readonly resourcesPath: string;
     /**
-     * A `Boolean`. When the renderer process is sandboxed, this property is `true`,
+     * A `boolean`. When the renderer process is sandboxed, this property is `true`,
      * otherwise it is `undefined`.
      *
      */
     readonly sandboxed: boolean;
     /**
-     * A `Boolean` that controls whether or not deprecation warnings will be thrown as
+     * A `boolean` that controls whether or not deprecation warnings will be thrown as
      * exceptions. Setting this to `true` will throw errors for deprecations. This
      * property is used instead of the `--throw-deprecation` command line flag.
      */
     throwDeprecation: boolean;
     /**
-     * A `Boolean` that controls whether or not deprecations printed to `stderr`
+     * A `boolean` that controls whether or not deprecations printed to `stderr`
      * include their stack trace. Setting this to `true` will print stack traces for
      * deprecations. This property is instead of the `--trace-deprecation` command line
      * flag.
      */
     traceDeprecation: boolean;
     /**
-     * A `Boolean` that controls whether or not process warnings printed to `stderr`
+     * A `boolean` that controls whether or not process warnings printed to `stderr`
      * include their stack trace. Setting this to `true` will print stack traces for
      * process warnings (including deprecations). This property is instead of the
      * `--trace-warnings` command line flag.
      */
     traceProcessWarnings: boolean;
     /**
-     * A `String` representing the current process's type, can be:
+     * A `string` representing the current process's type, can be:
      * 
      * * `browser` - The main process
      * * `renderer` - A renderer process
@@ -17571,7 +17571,7 @@ declare namespace NodeJS {
      */
     readonly type: ('browser' | 'renderer' | 'worker');
     /**
-     * A `Boolean`. If the app is running as a Windows Store app (appx), this property
+     * A `boolean`. If the app is running as a Windows Store app (appx), this property
      * is `true`, for otherwise it is `undefined`.
      *
      */
