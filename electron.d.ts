@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.0-beta.1
+// Type definitions for Electron 17.0.0-beta.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2002,8 +2002,8 @@ declare namespace Electron {
      * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
      * will prevent the window from being moved.
      *
-     * Note that this is only emitted when the window is being resized manually.
-     * Resizing the window with `setBounds`/`setSize` will not emit this event.
+     * Note that this is only emitted when the window is being moved manually. Moving
+     * the window with `setPosition`/`setBounds`/`center` will not emit this event.
      *
      * @platform darwin,win32
      */
