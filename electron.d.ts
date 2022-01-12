@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.0.6
+// Type definitions for Electron 16.0.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2015,8 +2015,8 @@ declare namespace Electron {
      * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
      * will prevent the window from being moved.
      *
-     * Note that this is only emitted when the window is being resized manually.
-     * Resizing the window with `setBounds`/`setSize` will not emit this event.
+     * Note that this is only emitted when the window is being moved manually. Moving
+     * the window with `setPosition`/`setBounds`/`center` will not emit this event.
      *
      * @platform darwin,win32
      */
@@ -7836,9 +7836,11 @@ declare namespace Electron {
      * If you want to override this behavior you can use this API to point the
      * dictionary downloader at your own hosted version of the hunspell dictionaries.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
-     * the files you need to host here, the file server must be **case insensitive**
-     * you must upload each file twice, once with the case it has in the ZIP file and
-     * once with the filename as all lower case.
+     * the files you need to host here.
+     *
+     * The file server must be **case insensitive**. If you cannot do this, you must
+     * upload each file twice: once with the case it has in the ZIP file and once with
+     * the filename as all lowercase.
      *
      * If the files present in `hunspell_dictionaries.zip` are available at
      * `https://example.com/dictionaries/language-code.bdic` then you should call this
@@ -14550,11 +14552,11 @@ declare namespace Electron {
 
   interface OpenDevToolsOptions {
     /**
-     * Opens the devtools with specified dock state, can be `right`, `bottom`,
+     * Opens the devtools with specified dock state, can be `left`, `right`, `bottom`,
      * `undocked`, `detach`. Defaults to last used dock state. In `undocked` mode it's
      * possible to dock back. In `detach` mode it's not.
      */
-    mode: ('right' | 'bottom' | 'undocked' | 'detach');
+    mode: ('left' | 'right' | 'bottom' | 'undocked' | 'detach');
     /**
      * Whether to bring the opened devtools window to the foreground. The default is
      * `true`.
