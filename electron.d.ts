@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.0-beta.2
+// Type definitions for Electron 17.0.0-beta.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7823,9 +7823,11 @@ declare namespace Electron {
      * If you want to override this behavior you can use this API to point the
      * dictionary downloader at your own hosted version of the hunspell dictionaries.
      * We publish a `hunspell_dictionaries.zip` file with each release which contains
-     * the files you need to host here, the file server must be **case insensitive**
-     * you must upload each file twice, once with the case it has in the ZIP file and
-     * once with the filename as all lower case.
+     * the files you need to host here.
+     *
+     * The file server must be **case insensitive**. If you cannot do this, you must
+     * upload each file twice: once with the case it has in the ZIP file and once with
+     * the filename as all lowercase.
      *
      * If the files present in `hunspell_dictionaries.zip` are available at
      * `https://example.com/dictionaries/language-code.bdic` then you should call this
@@ -11873,10 +11875,6 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/web-source
 
     code: string;
-    /**
-     * Default is 1.
-     */
-    startLine?: number;
     url?: string;
   }
 
@@ -14262,10 +14260,10 @@ declare namespace Electron {
     versionId: number;
     /**
      * The type of source for this message.  Can be `javascript`, `xml`, `network`,
-     * `console-api`, `storage`, `app-cache`, `rendering`, `security`, `deprecation`,
-     * `worker`, `violation`, `intervention`, `recommendation` or `other`.
+     * `console-api`, `storage`, `rendering`, `security`, `deprecation`, `worker`,
+     * `violation`, `intervention`, `recommendation` or `other`.
      */
-    source: ('javascript' | 'xml' | 'network' | 'console-api' | 'storage' | 'app-cache' | 'rendering' | 'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' | 'other');
+    source: ('javascript' | 'xml' | 'network' | 'console-api' | 'storage' | 'rendering' | 'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' | 'other');
     /**
      * The log level, from 0 to 3. In order it matches `verbose`, `info`, `warning` and
      * `error`.
@@ -14547,11 +14545,11 @@ declare namespace Electron {
 
   interface OpenDevToolsOptions {
     /**
-     * Opens the devtools with specified dock state, can be `right`, `bottom`,
+     * Opens the devtools with specified dock state, can be `left`, `right`, `bottom`,
      * `undocked`, `detach`. Defaults to last used dock state. In `undocked` mode it's
      * possible to dock back. In `detach` mode it's not.
      */
-    mode: ('right' | 'bottom' | 'undocked' | 'detach');
+    mode: ('left' | 'right' | 'bottom' | 'undocked' | 'detach');
     /**
      * Whether to bring the opened devtools window to the foreground. The default is
      * `true`.
