@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.0-beta.3
+// Type definitions for Electron 17.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -14142,7 +14142,7 @@ declare namespace Electron {
      * Initial checked state of the checkbox. `false` by default.
      */
     checkboxChecked?: boolean;
-    icon?: NativeImage;
+    icon?: (NativeImage) | (string);
     /**
      * Custom width of the text in the message box.
      *
