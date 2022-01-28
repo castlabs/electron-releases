@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.0-beta.7
+// Type definitions for Electron 17.0.0-beta.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1116,10 +1116,6 @@ declare namespace Electron {
      */
     removeAsDefaultProtocolClient(protocol: string, path?: string, args?: string[]): boolean;
     /**
-     * * `additionalData` unknown (optional) - A JSON object containing additional data
-     * to send to the first instance.
-     *
-     *
      * The return value of this method indicates whether or not this instance of your
      * application successfully obtained the lock.  If it failed to obtain the lock,
      * you can assume that another instance of your application is already running with
@@ -1139,7 +1135,7 @@ declare namespace Electron {
      * An example of activating the window of primary instance when a second instance
      * starts:
      */
-    requestSingleInstanceLock(): boolean;
+    requestSingleInstanceLock(additionalData?: Record<any, any>): boolean;
     /**
      * Marks the current Handoff user activity as inactive without invalidating it.
      *
@@ -6307,6 +6303,34 @@ declare namespace Electron {
     userText?: string;
   }
 
+  interface PaymentDiscount {
+
+    // Docs: https://electronjs.org/docs/api/structures/payment-discount
+
+    /**
+     * A string used to uniquely identify a discount offer for a product.
+     */
+    identifier: string;
+    /**
+     * A string that identifies the key used to generate the signature.
+     */
+    keyIdentifier: string;
+    /**
+     * A universally unique ID (UUID) value that you define.
+     */
+    nonce: string;
+    /**
+     * A UTF-8 string representing the properties of a specific discount offer,
+     * cryptographically signed.
+     */
+    signature: string;
+    /**
+     * The date and time of the signature's creation in milliseconds, formatted in Unix
+     * epoch time.
+     */
+    timestamp: number;
+  }
+
   interface Point {
 
     // Docs: https://electronjs.org/docs/api/structures/point
@@ -6600,9 +6624,26 @@ declare namespace Electron {
      */
     currencyCode: string;
     /**
+     * An array of discount offers
+     */
+    discounts: ProductDiscount[];
+    /**
+     * The total size of the content, in bytes.
+     */
+    downloadContentLengths: number[];
+    /**
+     * A string that identifies the version of the content.
+     */
+    downloadContentVersion: string;
+    /**
      * The locale formatted price of the product.
      */
     formattedPrice: string;
+    /**
+     * The object containing introductory price information for the product. available
+     * for the product.
+     */
+    introductoryPrice?: ProductDiscount;
     /**
      * A boolean value that indicates whether the App Store has downloadable content
      * for this product. `true` if at least one file has been associated with the
@@ -6625,6 +6666,65 @@ declare namespace Electron {
      * The string that identifies the product to the Apple App Store.
      */
     productIdentifier: string;
+    /**
+     * The identifier of the subscription group to which the subscription belongs.
+     */
+    subscriptionGroupIdentifier: string;
+    /**
+     * The period details for products that are subscriptions.
+     */
+    subscriptionPeriod?: ProductSubscriptionPeriod;
+  }
+
+  interface ProductDiscount {
+
+    // Docs: https://electronjs.org/docs/api/structures/product-discount
+
+    /**
+     * A string used to uniquely identify a discount offer for a product.
+     */
+    identifier: string;
+    /**
+     * An integer that indicates the number of periods the product discount is
+     * available.
+     */
+    numberOfPeriods: number;
+    /**
+     * The payment mode for this product discount. Can be `payAsYouGo`, `payUpFront`,
+     * or `freeTrial`.
+     */
+    paymentMode: ('payAsYouGo' | 'payUpFront' | 'freeTrial');
+    /**
+     * The discount price of the product in the local currency.
+     */
+    price: number;
+    /**
+     * The locale used to format the discount price of the product.
+     */
+    priceLocale: string;
+    /**
+     * An object that defines the period for the product discount.
+     */
+    subscriptionPeriod?: ProductSubscriptionPeriod;
+    /**
+     * The type of discount offer.
+     */
+    type: number;
+  }
+
+  interface ProductSubscriptionPeriod {
+
+    // Docs: https://electronjs.org/docs/api/structures/product-subscription-period
+
+    /**
+     * The number of units per subscription period.
+     */
+    numberOfUnits: number;
+    /**
+     * The increment of time that a subscription period is specified in. Can be `day`,
+     * `week`, `month`, `year`.
+     */
+    unit: ('day' | 'week' | 'month' | 'year');
   }
 
   interface Protocol {
@@ -14702,6 +14802,14 @@ declare namespace Electron {
      * The quantity purchased.
      */
     quantity: number;
+    /**
+     * An opaque identifier for the user’s account on your system.
+     */
+    applicationUsername: string;
+    /**
+     * The details of the discount offer to apply to the payment.
+     */
+    paymentDiscount?: PaymentDiscount;
   }
 
   interface PermissionCheckHandlerHandlerDetails {
@@ -16431,12 +16539,15 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type PaymentDiscount = Electron.PaymentDiscount;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
+    type ProductDiscount = Electron.ProductDiscount;
+    type ProductSubscriptionPeriod = Electron.ProductSubscriptionPeriod;
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
@@ -16723,12 +16834,15 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type PaymentDiscount = Electron.PaymentDiscount;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
+    type ProductDiscount = Electron.ProductDiscount;
+    type ProductSubscriptionPeriod = Electron.ProductSubscriptionPeriod;
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
@@ -16951,12 +17065,15 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type PaymentDiscount = Electron.PaymentDiscount;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
+    type ProductDiscount = Electron.ProductDiscount;
+    type ProductSubscriptionPeriod = Electron.ProductSubscriptionPeriod;
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
@@ -17258,12 +17375,15 @@ declare namespace Electron {
     type NewWindowWebContentsEvent = Electron.NewWindowWebContentsEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type PaymentDiscount = Electron.PaymentDiscount;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
+    type ProductDiscount = Electron.ProductDiscount;
+    type ProductSubscriptionPeriod = Electron.ProductSubscriptionPeriod;
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
