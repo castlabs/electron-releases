@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.0.7
+// Type definitions for Electron 16.0.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1129,10 +1129,6 @@ declare namespace Electron {
      */
     removeAsDefaultProtocolClient(protocol: string, path?: string, args?: string[]): boolean;
     /**
-     * * `additionalData` unknown (optional) - A JSON object containing additional data
-     * to send to the first instance.
-     *
-     *
      * The return value of this method indicates whether or not this instance of your
      * application successfully obtained the lock.  If it failed to obtain the lock,
      * you can assume that another instance of your application is already running with
@@ -1152,7 +1148,7 @@ declare namespace Electron {
      * An example of activating the window of primary instance when a second instance
      * starts:
      */
-    requestSingleInstanceLock(): boolean;
+    requestSingleInstanceLock(additionalData?: Record<any, any>): boolean;
     /**
      * Marks the current Handoff user activity as inactive without invalidating it.
      *
