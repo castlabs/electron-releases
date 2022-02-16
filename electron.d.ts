@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.0
+// Type definitions for Electron 17.0.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13936,8 +13936,8 @@ declare namespace Electron {
 
   interface InsertCSSOptions {
     /**
-     * Can be either 'user' or 'author'; Specifying 'user' enables you to prevent
-     * websites from overriding the CSS you insert. Default is 'author'.
+     * Can be either 'user' or 'author'. Sets the cascade origin of the inserted
+     * stylesheet. Default is 'author'.
      */
     cssOrigin?: string;
   }
