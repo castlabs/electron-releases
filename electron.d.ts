@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.0.1
+// Type definitions for Electron 17.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -16038,6 +16038,13 @@ declare namespace Electron {
      * @platform win32
      */
     symbolColor?: string;
+    /**
+     * The height of the title bar and Window Controls Overlay in pixels. Default is
+     * system height.
+     *
+     * @platform darwin,win32
+     */
+    height?: number;
   }
 
   interface WebPreferences {
