@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.3.7
+// Type definitions for Electron 15.4.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12987,7 +12987,7 @@ declare namespace Electron {
      */
     webPreferences?: WebPreferences;
     /**
-     *  When using a frameless window in conjunction with
+     *  When using a frameless window in conjuction with
      * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
      * that the standard window controls ("traffic lights" on macOS) are visible, this
      * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
@@ -15981,6 +15981,13 @@ declare namespace Electron {
      * @platform win32
      */
     symbolColor?: string;
+    /**
+     * The height of the title bar and Window Controls Overlay in pixels. Default is
+     * system height.
+     *
+     * @platform darwin,win32
+     */
+    height?: number;
   }
 
   interface WebPreferences {
