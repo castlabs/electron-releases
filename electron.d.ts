@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.0.0-beta.3
+// Type definitions for Electron 18.0.0-beta.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11668,7 +11668,7 @@ declare namespace Electron {
      * Injects CSS into the current web page and returns a unique key for the inserted
      * stylesheet.
      */
-    insertCSS(css: string): string;
+    insertCSS(css: string, options?: InsertCSSOptions): string;
     /**
      * Inserts `text` to the focused element.
      */
@@ -11689,19 +11689,6 @@ declare namespace Electron {
      * specified.
      */
     setIsolatedWorldInfo(worldId: number, info: Info): void;
-    /**
-     * Sets a provider for spell checking in input fields and text areas.
-     *
-     * If you want to use this method you must disable the builtin spellchecker when
-     * you construct the window.
-     *
-     * The `provider` must be an object that has a `spellCheck` method that accepts an
-     * array of individual words for spellchecking. The `spellCheck` function runs
-     * asynchronously and calls the `callback` function with an array of misspelt words
-     * when complete.
-     *
-     * An example of using node-spellchecker as provider:
-     */
     setSpellCheckProvider(language: string, provider: Provider): void;
     /**
      * Sets the maximum and minimum pinch-to-zoom level.
@@ -12823,10 +12810,6 @@ declare namespace Electron {
      * Size of all allocated objects in Kilobytes.
      */
     allocated: number;
-    /**
-     * Size of all marked objects in Kilobytes.
-     */
-    marked: number;
     /**
      * Total allocated space in Kilobytes.
      */
@@ -17559,7 +17542,6 @@ declare namespace NodeJS {
     crash(): void;
     /**
      * * `allocated` Integer - Size of all allocated objects in Kilobytes.
-     * * `marked` Integer - Size of all marked objects in Kilobytes.
      * * `total` Integer - Total allocated space in Kilobytes.
      * 
      * Returns an object with Blink memory information. It can be useful for debugging
