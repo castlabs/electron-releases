@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.0.0-beta.4
+// Type definitions for Electron 18.0.0-beta.5
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7674,6 +7674,10 @@ declare namespace Electron {
      */
     clearCache(): Promise<void>;
     /**
+     * resolves when the code cache clear operation is complete.
+     */
+    clearCodeCaches(options: ClearCodeCachesOptions): Promise<void>;
+    /**
      * Resolves when the operation is complete.
      *
      * Clears the host resolver cache.
@@ -7844,6 +7848,16 @@ declare namespace Electron {
      * > **NOTE:** The result of this procedure is cached by the network service.
      */
     setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
+    /**
+     * Sets the directory to store the generated JS code cache for this session. The
+     * directory is not required to be created by the user before this call, the
+     * runtime will create if it does not exist otherwise will use the existing
+     * directory. If directory cannot be created, then code cache will not be used and
+     * all operations related to code cache will fail silently inside the runtime. By
+     * default, the directory will be `Code Cache` under the respective user data
+     * folder.
+     */
+    setCodeCachePath(path: string): void;
     /**
      * Sets the handler which can be used to respond to device permission checks for
      * the `session`. Returning `true` will allow the device to be permitted and
@@ -13090,6 +13104,15 @@ declare namespace Electron {
     message: string;
   }
 
+  interface ClearCodeCachesOptions {
+    /**
+     * An array of url corresponding to the resource whose generated code cache needs
+     * to be removed. If the list is empty then all entries in the cache directory will
+     * be removed.
+     */
+    urls?: string[];
+  }
+
   interface ClearStorageDataOptions {
     /**
      * Should follow `window.location.origin`’s representation `scheme://host:port`.
@@ -16403,6 +16426,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -16698,6 +16722,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -16928,6 +16953,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -17237,6 +17263,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
