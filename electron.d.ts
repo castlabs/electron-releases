@@ -1,4 +1,4 @@
-// Type definitions for Electron 15.4.1
+// Type definitions for Electron 15.4.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12725,10 +12725,6 @@ declare namespace Electron {
      */
     allocated: number;
     /**
-     * Size of all marked objects in Kilobytes.
-     */
-    marked: number;
-    /**
      * Total allocated space in Kilobytes.
      */
     total: number;
@@ -17438,7 +17434,6 @@ declare namespace NodeJS {
     crash(): void;
     /**
      * * `allocated` Integer - Size of all allocated objects in Kilobytes.
-     * * `marked` Integer - Size of all marked objects in Kilobytes.
      * * `total` Integer - Total allocated space in Kilobytes.
      * 
      * Returns an object with Blink memory information. It can be useful for debugging
