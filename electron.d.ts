@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.1.2
+// Type definitions for Electron 17.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7646,6 +7646,10 @@ declare namespace Electron {
      */
     clearCache(): Promise<void>;
     /**
+     * resolves when the code cache clear operation is complete.
+     */
+    clearCodeCaches(options: ClearCodeCachesOptions): Promise<void>;
+    /**
      * Resolves when the operation is complete.
      *
      * Clears the host resolver cache.
@@ -7816,6 +7820,16 @@ declare namespace Electron {
      * > **NOTE:** The result of this procedure is cached by the network service.
      */
     setCertificateVerifyProc(proc: ((request: Request, callback: (verificationResult: number) => void) => void) | (null)): void;
+    /**
+     * Sets the directory to store the generated JS code cache for this session. The
+     * directory is not required to be created by the user before this call, the
+     * runtime will create if it does not exist otherwise will use the existing
+     * directory. If directory cannot be created, then code cache will not be used and
+     * all operations related to code cache will fail silently inside the runtime. By
+     * default, the directory will be `Code Cache` under the respective user data
+     * folder.
+     */
+    setCodeCachePath(path: string): void;
     /**
      * Sets the handler which can be used to respond to device permission checks for
      * the `session`. Returning `true` will allow the device to be permitted and
@@ -11617,7 +11631,7 @@ declare namespace Electron {
      * Injects CSS into the current web page and returns a unique key for the inserted
      * stylesheet.
      */
-    insertCSS(css: string): string;
+    insertCSS(css: string, options?: InsertCSSOptions): string;
     /**
      * Inserts `text` to the focused element.
      */
@@ -11638,19 +11652,6 @@ declare namespace Electron {
      * specified.
      */
     setIsolatedWorldInfo(worldId: number, info: Info): void;
-    /**
-     * Sets a provider for spell checking in input fields and text areas.
-     *
-     * If you want to use this method you must disable the builtin spellchecker when
-     * you construct the window.
-     *
-     * The `provider` must be an object that has a `spellCheck` method that accepts an
-     * array of individual words for spellchecking. The `spellCheck` function runs
-     * asynchronously and calls the `callback` function with an array of misspelt words
-     * when complete.
-     *
-     * An example of using node-spellchecker as provider:
-     */
     setSpellCheckProvider(language: string, provider: Provider): void;
     /**
      * Sets the maximum and minimum pinch-to-zoom level.
@@ -12773,10 +12774,6 @@ declare namespace Electron {
      */
     allocated: number;
     /**
-     * Size of all marked objects in Kilobytes.
-     */
-    marked: number;
-    /**
      * Total allocated space in Kilobytes.
      */
     total: number;
@@ -13054,6 +13051,15 @@ declare namespace Electron {
      * The message to display to the user.
      */
     message: string;
+  }
+
+  interface ClearCodeCachesOptions {
+    /**
+     * An array of url corresponding to the resource whose generated code cache needs
+     * to be removed. If the list is empty then all entries in the cache directory will
+     * be removed.
+     */
+    urls?: string[];
   }
 
   interface ClearStorageDataOptions {
@@ -16372,6 +16378,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -16667,6 +16674,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -16898,6 +16906,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -17208,6 +17217,7 @@ declare namespace Electron {
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
+    type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type Config = Electron.Config;
@@ -17513,7 +17523,6 @@ declare namespace NodeJS {
     crash(): void;
     /**
      * * `allocated` Integer - Size of all allocated objects in Kilobytes.
-     * * `marked` Integer - Size of all marked objects in Kilobytes.
      * * `total` Integer - Total allocated space in Kilobytes.
      * 
      * Returns an object with Blink memory information. It can be useful for debugging
