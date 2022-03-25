@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.0.0-beta.5
+// Type definitions for Electron 18.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1673,6 +1673,36 @@ declare namespace Electron {
      */
     getBounds(): Rectangle;
     setAutoResize(options: AutoResizeOptions): void;
+    /**
+     * Examples of valid `color` values:
+     *
+     * * Hex
+     *   * #fff (RGB)
+     *   * #ffff (ARGB)
+     *   * #ffffff (RRGGBB)
+     *   * #ffffffff (AARRGGBB)
+     * * RGB
+     *   * rgb(([\d]+),\s*([\d]+),\s*([\d]+))
+     *     * e.g. rgb(255, 255, 255)
+     * * RGBA
+     *   * rgba(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+))
+     *     * e.g. rgba(255, 255, 255, 1.0)
+     * * HSL
+     *   * hsl((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%)
+     *     * e.g. hsl(200, 20%, 50%)
+     * * HSLA
+     *   * hsla((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+))
+     *     * e.g. hsla(200, 20%, 50%, 0.5)
+     * * Color name
+     *   * Options are listed in SkParseColor.cpp
+     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
+     *     * e.g. `blueviolet` or `red`
+     *
+     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBA` or
+     * `RGA`.
+     *
+     * @experimental
+     */
     setBackgroundColor(color: string): void;
     /**
      * Resizes and moves the view to the supplied bounds relative to the window.
@@ -2205,7 +2235,12 @@ declare namespace Electron {
     focus(): void;
     focusOnWebView(): void;
     /**
-     * Gets the background color of the window. See Setting `backgroundColor`.
+     * Gets the background color of the window in Hex (`#RRGGBB`) format.
+     *
+     * See Setting `backgroundColor`.
+     *
+     * **Note:** The alpha value is _not_ returned alongside the red, green, and blue
+     * values.
      */
     getBackgroundColor(): string;
     /**
@@ -2606,6 +2641,30 @@ declare namespace Electron {
      */
     setAutoHideMenuBar(hide: boolean): void;
     /**
+     * Examples of valid `backgroundColor` values:
+     *
+     * * Hex
+     *   * #fff (shorthand RGB)
+     *   * #ffff (shorthand ARGB)
+     *   * #ffffff (RGB)
+     *   * #ffffffff (ARGB)
+     * * RGB
+     *   * rgb(([\d]+),\s*([\d]+),\s*([\d]+))
+     *     * e.g. rgb(255, 255, 255)
+     * * RGBA
+     *   * rgba(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+))
+     *     * e.g. rgba(255, 255, 255, 1.0)
+     * * HSL
+     *   * hsl((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%)
+     *     * e.g. hsl(200, 20%, 50%)
+     * * HSLA
+     *   * hsla((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+))
+     *     * e.g. hsla(200, 20%, 50%, 0.5)
+     * * Color name
+     *   * Options are listed in SkParseColor.cpp
+     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
+     *     * e.g. `blueviolet` or `red`
+     *
      * Sets the background color of the window. See Setting `backgroundColor`.
      */
     setBackgroundColor(backgroundColor: string): void;
@@ -5979,6 +6038,14 @@ declare namespace Electron {
     once(event: 'updated', listener: Function): this;
     addListener(event: 'updated', listener: Function): this;
     removeListener(event: 'updated', listener: Function): this;
+    /**
+     * A `boolean` indicating whether Chromium is in forced colors mode, controlled by
+     * system accessibility settings. Currently, Windows high contrast is the only
+     * system setting that triggers forced colors mode.
+     *
+     * @platform win32
+     */
+    readonly inForcedColorsMode: boolean;
     /**
      * A `boolean` for if the OS / Chromium currently has a dark mode enabled or is
      * being instructed to show a dark-style UI.  If you want to modify this value you
@@ -12993,9 +13060,10 @@ declare namespace Electron {
      */
     enableLargerThanScreen?: boolean;
     /**
-     * Window's background color as a hexadecimal value, like `#66CD00` or `#FFF` or
-     * `#80FFFFFF` (alpha in #AARRGGBB format is supported if `transparent` is set to
-     * `true`). Default is `#FFF` (white).
+     * The window's background color in Hex, RGB, RGBA, HSL, HSLA or named CSS color
+     * format. Alpha in #AARRGGBB format is supported if `transparent` is set to
+     * `true`. Default is `#FFF` (white). See win.setBackgroundColor for more
+     * information.
      */
     backgroundColor?: string;
     /**
