@@ -1,4 +1,4 @@
-// Type definitions for Electron 16.1.1
+// Type definitions for Electron 16.2.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5964,6 +5964,14 @@ declare namespace Electron {
     once(event: 'updated', listener: Function): this;
     addListener(event: 'updated', listener: Function): this;
     removeListener(event: 'updated', listener: Function): this;
+    /**
+     * A `boolean` indicating whether Chromium is in forced colors mode, controlled by
+     * system accessibility settings. Currently, Windows high contrast is the only
+     * system setting that triggers forced colors mode.
+     *
+     * @platform win32
+     */
+    readonly inForcedColorsMode: boolean;
     /**
      * A `Boolean` for if the OS / Chromium currently has a dark mode enabled or is
      * being instructed to show a dark-style UI.  If you want to modify this value you
