@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.0.0-beta.6
+// Type definitions for Electron 18.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2933,6 +2933,13 @@ declare namespace Electron {
      * Changes the title of native window to `title`.
      */
     setTitle(title: string): void;
+    /**
+     * On a Window with Window Controls Overlay already enabled, this method updates
+     * the style of the title bar overlay.
+     *
+     * @platform win32
+     */
+    setTitleBarOverlay(options: TitleBarOverlayOptions): void;
     /**
      * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
      * error if `browserView` is not attached to `win`.
@@ -15456,6 +15463,27 @@ declare namespace Electron {
     swapFree: number;
   }
 
+  interface TitleBarOverlayOptions {
+    /**
+     * The CSS color of the Window Controls Overlay when enabled.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
+    /**
+     * The height of the title bar and Window Controls Overlay in pixels.
+     *
+     * @platform win32
+     */
+    height?: number;
+  }
+
   interface TitleOptions {
     /**
      * The font family variant to display, can be `monospaced` or `monospacedDigit`.
@@ -16603,6 +16631,7 @@ declare namespace Electron {
     type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -16899,6 +16928,7 @@ declare namespace Electron {
     type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -17130,6 +17160,7 @@ declare namespace Electron {
     type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -17440,6 +17471,7 @@ declare namespace Electron {
     type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;

@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "@electron/get": "^1.13.0",
-    "@types/node": "^14.6.2",
+    "@types/node": "^16.11.26",
     "extract-zip": "^1.0.3"
   },
   "engines": {
     "node": ">= 8.6"
   },
   "name": "electron",
-  "version": "18.0.0-beta.6+wvcus",
+  "version": "18.0.0+wvcus",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
