@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.0.0
+// Type definitions for Electron 19.0.0-alpha.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8618,7 +8618,7 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    setUserDefault(key: string, type: 'string' | 'boolean' | 'integer' | 'float' | 'double' | 'url' | 'array' | 'dictionary', value: string): void;
+    setUserDefault<Type extends keyof UserDefaultTypes>(key: string, type: Type, value: UserDefaultTypes[Type]): void;
     /**
      * The ID of this subscription
      *
@@ -9723,7 +9723,8 @@ declare namespace Electron {
      */
     static getAllWebContents(): WebContents[];
     /**
-     * The web contents that is focused in this application, otherwise returns `null`.
+     * | null - The web contents that is focused in this application, otherwise returns
+     * `null`.
      */
     static getFocusedWebContents(): WebContents;
     /**
@@ -10836,9 +10837,6 @@ declare namespace Electron {
      * This event can be used to configure `webPreferences` for the `webContents` of a
      * `<webview>` before it's loaded, and provides the ability to set settings that
      * can't be set via `<webview>` attributes.
-     *
-     * **Note:** The specified `preload` script option will appear as `preloadURL` (not
-     * `preload`) in the `webPreferences` object emitted with this event.
      */
     on(event: 'will-attach-webview', listener: (event: Event,
                                                 /**
@@ -11777,6 +11775,19 @@ declare namespace Electron {
      * specified.
      */
     setIsolatedWorldInfo(worldId: number, info: Info): void;
+    /**
+     * Sets a provider for spell checking in input fields and text areas.
+     *
+     * If you want to use this method you must disable the builtin spellchecker when
+     * you construct the window.
+     *
+     * The `provider` must be an object that has a `spellCheck` method that accepts an
+     * array of individual words for spellchecking. The `spellCheck` function runs
+     * asynchronously and calls the `callback` function with an array of misspelt words
+     * when complete.
+     *
+     * An example of using node-spellchecker as provider:
+     */
     setSpellCheckProvider(language: string, provider: Provider): void;
     /**
      * Sets the maximum and minimum pinch-to-zoom level.
@@ -11896,10 +11907,9 @@ declare namespace Electron {
     reload(): boolean;
     /**
      * Send an asynchronous message to the renderer process via `channel`, along with
-     * arguments. Arguments will be serialized with the [Structured Clone
-     * Algorithm][SCA], just like [`postMessage`][], so prototype chains will not be
-     * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
-     * an exception.
+     * arguments. Arguments will be serialized with the Structured Clone Algorithm,
+     * just like `postMessage`, so prototype chains will not be included. Sending
+     * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
      *
      * The renderer process can handle the message by listening to `channel` with the
      * `ipcRenderer` module.
@@ -12681,9 +12691,6 @@ declare namespace Electron {
      * When the guest page doesn't have node integration this script will still have
      * access to all Node APIs, but global objects injected by Node will be deleted
      * after this script has finished executing.
-     *
-     * **Note:** This option will appear as `preloadURL` (not `preload`) in the
-     * `webPreferences` specified to the `will-attach-webview` event.
      */
     preload: string;
     /**
@@ -12937,7 +12944,7 @@ declare namespace Electron {
      */
     useContentSize?: boolean;
     /**
-     * Show window in the center of the screen.
+     * Show window in the center of the screen. Default is `false`.
      */
     center?: boolean;
     /**
@@ -13007,6 +13014,8 @@ declare namespace Electron {
     simpleFullscreen?: boolean;
     /**
      * Whether to show the window in taskbar. Default is `false`.
+     *
+     * @platform darwin,win32
      */
     skipTaskbar?: boolean;
     /**
