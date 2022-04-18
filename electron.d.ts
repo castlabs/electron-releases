@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0-alpha.1
+// Type definitions for Electron 19.0.0-alpha.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2424,10 +2424,14 @@ declare namespace Electron {
     isMaximized(): boolean;
     /**
      * Whether menu bar automatically hides itself.
+     *
+     * @platform win32,linux
      */
     isMenuBarAutoHide(): boolean;
     /**
      * Whether the menu bar is visible.
+     *
+     * @platform win32,linux
      */
     isMenuBarVisible(): boolean;
     /**
@@ -2490,6 +2494,8 @@ declare namespace Electron {
      * Whether the window is visible on all workspaces.
      *
      * **Note:** This API always returns false on Windows.
+     *
+     * @platform darwin,linux
      */
     isVisibleOnAllWorkspaces(): boolean;
     /**
@@ -2638,6 +2644,8 @@ declare namespace Electron {
      *
      * If the menu bar is already visible, calling `setAutoHideMenuBar(true)` won't
      * hide it immediately.
+     *
+     * @platform win32,linux
      */
     setAutoHideMenuBar(hide: boolean): void;
     /**
@@ -2978,6 +2986,8 @@ declare namespace Electron {
      * Sets whether the window should be visible on all workspaces.
      *
      * **Note:** This API does nothing on Windows.
+     *
+     * @platform darwin,linux
      */
     setVisibleOnAllWorkspaces(visible: boolean, options?: VisibleOnAllWorkspacesOptions): void;
     /**
@@ -3043,6 +3053,8 @@ declare namespace Electron {
      * by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
      */
     closable: boolean;
     /**
@@ -3091,6 +3103,8 @@ declare namespace Electron {
      * maximized by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
      */
     maximizable: boolean;
     /**
@@ -3107,12 +3121,16 @@ declare namespace Electron {
      * minimized by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
      */
     minimizable: boolean;
     /**
      * A `boolean` property that determines Whether the window can be moved by user.
      *
      * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
      */
     movable: boolean;
     /**
@@ -3148,6 +3166,8 @@ declare namespace Electron {
      * workspaces.
      *
      * **Note:** Always returns false on Windows.
+     *
+     * @platform darwin,linux
      */
     visibleOnAllWorkspaces: boolean;
     /**
@@ -7139,7 +7159,8 @@ declare namespace Electron {
      * Whether encryption is available.
      *
      * On Linux, returns true if the secret key is available. On MacOS, returns true if
-     * Keychain is available. On Windows, returns true with no other preconditions.
+     * Keychain is available. On Windows, returns true once the app has emitted the
+     * `ready` event.
      */
     isEncryptionAvailable(): boolean;
   }
@@ -12969,20 +12990,28 @@ declare namespace Electron {
     resizable?: boolean;
     /**
      * Whether window is movable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
      */
     movable?: boolean;
     /**
      * Whether window is minimizable. This is not implemented on Linux. Default is
      * `true`.
+     *
+     * @platform darwin,win32
      */
     minimizable?: boolean;
     /**
      * Whether window is maximizable. This is not implemented on Linux. Default is
      * `true`.
+     *
+     * @platform darwin,win32
      */
     maximizable?: boolean;
     /**
      * Whether window is closable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
      */
     closable?: boolean;
     /**
@@ -13010,6 +13039,8 @@ declare namespace Electron {
     fullscreenable?: boolean;
     /**
      * Use pre-Lion fullscreen on macOS. Default is `false`.
+     *
+     * @platform darwin
      */
     simpleFullscreen?: boolean;
     /**
@@ -13060,6 +13091,8 @@ declare namespace Electron {
     /**
      * Whether clicking an inactive window will also click through to the web contents.
      * Default is `false` on macOS. This option is not configurable on other platforms.
+     *
+     * @platform darwin
      */
     acceptFirstMouse?: boolean;
     /**
@@ -13073,6 +13106,8 @@ declare namespace Electron {
     /**
      * Enable the window to be resized larger than screen. Only relevant for macOS, as
      * other OSes allow larger-than-screen windows by default. Default is `false`.
+     *
+     * @platform darwin
      */
     enableLargerThanScreen?: boolean;
     /**
@@ -13089,6 +13124,8 @@ declare namespace Electron {
     /**
      * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
      * (fully opaque). This is only implemented on Windows and macOS.
+     *
+     * @platform darwin,win32
      */
     opacity?: number;
     /**
@@ -13108,6 +13145,8 @@ declare namespace Electron {
     /**
      * Specify how the material appearance should reflect window activity state on
      * macOS. Must be used with the `vibrancy` property. Possible values are:
+     *
+     * @platform darwin
      */
     visualEffectState?: ('followWindow' | 'active' | 'inactive');
     /**
@@ -13118,11 +13157,15 @@ declare namespace Electron {
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
     /**
      * Set a custom position for the traffic light buttons in frameless windows.
+     *
+     * @platform darwin
      */
     trafficLightPosition?: Point;
     /**
      * Whether frameless window should have rounded corners on macOS. Default is
      * `true`.
+     *
+     * @platform darwin
      */
     roundedCorners?: boolean;
     /**
@@ -13130,6 +13173,7 @@ declare namespace Electron {
      * titleBarStyle. Default is `false`.
      *
      * @deprecated
+     * @platform darwin
      */
     fullscreenWindowTitle?: boolean;
     /**
@@ -13145,6 +13189,8 @@ declare namespace Electron {
      * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`. Please
      * note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
      * are deprecated and have been removed in macOS Catalina (10.15).
+     *
+     * @platform darwin
      */
     vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
     /**
@@ -13153,6 +13199,8 @@ declare namespace Electron {
      * will grow to the preferred width of the web page when zoomed, `false` will cause
      * it to zoom to the width of the screen. This will also affect the behavior when
      * calling `maximize()` directly. Default is `false`.
+     *
+     * @platform darwin
      */
     zoomToPageWidth?: boolean;
     /**
@@ -13160,6 +13208,8 @@ declare namespace Electron {
      * Windows with the same tabbing identifier will be grouped together. This also
      * adds a native new tab button to your window's tab bar and allows your `app` and
      * window to receive the `new-window-for-tab` event.
+     *
+     * @platform darwin
      */
     tabbingIdentifier?: string;
     /**
@@ -16310,6 +16360,8 @@ declare namespace Electron {
     experimentalFeatures?: boolean;
     /**
      * Enables scroll bounce (rubber banding) effect on macOS. Default is `false`.
+     *
+     * @platform darwin
      */
     scrollBounce?: boolean;
     /**
