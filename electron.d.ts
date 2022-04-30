@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0-beta.1
+// Type definitions for Electron 19.0.0-beta.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -8647,9 +8647,12 @@ declare namespace Electron {
      * defaults. This is necessary for events such as
      * `NSUserDefaultsDidChangeNotification`.
      *
+     * If `event` is null, the `NSNotificationCenter` doesn’t use it as criteria for
+     * delivery to the observer. See docs for more information.
+     *
      * @platform darwin
      */
-    subscribeLocalNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
+    subscribeLocalNotification(event: (string) | (null), callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
     /**
      * The ID of this subscription
      *
@@ -8670,9 +8673,12 @@ declare namespace Electron {
      * * `AppleColorPreferencesChangedNotification`
      * * `AppleShowScrollBarsSettingChanged`
      *
+     * If `event` is null, the `NSDistributedNotificationCenter` doesn’t use it as
+     * criteria for delivery to the observer. See docs  for more information.
+     *
      * @platform darwin
      */
-    subscribeNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
+    subscribeNotification(event: (string) | (null), callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
     /**
      * The ID of this subscription
      *
@@ -8680,9 +8686,12 @@ declare namespace Electron {
      * `NSWorkspace.sharedWorkspace.notificationCenter`. This is necessary for events
      * such as `NSWorkspaceDidActivateApplicationNotification`.
      *
+     * If `event` is null, the `NSWorkspaceNotificationCenter` doesn’t use it as
+     * criteria for delivery to the observer. See docs for more information.
+     *
      * @platform darwin
      */
-    subscribeWorkspaceNotification(event: string, callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
+    subscribeWorkspaceNotification(event: (string) | (null), callback: (event: string, userInfo: Record<string, unknown>, object: string) => void): number;
     /**
      * Same as `unsubscribeNotification`, but removes the subscriber from
      * `NSNotificationCenter`.
