@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0-beta.2
+// Type definitions for Electron 19.0.0-beta.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1333,7 +1333,7 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    setJumpList(categories: (JumpListCategory[]) | (null)): void;
+    setJumpList(categories: (JumpListCategory[]) | (null)): ('ok' | 'error' | 'invalidSeparatorError' | 'fileTypeRegistrationError' | 'customCategoryAccessDeniedError');
     /**
      * To work with Electron's `autoUpdater` on Windows, which uses Squirrel, you'll
      * want to set the launch path to Update.exe, and pass arguments that specify your
