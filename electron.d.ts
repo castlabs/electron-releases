@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.2.0
+// Type definitions for Electron 18.2.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1333,7 +1333,7 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    setJumpList(categories: (JumpListCategory[]) | (null)): void;
+    setJumpList(categories: (JumpListCategory[]) | (null)): ('ok' | 'error' | 'invalidSeparatorError' | 'fileTypeRegistrationError' | 'customCategoryAccessDeniedError');
     /**
      * To work with Electron's `autoUpdater` on Windows, which uses Squirrel, you'll
      * want to set the launch path to Update.exe, and pass arguments that specify your
@@ -3646,7 +3646,7 @@ declare namespace Electron {
      *
      * This API must be called after the `ready` event is emitted.
      */
-    uppdatesEnabled: boolean;
+    updatesEnabled: boolean;
     /**
      * A `String` which is the identifier of the Widevine Content Decryption Module.
      *
