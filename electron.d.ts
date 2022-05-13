@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0-beta.5
+// Type definitions for Electron 19.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7158,9 +7158,9 @@ declare namespace Electron {
     /**
      * Whether encryption is available.
      *
-     * On Linux, returns true if the secret key is available. On MacOS, returns true if
-     * Keychain is available. On Windows, returns true once the app has emitted the
-     * `ready` event.
+     * On Linux, returns true if the app has emitted the `ready` event and the secret
+     * key is available. On MacOS, returns true if Keychain is available. On Windows,
+     * returns true once the app has emitted the `ready` event.
      */
     isEncryptionAvailable(): boolean;
   }
