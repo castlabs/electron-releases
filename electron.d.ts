@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0-beta.8
+// Type definitions for Electron 19.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -315,35 +315,6 @@ declare namespace Electron {
     addListener(event: 'did-become-active', listener: (event: Event) => void): this;
     removeListener(event: 'did-become-active', listener: (event: Event) => void): this;
     /**
-     * This event will be emitted within the second instance during the call to
-     * `app.requestSingleInstanceLock()`, when the first instance calls the
-     * `ackCallback` provided by the `second-instance` event handler.
-     */
-    on(event: 'first-instance-ack', listener: (event: Event,
-                                               /**
-                                                * A JSON object of additional data passed from the first instance, in response to
-                                                * the first instance's `second-instance` event.
-                                                */
-                                               additionalData: unknown) => void): this;
-    once(event: 'first-instance-ack', listener: (event: Event,
-                                               /**
-                                                * A JSON object of additional data passed from the first instance, in response to
-                                                * the first instance's `second-instance` event.
-                                                */
-                                               additionalData: unknown) => void): this;
-    addListener(event: 'first-instance-ack', listener: (event: Event,
-                                               /**
-                                                * A JSON object of additional data passed from the first instance, in response to
-                                                * the first instance's `second-instance` event.
-                                                */
-                                               additionalData: unknown) => void): this;
-    removeListener(event: 'first-instance-ack', listener: (event: Event,
-                                               /**
-                                                * A JSON object of additional data passed from the first instance, in response to
-                                                * the first instance's `second-instance` event.
-                                                */
-                                               additionalData: unknown) => void): this;
-    /**
      * Emitted whenever there is a GPU info update.
      */
     on(event: 'gpu-info-update', listener: Function): this;
@@ -528,19 +499,6 @@ declare namespace Electron {
      * **Note:** If the second instance is started by a different user than the first,
      * the `argv` array will not include the arguments.
      *
-     * **Note:** `ackCallback` allows the user to send data back to the second instance
-     * during the `app.requestSingleInstanceLock()` flow. This callback can be used for
-     * cases where the second instance needs to obtain additional information from the
-     * first instance before quitting.
-     *
-     * Currently, the limit on the message size is kMaxMessageLength, or around 32kB.
-     * To be safe, keep the amount of data passed to 31kB at most.
-     *
-     * In order to call the callback, `event.preventDefault()` must be called, first.
-     * If the callback is not called in either case, `null` will be sent back. If
-     * `event.preventDefault()` is not called, but `ackCallback` is called by the user
-     * in the event, then the behaviour is undefined.
-     *
      * This event is guaranteed to be emitted after the `ready` event of `app` gets
      * emitted.
      *
@@ -559,11 +517,7 @@ declare namespace Electron {
                                             /**
                                              * A JSON object of additional data passed from the second instance
                                              */
-                                            additionalData: unknown,
-                                            /**
-                                             * A function that can be used to send data back to the second instance
-                                             */
-                                            ackCallback: unknown) => void): this;
+                                            additionalData: unknown) => void): this;
     once(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -576,11 +530,7 @@ declare namespace Electron {
                                             /**
                                              * A JSON object of additional data passed from the second instance
                                              */
-                                            additionalData: unknown,
-                                            /**
-                                             * A function that can be used to send data back to the second instance
-                                             */
-                                            ackCallback: unknown) => void): this;
+                                            additionalData: unknown) => void): this;
     addListener(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -593,11 +543,7 @@ declare namespace Electron {
                                             /**
                                              * A JSON object of additional data passed from the second instance
                                              */
-                                            additionalData: unknown,
-                                            /**
-                                             * A function that can be used to send data back to the second instance
-                                             */
-                                            ackCallback: unknown) => void): this;
+                                            additionalData: unknown) => void): this;
     removeListener(event: 'second-instance', listener: (event: Event,
                                             /**
                                              * An array of the second instance's command line arguments
@@ -610,11 +556,7 @@ declare namespace Electron {
                                             /**
                                              * A JSON object of additional data passed from the second instance
                                              */
-                                            additionalData: unknown,
-                                            /**
-                                             * A function that can be used to send data back to the second instance
-                                             */
-                                            ackCallback: unknown) => void): this;
+                                            additionalData: unknown) => void): this;
     /**
      * Emitted when a client certificate is requested.
      *
