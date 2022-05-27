@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.0
+// Type definitions for Electron 20.0.0-alpha.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -952,7 +952,7 @@ declare namespace Electron {
      * called first, a default log directory will be created equivalent to calling
      * `app.setAppLogsPath()` without a `path` parameter.
      */
-    getPath(name: 'home' | 'appData' | 'userData' | 'cache' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps'): string;
+    getPath(name: 'home' | 'appData' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps'): string;
     /**
      * The version of the loaded application. If no version is found in the
      * application's `package.json` file, the version of the current bundle or
@@ -1014,6 +1014,13 @@ declare namespace Electron {
      * whether or not the current OS version allows for native emoji pickers.
      */
     isEmojiPanelSupported(): boolean;
+    /**
+     * `true` if the application—including all of its windows—is hidden (e.g. with
+     * `Command-H`), `false` otherwise.
+     *
+     * @platform darwin
+     */
+    isHidden(): boolean;
     /**
      * Whether the application is currently running from the systems Application
      * folder. Use in combination with `app.moveToApplicationsFolder()`
@@ -1298,9 +1305,9 @@ declare namespace Electron {
      *
      * You can only override paths of a `name` defined in `app.getPath`.
      *
-     * By default, web pages' cookies and caches will be stored under the `userData`
+     * By default, web pages' cookies and caches will be stored under the `sessionData`
      * directory. If you want to change this location, you have to override the
-     * `userData` path before the `ready` event of the `app` module is emitted.
+     * `sessionData` path before the `ready` event of the `app` module is emitted.
      */
     setPath(name: string, path: string): void;
     /**
@@ -7425,11 +7432,11 @@ declare namespace Electron {
     removeListener(event: 'extension-unloaded', listener: (event: Event,
                                                extension: Extension) => void): this;
     /**
-     * Emitted when a new HID device becomes available. For example, when a new USB
-     * device is plugged in.
-     *
-     * This event will only be emitted after `navigator.hid.requestDevice` has been
-     * called and `select-hid-device` has fired.
+     * Emitted after `navigator.hid.requestDevice` has been called and
+     * `select-hid-device` has fired if a new device becomes available before the
+     * callback from `select-hid-device` is called.  This event is intended for use
+     * when using a UI to ask users to pick a device so that the UI can be updated with
+     * the newly added device.
      */
     on(event: 'hid-device-added', listener: (event: Event,
                                              details: HidDeviceAddedDetails) => void): this;
@@ -7440,11 +7447,11 @@ declare namespace Electron {
     removeListener(event: 'hid-device-added', listener: (event: Event,
                                              details: HidDeviceAddedDetails) => void): this;
     /**
-     * Emitted when a HID device has been removed.  For example, this event will fire
-     * when a USB device is unplugged.
-     *
-     * This event will only be emitted after `navigator.hid.requestDevice` has been
-     * called and `select-hid-device` has fired.
+     * Emitted after `navigator.hid.requestDevice` has been called and
+     * `select-hid-device` has fired if a device has been removed before the callback
+     * from `select-hid-device` is called.  This event is intended for use when using a
+     * UI to ask users to pick a device so that the UI can be updated to remove the
+     * specified device.
      */
     on(event: 'hid-device-removed', listener: (event: Event,
                                                details: HidDeviceRemovedDetails) => void): this;
@@ -7454,6 +7461,19 @@ declare namespace Electron {
                                                details: HidDeviceRemovedDetails) => void): this;
     removeListener(event: 'hid-device-removed', listener: (event: Event,
                                                details: HidDeviceRemovedDetails) => void): this;
+    /**
+     * Emitted after `HIDDevice.forget()` has been called.  This event can be used to
+     * help maintain persistent storage of permissions when
+     * `setDevicePermissionHandler` is used.
+     */
+    on(event: 'hid-device-revoked', listener: (event: Event,
+                                               details: HidDeviceRevokedDetails) => void): this;
+    once(event: 'hid-device-revoked', listener: (event: Event,
+                                               details: HidDeviceRevokedDetails) => void): this;
+    addListener(event: 'hid-device-revoked', listener: (event: Event,
+                                               details: HidDeviceRevokedDetails) => void): this;
+    removeListener(event: 'hid-device-revoked', listener: (event: Event,
+                                               details: HidDeviceRevokedDetails) => void): this;
     /**
      * Emitted when a render process requests preconnection to a URL, generally due to
      * a resource hint.
@@ -7543,8 +7563,10 @@ declare namespace Electron {
                                                callback: (portId: string) => void) => void): this;
     /**
      * Emitted after `navigator.serial.requestPort` has been called and
-     * `select-serial-port` has fired if a new serial port becomes available.  For
-     * example, this event will fire when a new USB device is plugged in.
+     * `select-serial-port` has fired if a new serial port becomes available before the
+     * callback from `select-serial-port` is called.  This event is intended for use
+     * when using a UI to ask users to pick a port so that the UI can be updated with
+     * the newly added port.
      */
     on(event: 'serial-port-added', listener: (event: Event,
                                               port: SerialPort,
@@ -7560,8 +7582,10 @@ declare namespace Electron {
                                               webContents: WebContents) => void): this;
     /**
      * Emitted after `navigator.serial.requestPort` has been called and
-     * `select-serial-port` has fired if a serial port has been removed.  For example,
-     * this event will fire when a USB device is unplugged.
+     * `select-serial-port` has fired if a serial port has been removed before the
+     * callback from `select-serial-port` is called.  This event is intended for use
+     * when using a UI to ask users to pick a port so that the UI can be updated to
+     * remove the specified port.
      */
     on(event: 'serial-port-removed', listener: (event: Event,
                                                 port: SerialPort,
@@ -13992,6 +14016,11 @@ declare namespace Electron {
     frame: WebFrameMain;
   }
 
+  interface HidDeviceRevokedDetails {
+    device: HIDDevice[];
+    frame: WebFrameMain;
+  }
+
   interface IgnoreMouseEventsOptions {
     /**
      * If true, forwards mouse move messages to Chromium, enabling mouse related events
@@ -15883,7 +15912,7 @@ declare namespace Electron {
     footer?: string;
     /**
      * Specify page size of the printed document. Can be `A3`, `A4`, `A5`, `Legal`,
-     * `Letter`, `Tabloid` or an Object containing `height`.
+     * `Letter`, `Tabloid` or an Object containing `height` in microns.
      */
     pageSize?: (string) | (Size);
   }
@@ -16575,6 +16604,7 @@ declare namespace Electron {
     type HeapStatistics = Electron.HeapStatistics;
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
+    type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -16872,6 +16902,7 @@ declare namespace Electron {
     type HeapStatistics = Electron.HeapStatistics;
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
+    type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -17104,6 +17135,7 @@ declare namespace Electron {
     type HeapStatistics = Electron.HeapStatistics;
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
+    type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
@@ -17415,6 +17447,7 @@ declare namespace Electron {
     type HeapStatistics = Electron.HeapStatistics;
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
+    type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type Info = Electron.Info;
