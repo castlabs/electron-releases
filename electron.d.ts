@@ -1,4 +1,4 @@
-// Type definitions for Electron 20.0.0-beta.8
+// Type definitions for Electron 20.0.0-beta.9
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7928,10 +7928,10 @@ declare namespace Electron {
      * `navigator.hid.requestDevice`).  If this handler is not defined, the default
      * device permissions as granted through device selection (eg via
      * `navigator.hid.requestDevice`) will be used. Additionally, the default behavior
-     * of Electron is to store granted device permision through the lifetime of the
-     * corresponding WebContents.  If longer term storage is needed, a developer can
-     * store granted device permissions (eg when handling the `select-hid-device`
-     * event) and then read from that storage with `setDevicePermissionHandler`.
+     * of Electron is to store granted device permision in memory. If longer term
+     * storage is needed, a developer can store granted device permissions (eg when
+     * handling the `select-hid-device` event) and then read from that storage with
+     * `setDevicePermissionHandler`.
      */
     setDevicePermissionHandler(handler: ((details: DevicePermissionHandlerHandlerDetails) => boolean) | (null)): void;
     /**
@@ -13745,10 +13745,6 @@ declare namespace Electron {
      * the device that permission is being requested for.
      */
     device: (HIDDevice) | (SerialPort);
-    /**
-     * WebFrameMain checking the device permission.
-     */
-    frame: WebFrameMain;
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -14018,7 +14014,10 @@ declare namespace Electron {
 
   interface HidDeviceRevokedDetails {
     device: HIDDevice[];
-    frame: WebFrameMain;
+    /**
+     * The origin that the device has been revoked from.
+     */
+    origin?: string;
   }
 
   interface IgnoreMouseEventsOptions {
