@@ -1,4 +1,4 @@
-// Type definitions for Electron 17.4.10
+// Type definitions for Electron 17.4.11
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
