@@ -1,4 +1,4 @@
-// Type definitions for Electron 20.0.0
+// Type definitions for Electron 21.0.0-alpha.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -409,6 +409,11 @@ declare namespace Electron {
      * `CFBundleURLTypes` key, and set `NSPrincipalClass` to `AtomApplication`.
      *
      * You should call `event.preventDefault()` if you want to handle this event.
+     *
+     * As with the `open-file` event, be sure to register a listener for the `open-url`
+     * event early in your application startup to detect if the the application being
+     * is being opened to handle a URL. If you register the listener in response to a
+     * `ready` event, you'll miss URLs that trigger the launch of your application.
      *
      * @platform darwin
      */
@@ -1062,7 +1067,7 @@ declare namespace Electron {
      *
      * By default, if an app of the same name as the one being moved exists in the
      * Applications directory and is _not_ running, the existing app will be trashed
-     * and the active app moved into its place. If it _is_ running, the pre-existing
+     * and the active app moved into its place. If it _is_ running, the preexisting
      * running app will assume focus and the previously active app will quit itself.
      * This behavior can be changed by providing the optional conflict handler, where
      * the boolean returned by the handler determines whether or not the move conflict
@@ -7051,6 +7056,137 @@ declare namespace Electron {
     data: (string) | (Buffer);
   }
 
+  interface PushNotifications extends NodeJS.EventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/push-notifications
+
+    /**
+     * Emitted when the app receives a remote notification while running. See:
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * com/documentation/appkit/nsapplicationdelegate/1428430-application?language=objc
+     *
+     * @platform darwin
+     */
+    on(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
+    once(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
+    addListener(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
+    removeListener(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
+    /**
+     * Registers the app with Apple Push Notification service (APNS) to receive Badge,
+     * Sound, and Alert notifications. If registration is successful, the promise will
+     * be resolved with the APNS device token. Otherwise, the promise will be rejected
+     * with an error message. See:
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * tion/appkit/nsapplication/1428476-registerforremotenotificationtyp?language=objc
+     *
+     * @platform darwin
+     */
+    registerForAPNSNotifications(): Promise<string>;
+    /**
+     * Unregisters the app from notifications received from APNS. See:
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * tion/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc
+     *
+     * @platform darwin
+     */
+    unregisterForAPNSNotifications(): void;
+  }
+
   interface Rectangle {
 
     // Docs: https://electronjs.org/docs/api/structures/rectangle
@@ -11367,16 +11503,13 @@ declare namespace Electron {
     /**
      * Resolves with the generated PDF data.
      *
-     * Prints window's web page as PDF with Chromium's preview printing custom
-     * settings.
+     * Prints the window's web page as PDF.
      *
      * The `landscape` will be ignored if `@page` CSS at-rule is used in the web page.
      *
-     * By default, an empty `options` will be regarded as:
-     *
-     * Use `page-break-before: always;` CSS style to force to print to a new page.
-     *
      * An example of `webContents.printToPDF`:
+     *
+     * See Page.printToPdf for more information.
      */
     printToPDF(options: PrintToPDFOptions): Promise<Buffer>;
     /**
@@ -12771,7 +12904,7 @@ declare namespace Electron {
     /**
      * The scale factor to add the image representation for.
      */
-    scaleFactor: number;
+    scaleFactor?: number;
     /**
      * Defaults to 0. Required if a bitmap buffer is specified as `buffer`.
      */
@@ -15081,39 +15214,51 @@ declare namespace Electron {
 
   interface PrintToPDFOptions {
     /**
-     * the header and footer for the PDF.
-     */
-    headerFooter?: Record<string, string>;
-    /**
-     * `true` for landscape, `false` for portrait.
+     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
      */
     landscape?: boolean;
     /**
-     * Specifies the type of margins to use. Uses 0 for default margin, 1 for no
-     * margin, and 2 for minimum margin. and `width` in microns.
+     * Whether to display header and footer. Defaults to false.
      */
-    marginsType?: number;
+    displayHeaderFooter?: boolean;
     /**
-     * The scale factor of the web page. Can range from 0 to 100.
-     */
-    scaleFactor?: number;
-    /**
-     * The page range to print. On macOS, only the first range is honored.
-     */
-    pageRanges?: Record<string, number>;
-    /**
-     * Specify page size of the generated PDF. Can be `A3`, `A4`, `A5`, `Legal`,
-     * `Letter`, `Tabloid` or an Object containing `height`
-     */
-    pageSize?: (string) | (Size);
-    /**
-     * Whether to print CSS backgrounds.
+     * Whether to print background graphics. Defaults to false.
      */
     printBackground?: boolean;
     /**
-     * Whether to print selection only.
+     * Scale of the webpage rendering. Defaults to 1.
      */
-    printSelectionOnly?: boolean;
+    scale?: number;
+    /**
+     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
+     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
+     * `height` and `width` in inches. Defaults to `Letter`.
+     */
+    pageSize?: (string) | (Size);
+    margins?: Margins;
+    /**
+     * Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string,
+     * which means print all pages.
+     */
+    pageRanges?: string;
+    /**
+     * HTML template for the print header. Should be valid HTML markup with following
+     * classes used to inject printing values into them: `date` (formatted print date),
+     * `title` (document title), `url` (document location), `pageNumber` (current page
+     * number) and `totalPages` (total pages in the document). For example, `<span
+     * class=title></span>` would generate span containing the title.
+     */
+    headerTemplate?: string;
+    /**
+     * HTML template for the print footer. Should use the same format as the
+     * `headerTemplate`.
+     */
+    footerTemplate?: string;
+    /**
+     * Whether or not to prefer page size as defined by css. Defaults to false, in
+     * which case the content will be scaled to fit the paper size.
+     */
+    preferCSSPageSize?: boolean;
   }
 
   interface Privileges {
@@ -15848,7 +15993,7 @@ declare namespace Electron {
     footer?: string;
     /**
      * Specify page size of the printed document. Can be `A3`, `A4`, `A5`, `Legal`,
-     * `Letter`, `Tabloid` or an Object containing `height`.
+     * `Letter`, `Tabloid` or an Object containing `height` and `width`.
      */
     pageSize?: (string) | (Size);
   }
@@ -16527,6 +16672,7 @@ declare namespace Electron {
     powerMonitor: PowerMonitor;
     powerSaveBlocker: PowerSaveBlocker;
     protocol: Protocol;
+    pushNotifications: PushNotifications;
     safeStorage: SafeStorage;
     screen: Screen;
     session: typeof Session;
@@ -16821,6 +16967,8 @@ declare namespace Electron {
     type PowerSaveBlocker = Electron.PowerSaveBlocker;
     const protocol: Protocol;
     type Protocol = Electron.Protocol;
+    const pushNotifications: PushNotifications;
+    type PushNotifications = Electron.PushNotifications;
     const safeStorage: SafeStorage;
     type SafeStorage = Electron.SafeStorage;
     const screen: Screen;
@@ -17362,6 +17510,8 @@ declare namespace Electron {
     type PowerSaveBlocker = Electron.PowerSaveBlocker;
     const protocol: Protocol;
     type Protocol = Electron.Protocol;
+    const pushNotifications: PushNotifications;
+    type PushNotifications = Electron.PushNotifications;
     const safeStorage: SafeStorage;
     type SafeStorage = Electron.SafeStorage;
     const screen: Screen;
@@ -17639,6 +17789,7 @@ declare namespace Electron {
   const powerMonitor: PowerMonitor;
   const powerSaveBlocker: PowerSaveBlocker;
   const protocol: Protocol;
+  const pushNotifications: PushNotifications;
   const safeStorage: SafeStorage;
   const screen: Screen;
   const session: typeof Session;
