@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.11
+// Type definitions for Electron 19.0.12
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7802,10 +7802,10 @@ declare namespace Electron {
      */
     getSpellCheckerLanguages(): string[];
     /**
-     * A `string | null` indicating the absolute file system path where data for this
-     * session is persisted on disk.  For in memory sessions this returns `null`.
+     * The absolute file system path where data for this session is persisted on disk.
+     * For in memory sessions this returns `null`.
      */
-    getStoragePath(): void;
+    getStoragePath(): (string) | (null);
     /**
      * The user agent for this session.
      */
