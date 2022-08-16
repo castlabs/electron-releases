@@ -16,7 +16,7 @@
     "node": ">= 10.17.0"
   },
   "name": "electron",
-  "version": "21.0.0-alpha.2+wvcus",
+  "version": "21.0.0-alpha.3+wvcus",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
