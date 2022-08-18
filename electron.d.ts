@@ -1,4 +1,4 @@
-// Type definitions for Electron 18.3.8
+// Type definitions for Electron 18.3.9
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11284,6 +11284,9 @@ declare namespace Electron {
      *
      * When `contents` is a `<webview>` tag, the `mode` would be `detach` by default,
      * explicitly passing an empty `mode` can force using last used dock state.
+     *
+     * On Windows, if Windows Control Overlay is enabled, Devtools will be opened with
+     * `mode: 'detach'`.
      */
     openDevTools(options?: OpenDevToolsOptions): void;
     /**
