@@ -1,4 +1,4 @@
-// Type definitions for Electron 20.0.2
+// Type definitions for Electron 20.0.3
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7828,10 +7828,10 @@ declare namespace Electron {
      */
     getSpellCheckerLanguages(): string[];
     /**
-     * A `string | null` indicating the absolute file system path where data for this
-     * session is persisted on disk.  For in memory sessions this returns `null`.
+     * The absolute file system path where data for this session is persisted on disk.
+     * For in memory sessions this returns `null`.
      */
-    getStoragePath(): void;
+    getStoragePath(): (string) | (null);
     /**
      * The user agent for this session.
      */
@@ -11328,6 +11328,9 @@ declare namespace Electron {
      *
      * When `contents` is a `<webview>` tag, the `mode` would be `detach` by default,
      * explicitly passing an empty `mode` can force using last used dock state.
+     *
+     * On Windows, if Windows Control Overlay is enabled, Devtools will be opened with
+     * `mode: 'detach'`.
      */
     openDevTools(options?: OpenDevToolsOptions): void;
     /**
