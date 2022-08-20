@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.0.0-alpha.3
+// Type definitions for Electron 21.0.0-alpha.4
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -10553,6 +10553,9 @@ declare namespace Electron {
     /**
      * Emitted when the renderer process sends an asynchronous message via
      * `ipcRenderer.send()`.
+     *
+     * See also `webContents.ipc`, which provides an `IpcMain`-like interface for
+     * responding to IPC messages specifically from this WebContents.
      */
     on(event: 'ipc-message', listener: (event: Event,
                                         channel: string,
@@ -10569,6 +10572,9 @@ declare namespace Electron {
     /**
      * Emitted when the renderer process sends a synchronous message via
      * `ipcRenderer.sendSync()`.
+     *
+     * See also `webContents.ipc`, which provides an `IpcMain`-like interface for
+     * responding to IPC messages specifically from this WebContents.
      */
     on(event: 'ipc-message-sync', listener: (event: Event,
                                              channel: string,
@@ -11769,6 +11775,35 @@ declare namespace Electron {
      */
     readonly id: number;
     /**
+     * An `IpcMain` scoped to just IPC messages sent from this WebContents.
+     *
+     * IPC messages sent with `ipcRenderer.send`, `ipcRenderer.sendSync` or
+     * `ipcRenderer.postMessage` will be delivered in the following order:
+     *
+     * * `contents.on('ipc-message')`
+     * * `contents.mainFrame.on(channel)`
+     * * `contents.ipc.on(channel)`
+     * * `ipcMain.on(channel)`
+     *
+     * Handlers registered with `invoke` will be checked in the following order. The
+     * first one that is defined will be called, the rest will be ignored.
+     *
+     * * `contents.mainFrame.handle(channel)`
+     * * `contents.handle(channel)`
+     * * `ipcMain.handle(channel)`
+     *
+     * A handler or event listener registered on the WebContents will receive IPC
+     * messages sent from any frame, including child frames. In most cases, only the
+     * main frame can send IPC messages. However, if the `nodeIntegrationInSubFrames`
+     * option is enabled, it is possible for child frames to send IPC messages also. In
+     * that case, handlers should check the `senderFrame` property of the IPC event to
+     * ensure that the message is coming from the expected frame. Alternatively,
+     * register handlers on the appropriate frame directly using the `WebFrameMain.ipc`
+     * interface.
+     *
+     */
+    readonly ipc: IpcMain;
+    /**
      * A `WebFrameMain` property that represents the top frame of the page's frame
      * hierarchy.
      *
@@ -12065,6 +12100,32 @@ declare namespace Electron {
      *
      */
     readonly frameTreeNodeId: number;
+    /**
+     * An `IpcMain` instance scoped to the frame.
+     *
+     * IPC messages sent with `ipcRenderer.send`, `ipcRenderer.sendSync` or
+     * `ipcRenderer.postMessage` will be delivered in the following order:
+     *
+     * * `contents.on('ipc-message')`
+     * * `contents.mainFrame.on(channel)`
+     * * `contents.ipc.on(channel)`
+     * * `ipcMain.on(channel)`
+     *
+     * Handlers registered with `invoke` will be checked in the following order. The
+     * first one that is defined will be called, the rest will be ignored.
+     *
+     * * `contents.mainFrame.handle(channel)`
+     * * `contents.handle(channel)`
+     * * `ipcMain.handle(channel)`
+     *
+     * In most cases, only the main frame of a WebContents can send or receive IPC
+     * messages. However, if the `nodeIntegrationInSubFrames` option is enabled, it is
+     * possible for child frames to send and receive IPC messages also. The
+     * `WebContents.ipc` interface may be more convenient when
+     * `nodeIntegrationInSubFrames` is not enabled.
+     *
+     */
+    readonly ipc: IpcMain;
     /**
      * A `string` representing the frame name.
      *
