@@ -1,4 +1,4 @@
-// Type definitions for Electron 19.0.14
+// Type definitions for Electron 19.0.15
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13117,7 +13117,8 @@ declare namespace Electron {
     trafficLightPosition?: Point;
     /**
      * Whether frameless window should have rounded corners on macOS. Default is
-     * `true`.
+     * `true`. Setting this property to `false` will prevent the window from being
+     * fullscreenable.
      *
      * @platform darwin
      */
