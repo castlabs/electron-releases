@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.0.0-beta.5
+// Type definitions for Electron 21.0.0-beta.6
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7960,7 +7960,8 @@ declare namespace Electron {
      * the current OS locale.  This setting is persisted across restarts.
      *
      * **Note:** On macOS the OS spellchecker is used and has its own list of
-     * languages.  This API is a no-op on macOS.
+     * languages. On macOS, this API will return whichever languages have been
+     * configured by the OS.
      */
     getSpellCheckerLanguages(): string[];
     /**
@@ -11470,6 +11471,9 @@ declare namespace Electron {
      *
      * When `contents` is a `<webview>` tag, the `mode` would be `detach` by default,
      * explicitly passing an empty `mode` can force using last used dock state.
+     *
+     * On Windows, if Windows Control Overlay is enabled, Devtools will be opened with
+     * `mode: 'detach'`.
      */
     openDevTools(options?: OpenDevToolsOptions): void;
     /**
