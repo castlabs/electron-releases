@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.0.0-beta.6
+// Type definitions for Electron 21.0.0-beta.7
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12135,6 +12135,16 @@ declare namespace Electron {
      *
      */
     readonly name: string;
+    /**
+     * A `string` representing the current origin of the frame, serialized according to
+     * RFC 6454. This may be different from the URL. For instance, if the frame is a
+     * child window opened to `about:blank`, then `frame.origin` will return the parent
+     * frame's origin, while `frame.url` will return the empty string. Pages without a
+     * scheme/host/port triple origin will have the serialized origin of `"null"` (that
+     * is, the string containing the letters n, u, l, l).
+     *
+     */
+    readonly origin: string;
     /**
      * An `Integer` representing the operating system `pid` of the process which owns
      * this frame.
