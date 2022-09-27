@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.0.0-beta.8
+// Type definitions for Electron 21.0.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -894,7 +894,7 @@ declare namespace Electron {
      * **Note:** When distributing your packaged app, you have to also ship the
      * `locales` folder.
      *
-     * **Note:** On Windows, you have to call it after the `ready` events gets emitted.
+     * **Note:** This API must be called after the `ready` event is emitted.
      */
     getLocale(): string;
     /**
@@ -958,6 +958,13 @@ declare namespace Electron {
      * `app.setAppLogsPath()` without a `path` parameter.
      */
     getPath(name: 'home' | 'appData' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps'): string;
+    /**
+     * The current system locale. On Windows and Linux, it is fetched using Chromium's
+     * `i18n` library. On macOS, the `NSLocale` object is used instead.
+     *
+     * **Note:** This API must be called after the `ready` event is emitted.
+     */
+    getSystemLocale(): string;
     /**
      * The version of the loaded application. If no version is found in the
      * application's `package.json` file, the version of the current bundle or
@@ -8037,6 +8044,17 @@ declare namespace Electron {
      */
     resolveProxy(url: string): Promise<string>;
     /**
+     * Sets a handler to respond to Bluetooth pairing requests. This handler allows
+     * developers to handle devices that require additional validation before pairing.
+     * When a handler is not defined, any pairing on Linux or Windows that requires
+     * additional validation will be automatically cancelled. macOS does not require a
+     * handler because macOS handles the pairing automatically.  To clear the handler,
+     * call `setBluetoothPairingHandler(null)`.
+     *
+     * @platform win32,linux
+     */
+    setBluetoothPairingHandler(handler: ((details: BluetoothPairingHandlerHandlerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    /**
      * Sets the certificate verify proc for `session`, the `proc` will be called with
      * `proc(request, callback)` whenever a server certificate verification is
      * requested. Calling `callback(0)` accepts the certificate, calling `callback(-2)`
@@ -12215,7 +12233,7 @@ declare namespace Electron {
      *
      * Some examples of valid `urls`:
      */
-    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRequest(filter: WebRequestFilter, listener: ((details: OnBeforeRequestListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` when a request
      * is about to occur.
@@ -12226,7 +12244,7 @@ declare namespace Electron {
      *
      * Some examples of valid `urls`:
      */
-    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: Response) => void) => void) | (null)): void;
+    onBeforeRequest(listener: ((details: OnBeforeRequestListenerDetails, callback: (response: CallbackResponse) => void) => void) | (null)): void;
     /**
      * The `listener` will be called with `listener(details, callback)` before sending
      * an HTTP request, once the request headers are available. This may occur after a
@@ -13117,6 +13135,19 @@ declare namespace Electron {
     total: number;
   }
 
+  interface BluetoothPairingHandlerHandlerDetails {
+    deviceId: string;
+    /**
+     * The type of pairing prompt being requested. One of the following values:
+     */
+    pairingKind: ('confirm' | 'confirmPin' | 'providePin');
+    frame: WebFrameMain;
+    /**
+     * The pin value to verify if `pairingKind` is `confirmPin`.
+     */
+    pin?: string;
+  }
+
   interface BrowserViewConstructorOptions {
     /**
      * See BrowserWindow.
@@ -13411,6 +13442,15 @@ declare namespace Electron {
      * colors. Default is `false`.
      */
     titleBarOverlay?: (TitleBarOverlay) | (boolean);
+  }
+
+  interface CallbackResponse {
+    cancel?: boolean;
+    /**
+     * The original request is prevented from being sent or completed and is instead
+     * redirected to the given URL.
+     */
+    redirectURL?: string;
   }
 
   interface CertificateTrustDialogOptions {
@@ -15461,12 +15501,18 @@ declare namespace Electron {
   }
 
   interface Response {
-    cancel?: boolean;
     /**
-     * The original request is prevented from being sent or completed and is instead
-     * redirected to the given URL.
+     * `false` should be passed in if the dialog is canceled. If the `pairingKind` is
+     * `confirm` or `confirmPin`, this value should indicate if the pairing is
+     * confirmed.  If the `pairingKind` is `providePin` the value should be `true` when
+     * a value is provided.
      */
-    redirectURL?: string;
+    confirmed: boolean;
+    /**
+     * When the `pairingKind` is `providePin` this value should be the required pin for
+     * the Bluetooth device.
+     */
+    pin?: (string) | (null);
   }
 
   interface Result {
@@ -16783,8 +16829,10 @@ declare namespace Electron {
     type BeforeSendResponse = Electron.BeforeSendResponse;
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
+    type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
@@ -17083,8 +17131,10 @@ declare namespace Electron {
     type BeforeSendResponse = Electron.BeforeSendResponse;
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
+    type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
@@ -17316,8 +17366,10 @@ declare namespace Electron {
     type BeforeSendResponse = Electron.BeforeSendResponse;
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
+    type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
@@ -17630,8 +17682,10 @@ declare namespace Electron {
     type BeforeSendResponse = Electron.BeforeSendResponse;
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
+    type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
