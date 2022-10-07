@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.0.1
+// Type definitions for Electron 21.1.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9866,6 +9866,11 @@ declare namespace Electron {
      */
     static fromDevToolsTargetId(targetId: string): WebContents;
     /**
+     * | undefined - A WebContents instance with the given WebFrameMain, or `undefined`
+     * if there is no WebContents associated with the given WebFrameMain.
+     */
+    static fromFrame(frame: WebFrameMain): WebContents;
+    /**
      * | undefined - A WebContents instance with the given ID, or `undefined` if there
      * is no WebContents associated with the given ID.
      */
@@ -11831,6 +11836,13 @@ declare namespace Electron {
      *
      */
     readonly mainFrame: WebFrameMain;
+    /**
+     * A `WebFrameMain` property that represents the frame that opened this
+     * WebContents, either with open(), or by navigating a link with a target
+     * attribute.
+     *
+     */
+    readonly opener: WebFrameMain;
     /**
      * A `Session` used by this webContents.
      *
