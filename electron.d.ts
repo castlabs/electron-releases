@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.0-alpha.7
+// Type definitions for Electron 22.0.0-alpha.8
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7766,6 +7766,19 @@ declare namespace Electron {
     removeListener(event: 'serial-port-removed', listener: (event: Event,
                                                 port: SerialPort,
                                                 webContents: WebContents) => void): this;
+    /**
+     * Emitted after `SerialPort.forget()` has been called.  This event can be used to
+     * help maintain persistent storage of permissions when
+     * `setDevicePermissionHandler` is used.
+     */
+    on(event: 'serial-port-revoked', listener: (event: Event,
+                                                details: SerialPortRevokedDetails) => void): this;
+    once(event: 'serial-port-revoked', listener: (event: Event,
+                                                details: SerialPortRevokedDetails) => void): this;
+    addListener(event: 'serial-port-revoked', listener: (event: Event,
+                                                details: SerialPortRevokedDetails) => void): this;
+    removeListener(event: 'serial-port-revoked', listener: (event: Event,
+                                                details: SerialPortRevokedDetails) => void): this;
     /**
      * Emitted when a hunspell dictionary file starts downloading
      */
@@ -15614,6 +15627,15 @@ declare namespace Electron {
     frame: WebFrameMain;
   }
 
+  interface SerialPortRevokedDetails {
+    port: SerialPort;
+    frame: WebFrameMain;
+    /**
+     * The origin that the device has been revoked from.
+     */
+    origin: string;
+  }
+
   interface Settings {
     /**
      * `true` to open the app at login, `false` to remove the app as a login item.
@@ -16933,6 +16955,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -17237,6 +17260,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -17474,6 +17498,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
@@ -17792,6 +17817,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
     type SSLConfigConfig = Electron.SSLConfigConfig;
