@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.0-alpha.8
+// Type definitions for Electron 22.0.0-beta.1
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -14516,8 +14516,8 @@ declare namespace Electron {
      * `selectAll`, `reload`, `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`,
      * `zoomOut`, `toggleSpellChecker`, `togglefullscreen`, `window`, `minimize`,
      * `close`, `help`, `about`, `services`, `hide`, `hideOthers`, `unhide`, `quit`,
-     * 'showSubstitutions', 'toggleSmartQuotes', 'toggleSmartDashes',
-     * 'toggleTextReplacement', `startSpeaking`, `stopSpeaking`, `zoom`, `front`,
+     * `showSubstitutions`, `toggleSmartQuotes`, `toggleSmartDashes`,
+     * `toggleTextReplacement`, `startSpeaking`, `stopSpeaking`, `zoom`, `front`,
      * `appMenu`, `fileMenu`, `editMenu`, `viewMenu`, `shareMenu`, `recentDocuments`,
      * `toggleTabBar`, `selectNextTab`, `selectPreviousTab`, `mergeAllWindows`,
      * `clearRecentDocuments`, `moveTabToNewWindow` or `windowMenu` - Define the action
