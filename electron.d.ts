@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.2.0
+// Type definitions for Electron 0.0.0-development
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5251,14 +5251,6 @@ declare namespace Electron {
      * included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw
      * an exception.
      *
-     * > **NOTE:** Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects will throw an exception.
-     *
-     * Since the main process does not have support for DOM objects such as
-     * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
-     * Electron's IPC to the main process, as the main process would have no way to
-     * decode them. Attempting to send such objects over IPC will result in an error.
-     *
      * The main process should listen for `channel` with `ipcMain.handle()`.
      *
      * For example:
@@ -5267,6 +5259,18 @@ declare namespace Electron {
      * `ipcRenderer.postMessage`.
      *
      * If you do not need a response to the message, consider using `ipcRenderer.send`.
+     *
+     * > **Note** Sending non-standard JavaScript types such as DOM objects or special
+     * Electron objects will throw an exception.
+     *
+     * Since the main process does not have support for DOM objects such as
+     * `ImageBitmap`, `File`, `DOMMatrix` and so on, such objects cannot be sent over
+     * Electron's IPC to the main process, as the main process would have no way to
+     * decode them. Attempting to send such objects over IPC will result in an error.
+     *
+     * > **Note** If the handler in the main process throws an error, the promise
+     * returned by `invoke` will reject. However, the `Error` object in the renderer
+     * process will not be the same as the one thrown in the main process.
      */
     invoke(channel: string, ...args: any[]): Promise<any>;
     /**
@@ -14540,8 +14544,8 @@ declare namespace Electron {
      * `selectAll`, `reload`, `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`,
      * `zoomOut`, `toggleSpellChecker`, `togglefullscreen`, `window`, `minimize`,
      * `close`, `help`, `about`, `services`, `hide`, `hideOthers`, `unhide`, `quit`,
-     * 'showSubstitutions', 'toggleSmartQuotes', 'toggleSmartDashes',
-     * 'toggleTextReplacement', `startSpeaking`, `stopSpeaking`, `zoom`, `front`,
+     * `showSubstitutions`, `toggleSmartQuotes`, `toggleSmartDashes`,
+     * `toggleTextReplacement`, `startSpeaking`, `stopSpeaking`, `zoom`, `front`,
      * `appMenu`, `fileMenu`, `editMenu`, `viewMenu`, `shareMenu`, `recentDocuments`,
      * `toggleTabBar`, `selectNextTab`, `selectPreviousTab`, `mergeAllWindows`,
      * `clearRecentDocuments`, `moveTabToNewWindow` or `windowMenu` - Define the action
