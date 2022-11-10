@@ -869,7 +869,7 @@ declare namespace Electron {
      * response:
      *
      * Using `basic` should be preferred if only basic information like `vendorId` or
-     * `driverId` is needed.
+     * `deviceId` is needed.
      */
     getGPUInfo(infoType: 'basic' | 'complete'): Promise<unknown>;
     /**
