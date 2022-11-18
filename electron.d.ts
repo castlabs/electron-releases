@@ -1,4 +1,4 @@
-// Type definitions for Electron 0.0.0-development
+// Type definitions for Electron 22.0.0-beta.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6475,6 +6475,24 @@ declare namespace Electron {
     userText?: string;
   }
 
+  interface ParentPort extends NodeJS.EventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/parent-port
+
+    /**
+     * Emitted when the process receives a message. Messages received on this port will
+     * be queued up until a handler is registered for this event.
+     */
+    on(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    once(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    addListener(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    removeListener(event: 'message', listener: (messageEvent: MessageEvent) => void): this;
+    /**
+     * Sends a message from the process to its parent.
+     */
+    postMessage(message: any): void;
+  }
+
   interface PaymentDiscount {
 
     // Docs: https://electronjs.org/docs/api/structures/payment-discount
@@ -9962,6 +9980,89 @@ declare namespace Electron {
     integer: number;
     string: string;
     url: string;
+  }
+
+  class UtilityProcess extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/utility-process
+
+    static fork(modulePath: string, args?: string[], options?: ForkOptions): UtilityProcess;
+    /**
+     * Emitted after the child process ends.
+     */
+    on(event: 'exit', listener: (
+                                 /**
+                                  * Contains the exit code for the process obtained from waitpid on posix, or
+                                  * GetExitCodeProcess on windows.
+                                  */
+                                 code: number) => void): this;
+    once(event: 'exit', listener: (
+                                 /**
+                                  * Contains the exit code for the process obtained from waitpid on posix, or
+                                  * GetExitCodeProcess on windows.
+                                  */
+                                 code: number) => void): this;
+    addListener(event: 'exit', listener: (
+                                 /**
+                                  * Contains the exit code for the process obtained from waitpid on posix, or
+                                  * GetExitCodeProcess on windows.
+                                  */
+                                 code: number) => void): this;
+    removeListener(event: 'exit', listener: (
+                                 /**
+                                  * Contains the exit code for the process obtained from waitpid on posix, or
+                                  * GetExitCodeProcess on windows.
+                                  */
+                                 code: number) => void): this;
+    /**
+     * Emitted when the child process sends a message using
+     * `process.parentPort.postMessage()`.
+     */
+    on(event: 'message', listener: (message: any) => void): this;
+    once(event: 'message', listener: (message: any) => void): this;
+    addListener(event: 'message', listener: (message: any) => void): this;
+    removeListener(event: 'message', listener: (message: any) => void): this;
+    /**
+     * Emitted once the child process has spawned successfully.
+     */
+    on(event: 'spawn', listener: Function): this;
+    once(event: 'spawn', listener: Function): this;
+    addListener(event: 'spawn', listener: Function): this;
+    removeListener(event: 'spawn', listener: Function): this;
+    /**
+     * Terminates the process gracefully. On POSIX, it uses SIGTERM but will ensure the
+     * process is reaped on exit. This function returns true if the kill is successful,
+     * and false otherwise.
+     */
+    kill(): boolean;
+    /**
+     * Send a message to the child process, optionally transferring ownership of zero
+     * or more [`MessagePortMain`][] objects.
+     *
+     * For example:
+     */
+    postMessage(message: any, transfer?: MessagePortMain[]): void;
+    /**
+     * A `Integer | undefined` representing the process identifier (PID) of the child
+     * process. If the child process fails to spawn due to errors, then the value is
+     * `undefined`. When the child process exits, then the value is `undefined` after
+     * the `exit` event is emitted.
+     */
+    pid: (number) | (undefined);
+    /**
+     * A `NodeJS.ReadableStream | null` that represents the child process's stderr. If
+     * the child was spawned with options.stdio[2] set to anything other than 'pipe',
+     * then this will be `null`. When the child process exits, then the value is `null`
+     * after the `exit` event is emitted.
+     */
+    stderr: (NodeJS.ReadableStream) | (null);
+    /**
+     * A `NodeJS.ReadableStream | null` that represents the child process's stdout. If
+     * the child was spawned with options.stdio[1] set to anything other than 'pipe',
+     * then this will be `null`. When the child process exits, then the value is `null`
+     * after the `exit` event is emitted.
+     */
+    stdout: (NodeJS.ReadableStream) | (null);
   }
 
   class WebContents extends NodeEventEmitter {
@@ -14232,6 +14333,47 @@ declare namespace Electron {
     steal: boolean;
   }
 
+  interface ForkOptions {
+    /**
+     * Environment key-value pairs. Default is `process.env`.
+     */
+    env?: Env;
+    /**
+     * List of string arguments passed to the executable.
+     */
+    execArgv?: string[];
+    /**
+     * Current working directory of the child process.
+     */
+    cwd?: string;
+    /**
+     * Allows configuring the mode for `stdout` and `stderr` of the child process.
+     * Default is `inherit`. String value can be one of `pipe`, `ignore`, `inherit`,
+     * for more details on these values you can refer to stdio documentation from
+     * Node.js. Currently this option only supports configuring `stdout` and `stderr`
+     * to either `pipe`, `inherit` or `ignore`. Configuring `stdin` is not supported;
+     * `stdin` will always be ignored. For example, the supported values will be
+     * processed as following:
+     */
+    stdio?: (Array<'pipe' | 'ignore' | 'inherit'>) | (string);
+    /**
+     * Name of the process that will appear in `name` property of `child-process-gone`
+     * event of `app`. Default is `node.mojom.NodeService`.
+     */
+    serviceName?: string;
+    /**
+     * With this flag, the utility process will be launched via the `Electron Helper
+     * (Plugin).app` helper executable on macOS, which can be codesigned with
+     * `com.apple.security.cs.disable-library-validation` and
+     * `com.apple.security.cs.allow-unsigned-executable-memory` entitlements. This will
+     * allow the utility process to load unsigned libraries. Unless you specifically
+     * need this capability, it is best to leave this disabled. Default is `false`.
+     *
+     * @platform darwin
+     */
+    allowLoadingUnsignedLibraries?: boolean;
+  }
+
   interface FoundInPageEvent extends Event {
     result: FoundInPageResult;
   }
@@ -16299,6 +16441,9 @@ declare namespace Electron {
     canEditRichly: boolean;
   }
 
+  interface Env {
+  }
+
   interface FoundInPageResult {
     requestId: number;
     /**
@@ -16883,6 +17028,7 @@ declare namespace Electron {
     systemPreferences: SystemPreferences;
     TouchBar: typeof TouchBar;
     Tray: typeof Tray;
+    utilityProcess: typeof UtilityProcess;
     webContents: typeof WebContents;
     webFrameMain: typeof WebFrameMain;
   }
@@ -16948,6 +17094,7 @@ declare namespace Electron {
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
+    type ForkOptions = Electron.ForkOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
@@ -17051,6 +17198,7 @@ declare namespace Electron {
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
+    type Env = Electron.Env;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
@@ -17198,6 +17346,8 @@ declare namespace Electron {
     type TouchBarSlider = Electron.TouchBarSlider;
     type TouchBarSpacer = Electron.TouchBarSpacer;
     class Tray extends Electron.Tray {}
+    const utilityProcess: typeof UtilityProcess;
+    type UtilityProcess = Electron.UtilityProcess;
     const webContents: typeof WebContents;
     type WebContents = Electron.WebContents;
     const webFrameMain: typeof WebFrameMain;
@@ -17253,6 +17403,7 @@ declare namespace Electron {
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
+    type ForkOptions = Electron.ForkOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
@@ -17356,6 +17507,7 @@ declare namespace Electron {
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
+    type Env = Electron.Env;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
@@ -17491,6 +17643,7 @@ declare namespace Electron {
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
+    type ForkOptions = Electron.ForkOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
@@ -17594,6 +17747,7 @@ declare namespace Electron {
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
+    type Env = Electron.Env;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
@@ -17753,6 +17907,8 @@ declare namespace Electron {
     type TouchBarSlider = Electron.TouchBarSlider;
     type TouchBarSpacer = Electron.TouchBarSpacer;
     class Tray extends Electron.Tray {}
+    const utilityProcess: typeof UtilityProcess;
+    type UtilityProcess = Electron.UtilityProcess;
     const webContents: typeof WebContents;
     type WebContents = Electron.WebContents;
     const webFrame: WebFrame;
@@ -17810,6 +17966,7 @@ declare namespace Electron {
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
+    type ForkOptions = Electron.ForkOptions;
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
@@ -17913,6 +18070,7 @@ declare namespace Electron {
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
+    type Env = Electron.Env;
     type FoundInPageResult = Electron.FoundInPageResult;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
@@ -18008,6 +18166,7 @@ declare namespace Electron {
   const nativeTheme: NativeTheme;
   const net: Net;
   const netLog: NetLog;
+  const parentPort: ParentPort;
   const powerMonitor: PowerMonitor;
   const powerSaveBlocker: PowerSaveBlocker;
   const protocol: Protocol;
@@ -18017,6 +18176,7 @@ declare namespace Electron {
   const session: typeof Session;
   const shell: Shell;
   const systemPreferences: SystemPreferences;
+  const utilityProcess: typeof UtilityProcess;
   const webContents: typeof WebContents;
   const webFrame: WebFrame;
   const webFrameMain: typeof WebFrameMain;
@@ -18230,6 +18390,11 @@ declare namespace NodeJS {
      */
     noDeprecation: boolean;
     /**
+     * A `Electron.ParentPort` property if this is a `UtilityProcess` (or `null`
+     * otherwise) allowing communication with the parent process.
+     */
+    parentPort: Electron.ParentPort;
+    /**
      * A `string` representing the path to the resources directory.
      *
      */
@@ -18266,9 +18431,10 @@ declare namespace NodeJS {
      * * `browser` - The main process
      * * `renderer` - A renderer process
      * * `worker` - In a web worker
+     * * `utility` - In a node process launched as a service
      *
      */
-    readonly type: ('browser' | 'renderer' | 'worker');
+    readonly type: ('browser' | 'renderer' | 'worker' | 'utility');
     /**
      * A `boolean`. If the app is running as a Windows Store app (appx), this property
      * is `true`, for otherwise it is `undefined`.
