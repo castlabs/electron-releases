@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.0-beta.8+wvcus
+// Type definitions for Electron 22.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9507,6 +9507,9 @@ declare namespace Electron {
     removeListener(event: 'balloon-show', listener: Function): this;
     /**
      * Emitted when the tray icon is clicked.
+     *
+     * Note that on Linux this event is emitted when the tray icon receives an
+     * activation, which might not necessarily be left mouse click.
      */
     on(event: 'click', listener: (event: KeyboardEvent,
                                   /**
