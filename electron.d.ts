@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.0+wvcus
+// Type definitions for Electron 23.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2237,9 +2237,12 @@ declare namespace Electron {
      * Resolves with a NativeImage
      *
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
-     * whole visible page. If the page is not visible, `rect` may be empty.
+     * whole visible page. If the page is not visible, `rect` may be empty. The page is
+     * considered visible when its browser window is hidden and the capturer count is
+     * non-zero. If you would like the page to stay hidden, you should ensure that
+     * `stayHidden` is set to true.
      */
-    capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
+    capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
      * Moves window to the center of the screen.
      */
@@ -2443,6 +2446,12 @@ declare namespace Electron {
      * window.
      */
     isFullScreenable(): boolean;
+    /**
+     * Whether the window will be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    isHiddenInMissionControl(): boolean;
     /**
      * Whether the window is in kiosk mode.
      */
@@ -2777,6 +2786,13 @@ declare namespace Electron {
      * Sets whether the window should have a shadow.
      */
     setHasShadow(hasShadow: boolean): void;
+    /**
+     * Sets whether the window will be hidden when the user toggles into mission
+     * control.
+     *
+     * @platform darwin
+     */
+    setHiddenInMissionControl(hidden: boolean): void;
     /**
      * Changes window icon.
      *
@@ -7812,6 +7828,26 @@ declare namespace Electron {
                                                webContents: WebContents,
                                                callback: (portId: string) => void) => void): this;
     /**
+     * Emitted when a USB device needs to be selected when a call to
+     * `navigator.usb.requestDevice` is made. `callback` should be called with
+     * `deviceId` to be selected; passing no arguments to `callback` will cancel the
+     * request.  Additionally, permissioning on `navigator.usb` can be further managed
+     * by using ses.setPermissionCheckHandler(handler) and
+     * ses.setDevicePermissionHandler(handler)`.
+     */
+    on(event: 'select-usb-device', listener: (event: Event,
+                                              details: SelectUsbDeviceDetails,
+                                              callback: (deviceId?: string) => void) => void): this;
+    once(event: 'select-usb-device', listener: (event: Event,
+                                              details: SelectUsbDeviceDetails,
+                                              callback: (deviceId?: string) => void) => void): this;
+    addListener(event: 'select-usb-device', listener: (event: Event,
+                                              details: SelectUsbDeviceDetails,
+                                              callback: (deviceId?: string) => void) => void): this;
+    removeListener(event: 'select-usb-device', listener: (event: Event,
+                                              details: SelectUsbDeviceDetails,
+                                              callback: (deviceId?: string) => void) => void): this;
+    /**
      * Emitted after `navigator.serial.requestPort` has been called and
      * `select-serial-port` has fired if a new serial port becomes available before the
      * callback from `select-serial-port` is called.  This event is intended for use
@@ -7956,6 +7992,49 @@ declare namespace Electron {
                                                                * The language code of the dictionary file
                                                                */
                                                               languageCode: string) => void): this;
+    /**
+     * Emitted after `navigator.usb.requestDevice` has been called and
+     * `select-usb-device` has fired if a new device becomes available before the
+     * callback from `select-usb-device` is called.  This event is intended for use
+     * when using a UI to ask users to pick a device so that the UI can be updated with
+     * the newly added device.
+     */
+    on(event: 'usb-device-added', listener: (event: Event,
+                                             details: UsbDeviceAddedDetails) => void): this;
+    once(event: 'usb-device-added', listener: (event: Event,
+                                             details: UsbDeviceAddedDetails) => void): this;
+    addListener(event: 'usb-device-added', listener: (event: Event,
+                                             details: UsbDeviceAddedDetails) => void): this;
+    removeListener(event: 'usb-device-added', listener: (event: Event,
+                                             details: UsbDeviceAddedDetails) => void): this;
+    /**
+     * Emitted after `navigator.usb.requestDevice` has been called and
+     * `select-usb-device` has fired if a device has been removed before the callback
+     * from `select-usb-device` is called.  This event is intended for use when using a
+     * UI to ask users to pick a device so that the UI can be updated to remove the
+     * specified device.
+     */
+    on(event: 'usb-device-removed', listener: (event: Event,
+                                               details: UsbDeviceRemovedDetails) => void): this;
+    once(event: 'usb-device-removed', listener: (event: Event,
+                                               details: UsbDeviceRemovedDetails) => void): this;
+    addListener(event: 'usb-device-removed', listener: (event: Event,
+                                               details: UsbDeviceRemovedDetails) => void): this;
+    removeListener(event: 'usb-device-removed', listener: (event: Event,
+                                               details: UsbDeviceRemovedDetails) => void): this;
+    /**
+     * Emitted after `USBDevice.forget()` has been called.  This event can be used to
+     * help maintain persistent storage of permissions when
+     * `setDevicePermissionHandler` is used.
+     */
+    on(event: 'usb-device-revoked', listener: (event: Event,
+                                               details: UsbDeviceRevokedDetails) => void): this;
+    once(event: 'usb-device-revoked', listener: (event: Event,
+                                               details: UsbDeviceRevokedDetails) => void): this;
+    addListener(event: 'usb-device-revoked', listener: (event: Event,
+                                               details: UsbDeviceRevokedDetails) => void): this;
+    removeListener(event: 'usb-device-revoked', listener: (event: Event,
+                                               details: UsbDeviceRevokedDetails) => void): this;
     /**
      * Emitted when Electron is about to download `item` in `webContents`.
      *
@@ -9971,6 +10050,72 @@ declare namespace Electron {
     type: 'rawData';
   }
 
+  interface USBDevice {
+
+    // Docs: https://electronjs.org/docs/api/structures/usb-device
+
+    /**
+     * The device class for the communication interface supported by the device
+     */
+    deviceClass: number;
+    /**
+     * Unique identifier for the device.
+     */
+    deviceId: string;
+    /**
+     * The device protocol for the communication interface supported by the device
+     */
+    deviceProtocol: number;
+    /**
+     * The device subclass for the communication interface supported by the device
+     */
+    deviceSubclass: number;
+    /**
+     * The major version number of the device as defined by the device manufacturer.
+     */
+    deviceVersionMajor: number;
+    /**
+     * The minor version number of the device as defined by the device manufacturer.
+     */
+    deviceVersionMinor: number;
+    /**
+     * The subminor version number of the device as defined by the device manufacturer.
+     */
+    deviceVersionSubminor: number;
+    /**
+     * The manufacturer name of the device.
+     */
+    manufacturerName?: string;
+    /**
+     * The USB product ID.
+     */
+    productId: number;
+    /**
+     * Name of the device.
+     */
+    productName?: string;
+    /**
+     * The USB device serial number.
+     */
+    serialNumber?: string;
+    /**
+     * The USB protocol major version supported by the device
+     */
+    usbVersionMajor: number;
+    /**
+     * The USB protocol minor version supported by the device
+     */
+    usbVersionMinor: number;
+    /**
+     * The USB protocol subminor version supported by the device
+     */
+    usbVersionSubminor: number;
+    /**
+     * The USB vendor ID.
+     */
+    vendorId: number;
+  }
+
   interface UserDefaultTypes {
 
     // Docs: https://electronjs.org/docs/api/structures/user-default-types
@@ -11306,9 +11451,11 @@ declare namespace Electron {
      * Resolves with a NativeImage
      *
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
-     * whole visible page.
+     * whole visible page. The page is considered visible when its browser window is
+     * hidden and the capturer count is non-zero. If you would like the page to stay
+     * hidden, you should ensure that `stayHidden` is set to true.
      */
-    capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
+    capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
      * Clears the navigation history.
      */
@@ -11320,7 +11467,7 @@ declare namespace Electron {
      * page, or `waitForBeforeUnload` is false or unspecified), the WebContents will be
      * destroyed and no longer usable. The `destroyed` event will be emitted.
      */
-    close(opts?: Opts): void;
+    close(opts?: CloseOpts): void;
     /**
      * Closes the devtools.
      */
@@ -11342,6 +11489,11 @@ declare namespace Electron {
      * state when its browser window is hidden or occluded and the capturer count
      * reaches zero. If you want to decrease the hidden capturer count instead you
      * should set `stayHidden` to true.
+     *
+     * **Deprecated:** This API's functionality is now handled automatically within
+     * `contents.capturePage()`. See breaking changes.
+     *
+     * @deprecated
      */
     decrementCapturerCount(stayHidden?: boolean, stayAwake?: boolean): void;
     /**
@@ -11504,6 +11656,11 @@ declare namespace Electron {
      * the page to stay hidden, you should ensure that `stayHidden` is set to true.
      *
      * This also affects the Page Visibility API.
+     *
+     * **Deprecated:** This API's functionality is now handled automatically within
+     * `contents.capturePage()`. See breaking changes.
+     *
+     * @deprecated
      */
     incrementCapturerCount(size?: Size, stayHidden?: boolean, stayAwake?: boolean): void;
     /**
@@ -11822,7 +11979,7 @@ declare namespace Electron {
      * submitting a form with `<form target="_blank">`. See `window.open()` for more
      * details and how to use this in conjunction with `did-create-window`.
      */
-    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
+    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', outlivesOpener?: boolean, overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
@@ -13400,6 +13557,12 @@ declare namespace Electron {
      */
     skipTaskbar?: boolean;
     /**
+     * Whether window should be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    hiddenInMissionControl?: boolean;
+    /**
      * Whether the window is in kiosk mode. Default is `false`.
      */
     kiosk?: boolean;
@@ -13619,8 +13782,8 @@ declare namespace Electron {
      */
     storages?: string[];
     /**
-     * The types of quotas to clear, can contain: `temporary`, `persistent`,
-     * `syncable`. If not specified, clear all quotas.
+     * The types of quotas to clear, can contain: `temporary`, `syncable`. If not
+     * specified, clear all quotas.
      */
     quotas?: string[];
   }
@@ -13693,6 +13856,15 @@ declare namespace Electron {
      * The origin URL of the request.
      */
     origin?: string;
+  }
+
+  interface CloseOpts {
+    /**
+     * if true, fire the `beforeunload` event before closing the page. If the page
+     * prevents the unload, the WebContents will not be closed. The
+     * `will-prevent-unload` will be fired if the page requests prevention of unload.
+     */
+    waitForBeforeUnload: boolean;
   }
 
   interface Config {
@@ -14118,10 +14290,10 @@ declare namespace Electron {
 
   interface DevicePermissionHandlerHandlerDetails {
     /**
-     * The type of device that permission is being requested on, can be `hid` or
-     * `serial`.
+     * The type of device that permission is being requested on, can be `hid`,
+     * `serial`, or `usb`.
      */
-    deviceType: ('hid' | 'serial');
+    deviceType: ('hid' | 'serial' | 'usb');
     /**
      * The origin URL of the device permission check.
      */
@@ -15361,11 +15533,13 @@ declare namespace Electron {
 
   interface Opts {
     /**
-     * if true, fire the `beforeunload` event before closing the page. If the page
-     * prevents the unload, the WebContents will not be closed. The
-     * `will-prevent-unload` will be fired if the page requests prevention of unload.
+     *  Keep the page hidden instead of visible. Default is `false`.
      */
-    waitForBeforeUnload: boolean;
+    stayHidden?: boolean;
+    /**
+     *  Keep the system awake instead of allowing it to sleep. Default is `false`.
+     */
+    stayAwake?: boolean;
   }
 
   interface PageFaviconUpdatedEvent extends Event {
@@ -15837,6 +16011,11 @@ declare namespace Electron {
     frame: WebFrameMain;
   }
 
+  interface SelectUsbDeviceDetails {
+    deviceList: USBDevice[];
+    frame: WebFrameMain;
+  }
+
   interface SerialPortRevokedDetails {
     port: SerialPort;
     frame: WebFrameMain;
@@ -16246,6 +16425,24 @@ declare namespace Electron {
      * The number of bytes that will be uploaded this request
      */
     total: number;
+  }
+
+  interface UsbDeviceAddedDetails {
+    device: USBDevice;
+    frame: WebFrameMain;
+  }
+
+  interface UsbDeviceRemovedDetails {
+    device: USBDevice;
+    frame: WebFrameMain;
+  }
+
+  interface UsbDeviceRevokedDetails {
+    device: USBDevice[];
+    /**
+     * The origin that the device has been revoked from.
+     */
+    origin?: string;
   }
 
   interface VisibleOnAllWorkspacesOptions {
@@ -17066,6 +17263,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
+    type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -17170,6 +17368,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
@@ -17195,6 +17394,9 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
+    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
+    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
+    type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -17275,6 +17477,7 @@ declare namespace Electron {
     type UploadData = Electron.UploadData;
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
+    type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -17375,6 +17578,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
+    type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -17479,6 +17683,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
@@ -17504,6 +17709,9 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
+    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
+    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
+    type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -17584,6 +17792,7 @@ declare namespace Electron {
     type UploadData = Electron.UploadData;
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
+    type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -17615,6 +17824,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
+    type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -17719,6 +17929,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
@@ -17744,6 +17955,9 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
+    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
+    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
+    type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -17824,6 +18038,7 @@ declare namespace Electron {
     type UploadData = Electron.UploadData;
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
+    type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -17938,6 +18153,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
+    type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -18042,6 +18258,7 @@ declare namespace Electron {
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
+    type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
@@ -18067,6 +18284,9 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
+    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
+    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
+    type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -18147,6 +18367,7 @@ declare namespace Electron {
     type UploadData = Electron.UploadData;
     type UploadFile = Electron.UploadFile;
     type UploadRawData = Electron.UploadRawData;
+    type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
