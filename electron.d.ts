@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.0+wvcus
+// Type definitions for Electron 22.0.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4206,11 +4206,10 @@ declare namespace Electron {
     display_id: string;
     /**
      * The identifier of a window or screen that can be used as a `chromeMediaSourceId`
-     * constraint when calling [`navigator.webkitGetUserMedia`]. The format of the
-     * identifier will be `window:XX:YY` or `screen:ZZ:0`. XX is the windowID/handle.
-     * YY is 1 for the current process, and 0 for all others. ZZ is a sequential number
-     * that represents the screen, and it does not equal to the index in the source's
-     * name.
+     * constraint when calling `navigator.getUserMedia`. The format of the identifier
+     * will be `window:XX:YY` or `screen:ZZ:0`. XX is the windowID/handle. YY is 1 for
+     * the current process, and 0 for all others. ZZ is a sequential number that
+     * represents the screen, and it does not equal to the index in the source's name.
      */
     id: string;
     /**
@@ -4580,7 +4579,7 @@ declare namespace Electron {
      */
     getBadge(): string;
     /**
-     * The application's [dock menu][dock-menu].
+     * The application's dock menu.
      *
      * @platform darwin
      */
@@ -4610,7 +4609,7 @@ declare namespace Electron {
      */
     setIcon(image: (NativeImage) | (string)): void;
     /**
-     * Sets the application's [dock menu][dock-menu].
+     * Sets the application's dock menu.
      *
      * @platform darwin
      */
@@ -10040,7 +10039,7 @@ declare namespace Electron {
     kill(): boolean;
     /**
      * Send a message to the child process, optionally transferring ownership of zero
-     * or more [`MessagePortMain`][] objects.
+     * or more `MessagePortMain` objects.
      *
      * For example:
      */
@@ -11638,7 +11637,7 @@ declare namespace Electron {
     pasteAndMatchStyle(): void;
     /**
      * Send a message to the renderer process, optionally transferring ownership of
-     * zero or more [`MessagePortMain`][] objects.
+     * zero or more `MessagePortMain` objects.
      *
      * The transferred `MessagePortMain` objects will be available in the renderer
      * process by accessing the `ports` property of the emitted event. When they arrive
@@ -11822,7 +11821,7 @@ declare namespace Electron {
      * submitting a form with `<form target="_blank">`. See `window.open()` for more
      * details and how to use this in conjunction with `did-create-window`.
      */
-    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
+    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', outlivesOpener?: boolean, overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
@@ -12220,7 +12219,7 @@ declare namespace Electron {
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
     /**
      * Send a message to the renderer process, optionally transferring ownership of
-     * zero or more [`MessagePortMain`][] objects.
+     * zero or more `MessagePortMain` objects.
      *
      * The transferred `MessagePortMain` objects will be available in the renderer
      * process by accessing the `ports` property of the emitted event. When they arrive
