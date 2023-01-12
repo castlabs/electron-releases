@@ -1,4 +1,4 @@
-// Type definitions for Electron 21.3.3+wvcus
+// Type definitions for Electron 21.3.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11758,7 +11758,7 @@ declare namespace Electron {
      * submitting a form with `<form target="_blank">`. See `window.open()` for more
      * details and how to use this in conjunction with `did-create-window`.
      */
-    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
+    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', outlivesOpener?: boolean, overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
