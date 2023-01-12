@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.0.0-alpha.3+wvcus
+// Type definitions for Electron 23.0.0-beta.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -500,6 +500,11 @@ declare namespace Electron {
      * `argv` is an Array of the second instance's command line arguments, and
      * `workingDirectory` is its current working directory. Usually applications
      * respond to this by making their primary window focused and non-minimized.
+     *
+     * **Note:** `argv` will not be exactly the same list of arguments as those passed
+     * to the second instance. The order might change and additional arguments might be
+     * appended. If you need to maintain the exact same arguments, it's advised to use
+     * `additionalData` instead.
      *
      * **Note:** If the second instance is started by a different user than the first,
      * the `argv` array will not include the arguments.
@@ -4222,11 +4227,10 @@ declare namespace Electron {
     display_id: string;
     /**
      * The identifier of a window or screen that can be used as a `chromeMediaSourceId`
-     * constraint when calling [`navigator.webkitGetUserMedia`]. The format of the
-     * identifier will be `window:XX:YY` or `screen:ZZ:0`. XX is the windowID/handle.
-     * YY is 1 for the current process, and 0 for all others. ZZ is a sequential number
-     * that represents the screen, and it does not equal to the index in the source's
-     * name.
+     * constraint when calling `navigator.getUserMedia`. The format of the identifier
+     * will be `window:XX:YY` or `screen:ZZ:0`. XX is the windowID/handle. YY is 1 for
+     * the current process, and 0 for all others. ZZ is a sequential number that
+     * represents the screen, and it does not equal to the index in the source's name.
      */
     id: string;
     /**
@@ -4596,7 +4600,7 @@ declare namespace Electron {
      */
     getBadge(): string;
     /**
-     * The application's [dock menu][dock-menu].
+     * The application's dock menu.
      *
      * @platform darwin
      */
@@ -4626,7 +4630,7 @@ declare namespace Electron {
      */
     setIcon(image: (NativeImage) | (string)): void;
     /**
-     * Sets the application's [dock menu][dock-menu].
+     * Sets the application's dock menu.
      *
      * @platform darwin
      */
@@ -8321,7 +8325,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -10185,7 +10189,7 @@ declare namespace Electron {
     kill(): boolean;
     /**
      * Send a message to the child process, optionally transferring ownership of zero
-     * or more [`MessagePortMain`][] objects.
+     * or more `MessagePortMain` objects.
      *
      * For example:
      */
@@ -11795,7 +11799,7 @@ declare namespace Electron {
     pasteAndMatchStyle(): void;
     /**
      * Send a message to the renderer process, optionally transferring ownership of
-     * zero or more [`MessagePortMain`][] objects.
+     * zero or more `MessagePortMain` objects.
      *
      * The transferred `MessagePortMain` objects will be available in the renderer
      * process by accessing the `ports` property of the emitted event. When they arrive
@@ -12377,7 +12381,7 @@ declare namespace Electron {
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
     /**
      * Send a message to the renderer process, optionally transferring ownership of
-     * zero or more [`MessagePortMain`][] objects.
+     * zero or more `MessagePortMain` objects.
      *
      * The transferred `MessagePortMain` objects will be available in the renderer
      * process by accessing the `ports` property of the emitted event. When they arrive
