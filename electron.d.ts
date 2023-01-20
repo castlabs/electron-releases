@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.0.0-beta.3+wvcus
+// Type definitions for Electron 23.0.0-beta.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -4537,6 +4537,10 @@ declare namespace Electron {
      * `true` for an internal display and `false` for an external display
      */
     internal: boolean;
+    /**
+     * User-friendly label, determined by the platform.
+     */
+    label: string;
     /**
      * Whether or not the display is a monochrome display.
      */
