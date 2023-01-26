@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.0.3+wvcus
+// Type definitions for Electron 22.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1536,7 +1536,8 @@ declare namespace Electron {
      * WOW).
      *
      * You can use this property to prompt users to download the arm64 version of your
-     * application when they are running the x64 version under Rosetta incorrectly.
+     * application when they are mistakenly running the x64 version under Rosetta or
+     * WOW.
      *
      * @platform darwin,win32
      */
@@ -4516,6 +4517,10 @@ declare namespace Electron {
      * `true` for an internal display and `false` for an external display
      */
     internal: boolean;
+    /**
+     * User-friendly label, determined by the platform.
+     */
+    label: string;
     /**
      * Whether or not the display is a monochrome display.
      */
