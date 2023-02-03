@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.1.0+wvcus
+// Type definitions for Electron 22.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2445,6 +2445,12 @@ declare namespace Electron {
      */
     isFullScreenable(): boolean;
     /**
+     * Whether the window will be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    isHiddenInMissionControl(): boolean;
+    /**
      * Whether the window is in kiosk mode.
      */
     isKiosk(): boolean;
@@ -2778,6 +2784,13 @@ declare namespace Electron {
      * Sets whether the window should have a shadow.
      */
     setHasShadow(hasShadow: boolean): void;
+    /**
+     * Sets whether the window will be hidden when the user toggles into mission
+     * control.
+     *
+     * @platform darwin
+     */
+    setHiddenInMissionControl(hidden: boolean): void;
     /**
      * Changes window icon.
      *
@@ -13403,6 +13416,12 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     skipTaskbar?: boolean;
+    /**
+     * Whether window should be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    hiddenInMissionControl?: boolean;
     /**
      * Whether the window is in kiosk mode. Default is `false`.
      */
