@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.0.0-beta.6+wvcus
+// Type definitions for Electron 23.0.0-beta.8+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2682,6 +2682,9 @@ declare namespace Electron {
      *
      * The aspect ratio is not respected when window is resized programmatically with
      * APIs like `win.setSize`.
+     *
+     * To reset an aspect ratio, pass 0 as the `aspectRatio` value:
+     * `win.setAspectRatio(0)`.
      */
     setAspectRatio(aspectRatio: number, extraSize?: Size): void;
     /**
