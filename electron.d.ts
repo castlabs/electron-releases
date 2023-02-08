@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.0.0-beta.8+wvcus
+// Type definitions for Electron 23.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11497,18 +11497,6 @@ declare namespace Electron {
      */
     cut(): void;
     /**
-     * Decrease the capturer count by one. The page will be set to hidden or occluded
-     * state when its browser window is hidden or occluded and the capturer count
-     * reaches zero. If you want to decrease the hidden capturer count instead you
-     * should set `stayHidden` to true.
-     *
-     * **Deprecated:** This API's functionality is now handled automatically within
-     * `contents.capturePage()`. See breaking changes.
-     *
-     * @deprecated
-     */
-    decrementCapturerCount(stayHidden?: boolean, stayAwake?: boolean): void;
-    /**
      * Executes the editing command `delete` in web page.
      */
     delete(): void;
@@ -11662,19 +11650,6 @@ declare namespace Electron {
      * Navigates to the specified offset from the "current entry".
      */
     goToOffset(offset: number): void;
-    /**
-     * Increase the capturer count by one. The page is considered visible when its
-     * browser window is hidden and the capturer count is non-zero. If you would like
-     * the page to stay hidden, you should ensure that `stayHidden` is set to true.
-     *
-     * This also affects the Page Visibility API.
-     *
-     * **Deprecated:** This API's functionality is now handled automatically within
-     * `contents.capturePage()`. See breaking changes.
-     *
-     * @deprecated
-     */
-    incrementCapturerCount(size?: Size, stayHidden?: boolean, stayAwake?: boolean): void;
     /**
      * A promise that resolves with a key for the inserted CSS that can later be used
      * to remove the CSS via `contents.removeInsertedCSS(key)`.
