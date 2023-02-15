@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.0.0+wvcus
+// Type definitions for Electron 24.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2406,7 +2406,18 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    hookWindowMessage(message: number, callback: (wParam: any, lParam: any) => void): void;
+    hookWindowMessage(message: number, callback: (wParam: Buffer, lParam: Buffer) => void): void;
+    /**
+     * Invalidates the window shadow so that it is recomputed based on the current
+     * window shape.
+     *
+     * `BrowserWindows` that are transparent can sometimes leave behind visual
+     * artifacts on macOS. This method can be used to clear these artifacts when, for
+     * example, performing an animation.
+     *
+     * @platform darwin
+     */
+    invalidateShadow(): void;
     /**
      * Whether the window is always on top of other windows.
      */
@@ -4937,7 +4948,7 @@ declare namespace Electron {
      * * "Media Previous Track"
      * * "Media Stop"
      */
-    registerAll(accelerators: string[], callback: () => void): void;
+    registerAll(accelerators: Accelerator[], callback: () => void): void;
     /**
      * Unregisters the global shortcut of `accelerator`.
      */
@@ -5073,7 +5084,7 @@ declare namespace Electron {
      * You should listen for the `transactions-updated` event as soon as possible and
      * certainly before you call `purchaseProduct`.
      */
-    purchaseProduct(productID: string, quantity?: number): Promise<boolean>;
+    purchaseProduct(productID: string, opts?: (number) | (PurchaseProductOpts)): Promise<boolean>;
     /**
      * Restores finished transactions. This method can be called either to install
      * purchases on additional devices, or to restore purchases for an application that
@@ -7230,10 +7241,14 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
-    once(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
-    addListener(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
-    removeListener(event: 'received-apns-notification', listener: (userInfo: Record<string, any>) => void): this;
+    on(event: 'received-apns-notification', listener: (event: Event,
+                                                       userInfo: Record<string, any>) => void): this;
+    once(event: 'received-apns-notification', listener: (event: Event,
+                                                       userInfo: Record<string, any>) => void): this;
+    addListener(event: 'received-apns-notification', listener: (event: Event,
+                                                       userInfo: Record<string, any>) => void): this;
+    removeListener(event: 'received-apns-notification', listener: (event: Event,
+                                                       userInfo: Record<string, any>) => void): this;
     /**
      * Registers the app with Apple Push Notification service (APNS) to receive Badge,
      * Sound, and Alert notifications. If registration is successful, the promise will
@@ -7801,8 +7816,8 @@ declare namespace Electron {
      * `navigator.hid.requestDevice` is made. `callback` should be called with
      * `deviceId` to be selected; passing no arguments to `callback` will cancel the
      * request.  Additionally, permissioning on `navigator.hid` can be further managed
-     * by using ses.setPermissionCheckHandler(handler) and
-     * ses.setDevicePermissionHandler(handler)`.
+     * by using `ses.setPermissionCheckHandler(handler)` and
+     * `ses.setDevicePermissionHandler(handler)`.
      */
     on(event: 'select-hid-device', listener: (event: Event,
                                               details: SelectHidDeviceDetails,
@@ -7844,8 +7859,8 @@ declare namespace Electron {
      * `navigator.usb.requestDevice` is made. `callback` should be called with
      * `deviceId` to be selected; passing no arguments to `callback` will cancel the
      * request.  Additionally, permissioning on `navigator.usb` can be further managed
-     * by using ses.setPermissionCheckHandler(handler) and
-     * ses.setDevicePermissionHandler(handler)`.
+     * by using `ses.setPermissionCheckHandler(handler)` and
+     * `ses.setDevicePermissionHandler(handler)`.
      */
     on(event: 'select-usb-device', listener: (event: Event,
                                               details: SelectUsbDeviceDetails,
@@ -8333,7 +8348,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -10546,6 +10561,30 @@ declare namespace Electron {
     addListener(event: 'devtools-focused', listener: Function): this;
     removeListener(event: 'devtools-focused', listener: Function): this;
     /**
+     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
+     * a link in its context menu.
+     */
+    on(event: 'devtools-open-url', listener: (
+                                              /**
+                                               * URL of the link that was clicked or selected.
+                                               */
+                                              url: string) => void): this;
+    once(event: 'devtools-open-url', listener: (
+                                              /**
+                                               * URL of the link that was clicked or selected.
+                                               */
+                                              url: string) => void): this;
+    addListener(event: 'devtools-open-url', listener: (
+                                              /**
+                                               * URL of the link that was clicked or selected.
+                                               */
+                                              url: string) => void): this;
+    removeListener(event: 'devtools-open-url', listener: (
+                                              /**
+                                               * URL of the link that was clicked or selected.
+                                               */
+                                              url: string) => void): this;
+    /**
      * Emitted when DevTools is opened.
      */
     on(event: 'devtools-opened', listener: Function): this;
@@ -10950,7 +10989,7 @@ declare namespace Electron {
     addListener(event: 'focus', listener: Function): this;
     removeListener(event: 'focus', listener: Function): this;
     /**
-     * Emitted when a result is available for [`webContents.findInPage`] request.
+     * Emitted when a result is available for `webContents.findInPage` request.
      */
     on(event: 'found-in-page', listener: (event: Event,
                                           result: Result) => void): this;
@@ -12812,6 +12851,12 @@ declare namespace Electron {
     addEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void): this;
     /**
+     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
+     * a link in its context menu.
+     */
+    addEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void): this;
+    /**
      * Emitted when DevTools is opened.
      */
     addEventListener(event: 'devtools-opened', listener: (event: Event) => void, useCapture?: boolean): this;
@@ -13763,9 +13808,9 @@ declare namespace Electron {
      */
     origin?: string;
     /**
-     * The types of storages to clear, can contain: `appcache`, `cookies`,
-     * `filesystem`, `indexdb`, `localstorage`, `shadercache`, `websql`,
-     * `serviceworkers`, `cachestorage`. If not specified, clear all storage types.
+     * The types of storages to clear, can contain: `cookies`, `filesystem`, `indexdb`,
+     * `localstorage`, `shadercache`, `websql`, `serviceworkers`, `cachestorage`. If
+     * not specified, clear all storage types.
      */
     storages?: string[];
     /**
@@ -14289,6 +14334,13 @@ declare namespace Electron {
      * the device that permission is being requested for.
      */
     device: (HIDDevice) | (SerialPort);
+  }
+
+  interface DevtoolsOpenUrlEvent extends Event {
+    /**
+     * URL of the link that was clicked or selected.
+     */
+    url: string;
   }
 
   interface DidChangeThemeColorEvent extends Event {
@@ -14914,7 +14966,7 @@ declare namespace Electron {
     enabled?: boolean;
     /**
      * default is `true`, and when `false` will prevent the accelerator from triggering
-     * the item if the item is not visible`.
+     * the item if the item is not visible.
      *
      * @platform darwin
      */
@@ -15774,6 +15826,18 @@ declare namespace Electron {
 
   interface Provider {
     spellCheck: (words: string[], callback: (misspeltWords: string[]) => void) => void;
+  }
+
+  interface PurchaseProductOpts {
+    /**
+     * The number of items the user wants to purchase.
+     */
+    quantity?: number;
+    /**
+     * The string that associates the transaction with a user account on your service
+     * (applicationUsername).
+     */
+    username?: string;
   }
 
   interface ReadBookmark {
@@ -17266,6 +17330,7 @@ declare namespace Electron {
     type Data = Electron.Data;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
+    type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -17342,6 +17407,7 @@ declare namespace Electron {
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
+    type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -17581,6 +17647,7 @@ declare namespace Electron {
     type Data = Electron.Data;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
+    type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -17657,6 +17724,7 @@ declare namespace Electron {
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
+    type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -17827,6 +17895,7 @@ declare namespace Electron {
     type Data = Electron.Data;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
+    type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -17903,6 +17972,7 @@ declare namespace Electron {
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
+    type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -18156,6 +18226,7 @@ declare namespace Electron {
     type Data = Electron.Data;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
+    type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -18232,6 +18303,7 @@ declare namespace Electron {
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
+    type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
