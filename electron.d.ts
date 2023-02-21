@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.2.1+wvcus
+// Type definitions for Electron 22.3.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2426,11 +2426,11 @@ declare namespace Electron {
      */
     isEnabled(): boolean;
     /**
-     * Returns whether the window can be focused.
+     * Whether the window can be focused.
      *
      * @platform darwin,win32
      */
-    isFocusable(): void;
+    isFocusable(): boolean;
     /**
      * Whether the window is focused.
      */
@@ -8259,7 +8259,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'window-placement' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'media' | 'display-capture' | 'mediaKeySystem' | 'geolocation' | 'notifications' | 'midi' | 'midiSysex' | 'pointerLock' | 'fullscreen' | 'openExternal' | 'window-placement' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -16349,8 +16349,9 @@ declare namespace Electron {
      */
     footer?: string;
     /**
-     * Specify page size of the printed document. Can be `A3`, `A4`, `A5`, `Legal`,
-     * `Letter`, `Tabloid` or an Object containing `height` and `width`.
+     * Specify page size of the printed document. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
+     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid` or an Object containing `height` and
+     * `width`.
      */
     pageSize?: (string) | (Size);
   }
