@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.1.0+wvcus
+// Type definitions for Electron 23.1.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2434,11 +2434,11 @@ declare namespace Electron {
      */
     isEnabled(): boolean;
     /**
-     * Returns whether the window can be focused.
+     * Whether the window can be focused.
      *
      * @platform darwin,win32
      */
-    isFocusable(): void;
+    isFocusable(): boolean;
     /**
      * Whether the window is focused.
      */
@@ -3022,7 +3022,7 @@ declare namespace Electron {
     /**
      * Sets the touchBar layout for the current window. Specifying `null` or
      * `undefined` clears the touch bar. This method only has an effect if the machine
-     * has a touch bar and is running on macOS 10.12.1+.
+     * has a touch bar.
      *
      * **Note:** The TouchBar API is currently experimental and may change or be
      * removed in future Electron releases.
@@ -8753,16 +8753,13 @@ declare namespace Electron {
      * information about how to set these in the context of Electron.
      *
      * This user consent was not required until macOS 10.14 Mojave, so this method will
-     * always return `true` if your system is running 10.13 High Sierra or lower.
+     * always return `true` if your system is running 10.13 High Sierra.
      *
      * @platform darwin
      */
     askForMediaAccess(mediaType: 'microphone' | 'camera'): Promise<boolean>;
     /**
      * whether or not this device has the ability to use Touch ID.
-     *
-     * **NOTE:** This API will return `false` on macOS systems older than Sierra
-     * 10.12.2.
      *
      * @platform darwin
      */
@@ -8822,10 +8819,10 @@ declare namespace Electron {
     /**
      * Can be `not-determined`, `granted`, `denied`, `restricted` or `unknown`.
      *
-     * This user consent was not required on macOS 10.13 High Sierra or lower so this
-     * method will always return `granted`. macOS 10.14 Mojave or higher requires
-     * consent for `microphone` and `camera` access. macOS 10.15 Catalina or higher
-     * requires consent for `screen` access.
+     * This user consent was not required on macOS 10.13 High Sierra so this method
+     * will always return `granted`. macOS 10.14 Mojave or higher requires consent for
+     * `microphone` and `camera` access. macOS 10.15 Catalina or higher requires
+     * consent for `screen` access.
      *
      * Windows 10 has a global setting controlling `microphone` and `camera` access for
      * all win32 applications. It will always return `granted` for `screen` and for all
@@ -8942,9 +8939,6 @@ declare namespace Electron {
      * auto-prompt for Touch ID biometric consent. This could be done with
      * `node-keytar`, such that one would store an encryption key with `node-keytar`
      * and only fetch it if `promptTouchID()` resolves.
-     *
-     * **NOTE:** This API will return a rejected Promise on macOS systems older than
-     * Sierra 10.12.2.
      *
      * @platform darwin
      */
@@ -13705,10 +13699,10 @@ declare namespace Electron {
      */
     zoomToPageWidth?: boolean;
     /**
-     * Tab group name, allows opening the window as a native tab on macOS 10.12+.
-     * Windows with the same tabbing identifier will be grouped together. This also
-     * adds a native new tab button to your window's tab bar and allows your `app` and
-     * window to receive the `new-window-for-tab` event.
+     * Tab group name, allows opening the window as a native tab. Windows with the same
+     * tabbing identifier will be grouped together. This also adds a native new tab
+     * button to your window's tab bar and allows your `app` and window to receive the
+     * `new-window-for-tab` event.
      *
      * @platform darwin
      */
@@ -16172,8 +16166,8 @@ declare namespace Electron {
   interface TitleOptions {
     /**
      * The font family variant to display, can be `monospaced` or `monospacedDigit`.
-     * `monospaced` is available in macOS 10.15+ and `monospacedDigit` is available in
-     * macOS 10.11+.  When left blank, the title uses the default system font.
+     * `monospaced` is available in macOS 10.15+ When left blank, the title uses the
+     * default system font.
      */
     fontType?: ('monospaced' | 'monospacedDigit');
   }
