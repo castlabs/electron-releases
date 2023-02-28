@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-alpha.5+wvcus
+// Type definitions for Electron 24.0.0-alpha.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -14118,6 +14118,10 @@ declare namespace Electron {
      * Filters out session or persistent cookies.
      */
     session?: boolean;
+    /**
+     * Filters cookies by httpOnly.
+     */
+    httpOnly?: boolean;
   }
 
   interface CookiesSetDetails {
@@ -15559,6 +15563,13 @@ declare namespace Electron {
      * @platform win32
      */
     workingDirectory?: string;
+    /**
+     * Indicates a user initiated launch that enables tracking of frequently used
+     * programs and other behaviors. The default is `false`.
+     *
+     * @platform win32
+     */
+    logUsage?: boolean;
   }
 
   interface Options {
