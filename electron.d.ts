@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-alpha.6+wvcus.2
+// Type definitions for Electron 24.0.0-alpha.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -12641,6 +12641,13 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/web-request-filter
 
+    /**
+     * Array of types that will be used to filter out the requests that do not match
+     * the types. When not specified, all types will be matched. Can be `mainFrame`,
+     * `subFrame`, `stylesheet`, `script`, `image`, `font`, `object`, `xhr`, `ping`,
+     * `cspReport`, `media` or `webSocket`.
+     */
+    types?: Array<'mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket'>;
     /**
      * Array of URL patterns that will be used to filter out the requests that do not
      * match the URL patterns.
