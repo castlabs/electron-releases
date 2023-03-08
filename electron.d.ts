@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-alpha.7+wvcus
+// Type definitions for Electron 24.0.0-beta.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -1431,7 +1431,7 @@ declare namespace Electron {
     show(): void;
     /**
      * Show the app's about panel options. These options can be overridden with
-     * `app.setAboutPanelOptions(options)`.
+     * `app.setAboutPanelOptions(options)`. This function runs asynchronously.
      */
     showAboutPanel(): void;
     /**
