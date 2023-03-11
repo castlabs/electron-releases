@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-beta.1+wvcus
+// Type definitions for Electron 24.0.0-beta.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -689,8 +689,7 @@ declare namespace Electron {
      * Emitted when the application has finished basic startup. On Windows and Linux,
      * the `will-finish-launching` event is the same as the `ready` event; on macOS,
      * this event represents the `applicationWillFinishLaunching` notification of
-     * `NSApplication`. You would usually set up listeners for the `open-file` and
-     * `open-url` events here, and start the crash reporter and auto updater.
+     * `NSApplication`.
      *
      * In most cases, you should do everything in the `ready` event handler.
      */
@@ -11896,13 +11895,14 @@ declare namespace Electron {
      * just like `postMessage`, so prototype chains will not be included. Sending
      * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects will throw an exception.
+     * :::warning
      *
-     * The renderer process can handle the message by listening to `channel` with the
-     * `ipcRenderer` module.
+     * Sending non-standard JavaScript types such as DOM objects or special Electron
+     * objects will throw an exception.
      *
-     * An example of sending messages from the main process to the renderer process:
+     * :::
+     *
+     * For additional reading, refer to Electron's IPC guide.
      */
     send(channel: string, ...args: any[]): void;
     /**
