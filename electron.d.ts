@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.1.3+wvcus
+// Type definitions for Electron 23.1.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -407,8 +407,6 @@ declare namespace Electron {
      * Emitted when the user wants to open a URL with the application. Your
      * application's `Info.plist` file must define the URL scheme within the
      * `CFBundleURLTypes` key, and set `NSPrincipalClass` to `AtomApplication`.
-     *
-     * You should call `event.preventDefault()` if you want to handle this event.
      *
      * As with the `open-file` event, be sure to register a listener for the `open-url`
      * event early in your application startup to detect if the the application being
@@ -11856,13 +11854,14 @@ declare namespace Electron {
      * just like `postMessage`, so prototype chains will not be included. Sending
      * Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.
      *
-     * > **NOTE**: Sending non-standard JavaScript types such as DOM objects or special
-     * Electron objects will throw an exception.
+     * :::warning
      *
-     * The renderer process can handle the message by listening to `channel` with the
-     * `ipcRenderer` module.
+     * Sending non-standard JavaScript types such as DOM objects or special Electron
+     * objects will throw an exception.
      *
-     * An example of sending messages from the main process to the renderer process:
+     * :::
+     *
+     * For additional reading, refer to Electron's IPC guide.
      */
     send(channel: string, ...args: any[]): void;
     /**
