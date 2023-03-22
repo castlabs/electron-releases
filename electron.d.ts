@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-beta.3+wvcus
+// Type definitions for Electron 24.0.0-beta.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -407,8 +407,6 @@ declare namespace Electron {
      * Emitted when the user wants to open a URL with the application. Your
      * application's `Info.plist` file must define the URL scheme within the
      * `CFBundleURLTypes` key, and set `NSPrincipalClass` to `AtomApplication`.
-     *
-     * You should call `event.preventDefault()` if you want to handle this event.
      *
      * As with the `open-file` event, be sure to register a listener for the `open-url`
      * event early in your application startup to detect if the the application being
@@ -16199,6 +16197,13 @@ declare namespace Electron {
      * Windows. If a WebFrameMain is specified, will capture audio from that frame.
      */
     audio?: (('loopback' | 'loopbackWithMute')) | (WebFrameMain);
+    /**
+     * If `audio` is a WebFrameMain and this is set to `true`, then local playback of
+     * audio will not be muted (e.g. using `MediaRecorder` to record `WebFrameMain`
+     * with this flag set to `true` will allow audio to pass through to the speakers
+     * while recording). Default is `false`.
+     */
+    enableLocalEcho?: boolean;
   }
 
   interface SystemMemoryInfo {
