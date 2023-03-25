@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-beta.4+wvcus
+// Type definitions for Electron 24.0.0-beta.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6378,8 +6378,8 @@ declare namespace Electron {
                                    */
                                   reply: string) => void): this;
     /**
-     * Emitted when the notification is shown to the user, note this could be fired
-     * multiple times as a notification can be shown multiple times through the
+     * Emitted when the notification is shown to the user. Note that this event can be
+     * fired multiple times as a notification can be shown multiple times through the
      * `show()` method.
      */
     on(event: 'show', listener: (event: Event) => void): this;
@@ -6399,10 +6399,9 @@ declare namespace Electron {
      */
     close(): void;
     /**
-     * Immediately shows the notification to the user, please note this means unlike
-     * the HTML5 Notification implementation, instantiating a `new Notification` does
-     * not immediately show it to the user, you need to call this method before the OS
-     * will display it.
+     * Immediately shows the notification to the user. Unlike the web notification API,
+     * instantiating a `new Notification()` does not immediately show it to the user.
+     * Instead, you need to call this method before the OS will display it.
      *
      * If the notification has been shown before, this method will dismiss the
      * previously shown notification and create a new one with identical properties.
@@ -15228,8 +15227,8 @@ declare namespace Electron {
 
   interface NotificationConstructorOptions {
     /**
-     * A title for the notification, which will be shown at the top of the notification
-     * window when it is shown.
+     * A title for the notification, which will be displayed at the top of the
+     * notification window when it is shown.
      */
     title?: string;
     /**
@@ -15244,7 +15243,8 @@ declare namespace Electron {
      */
     body?: string;
     /**
-     * Whether or not to emit an OS notification noise when showing the notification.
+     * Whether or not to suppress the OS notification noise when showing the
+     * notification.
      */
     silent?: boolean;
     /**
