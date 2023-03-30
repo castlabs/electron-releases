@@ -1,4 +1,4 @@
-// Type definitions for Electron 22.3.4+wvcus
+// Type definitions for Electron 22.3.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -11064,14 +11064,19 @@ declare namespace Electron {
     addListener(event: 'responsive', listener: Function): this;
     removeListener(event: 'responsive', listener: Function): this;
     /**
-     * Emitted when bluetooth device needs to be selected on call to
-     * `navigator.bluetooth.requestDevice`. To use `navigator.bluetooth` api
-     * `webBluetooth` should be enabled. If `event.preventDefault` is not called, first
-     * available device will be selected. `callback` should be called with `deviceId`
-     * to be selected, passing empty string to `callback` will cancel the request.
+     * Emitted when a bluetooth device needs to be selected when a call to
+     * `navigator.bluetooth.requestDevice` is made. `callback` should be called with
+     * the `deviceId` of the device to be selected.  Passing an empty string to
+     * `callback` will cancel the request.
      *
-     * If no event listener is added for this event, all bluetooth requests will be
-     * cancelled.
+     * If an event listener is not added for this event, or if `event.preventDefault`
+     * is not called when handling this event, the first available device will be
+     * automatically selected.
+     *
+     * Due to the nature of bluetooth, scanning for devices when
+     * `navigator.bluetooth.requestDevice` is called may take time and will cause
+     * `select-bluetooth-device` to fire multiple times until `callback` is called with
+     * either a device id or an empty string to cancel the request.
      */
     on(event: 'select-bluetooth-device', listener: (event: Event,
                                                     devices: BluetoothDevice[],
