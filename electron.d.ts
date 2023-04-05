@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0-beta.7+wvcus
+// Type definitions for Electron 24.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6049,9 +6049,12 @@ declare namespace Electron {
     /**
      * fulfilled with the file's thumbnail preview image, which is a NativeImage.
      *
+     * Note: The Windows implementation will ignore `size.height` and scale the height
+     * according to `size.width`.
+     *
      * @platform darwin,win32
      */
-    static createThumbnailFromPath(path: string, maxSize: Size): Promise<Electron.NativeImage>;
+    static createThumbnailFromPath(path: string, size: Size): Promise<Electron.NativeImage>;
     /**
      * Add an image representation for a specific scale factor. This can be used to
      * explicitly add different scale factor representations to an image. This can be
@@ -14383,10 +14386,9 @@ declare namespace Electron {
      */
     postBody?: PostBody;
     /**
-     * Can be `default`, `foreground-tab`, `background-tab`, `new-window`,
-     * `save-to-disk` and `other`.
+     * Can be `default`, `foreground-tab`, `background-tab`, `new-window` or `other`.
      */
-    disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'save-to-disk' | 'other');
+    disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'other');
   }
 
   interface DidFailLoadEvent extends Event {
@@ -14626,10 +14628,9 @@ declare namespace Electron {
      */
     features: string;
     /**
-     * Can be `default`, `foreground-tab`, `background-tab`, `new-window`,
-     * `save-to-disk` or `other`.
+     * Can be `default`, `foreground-tab`, `background-tab`, `new-window` or `other`.
      */
-    disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'save-to-disk' | 'other');
+    disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'other');
     /**
      * The referrer that will be passed to the new window. May or may not result in the
      * `Referer` header being sent, depending on the referrer policy.
