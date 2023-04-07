@@ -1,18 +1,23 @@
-// Type definitions for Electron 24.0.0+wvcus
+// Type definitions for Electron 25.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
-// Definitions: https://github.com/electron/electron-typescript-definitions
+// Definitions: https://github.com/electron/typescript-definitions
 
 /// <reference types="node" />
 
-type GlobalEvent = Event & { returnValue: any };
+type DOMEvent = Event;
+type GlobalResponse = Response;
+type GlobalRequest = Request;
 
 declare namespace Electron {
   const NodeEventEmitter: typeof import('events').EventEmitter;
 
-  class Accelerator extends String {
+  type Accelerator = string;
+  type Event<Params extends object = {}> = {
+    preventDefault: () => void;
+    readonly defaultPrevented: boolean;
+  } & Params;
 
-  }
   interface App extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/app
@@ -109,7 +114,7 @@ declare namespace Electron {
      * the application.
      *
      * **Note:** If application quit was initiated by `autoUpdater.quitAndInstall()`,
-     * then `before-quit` is emitted *after* emitting `close` event on all windows and
+     * then `before-quit` is emitted _after_ emitting `close` event on all windows and
      * closing them.
      *
      * **Note:** On Windows, this event will not be emitted if the app is closed due to
@@ -446,12 +451,24 @@ declare namespace Electron {
      * fulfilled when Electron is initialized.
      */
     on(event: 'ready', listener: (event: Event,
+                                  /**
+                                   * @platform darwin
+                                   */
                                   launchInfo: (Record<string, any>) | (NotificationResponse)) => void): this;
     once(event: 'ready', listener: (event: Event,
+                                  /**
+                                   * @platform darwin
+                                   */
                                   launchInfo: (Record<string, any>) | (NotificationResponse)) => void): this;
     addListener(event: 'ready', listener: (event: Event,
+                                  /**
+                                   * @platform darwin
+                                   */
                                   launchInfo: (Record<string, any>) | (NotificationResponse)) => void): this;
     removeListener(event: 'ready', listener: (event: Event,
+                                  /**
+                                   * @platform darwin
+                                   */
                                   launchInfo: (Record<string, any>) | (NotificationResponse)) => void): this;
     /**
      * Emitted when the renderer process unexpectedly disappears.  This is normally
@@ -978,21 +995,14 @@ declare namespace Electron {
      * Here are some examples of return values of the various language and locale APIs
      * with different configurations:
      *
-     * * For Windows, where the application locale is German, the regional format is
-     * Finnish (Finland), and the preferred system languages from most to least
-     * preferred are French (Canada), English (US), Simplified Chinese (China),
-     * Finnish, and Spanish (Latin America):
-     *   * `app.getLocale()` returns `'de'`
-     *   * `app.getSystemLocale()` returns `'fi-FI'`
-     *   * `app.getPreferredSystemLanguages()` returns `['fr-CA', 'en-US',
-     * 'zh-Hans-CN', 'fi', 'es-419']`
-     * * On macOS, where the application locale is German, the region is Finland, and
-     * the preferred system languages from most to least preferred are French (Canada),
+     * On Windows, given application locale is German, the regional format is Finnish
+     * (Finland), and the preferred system languages from most to least preferred are
+     * French (Canada), English (US), Simplified Chinese (China), Finnish, and Spanish
+     * (Latin America):
+     *
+     * On macOS, given the application locale is German, the region is Finland, and the
+     * preferred system languages from most to least preferred are French (Canada),
      * English (US), Simplified Chinese, and Spanish (Latin America):
-     *   * `app.getLocale()` returns `'de'`
-     *   * `app.getSystemLocale()` returns `'fr-FI'`
-     *   * `app.getPreferredSystemLanguages()` returns `['fr-CA', 'en-US',
-     * 'zh-Hans-FI', 'es-419']`
      *
      * Both the available languages and regions and the possible return values differ
      * between the two operating systems.
@@ -1005,7 +1015,7 @@ declare namespace Electron {
      * country code `FI` is used as the country code for preferred system languages
      * that do not have associated countries in the language name.
      */
-    getPreferredSystemLanguages(): Array<'app.getLocale()' | 'app.getSystemLocale()' | 'app.getPreferredSystemLanguages()' | 'app.getLocale()' | 'app.getSystemLocale()' | 'app.getPreferredSystemLanguages()'>;
+    getPreferredSystemLanguages(): string[];
     /**
      * The current system locale. On Windows and Linux, it is fetched using Chromium's
      * `i18n` library. On macOS, `[NSLocale currentLocale]` is used instead. To get the
@@ -1697,6 +1707,9 @@ declare namespace Electron {
      * @experimental
      */
     getBounds(): Rectangle;
+    /**
+     * @experimental
+     */
     setAutoResize(options: AutoResizeOptions): void;
     /**
      * Examples of valid `color` values:
@@ -1883,7 +1896,7 @@ declare namespace Electron {
     /**
      * Emitted once when the window is moved to a new position.
      *
-     * __Note__: On macOS this event is an alias of `move`.
+     * **Note**: On macOS this event is an alias of `move`.
      *
      * @platform darwin,win32
      */
@@ -2384,11 +2397,22 @@ declare namespace Electron {
      */
     getTitle(): string;
     /**
-     * The custom position for the traffic light buttons in frameless window.
+     * The custom position for the traffic light buttons in frameless window, `{ x: 0,
+     * y: 0 }` will be returned when there is no custom position.
      *
+     * > **Note** This function is deprecated. Use getWindowButtonPosition instead.
+     *
+     * @deprecated
      * @platform darwin
      */
     getTrafficLightPosition(): Point;
+    /**
+     * The custom position for the traffic light buttons in frameless window, `null`
+     * will be returned when there is no custom position.
+     *
+     * @platform darwin
+     */
+    getWindowButtonPosition(): (Point) | (null);
     /**
      * Whether the window has a shadow.
      */
@@ -2633,6 +2657,9 @@ declare namespace Electron {
      * Same as `webContents.reload`.
      */
     reload(): void;
+    /**
+     * @experimental
+     */
     removeBrowserView(browserView: BrowserView): void;
     /**
      * Remove the window's menu bar.
@@ -2744,6 +2771,9 @@ declare namespace Electron {
      * supplied will default to their current values.
      */
     setBounds(bounds: Partial<Rectangle>, animate?: boolean): void;
+    /**
+     * @experimental
+     */
     setBrowserView(browserView: (BrowserView) | (null)): void;
     /**
      * Sets whether the window can be manually closed by user. On Linux does nothing.
@@ -3039,8 +3069,12 @@ declare namespace Electron {
      */
     setTouchBar(touchBar: (TouchBar) | (null)): void;
     /**
-     * Set a custom position for the traffic light buttons in frameless window.
+     * Set a custom position for the traffic light buttons in frameless window. Passing
+     * `{ x: 0, y: 0 }` will reset the position to default.
      *
+     * > **Note** This function is deprecated. Use setWindowButtonPosition instead.
+     *
+     * @deprecated
      * @platform darwin
      */
     setTrafficLightPosition(position: Point): void;
@@ -3062,6 +3096,13 @@ declare namespace Electron {
      * @platform darwin,linux
      */
     setVisibleOnAllWorkspaces(visible: boolean, options?: VisibleOnAllWorkspacesOptions): void;
+    /**
+     * Set a custom position for the traffic light buttons in frameless window. Passing
+     * `null` will reset the position to default.
+     *
+     * @platform darwin
+     */
+    setWindowButtonPosition(position: (Point) | (null)): void;
     /**
      * Sets whether the window traffic light buttons should be visible.
      *
@@ -3458,7 +3499,7 @@ declare namespace Electron {
      * Sends the last chunk of the request data. Subsequent write or end operations
      * will not be allowed. The `finish` event is emitted just after the end operation.
      */
-    end(chunk?: (string) | (Buffer), encoding?: string, callback?: () => void): void;
+    end(chunk?: (string) | (Buffer), encoding?: string, callback?: () => void): this;
     /**
      * Continues any pending redirection. Can only be called during a `'redirect'`
      * event.
@@ -4839,13 +4880,6 @@ declare namespace Electron {
     savePath: string;
   }
 
-  interface Event extends GlobalEvent {
-
-    // Docs: https://electronjs.org/docs/api/structures/event
-
-    preventDefault: (() => void);
-  }
-
   interface Extension {
 
     // Docs: https://electronjs.org/docs/api/structures/extension
@@ -5325,7 +5359,7 @@ declare namespace Electron {
      * "reply" to the sent message in order to guarantee the reply will go to the
      * correct process and frame.
      */
-    reply: Function;
+    reply: (channel: string, ...args: any[]) => void;
     /**
      * Set this to the value to be returned in a synchronous message
      */
@@ -5657,7 +5691,7 @@ declare namespace Electron {
     size: number;
   }
 
-  class Menu {
+  class Menu extends NodeEventEmitter {
 
     // Docs: https://electronjs.org/docs/api/menu
 
@@ -6235,6 +6269,34 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/net
 
     /**
+     * see Response.
+     *
+     * Sends a request, similarly to how `fetch()` works in the renderer, using
+     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
+     * HTTP stack.
+     *
+     * Example:
+     *
+     * This method will issue requests from the default session. To send a `fetch`
+     * request from another session, use ses.fetch().
+     *
+     * See the MDN documentation for `fetch()` for more details.
+     *
+     * Limitations:
+     *
+     * * `net.fetch()` does not support the `data:` or `blob:` schemes.
+     * * The value of the `integrity` option is ignored.
+     * * The `.type` and `.url` values of the returned `Response` object are incorrect.
+     *
+     * By default, requests made with `net.fetch` can be made to custom protocols as
+     * well as `file:`, and will trigger webRequest handlers if present. When the
+     * non-standard `bypassCustomProtocolHandlers` option is set in RequestInit, custom
+     * protocol handlers will not be called for this request. This allows forwarding an
+     * intercepted request to the built-in handler. webRequest handlers will still be
+     * triggered when bypassing custom protocols.
+     */
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
+    /**
      * Whether there is currently internet connection.
      *
      * A return value of `false` is a pretty strong indicator that the user won't be
@@ -6291,6 +6353,9 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/notification
 
+    /**
+     * @platform darwin
+     */
     on(event: 'action', listener: (event: Event,
                                    /**
                                     * The index of the action that was activated.
@@ -6960,10 +7025,23 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/protocol
 
     /**
+     * Register a protocol handler for `scheme`. Requests made to URLs with this scheme
+     * will delegate to this handler to determine what response should be sent.
+     *
+     * Either a `Response` or a `Promise<Response>` can be returned.
+     *
+     * Example:
+     *
+     * See the MDN docs for `Request` and `Response` for more details.
+     */
+    handle(scheme: string, handler: (request: GlobalRequest) => (GlobalResponse) | (Promise<GlobalResponse>)): void;
+    /**
      * Whether the protocol was successfully intercepted
      *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `Buffer` as a response.
+     *
+     * @deprecated
      */
     interceptBufferProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (Buffer) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -6971,6 +7049,8 @@ declare namespace Electron {
      *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a file as a response.
+     *
+     * @deprecated
      */
     interceptFileProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -6978,6 +7058,8 @@ declare namespace Electron {
      *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a new HTTP request as a response.
+     *
+     * @deprecated
      */
     interceptHttpProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: ProtocolResponse) => void) => void): boolean;
     /**
@@ -6985,6 +7067,8 @@ declare namespace Electron {
      *
      * Same as `protocol.registerStreamProtocol`, except that it replaces an existing
      * protocol handler.
+     *
+     * @deprecated
      */
     interceptStreamProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (NodeJS.ReadableStream) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -6992,14 +7076,24 @@ declare namespace Electron {
      *
      * Intercepts `scheme` protocol and uses `handler` as the protocol's new handler
      * which sends a `string` as a response.
+     *
+     * @deprecated
      */
     interceptStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
+     * Whether `scheme` is already handled.
+     */
+    isProtocolHandled(scheme: string): boolean;
+    /**
      * Whether `scheme` is already intercepted.
+     *
+     * @deprecated
      */
     isProtocolIntercepted(scheme: string): boolean;
     /**
      * Whether `scheme` is already registered.
+     *
+     * @deprecated
      */
     isProtocolRegistered(scheme: string): boolean;
     /**
@@ -7012,6 +7106,8 @@ declare namespace Electron {
      * property.
      *
      * Example:
+     *
+     * @deprecated
      */
     registerBufferProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (Buffer) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -7027,6 +7123,8 @@ declare namespace Electron {
      *
      * By default the `scheme` is treated like `http:`, which is parsed differently
      * from protocols that follow the "generic URI syntax" like `file:`.
+     *
+     * @deprecated
      */
     registerFileProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -7036,6 +7134,8 @@ declare namespace Electron {
      *
      * The usage is the same with `registerFileProtocol`, except that the `callback`
      * should be called with an object that has the `url` property.
+     *
+     * @deprecated
      */
     registerHttpProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: ProtocolResponse) => void) => void): boolean;
     /**
@@ -7089,6 +7189,8 @@ declare namespace Electron {
      *
      * It is possible to pass any object that implements the readable stream API (emits
      * `data`/`end`/`error` events). For example, here's how a file could be returned:
+     *
+     * @deprecated
      */
     registerStreamProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (NodeJS.ReadableStream) | (ProtocolResponse)) => void) => void): boolean;
     /**
@@ -7099,18 +7201,28 @@ declare namespace Electron {
      * The usage is the same with `registerFileProtocol`, except that the `callback`
      * should be called with either a `string` or an object that has the `data`
      * property.
+     *
+     * @deprecated
      */
     registerStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
+    /**
+     * Removes a protocol handler registered with `protocol.handle`.
+     */
+    unhandle(scheme: string): void;
     /**
      * Whether the protocol was successfully unintercepted
      *
      * Remove the interceptor installed for `scheme` and restore its original handler.
+     *
+     * @deprecated
      */
     uninterceptProtocol(scheme: string): boolean;
     /**
      * Whether the protocol was successfully unregistered
      *
      * Unregisters the custom protocol of `scheme`.
+     *
+     * @deprecated
      */
     unregisterProtocol(scheme: string): boolean;
   }
@@ -7377,6 +7489,27 @@ declare namespace Electron {
      * HTTP Referrer URL.
      */
     url: string;
+  }
+
+  interface ResolvedEndpoint {
+
+    // Docs: https://electronjs.org/docs/api/structures/resolved-endpoint
+
+    address: string;
+    /**
+     * One of the following:
+     */
+    family: ('ipv4' | 'ipv6' | 'unspec');
+  }
+
+  interface ResolvedHost {
+
+    // Docs: https://electronjs.org/docs/api/structures/resolved-host
+
+    /**
+     * resolved DNS entries for the hostname
+     */
+    endpoints: ResolvedEndpoint[];
   }
 
   interface SafeStorage extends NodeJS.EventEmitter {
@@ -7678,6 +7811,18 @@ declare namespace Electron {
      * of an existing `Session` object.
      */
     static fromPartition(partition: string, options?: FromPartitionOptions): Session;
+    /**
+     * A session instance from the absolute path as specified by the `path` string.
+     * When there is an existing `Session` with the same absolute path, it will be
+     * returned; otherwise a new `Session` instance will be created with `options`. The
+     * call will throw an error if the path is not an absolute path. Additionally, an
+     * error will be thrown if an empty string is provided.
+     *
+     * To create a `Session` with `options`, you have to ensure the `Session` with the
+     * `path` has never been used before. There is no way to change the `options` of an
+     * existing `Session` object.
+     */
+    static fromPath(path: string, options?: FromPathOptions): Session;
     /**
      * A `Session` object, the default session object of the app.
      */
@@ -8148,6 +8293,34 @@ declare namespace Electron {
      */
     enableNetworkEmulation(options: EnableNetworkEmulationOptions): void;
     /**
+     * see Response.
+     *
+     * Sends a request, similarly to how `fetch()` works in the renderer, using
+     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
+     * HTTP stack.
+     *
+     * Example:
+     *
+     * See also `net.fetch()`, a convenience method which issues requests from the
+     * default session.
+     *
+     * See the MDN documentation for `fetch()` for more details.
+     *
+     * Limitations:
+     *
+     * * `net.fetch()` does not support the `data:` or `blob:` schemes.
+     * * The value of the `integrity` option is ignored.
+     * * The `.type` and `.url` values of the returned `Response` object are incorrect.
+     *
+     * By default, requests made with `net.fetch` can be made to custom protocols as
+     * well as `file:`, and will trigger webRequest handlers if present. When the
+     * non-standard `bypassCustomProtocolHandlers` option is set in RequestInit, custom
+     * protocol handlers will not be called for this request. This allows forwarding an
+     * intercepted request to the built-in handler. webRequest handlers will still be
+     * triggered when bypassing custom protocols.
+     */
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit): Promise<GlobalResponse>;
+    /**
      * Writes any unwritten DOMStorage data to disk.
      */
     flushStorageData(): void;
@@ -8262,6 +8435,10 @@ declare namespace Electron {
      * dictionary as well
      */
     removeWordFromSpellCheckerDictionary(word: string): boolean;
+    /**
+     * Resolves with the resolved IP addresses for the `host`.
+     */
+    resolveHost(host: string, options?: ResolveHostOptions): Promise<Electron.ResolvedHost>;
     /**
      * Resolves with the proxy information for `url`.
      */
@@ -8670,6 +8847,9 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/system-preferences
 
+    /**
+     * @platform win32
+     */
     on(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
                                                   * The new RGBA color the user assigned to be their system accent color.
@@ -8690,6 +8870,9 @@ declare namespace Electron {
                                                   * The new RGBA color the user assigned to be their system accent color.
                                                   */
                                                  newColor: string) => void): this;
+    /**
+     * @platform win32
+     */
     on(event: 'color-changed', listener: (event: Event) => void): this;
     once(event: 'color-changed', listener: (event: Event) => void): this;
     addListener(event: 'color-changed', listener: (event: Event) => void): this;
@@ -9131,7 +9314,7 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/thumbar-button
 
-    click: Function;
+    click: () => void;
     /**
      * Control specific states and behaviors of the button. By default, it is
      * `['enabled']`.
@@ -10041,15 +10224,16 @@ declare namespace Electron {
     /**
      * Number of bytes to read from `offset`. Defaults to `0`.
      */
-    length: number;
+    length?: number;
     /**
-     * Last Modification time in number of seconds since the UNIX epoch.
+     * Last Modification time in number of seconds since the UNIX epoch. Defaults to
+     * `0`.
      */
-    modificationTime: number;
+    modificationTime?: number;
     /**
      * Defaults to `0`.
      */
-    offset: number;
+    offset?: number;
     /**
      * `file`.
      */
@@ -10265,6 +10449,13 @@ declare namespace Electron {
      * `null`.
      */
     static getFocusedWebContents(): WebContents;
+    /**
+     * Emitted when media becomes audible or inaudible.
+     */
+    on(event: 'audio-state-changed', listener: (event: Event<WebContentsAudioStateChangedEventParams>) => void): this;
+    once(event: 'audio-state-changed', listener: (event: Event<WebContentsAudioStateChangedEventParams>) => void): this;
+    addListener(event: 'audio-state-changed', listener: (event: Event<WebContentsAudioStateChangedEventParams>) => void): this;
+    removeListener(event: 'audio-state-changed', listener: (event: Event<WebContentsAudioStateChangedEventParams>) => void): this;
     /**
      * Emitted before dispatching the `keydown` and `keyup` events in the page. Calling
      * `event.preventDefault` will prevent the page `keydown`/`keyup` events and the
@@ -10885,29 +11076,89 @@ declare namespace Electron {
      * This event cannot be prevented, if you want to prevent redirects you should
      * checkout out the `will-redirect` event above.
      */
-    on(event: 'did-redirect-navigation', listener: (event: Event,
+    on(event: 'did-redirect-navigation', listener: (details: Event<WebContentsDidRedirectNavigationEventParams>,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     url: string,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isInPlace: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isMainFrame: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameProcessId: number,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameRoutingId: number) => void): this;
-    once(event: 'did-redirect-navigation', listener: (event: Event,
+    once(event: 'did-redirect-navigation', listener: (details: Event<WebContentsDidRedirectNavigationEventParams>,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     url: string,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isInPlace: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isMainFrame: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameProcessId: number,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameRoutingId: number) => void): this;
-    addListener(event: 'did-redirect-navigation', listener: (event: Event,
+    addListener(event: 'did-redirect-navigation', listener: (details: Event<WebContentsDidRedirectNavigationEventParams>,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     url: string,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isInPlace: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isMainFrame: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameProcessId: number,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameRoutingId: number) => void): this;
-    removeListener(event: 'did-redirect-navigation', listener: (event: Event,
+    removeListener(event: 'did-redirect-navigation', listener: (details: Event<WebContentsDidRedirectNavigationEventParams>,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     url: string,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isInPlace: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     isMainFrame: boolean,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameProcessId: number,
+                                                    /**
+                                                     * @deprecated
+                                                     */
                                                     frameRoutingId: number) => void): this;
     /**
      * Corresponds to the points in time when the spinner of the tab started spinning.
@@ -10917,32 +11168,91 @@ declare namespace Electron {
     addListener(event: 'did-start-loading', listener: Function): this;
     removeListener(event: 'did-start-loading', listener: Function): this;
     /**
-     * Emitted when any frame (including main) starts navigating. `isInPlace` will be
-     * `true` for in-page navigations.
+     * Emitted when any frame (including main) starts navigating.
      */
-    on(event: 'did-start-navigation', listener: (event: Event,
+    on(event: 'did-start-navigation', listener: (details: Event<WebContentsDidStartNavigationEventParams>,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  url: string,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isInPlace: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isMainFrame: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameProcessId: number,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameRoutingId: number) => void): this;
-    once(event: 'did-start-navigation', listener: (event: Event,
+    once(event: 'did-start-navigation', listener: (details: Event<WebContentsDidStartNavigationEventParams>,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  url: string,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isInPlace: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isMainFrame: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameProcessId: number,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameRoutingId: number) => void): this;
-    addListener(event: 'did-start-navigation', listener: (event: Event,
+    addListener(event: 'did-start-navigation', listener: (details: Event<WebContentsDidStartNavigationEventParams>,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  url: string,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isInPlace: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isMainFrame: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameProcessId: number,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameRoutingId: number) => void): this;
-    removeListener(event: 'did-start-navigation', listener: (event: Event,
+    removeListener(event: 'did-start-navigation', listener: (details: Event<WebContentsDidStartNavigationEventParams>,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  url: string,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isInPlace: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  isMainFrame: boolean,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameProcessId: number,
+                                                 /**
+                                                  * @deprecated
+                                                  */
                                                  frameRoutingId: number) => void): this;
     /**
      * Corresponds to the points in time when the spinner of the tab stopped spinning.
@@ -11023,16 +11333,16 @@ declare namespace Electron {
      * See also `webContents.ipc`, which provides an `IpcMain`-like interface for
      * responding to IPC messages specifically from this WebContents.
      */
-    on(event: 'ipc-message', listener: (event: Event,
+    on(event: 'ipc-message', listener: (event: IpcMainEvent,
                                         channel: string,
                                         ...args: any[]) => void): this;
-    once(event: 'ipc-message', listener: (event: Event,
+    once(event: 'ipc-message', listener: (event: IpcMainEvent,
                                         channel: string,
                                         ...args: any[]) => void): this;
-    addListener(event: 'ipc-message', listener: (event: Event,
+    addListener(event: 'ipc-message', listener: (event: IpcMainEvent,
                                         channel: string,
                                         ...args: any[]) => void): this;
-    removeListener(event: 'ipc-message', listener: (event: Event,
+    removeListener(event: 'ipc-message', listener: (event: IpcMainEvent,
                                         channel: string,
                                         ...args: any[]) => void): this;
     /**
@@ -11042,16 +11352,16 @@ declare namespace Electron {
      * See also `webContents.ipc`, which provides an `IpcMain`-like interface for
      * responding to IPC messages specifically from this WebContents.
      */
-    on(event: 'ipc-message-sync', listener: (event: Event,
+    on(event: 'ipc-message-sync', listener: (event: IpcMainEvent,
                                              channel: string,
                                              ...args: any[]) => void): this;
-    once(event: 'ipc-message-sync', listener: (event: Event,
+    once(event: 'ipc-message-sync', listener: (event: IpcMainEvent,
                                              channel: string,
                                              ...args: any[]) => void): this;
-    addListener(event: 'ipc-message-sync', listener: (event: Event,
+    addListener(event: 'ipc-message-sync', listener: (event: IpcMainEvent,
                                              channel: string,
                                              ...args: any[]) => void): this;
-    removeListener(event: 'ipc-message-sync', listener: (event: Event,
+    removeListener(event: 'ipc-message-sync', listener: (event: IpcMainEvent,
                                              channel: string,
                                              ...args: any[]) => void): this;
     /**
@@ -11362,8 +11672,13 @@ declare namespace Electron {
                                                  */
                                                 params: Record<string, string>) => void): this;
     /**
-     * Emitted when a user or the page wants to start navigation. It can happen when
-     * the `window.location` object is changed or a user clicks a link in the page.
+     * Emitted when a user or the page wants to start navigation in any frame. It can
+     * happen when the `window.location` object is changed or a user clicks a link in
+     * the page.
+     *
+     * Unlike `will-navigate`, `will-frame-navigate` is fired when the main frame or
+     * any of its subframes attempts to navigate. When the navigation event comes from
+     * the main frame, `isMainFrame` will be `true`.
      *
      * This event will not emit when the navigation is started programmatically with
      * APIs like `webContents.loadURL` and `webContents.back`.
@@ -11374,14 +11689,108 @@ declare namespace Electron {
      *
      * Calling `event.preventDefault()` will prevent the navigation.
      */
-    on(event: 'will-navigate', listener: (event: Event,
-                                          url: string) => void): this;
-    once(event: 'will-navigate', listener: (event: Event,
-                                          url: string) => void): this;
-    addListener(event: 'will-navigate', listener: (event: Event,
-                                          url: string) => void): this;
-    removeListener(event: 'will-navigate', listener: (event: Event,
-                                          url: string) => void): this;
+    on(event: 'will-frame-navigate', listener: (details: Event<WebContentsWillFrameNavigateEventParams>) => void): this;
+    once(event: 'will-frame-navigate', listener: (details: Event<WebContentsWillFrameNavigateEventParams>) => void): this;
+    addListener(event: 'will-frame-navigate', listener: (details: Event<WebContentsWillFrameNavigateEventParams>) => void): this;
+    removeListener(event: 'will-frame-navigate', listener: (details: Event<WebContentsWillFrameNavigateEventParams>) => void): this;
+    /**
+     * Emitted when a user or the page wants to start navigation on the main frame. It
+     * can happen when the `window.location` object is changed or a user clicks a link
+     * in the page.
+     *
+     * This event will not emit when the navigation is started programmatically with
+     * APIs like `webContents.loadURL` and `webContents.back`.
+     *
+     * It is also not emitted for in-page navigations, such as clicking anchor links or
+     * updating the `window.location.hash`. Use `did-navigate-in-page` event for this
+     * purpose.
+     *
+     * Calling `event.preventDefault()` will prevent the navigation.
+     */
+    on(event: 'will-navigate', listener: (details: Event<WebContentsWillNavigateEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          url: string,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameRoutingId: number) => void): this;
+    once(event: 'will-navigate', listener: (details: Event<WebContentsWillNavigateEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          url: string,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameRoutingId: number) => void): this;
+    addListener(event: 'will-navigate', listener: (details: Event<WebContentsWillNavigateEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          url: string,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameRoutingId: number) => void): this;
+    removeListener(event: 'will-navigate', listener: (details: Event<WebContentsWillNavigateEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          url: string,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
+                                          frameRoutingId: number) => void): this;
     /**
      * Emitted when a `beforeunload` event handler is attempting to cancel a page
      * unload.
@@ -11407,29 +11816,89 @@ declare namespace Electron {
      * Calling `event.preventDefault()` will prevent the navigation (not just the
      * redirect).
      */
-    on(event: 'will-redirect', listener: (event: Event,
+    on(event: 'will-redirect', listener: (details: Event<WebContentsWillRedirectEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
                                           url: string,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameRoutingId: number) => void): this;
-    once(event: 'will-redirect', listener: (event: Event,
+    once(event: 'will-redirect', listener: (details: Event<WebContentsWillRedirectEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
                                           url: string,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameRoutingId: number) => void): this;
-    addListener(event: 'will-redirect', listener: (event: Event,
+    addListener(event: 'will-redirect', listener: (details: Event<WebContentsWillRedirectEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
                                           url: string,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameRoutingId: number) => void): this;
-    removeListener(event: 'will-redirect', listener: (event: Event,
+    removeListener(event: 'will-redirect', listener: (details: Event<WebContentsWillRedirectEventParams>,
+                                          /**
+                                           * @deprecated
+                                           */
                                           url: string,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isInPlace: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           isMainFrame: boolean,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameProcessId: number,
+                                          /**
+                                           * @deprecated
+                                           */
                                           frameRoutingId: number) => void): this;
     /**
      * Emitted when the user is requesting to change the zoom level using the mouse
@@ -11607,7 +12076,7 @@ declare namespace Electron {
      */
     getBackgroundThrottling(): boolean;
     /**
-     * If *offscreen rendering* is enabled returns the current frame rate.
+     * If _offscreen rendering_ is enabled returns the current frame rate.
      */
     getFrameRate(): number;
     /**
@@ -11718,7 +12187,7 @@ declare namespace Electron {
     /**
      * Schedules a full repaint of the window this web contents is in.
      *
-     * If *offscreen rendering* is enabled invalidates the frame and generates a new
+     * If _offscreen rendering_ is enabled invalidates the frame and generates a new
      * one through the `'paint'` event.
      */
     invalidate(): void;
@@ -11765,11 +12234,11 @@ declare namespace Electron {
      */
     isLoadingMainFrame(): boolean;
     /**
-     * Indicates whether *offscreen rendering* is enabled.
+     * Indicates whether _offscreen rendering_ is enabled.
      */
     isOffscreen(): boolean;
     /**
-     * If *offscreen rendering* is enabled returns whether it is currently painting.
+     * If _offscreen rendering_ is enabled returns whether it is currently painting.
      */
     isPainting(): boolean;
     /**
@@ -11964,7 +12433,7 @@ declare namespace Electron {
      */
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
-     * If *offscreen rendering* is enabled sets the frame rate to the specified number.
+     * If _offscreen rendering_ is enabled sets the frame rate to the specified number.
      * Only values between 1 and 240 are accepted.
      */
     setFrameRate(fps: number): void;
@@ -12037,7 +12506,7 @@ declare namespace Electron {
      */
     startDrag(item: Item): void;
     /**
-     * If *offscreen rendering* is enabled and not painting, start painting.
+     * If _offscreen rendering_ is enabled and not painting, start painting.
      */
     startPainting(): void;
     /**
@@ -12049,7 +12518,7 @@ declare namespace Electron {
      */
     stopFindInPage(action: 'clearSelection' | 'keepSelection' | 'activateSelection'): void;
     /**
-     * If *offscreen rendering* is enabled and painting, stop painting.
+     * If _offscreen rendering_ is enabled and painting, stop painting.
      */
     stopPainting(): void;
     /**
@@ -12098,7 +12567,7 @@ declare namespace Electron {
      * An `Integer` property that sets the frame rate of the web contents to the
      * specified number. Only values between 1 and 240 are accepted.
      *
-     * Only applicable if *offscreen rendering* is enabled.
+     * Only applicable if _offscreen rendering_ is enabled.
      */
     frameRate: number;
     /**
@@ -12179,7 +12648,7 @@ declare namespace Electron {
     zoomLevel: number;
   }
 
-  interface WebFrame extends NodeJS.EventEmitter {
+  interface WebFrame {
 
     // Docs: https://electronjs.org/docs/api/web-frame
 
@@ -12683,8 +13152,8 @@ declare namespace Electron {
      * Fired when the navigation is done, i.e. the spinner of the tab will stop
      * spinning, and the `onload` event is dispatched.
      */
-    addEventListener(event: 'did-finish-load', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'did-finish-load', listener: (event: Event) => void): this;
+    addEventListener(event: 'did-finish-load', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-finish-load', listener: (event: DOMEvent) => void): this;
     /**
      * This event is like `did-finish-load`, but fired when the load failed or was
      * cancelled, e.g. `window.stop()` is invoked.
@@ -12699,23 +13168,23 @@ declare namespace Electron {
     /**
      * Corresponds to the points in time when the spinner of the tab starts spinning.
      */
-    addEventListener(event: 'did-start-loading', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'did-start-loading', listener: (event: Event) => void): this;
+    addEventListener(event: 'did-start-loading', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-start-loading', listener: (event: DOMEvent) => void): this;
     /**
      * Corresponds to the points in time when the spinner of the tab stops spinning.
      */
-    addEventListener(event: 'did-stop-loading', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'did-stop-loading', listener: (event: Event) => void): this;
+    addEventListener(event: 'did-stop-loading', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-stop-loading', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when attached to the embedder web contents.
      */
-    addEventListener(event: 'did-attach', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'did-attach', listener: (event: Event) => void): this;
+    addEventListener(event: 'did-attach', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'did-attach', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when document in the given frame is loaded.
      */
-    addEventListener(event: 'dom-ready', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'dom-ready', listener: (event: Event) => void): this;
+    addEventListener(event: 'dom-ready', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'dom-ready', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when page title is set during navigation. `explicitSet` is false when
      * title is synthesized from file url.
@@ -12730,13 +13199,13 @@ declare namespace Electron {
     /**
      * Fired when page enters fullscreen triggered by HTML API.
      */
-    addEventListener(event: 'enter-html-full-screen', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'enter-html-full-screen', listener: (event: Event) => void): this;
+    addEventListener(event: 'enter-html-full-screen', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'enter-html-full-screen', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when page leaves fullscreen triggered by HTML API.
      */
-    addEventListener(event: 'leave-html-full-screen', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'leave-html-full-screen', listener: (event: Event) => void): this;
+    addEventListener(event: 'leave-html-full-screen', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'leave-html-full-screen', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when the guest window logs a console message.
      *
@@ -12761,10 +13230,26 @@ declare namespace Electron {
      * or updating the `window.location.hash`. Use `did-navigate-in-page` event for
      * this purpose.
      *
-     * Calling `event.preventDefault()` does __NOT__ have any effect.
+     * Calling `event.preventDefault()` does **NOT** have any effect.
      */
     addEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void): this;
+    /**
+     * Emitted when a user or the page wants to start navigation anywhere in the
+     * `<webview>` or any frames embedded within. It can happen when the
+     * `window.location` object is changed or a user clicks a link in the page.
+     *
+     * This event will not emit when the navigation is started programmatically with
+     * APIs like `<webview>.loadURL` and `<webview>.back`.
+     *
+     * It is also not emitted during in-page navigation, such as clicking anchor links
+     * or updating the `window.location.hash`. Use `did-navigate-in-page` event for
+     * this purpose.
+     *
+     * Calling `event.preventDefault()` does **NOT** have any effect.
+     */
+    addEventListener(event: 'will-frame-navigate', listener: (event: WillFrameNavigateEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'will-frame-navigate', listener: (event: WillFrameNavigateEvent) => void): this;
     /**
      * Emitted when any frame (including main) starts navigating. `isInPlace` will be
      * `true` for in-page navigations.
@@ -12810,8 +13295,8 @@ declare namespace Electron {
      * The following example code navigates the `webview` to `about:blank` when the
      * guest attempts to close itself.
      */
-    addEventListener(event: 'close', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'close', listener: (event: Event) => void): this;
+    addEventListener(event: 'close', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'close', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when the guest page has sent an asynchronous message to embedder page.
      *
@@ -12823,8 +13308,8 @@ declare namespace Electron {
     /**
      * Fired when the renderer process is crashed.
      */
-    addEventListener(event: 'crashed', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'crashed', listener: (event: Event) => void): this;
+    addEventListener(event: 'crashed', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'crashed', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when a plugin process is crashed.
      */
@@ -12833,18 +13318,18 @@ declare namespace Electron {
     /**
      * Fired when the WebContents is destroyed.
      */
-    addEventListener(event: 'destroyed', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'destroyed', listener: (event: Event) => void): this;
+    addEventListener(event: 'destroyed', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'destroyed', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when media starts playing.
      */
-    addEventListener(event: 'media-started-playing', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'media-started-playing', listener: (event: Event) => void): this;
+    addEventListener(event: 'media-started-playing', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'media-started-playing', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when media is paused or done playing.
      */
-    addEventListener(event: 'media-paused', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'media-paused', listener: (event: Event) => void): this;
+    addEventListener(event: 'media-paused', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'media-paused', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when a page's theme color changes. This is usually due to encountering a
      * meta tag:
@@ -12865,18 +13350,18 @@ declare namespace Electron {
     /**
      * Emitted when DevTools is opened.
      */
-    addEventListener(event: 'devtools-opened', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'devtools-opened', listener: (event: Event) => void): this;
+    addEventListener(event: 'devtools-opened', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'devtools-opened', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when DevTools is closed.
      */
-    addEventListener(event: 'devtools-closed', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'devtools-closed', listener: (event: Event) => void): this;
+    addEventListener(event: 'devtools-closed', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'devtools-closed', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when DevTools is focused / opened.
      */
-    addEventListener(event: 'devtools-focused', listener: (event: Event) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'devtools-focused', listener: (event: Event) => void): this;
+    addEventListener(event: 'devtools-focused', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'devtools-focused', listener: (event: DOMEvent) => void): this;
     /**
      * Emitted when there is a new context menu that needs to be handled.
      */
@@ -13847,15 +14332,16 @@ declare namespace Electron {
      */
     partition?: string;
     /**
-     * Can be `include` or `omit`. Whether to send credentials with this request. If
-     * set to `include`, credentials from the session associated with the request will
-     * be used. If set to `omit`, credentials will not be sent with the request (and
-     * the `'login'` event will not be triggered in the event of a 401). This matches
-     * the behavior of the fetch option of the same name. If this option is not
-     * specified, authentication data from the session will be sent, and cookies will
-     * not be sent (unless `useSessionCookies` is set).
+     * Can be `include`, `omit` or `same-origin`. Whether to send credentials with this
+     * request. If set to `include`, credentials from the session associated with the
+     * request will be used. If set to `omit`, credentials will not be sent with the
+     * request (and the `'login'` event will not be triggered in the event of a 401).
+     * If set to `same-origin`, `origin` must also be specified. This matches the
+     * behavior of the fetch option of the same name. If this option is not specified,
+     * authentication data from the session will be sent, and cookies will not be sent
+     * (unless `useSessionCookies` is set).
      */
-    credentials?: ('include' | 'omit');
+    credentials?: ('include' | 'omit' | 'same-origin');
     /**
      * Whether to send cookies with this request from the provided session. If
      * `credentials` is specified, this option has no effect. Default is `false`.
@@ -13894,6 +14380,18 @@ declare namespace Electron {
      * The origin URL of the request.
      */
     origin?: string;
+    /**
+     * can be `""`, `no-referrer`, `no-referrer-when-downgrade`, `origin`,
+     * `origin-when-cross-origin`, `unsafe-url`, `same-origin`, `strict-origin`, or
+     * `strict-origin-when-cross-origin`. Defaults to
+     * `strict-origin-when-cross-origin`.
+     */
+    referrerPolicy?: string;
+    /**
+     * can be `default`, `no-store`, `reload`, `no-cache`, `force-cache` or
+     * `only-if-cached`.
+     */
+    cache?: ('default' | 'no-store' | 'reload' | 'no-cache' | 'force-cache' | 'only-if-cached');
   }
 
   interface CloseOpts {
@@ -13959,7 +14457,7 @@ declare namespace Electron {
     enableAdditionalDnsQueryTypes?: boolean;
   }
 
-  interface ConsoleMessageEvent extends Event {
+  interface ConsoleMessageEvent extends DOMEvent {
     /**
      * The log level, from 0 to 3. In order it matches `verbose`, `info`, `warning` and
      * `error`.
@@ -13976,7 +14474,7 @@ declare namespace Electron {
     sourceId: string;
   }
 
-  interface ContextMenuEvent extends Event {
+  interface ContextMenuEvent extends DOMEvent {
     params: Params;
   }
 
@@ -14346,14 +14844,14 @@ declare namespace Electron {
     device: (HIDDevice) | (SerialPort);
   }
 
-  interface DevtoolsOpenUrlEvent extends Event {
+  interface DevtoolsOpenUrlEvent extends DOMEvent {
     /**
      * URL of the link that was clicked or selected.
      */
     url: string;
   }
 
-  interface DidChangeThemeColorEvent extends Event {
+  interface DidChangeThemeColorEvent extends DOMEvent {
     themeColor: string;
   }
 
@@ -14391,18 +14889,18 @@ declare namespace Electron {
     disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'other');
   }
 
-  interface DidFailLoadEvent extends Event {
+  interface DidFailLoadEvent extends DOMEvent {
     errorCode: number;
     errorDescription: string;
     validatedURL: string;
     isMainFrame: boolean;
   }
 
-  interface DidFrameFinishLoadEvent extends Event {
+  interface DidFrameFinishLoadEvent extends DOMEvent {
     isMainFrame: boolean;
   }
 
-  interface DidFrameNavigateEvent extends Event {
+  interface DidFrameNavigateEvent extends DOMEvent {
     url: string;
     /**
      * -1 for non HTTP navigations
@@ -14417,16 +14915,16 @@ declare namespace Electron {
     frameRoutingId: number;
   }
 
-  interface DidNavigateEvent extends Event {
+  interface DidNavigateEvent extends DOMEvent {
     url: string;
   }
 
-  interface DidNavigateInPageEvent extends Event {
+  interface DidNavigateInPageEvent extends DOMEvent {
     isMainFrame: boolean;
     url: string;
   }
 
-  interface DidRedirectNavigationEvent extends Event {
+  interface DidRedirectNavigationEvent extends DOMEvent {
     url: string;
     isInPlace: boolean;
     isMainFrame: boolean;
@@ -14434,7 +14932,7 @@ declare namespace Electron {
     frameRoutingId: number;
   }
 
-  interface DidStartNavigationEvent extends Event {
+  interface DidStartNavigationEvent extends DOMEvent {
     url: string;
     isInPlace: boolean;
     isMainFrame: boolean;
@@ -14597,7 +15095,7 @@ declare namespace Electron {
     allowLoadingUnsignedLibraries?: boolean;
   }
 
-  interface FoundInPageEvent extends Event {
+  interface FoundInPageEvent extends DOMEvent {
     result: FoundInPageResult;
   }
 
@@ -14606,6 +15104,13 @@ declare namespace Electron {
   }
 
   interface FromPartitionOptions {
+    /**
+     * Whether to enable cache.
+     */
+    cache: boolean;
+  }
+
+  interface FromPathOptions {
     /**
      * Whether to enable cache.
      */
@@ -14780,7 +15285,7 @@ declare namespace Electron {
     cssOrigin?: string;
   }
 
-  interface IpcMessageEvent extends Event {
+  interface IpcMessageEvent extends DOMEvent {
     /**
      * pair of `[processId, frameId]`.
      */
@@ -14820,7 +15325,7 @@ declare namespace Electron {
     removedItems: JumpListItem[];
   }
 
-  interface LoadCommitEvent extends Event {
+  interface LoadCommitEvent extends DOMEvent {
     url: string;
     isMainFrame: boolean;
   }
@@ -15597,14 +16102,14 @@ declare namespace Electron {
     stayAwake?: boolean;
   }
 
-  interface PageFaviconUpdatedEvent extends Event {
+  interface PageFaviconUpdatedEvent extends DOMEvent {
     /**
      * Array of URLs.
      */
     favicons: string[];
   }
 
-  interface PageTitleUpdatedEvent extends Event {
+  interface PageTitleUpdatedEvent extends DOMEvent {
     title: string;
     explicitSet: boolean;
   }
@@ -15706,7 +16211,7 @@ declare namespace Electron {
     isMainFrame: boolean;
   }
 
-  interface PluginCrashedEvent extends Event {
+  interface PluginCrashedEvent extends DOMEvent {
     name: string;
     version: string;
   }
@@ -15923,6 +16428,32 @@ declare namespace Electron {
      * three methods to be mapped to the same algorithm on a given platform.
      */
     quality?: string;
+  }
+
+  interface ResolveHostOptions {
+    /**
+     * Requested DNS query type. If unspecified, resolver will pick A or AAAA (or both)
+     * based on IPv4/IPv6 settings:
+     */
+    queryType?: ('A' | 'AAAA');
+    /**
+     * The source to use for resolved addresses. Default allows the resolver to pick an
+     * appropriate source. Only affects use of big external sources (e.g. calling the
+     * system for resolution or using DNS). Even if a source is specified, results can
+     * still come from cache, resolving "localhost" or IP literals, etc. One of the
+     * following values:
+     */
+    source?: ('any' | 'system' | 'dns' | 'mdns' | 'localOnly');
+    /**
+     * Indicates what DNS cache entries, if any, can be used to provide a response. One
+     * of the following values:
+     */
+    cacheUsage?: ('allowed' | 'staleAllowed' | 'disallowed');
+    /**
+     * Controls the resolver's Secure DNS behavior for this request. One of the
+     * following values:
+     */
+    secureDnsPolicy?: ('allow' | 'disable');
   }
 
   interface ResourceUsage {
@@ -16476,7 +17007,7 @@ declare namespace Electron {
     percentage: number;
   }
 
-  interface UpdateTargetUrlEvent extends Event {
+  interface UpdateTargetUrlEvent extends DOMEvent {
     url: string;
   }
 
@@ -16536,6 +17067,69 @@ declare namespace Electron {
      * @platform darwin
      */
     skipTransformProcessType?: boolean;
+  }
+
+  interface WebContentsAudioStateChangedEventParams {
+    /**
+     * True if one or more frames or child `webContents` are emitting audio.
+     */
+    audible: boolean;
+  }
+
+  interface WebContentsDidRedirectNavigationEventParams {
+    /**
+     * The URL the frame is navigating to.
+     */
+    url: string;
+    /**
+     * Whether the navigation happened without changing document. Examples of same
+     * document navigations are reference fragment navigations, pushState/replaceState,
+     * and same page history navigation.
+     */
+    isSameDocument: boolean;
+    /**
+     * True if the navigation is taking place in a main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The frame to be navigated.
+     */
+    frame: WebFrameMain;
+    /**
+     * The frame which initiated the navigation, which can be a parent frame (e.g. via
+     * `window.open` with a frame's name), or null if the navigation was not initiated
+     * by a frame. This can also be null if the initiating frame was deleted before the
+     * event was emitted.
+     */
+    initiator?: WebFrameMain;
+  }
+
+  interface WebContentsDidStartNavigationEventParams {
+    /**
+     * The URL the frame is navigating to.
+     */
+    url: string;
+    /**
+     * Whether the navigation happened without changing document. Examples of same
+     * document navigations are reference fragment navigations, pushState/replaceState,
+     * and same page history navigation.
+     */
+    isSameDocument: boolean;
+    /**
+     * True if the navigation is taking place in a main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The frame to be navigated.
+     */
+    frame: WebFrameMain;
+    /**
+     * The frame which initiated the navigation, which can be a parent frame (e.g. via
+     * `window.open` with a frame's name), or null if the navigation was not initiated
+     * by a frame. This can also be null if the initiating frame was deleted before the
+     * event was emitted.
+     */
+    initiator?: WebFrameMain;
   }
 
   interface WebContentsPrintOptions {
@@ -16604,6 +17198,84 @@ declare namespace Electron {
     pageSize?: (string) | (Size);
   }
 
+  interface WebContentsWillFrameNavigateEventParams {
+    /**
+     * The URL the frame is navigating to.
+     */
+    url: string;
+    /**
+     * True if the navigation is taking place in a main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The frame to be navigated.
+     */
+    frame: WebFrameMain;
+    /**
+     * The frame which initiated the navigation, which can be a parent frame (e.g. via
+     * `window.open` with a frame's name), or null if the navigation was not initiated
+     * by a frame. This can also be null if the initiating frame was deleted before the
+     * event was emitted.
+     */
+    initiator?: WebFrameMain;
+  }
+
+  interface WebContentsWillNavigateEventParams {
+    /**
+     * The URL the frame is navigating to.
+     */
+    url: string;
+    /**
+     * Whether the navigation happened without changing document. Examples of same
+     * document navigations are reference fragment navigations, pushState/replaceState,
+     * and same page history navigation.
+     */
+    isSameDocument: boolean;
+    /**
+     * True if the navigation is taking place in a main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The frame to be navigated.
+     */
+    frame: WebFrameMain;
+    /**
+     * The frame which initiated the navigation, which can be a parent frame (e.g. via
+     * `window.open` with a frame's name), or null if the navigation was not initiated
+     * by a frame. This can also be null if the initiating frame was deleted before the
+     * event was emitted.
+     */
+    initiator?: WebFrameMain;
+  }
+
+  interface WebContentsWillRedirectEventParams {
+    /**
+     * The URL the frame is navigating to.
+     */
+    url: string;
+    /**
+     * Whether the navigation happened without changing document. Examples of same
+     * document navigations are reference fragment navigations, pushState/replaceState,
+     * and same page history navigation.
+     */
+    isSameDocument: boolean;
+    /**
+     * True if the navigation is taking place in a main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The frame to be navigated.
+     */
+    frame: WebFrameMain;
+    /**
+     * The frame which initiated the navigation, which can be a parent frame (e.g. via
+     * `window.open` with a frame's name), or null if the navigation was not initiated
+     * by a frame. This can also be null if the initiating frame was deleted before the
+     * event was emitted.
+     */
+    initiator?: WebFrameMain;
+  }
+
   interface WebviewTagPrintOptions {
     /**
      * Don't ask user for print settings. Default is `false`.
@@ -16669,7 +17341,14 @@ declare namespace Electron {
     pageSize?: (string) | (Size);
   }
 
-  interface WillNavigateEvent extends Event {
+  interface WillFrameNavigateEvent extends DOMEvent {
+    url: string;
+    isMainFrame: boolean;
+    frameProcessId: number;
+    frameRoutingId: number;
+  }
+
+  interface WillNavigateEvent extends DOMEvent {
     url: string;
   }
 
@@ -17311,6 +17990,7 @@ declare namespace Electron {
 
 
   namespace Common {
+    type Event<Params extends object = {}> = Electron.Event<Params>;
     const clipboard: Clipboard;
     type Clipboard = Electron.Clipboard;
     const crashReporter: CrashReporter;
@@ -17375,6 +18055,7 @@ declare namespace Electron {
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
+    type FromPathOptions = Electron.FromPathOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
@@ -17438,6 +18119,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -17475,8 +18157,15 @@ declare namespace Electron {
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
+    type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
+    type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
+    type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
+    type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
+    type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
+    type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
@@ -17501,7 +18190,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type Event = Electron.Event;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -17538,6 +18226,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -17561,6 +18251,7 @@ declare namespace Electron {
   }
 
   namespace Main {
+    type Event<Params extends object = {}> = Electron.Event<Params>;
     const app: App;
     type App = Electron.App;
     const autoUpdater: AutoUpdater;
@@ -17692,6 +18383,7 @@ declare namespace Electron {
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
+    type FromPathOptions = Electron.FromPathOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
@@ -17755,6 +18447,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -17792,8 +18485,15 @@ declare namespace Electron {
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
+    type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
+    type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
+    type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
+    type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
+    type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
+    type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
@@ -17818,7 +18518,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type Event = Electron.Event;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -17855,6 +18554,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -17878,12 +18579,14 @@ declare namespace Electron {
   }
 
   namespace Renderer {
+    type Event<Params extends object = {}> = Electron.Event<Params>;
     const contextBridge: ContextBridge;
     type ContextBridge = Electron.ContextBridge;
     const ipcRenderer: IpcRenderer;
     type IpcRenderer = Electron.IpcRenderer;
     const webFrame: WebFrame;
     type WebFrame = Electron.WebFrame;
+    type WebviewTag = Electron.WebviewTag;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AnimationSettings = Electron.AnimationSettings;
@@ -17940,6 +18643,7 @@ declare namespace Electron {
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
+    type FromPathOptions = Electron.FromPathOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
@@ -18003,6 +18707,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -18040,8 +18745,15 @@ declare namespace Electron {
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
+    type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
+    type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
+    type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
+    type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
+    type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
+    type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
@@ -18066,7 +18778,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type Event = Electron.Event;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -18103,6 +18814,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -18126,6 +18839,7 @@ declare namespace Electron {
   }
 
   namespace CrossProcessExports {
+    type Event<Params extends object = {}> = Electron.Event<Params>;
     const app: App;
     type App = Electron.App;
     const autoUpdater: AutoUpdater;
@@ -18215,6 +18929,7 @@ declare namespace Electron {
     const webFrameMain: typeof WebFrameMain;
     type WebFrameMain = Electron.WebFrameMain;
     type WebRequest = Electron.WebRequest;
+    type WebviewTag = Electron.WebviewTag;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AnimationSettings = Electron.AnimationSettings;
@@ -18271,6 +18986,7 @@ declare namespace Electron {
     type FoundInPageEvent = Electron.FoundInPageEvent;
     type FrameCreatedDetails = Electron.FrameCreatedDetails;
     type FromPartitionOptions = Electron.FromPartitionOptions;
+    type FromPathOptions = Electron.FromPathOptions;
     type HandlerDetails = Electron.HandlerDetails;
     type HeadersReceivedResponse = Electron.HeadersReceivedResponse;
     type HeapStatistics = Electron.HeapStatistics;
@@ -18334,6 +19050,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -18371,8 +19088,15 @@ declare namespace Electron {
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
+    type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
+    type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
+    type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
+    type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
+    type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
+    type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
     type EditFlags = Electron.EditFlags;
@@ -18397,7 +19121,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type Event = Electron.Event;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -18434,6 +19157,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -18587,6 +19312,9 @@ declare namespace NodeJS {
      * in Kilobytes.
      */
     getHeapStatistics(): Electron.HeapStatistics;
+    /**
+     * @platform win32,linux
+     */
     getIOCounters(): Electron.IOCounters;
     /**
      * Resolves with a ProcessMemoryInfo
@@ -18662,8 +19390,11 @@ declare namespace NodeJS {
      */
     readonly contextIsolated: boolean;
     /**
-     * A `boolean`. When app is started by being passed as parameter to the default
-     * app, this property is `true` in the main process, otherwise it is `undefined`.
+     * A `boolean`. When the app is started by being passed as parameter to the default
+     * Electron executable, this property is `true` in the main process, otherwise it
+     * is `undefined`. For example when running the app with `electron .`, it is
+     * `true`, even if the app is packaged (`isPackaged`) is `true`. This can be useful
+     * to determine how many arguments will need to be sliced off from `process.argv`.
      *
      */
     readonly defaultApp: boolean;
