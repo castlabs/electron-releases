@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.0.0+wvcus
+// Type definitions for Electron 24.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -109,7 +109,7 @@ declare namespace Electron {
      * the application.
      *
      * **Note:** If application quit was initiated by `autoUpdater.quitAndInstall()`,
-     * then `before-quit` is emitted *after* emitting `close` event on all windows and
+     * then `before-quit` is emitted _after_ emitting `close` event on all windows and
      * closing them.
      *
      * **Note:** On Windows, this event will not be emitted if the app is closed due to
@@ -978,21 +978,14 @@ declare namespace Electron {
      * Here are some examples of return values of the various language and locale APIs
      * with different configurations:
      *
-     * * For Windows, where the application locale is German, the regional format is
-     * Finnish (Finland), and the preferred system languages from most to least
-     * preferred are French (Canada), English (US), Simplified Chinese (China),
-     * Finnish, and Spanish (Latin America):
-     *   * `app.getLocale()` returns `'de'`
-     *   * `app.getSystemLocale()` returns `'fi-FI'`
-     *   * `app.getPreferredSystemLanguages()` returns `['fr-CA', 'en-US',
-     * 'zh-Hans-CN', 'fi', 'es-419']`
-     * * On macOS, where the application locale is German, the region is Finland, and
-     * the preferred system languages from most to least preferred are French (Canada),
+     * On Windows, given application locale is German, the regional format is Finnish
+     * (Finland), and the preferred system languages from most to least preferred are
+     * French (Canada), English (US), Simplified Chinese (China), Finnish, and Spanish
+     * (Latin America):
+     *
+     * On macOS, given the application locale is German, the region is Finland, and the
+     * preferred system languages from most to least preferred are French (Canada),
      * English (US), Simplified Chinese, and Spanish (Latin America):
-     *   * `app.getLocale()` returns `'de'`
-     *   * `app.getSystemLocale()` returns `'fr-FI'`
-     *   * `app.getPreferredSystemLanguages()` returns `['fr-CA', 'en-US',
-     * 'zh-Hans-FI', 'es-419']`
      *
      * Both the available languages and regions and the possible return values differ
      * between the two operating systems.
@@ -1005,7 +998,7 @@ declare namespace Electron {
      * country code `FI` is used as the country code for preferred system languages
      * that do not have associated countries in the language name.
      */
-    getPreferredSystemLanguages(): Array<'app.getLocale()' | 'app.getSystemLocale()' | 'app.getPreferredSystemLanguages()' | 'app.getLocale()' | 'app.getSystemLocale()' | 'app.getPreferredSystemLanguages()'>;
+    getPreferredSystemLanguages(): string[];
     /**
      * The current system locale. On Windows and Linux, it is fetched using Chromium's
      * `i18n` library. On macOS, `[NSLocale currentLocale]` is used instead. To get the
@@ -1883,7 +1876,7 @@ declare namespace Electron {
     /**
      * Emitted once when the window is moved to a new position.
      *
-     * __Note__: On macOS this event is an alias of `move`.
+     * **Note**: On macOS this event is an alias of `move`.
      *
      * @platform darwin,win32
      */
@@ -7379,6 +7372,27 @@ declare namespace Electron {
     url: string;
   }
 
+  interface ResolvedEndpoint {
+
+    // Docs: https://electronjs.org/docs/api/structures/resolved-endpoint
+
+    address: string;
+    /**
+     * One of the following:
+     */
+    family: ('ipv4' | 'ipv6' | 'unspec');
+  }
+
+  interface ResolvedHost {
+
+    // Docs: https://electronjs.org/docs/api/structures/resolved-host
+
+    /**
+     * resolved DNS entries for the hostname
+     */
+    endpoints: ResolvedEndpoint[];
+  }
+
   interface SafeStorage extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/safe-storage
@@ -8262,6 +8276,10 @@ declare namespace Electron {
      * dictionary as well
      */
     removeWordFromSpellCheckerDictionary(word: string): boolean;
+    /**
+     * Resolves with the resolved IP addresses for the `host`.
+     */
+    resolveHost(host: string, options?: ResolveHostOptions): Promise<Electron.ResolvedHost>;
     /**
      * Resolves with the proxy information for `url`.
      */
@@ -11607,7 +11625,7 @@ declare namespace Electron {
      */
     getBackgroundThrottling(): boolean;
     /**
-     * If *offscreen rendering* is enabled returns the current frame rate.
+     * If _offscreen rendering_ is enabled returns the current frame rate.
      */
     getFrameRate(): number;
     /**
@@ -11718,7 +11736,7 @@ declare namespace Electron {
     /**
      * Schedules a full repaint of the window this web contents is in.
      *
-     * If *offscreen rendering* is enabled invalidates the frame and generates a new
+     * If _offscreen rendering_ is enabled invalidates the frame and generates a new
      * one through the `'paint'` event.
      */
     invalidate(): void;
@@ -11765,11 +11783,11 @@ declare namespace Electron {
      */
     isLoadingMainFrame(): boolean;
     /**
-     * Indicates whether *offscreen rendering* is enabled.
+     * Indicates whether _offscreen rendering_ is enabled.
      */
     isOffscreen(): boolean;
     /**
-     * If *offscreen rendering* is enabled returns whether it is currently painting.
+     * If _offscreen rendering_ is enabled returns whether it is currently painting.
      */
     isPainting(): boolean;
     /**
@@ -11964,7 +11982,7 @@ declare namespace Electron {
      */
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
-     * If *offscreen rendering* is enabled sets the frame rate to the specified number.
+     * If _offscreen rendering_ is enabled sets the frame rate to the specified number.
      * Only values between 1 and 240 are accepted.
      */
     setFrameRate(fps: number): void;
@@ -12037,7 +12055,7 @@ declare namespace Electron {
      */
     startDrag(item: Item): void;
     /**
-     * If *offscreen rendering* is enabled and not painting, start painting.
+     * If _offscreen rendering_ is enabled and not painting, start painting.
      */
     startPainting(): void;
     /**
@@ -12049,7 +12067,7 @@ declare namespace Electron {
      */
     stopFindInPage(action: 'clearSelection' | 'keepSelection' | 'activateSelection'): void;
     /**
-     * If *offscreen rendering* is enabled and painting, stop painting.
+     * If _offscreen rendering_ is enabled and painting, stop painting.
      */
     stopPainting(): void;
     /**
@@ -12098,7 +12116,7 @@ declare namespace Electron {
      * An `Integer` property that sets the frame rate of the web contents to the
      * specified number. Only values between 1 and 240 are accepted.
      *
-     * Only applicable if *offscreen rendering* is enabled.
+     * Only applicable if _offscreen rendering_ is enabled.
      */
     frameRate: number;
     /**
@@ -12761,7 +12779,7 @@ declare namespace Electron {
      * or updating the `window.location.hash`. Use `did-navigate-in-page` event for
      * this purpose.
      *
-     * Calling `event.preventDefault()` does __NOT__ have any effect.
+     * Calling `event.preventDefault()` does **NOT** have any effect.
      */
     addEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'will-navigate', listener: (event: WillNavigateEvent) => void): this;
@@ -15925,6 +15943,32 @@ declare namespace Electron {
     quality?: string;
   }
 
+  interface ResolveHostOptions {
+    /**
+     * Requested DNS query type. If unspecified, resolver will pick A or AAAA (or both)
+     * based on IPv4/IPv6 settings:
+     */
+    queryType?: ('A' | 'AAAA');
+    /**
+     * The source to use for resolved addresses. Default allows the resolver to pick an
+     * appropriate source. Only affects use of big external sources (e.g. calling the
+     * system for resolution or using DNS). Even if a source is specified, results can
+     * still come from cache, resolving "localhost" or IP literals, etc. One of the
+     * following values:
+     */
+    source?: ('any' | 'system' | 'dns' | 'mdns' | 'localOnly');
+    /**
+     * Indicates what DNS cache entries, if any, can be used to provide a response. One
+     * of the following values:
+     */
+    cacheUsage?: ('allowed' | 'staleAllowed' | 'disallowed');
+    /**
+     * Controls the resolver's Secure DNS behavior for this request. One of the
+     * following values:
+     */
+    secureDnsPolicy?: ('allow' | 'disable');
+  }
+
   interface ResourceUsage {
     images: MemoryUsageDetails;
     scripts: MemoryUsageDetails;
@@ -17438,6 +17482,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -17538,6 +17583,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -17755,6 +17802,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -17855,6 +17903,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -18003,6 +18053,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -18103,6 +18154,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
@@ -18334,6 +18387,7 @@ declare namespace Electron {
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
+    type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
     type Result = Electron.Result;
@@ -18434,6 +18488,8 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type ResolvedEndpoint = Electron.ResolvedEndpoint;
+    type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
