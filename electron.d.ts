@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-alpha.3+wvcus
+// Type definitions for Electron 25.0.0-alpha.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2822,6 +2822,10 @@ declare namespace Electron {
     setFocusable(focusable: boolean): void;
     /**
      * Sets whether the window should be in fullscreen mode.
+     *
+     * **Note:** On macOS, fullscreen transitions take place asynchronously. If further
+     * actions depend on the fullscreen state, use the 'enter-full-screen' or
+     * 'leave-full-screen' events.
      */
     setFullScreen(flag: boolean): void;
     /**
