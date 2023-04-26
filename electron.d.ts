@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-alpha.4+wvcus
+// Type definitions for Electron 25.0.0-alpha.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -309,9 +309,10 @@ declare namespace Electron {
                                                      */
                                                     error: string) => void): this;
     /**
-     * Emitted when mac application become active. Difference from `activate` event is
-     * that `did-become-active` is emitted every time the app becomes active, not only
-     * when Dock icon is clicked or application is re-launched.
+     * Emitted when the application becomes active. This differs from the `activate`
+     * event in that `did-become-active` is emitted every time the app becomes active,
+     * not only when Dock icon is clicked or application is re-launched. It is also
+     * emitted when a user switches to the app via the macOS App Switcher.
      *
      * @platform darwin
      */
@@ -319,6 +320,17 @@ declare namespace Electron {
     once(event: 'did-become-active', listener: (event: Event) => void): this;
     addListener(event: 'did-become-active', listener: (event: Event) => void): this;
     removeListener(event: 'did-become-active', listener: (event: Event) => void): this;
+    /**
+     * Emitted when the app is no longer active and doesn’t have focus. This can be
+     * triggered, for example, by clicking on another application or by using the macOS
+     * App Switcher to switch to another application.
+     *
+     * @platform darwin
+     */
+    on(event: 'did-resign-active', listener: (event: Event) => void): this;
+    once(event: 'did-resign-active', listener: (event: Event) => void): this;
+    addListener(event: 'did-resign-active', listener: (event: Event) => void): this;
+    removeListener(event: 'did-resign-active', listener: (event: Event) => void): this;
     /**
      * Emitted whenever there is a GPU info update.
      */
@@ -6708,12 +6720,109 @@ declare namespace Electron {
     addListener(event: 'shutdown', listener: Function): this;
     removeListener(event: 'shutdown', listener: Function): this;
     /**
+     * Notification of a change in the operating system's advertised speed limit for
+     * CPUs, in percent. Values below 100 indicate that the system is impairing
+     * processing power due to thermal management.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'speed-limit-change', listener: Function): this;
+    once(event: 'speed-limit-change', listener: Function): this;
+    addListener(event: 'speed-limit-change', listener: Function): this;
+    removeListener(event: 'speed-limit-change', listener: Function): this;
+    /**
      * Emitted when the system is suspending.
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
     addListener(event: 'suspend', listener: Function): this;
     removeListener(event: 'suspend', listener: Function): this;
+    /**
+     * Emitted when the thermal state of the system changes. Notification of a change
+     * in the thermal status of the system, such as entering a critical temperature
+     * range. Depending on the severity, the system might take steps to reduce said
+     * temperature, for example, throttling the CPU or switching on the fans if
+     * available.
+     *
+     * Apps may react to the new state by reducing expensive computing tasks (e.g.
+     * video encoding), or notifying the user. The same state might be received
+     * repeatedly.
+     *
+     * See
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * nce/Conceptual/power_efficiency_guidelines_osx/RespondToThermalStateChanges.html
+     *
+     * @platform darwin
+     */
+    on(event: 'thermal-state-change', listener: Function): this;
+    once(event: 'thermal-state-change', listener: Function): this;
+    addListener(event: 'thermal-state-change', listener: Function): this;
+    removeListener(event: 'thermal-state-change', listener: Function): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
@@ -6744,7 +6853,14 @@ declare namespace Electron {
     addListener(event: 'user-did-resign-active', listener: Function): this;
     removeListener(event: 'user-did-resign-active', listener: Function): this;
     /**
-     * The system's current state. Can be `active`, `idle`, `locked` or `unknown`.
+     * The system's current thermal state. Can be `unknown`, `nominal`, `fair`,
+     * `serious`, or `critical`.
+     *
+     * @platform darwin
+     */
+    getCurrentThermalState(): ('unknown' | 'nominal' | 'fair' | 'serious' | 'critical');
+    /**
+     * The system's current idle state. Can be `active`, `idle`, `locked` or `unknown`.
      *
      * Calculate the system idle state. `idleThreshold` is the amount of time (in
      * seconds) before considered idle.  `locked` is available on supported systems
@@ -8175,13 +8291,17 @@ declare namespace Electron {
      * the newly added device.
      */
     on(event: 'usb-device-added', listener: (event: Event,
-                                             details: UsbDeviceAddedDetails) => void): this;
+                                             device: USBDevice,
+                                             webContents: WebContents) => void): this;
     once(event: 'usb-device-added', listener: (event: Event,
-                                             details: UsbDeviceAddedDetails) => void): this;
+                                             device: USBDevice,
+                                             webContents: WebContents) => void): this;
     addListener(event: 'usb-device-added', listener: (event: Event,
-                                             details: UsbDeviceAddedDetails) => void): this;
+                                             device: USBDevice,
+                                             webContents: WebContents) => void): this;
     removeListener(event: 'usb-device-added', listener: (event: Event,
-                                             details: UsbDeviceAddedDetails) => void): this;
+                                             device: USBDevice,
+                                             webContents: WebContents) => void): this;
     /**
      * Emitted after `navigator.usb.requestDevice` has been called and
      * `select-usb-device` has fired if a device has been removed before the callback
@@ -8190,13 +8310,17 @@ declare namespace Electron {
      * specified device.
      */
     on(event: 'usb-device-removed', listener: (event: Event,
-                                               details: UsbDeviceRemovedDetails) => void): this;
+                                               device: USBDevice,
+                                               webContents: WebContents) => void): this;
     once(event: 'usb-device-removed', listener: (event: Event,
-                                               details: UsbDeviceRemovedDetails) => void): this;
+                                               device: USBDevice,
+                                               webContents: WebContents) => void): this;
     addListener(event: 'usb-device-removed', listener: (event: Event,
-                                               details: UsbDeviceRemovedDetails) => void): this;
+                                               device: USBDevice,
+                                               webContents: WebContents) => void): this;
     removeListener(event: 'usb-device-removed', listener: (event: Event,
-                                               details: UsbDeviceRemovedDetails) => void): this;
+                                               device: USBDevice,
+                                               webContents: WebContents) => void): this;
     /**
      * Emitted after `USBDevice.forget()` has been called.  This event can be used to
      * help maintain persistent storage of permissions when
@@ -17036,18 +17160,8 @@ declare namespace Electron {
     total: number;
   }
 
-  interface UsbDeviceAddedDetails {
-    device: USBDevice;
-    frame: WebFrameMain;
-  }
-
-  interface UsbDeviceRemovedDetails {
-    device: USBDevice;
-    frame: WebFrameMain;
-  }
-
   interface UsbDeviceRevokedDetails {
-    device: USBDevice[];
+    device: USBDevice;
     /**
      * The origin that the device has been revoked from.
      */
@@ -18157,8 +18271,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
-    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
@@ -18485,8 +18597,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
-    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
@@ -18745,8 +18855,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
-    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
@@ -19088,8 +19196,6 @@ declare namespace Electron {
     type TraceBufferUsageReturnValue = Electron.TraceBufferUsageReturnValue;
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
-    type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
-    type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
