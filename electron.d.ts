@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-alpha.5+wvcus
+// Type definitions for Electron 25.0.0-alpha.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -10550,33 +10550,32 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/web-contents
 
     /**
-     * | undefined - A WebContents instance with the given TargetID, or `undefined` if
-     * there is no WebContents associated with the given TargetID.
+     * A WebContents instance with the given TargetID, or `undefined` if there is no
+     * WebContents associated with the given TargetID.
      *
      * When communicating with the Chrome DevTools Protocol, it can be useful to lookup
      * a WebContents instance based on its assigned TargetID.
      */
-    static fromDevToolsTargetId(targetId: string): WebContents;
+    static fromDevToolsTargetId(targetId: string): (WebContents) | (undefined);
     /**
-     * | undefined - A WebContents instance with the given WebFrameMain, or `undefined`
-     * if there is no WebContents associated with the given WebFrameMain.
+     * A WebContents instance with the given WebFrameMain, or `undefined` if there is
+     * no WebContents associated with the given WebFrameMain.
      */
-    static fromFrame(frame: WebFrameMain): WebContents;
+    static fromFrame(frame: WebFrameMain): (WebContents) | (undefined);
     /**
-     * | undefined - A WebContents instance with the given ID, or `undefined` if there
-     * is no WebContents associated with the given ID.
+     * A WebContents instance with the given ID, or `undefined` if there is no
+     * WebContents associated with the given ID.
      */
-    static fromId(id: number): WebContents;
+    static fromId(id: number): (WebContents) | (undefined);
     /**
      * An array of all `WebContents` instances. This will contain web contents for all
      * windows, webviews, opened devtools, and devtools extension background pages.
      */
     static getAllWebContents(): WebContents[];
     /**
-     * | null - The web contents that is focused in this application, otherwise returns
-     * `null`.
+     * The web contents that is focused in this application, otherwise returns `null`.
      */
-    static getFocusedWebContents(): WebContents;
+    static getFocusedWebContents(): (WebContents) | (null);
     /**
      * Emitted when media becomes audible or inaudible.
      */
