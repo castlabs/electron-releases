@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.1.3+wvcus
+// Type definitions for Electron 24.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6636,12 +6636,109 @@ declare namespace Electron {
     addListener(event: 'shutdown', listener: Function): this;
     removeListener(event: 'shutdown', listener: Function): this;
     /**
+     * Notification of a change in the operating system's advertised speed limit for
+     * CPUs, in percent. Values below 100 indicate that the system is impairing
+     * processing power due to thermal management.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'speed-limit-change', listener: Function): this;
+    once(event: 'speed-limit-change', listener: Function): this;
+    addListener(event: 'speed-limit-change', listener: Function): this;
+    removeListener(event: 'speed-limit-change', listener: Function): this;
+    /**
      * Emitted when the system is suspending.
      */
     on(event: 'suspend', listener: Function): this;
     once(event: 'suspend', listener: Function): this;
     addListener(event: 'suspend', listener: Function): this;
     removeListener(event: 'suspend', listener: Function): this;
+    /**
+     * Emitted when the thermal state of the system changes. Notification of a change
+     * in the thermal status of the system, such as entering a critical temperature
+     * range. Depending on the severity, the system might take steps to reduce said
+     * temperature, for example, throttling the CPU or switching on the fans if
+     * available.
+     *
+     * Apps may react to the new state by reducing expensive computing tasks (e.g.
+     * video encoding), or notifying the user. The same state might be received
+     * repeatedly.
+     *
+     * See
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * nce/Conceptual/power_efficiency_guidelines_osx/RespondToThermalStateChanges.html
+     *
+     * @platform darwin
+     */
+    on(event: 'thermal-state-change', listener: Function): this;
+    once(event: 'thermal-state-change', listener: Function): this;
+    addListener(event: 'thermal-state-change', listener: Function): this;
+    removeListener(event: 'thermal-state-change', listener: Function): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
@@ -6672,7 +6769,14 @@ declare namespace Electron {
     addListener(event: 'user-did-resign-active', listener: Function): this;
     removeListener(event: 'user-did-resign-active', listener: Function): this;
     /**
-     * The system's current state. Can be `active`, `idle`, `locked` or `unknown`.
+     * The system's current thermal state. Can be `unknown`, `nominal`, `fair`,
+     * `serious`, or `critical`.
+     *
+     * @platform darwin
+     */
+    getCurrentThermalState(): ('unknown' | 'nominal' | 'fair' | 'serious' | 'critical');
+    /**
+     * The system's current idle state. Can be `active`, `idle`, `locked` or `unknown`.
      *
      * Calculate the system idle state. `idleThreshold` is the amount of time (in
      * seconds) before considered idle.  `locked` is available on supported systems
