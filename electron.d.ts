@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-beta.2+wvcus
+// Type definitions for Electron 25.0.0-beta.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6328,6 +6328,13 @@ declare namespace Electron {
      * specified protocol scheme in the `options` object.
      */
     request(options: (ClientRequestConstructorOptions) | (string)): ClientRequest;
+    /**
+     * Resolves with the resolved IP addresses for the `host`.
+     *
+     * This method will resolve hosts from the default session. To resolve a host from
+     * another session, use ses.resolveHost().
+     */
+    resolveHost(host: string, options?: ResolveHostOptions): Promise<Electron.ResolvedHost>;
     /**
      * A `boolean` property. Whether there is currently internet connection.
      *
@@ -14968,7 +14975,7 @@ declare namespace Electron {
     /**
      * the device that permission is being requested for.
      */
-    device: (HIDDevice) | (SerialPort);
+    device: (HIDDevice) | (SerialPort) | (USBDevice);
   }
 
   interface DevtoolsOpenUrlEvent extends DOMEvent {
