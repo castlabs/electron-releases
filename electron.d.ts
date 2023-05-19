@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.3.2+wvcus
+// Type definitions for Electron 23.3.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2529,7 +2529,7 @@ declare namespace Electron {
      */
     isTabletMode(): boolean;
     /**
-     * Whether the window is visible to the user.
+     * Whether the window is visible to the user in the foreground of the app.
      */
     isVisible(): boolean;
     /**
@@ -14284,7 +14284,7 @@ declare namespace Electron {
     /**
      * the device that permission is being requested for.
      */
-    device: (HIDDevice) | (SerialPort);
+    device: (HIDDevice) | (SerialPort) | (USBDevice);
   }
 
   interface DidChangeThemeColorEvent extends Event {
