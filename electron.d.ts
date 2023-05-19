@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-beta.6+wvcus
+// Type definitions for Electron 25.0.0-beta.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2583,7 +2583,7 @@ declare namespace Electron {
      */
     isTabletMode(): boolean;
     /**
-     * Whether the window is visible to the user.
+     * Whether the window is visible to the user in the foreground of the app.
      */
     isVisible(): boolean;
     /**
@@ -10784,14 +10784,17 @@ declare namespace Electron {
     removeListener(event: 'crashed', listener: (event: Event,
                                     killed: boolean) => void): this;
     /**
-     * Emitted when the cursor's type changes. The `type` parameter can be `default`,
-     * `crosshair`, `pointer`, `text`, `wait`, `help`, `e-resize`, `n-resize`,
+     * Emitted when the cursor's type changes. The `type` parameter can be `pointer`,
+     * `crosshair`, `hand`, `text`, `wait`, `help`, `e-resize`, `n-resize`,
      * `ne-resize`, `nw-resize`, `s-resize`, `se-resize`, `sw-resize`, `w-resize`,
      * `ns-resize`, `ew-resize`, `nesw-resize`, `nwse-resize`, `col-resize`,
-     * `row-resize`, `m-panning`, `e-panning`, `n-panning`, `ne-panning`, `nw-panning`,
-     * `s-panning`, `se-panning`, `sw-panning`, `w-panning`, `move`, `vertical-text`,
-     * `cell`, `context-menu`, `alias`, `progress`, `nodrop`, `copy`, `none`,
-     * `not-allowed`, `zoom-in`, `zoom-out`, `grab`, `grabbing` or `custom`.
+     * `row-resize`, `m-panning`, `m-panning-vertical`, `m-panning-horizontal`,
+     * `e-panning`, `n-panning`, `ne-panning`, `nw-panning`, `s-panning`, `se-panning`,
+     * `sw-panning`, `w-panning`, `move`, `vertical-text`, `cell`, `context-menu`,
+     * `alias`, `progress`, `nodrop`, `copy`, `none`, `not-allowed`, `zoom-in`,
+     * `zoom-out`, `grab`, `grabbing`, `custom`, `null`, `drag-drop-none`,
+     * `drag-drop-move`, `drag-drop-copy`, `drag-drop-link`, `ns-no-resize`,
+     * `ew-no-resize`, `nesw-no-resize`, `nwse-no-resize`, or `default`.
      *
      * If the `type` parameter is `custom`, the `image` parameter will hold the custom
      * cursor image in a `NativeImage`, and `scale`, `size` and `hotspot` will hold
