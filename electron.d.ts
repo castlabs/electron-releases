@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.3.0+wvcus
+// Type definitions for Electron 24.3.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2540,7 +2540,7 @@ declare namespace Electron {
      */
     isTabletMode(): boolean;
     /**
-     * Whether the window is visible to the user.
+     * Whether the window is visible to the user in the foreground of the app.
      */
     isVisible(): boolean;
     /**
