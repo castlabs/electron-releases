@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-beta.7+wvcus
+// Type definitions for Electron 25.0.0-beta.8+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2778,6 +2778,17 @@ declare namespace Electron {
      * Sets the background color of the window. See Setting `backgroundColor`.
      */
     setBackgroundColor(backgroundColor: string): void;
+    /**
+     * This method sets the browser window's system-drawn background material,
+     * including behind the non-client area.
+     *
+     * See the Windows documentation for more details.
+     *
+     * **Note:** This method is only supported on Windows 11 22H2 and up.
+     *
+     * @platform win32
+     */
+    setBackgroundMaterial(material: 'auto' | 'none' | 'mica' | 'acrylic' | 'tabbed'): void;
     /**
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
@@ -10885,22 +10896,22 @@ declare namespace Electron {
      * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
      * a link in its context menu.
      */
-    on(event: 'devtools-open-url', listener: (
+    on(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    once(event: 'devtools-open-url', listener: (
+    once(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    addListener(event: 'devtools-open-url', listener: (
+    addListener(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    removeListener(event: 'devtools-open-url', listener: (
+    removeListener(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
@@ -12067,6 +12078,81 @@ declare namespace Electron {
      */
     addWorkSpace(path: string): void;
     /**
+     * Adjusts the current text selection starting and ending points in the focused
+     * frame by the given amounts. A negative amount moves the selection towards the
+     * beginning of the document, and a positive amount moves the selection towards the
+     * end of the document.
+     *
+     * Example:
+     *
+     * For a call of `win.webContents.adjustSelection({ start: 1, end: 5 })`
+     *
+     * Before:
+     *
+     * <img width="487" alt="Image Before Text Selection Adjustment"
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * thubusercontent.com/2036040/231761306-cd4e7b15-c2ed-46cf-8e80-10811f6de83e.png">
+     *
+     * After:
+     *
+     * <img width="487" alt="Image After Text Selection Adjustment"
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * thubusercontent.com/2036040/231761169-887eb8ef-06fb-46e4-9efa-898bcb0d6a2b.png">
+     */
+    adjustSelection(options: AdjustSelectionOptions): void;
+    /**
      * Begin subscribing for presentation events and captured frames, the `callback`
      * will be called with `callback(image, dirtyRect)` when there is a presentation
      * event.
@@ -12111,6 +12197,10 @@ declare namespace Electron {
      * hidden, you should ensure that `stayHidden` is set to true.
      */
     capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
+    /**
+     * Centers the current text selection in web page.
+     */
+    centerSelection(): void;
     /**
      * Clears the navigation history.
      */
@@ -12496,6 +12586,14 @@ declare namespace Electron {
      * resolves if the page is saved.
      */
     savePage(fullPath: string, saveType: 'HTMLOnly' | 'HTMLComplete' | 'MHTML'): Promise<void>;
+    /**
+     * Scrolls to the bottom of the current `webContents`.
+     */
+    scrollToBottom(): void;
+    /**
+     * Scrolls to the top of the current `webContents`.
+     */
+    scrollToTop(): void;
     /**
      * Executes the editing command `selectAll` in web page.
      */
@@ -13509,6 +13607,15 @@ declare namespace Electron {
     removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, useCapture?: boolean): void;
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
     /**
+     * Adjusts the current text selection starting and ending points in the focused
+     * frame by the given amounts. A negative amount moves the selection towards the
+     * beginning of the document, and a positive amount moves the selection towards the
+     * end of the document.
+     *
+     * See `webContents.adjustSelection` for examples.
+     */
+    adjustSelection(options: AdjustSelectionOptions): void;
+    /**
      * Whether the guest page can go back.
      */
     canGoBack(): boolean;
@@ -13527,6 +13634,10 @@ declare namespace Electron {
      * whole visible page.
      */
     capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
+    /**
+     * Centers the current text selection in page.
+     */
+    centerSelection(): void;
     /**
      * Clears the navigation history.
      */
@@ -13723,6 +13834,14 @@ declare namespace Electron {
      */
     replaceMisspelling(text: string): void;
     /**
+     * Scrolls to the bottom of the current `<webview>`.
+     */
+    scrollToBottom(): void;
+    /**
+     * Scrolls to the top of the current `<webview>`.
+     */
+    scrollToTop(): void;
+    /**
      * Executes editing command `selectAll` in page.
      */
     selectAll(): void;
@@ -13813,6 +13932,8 @@ declare namespace Electron {
     /**
      * A `boolean`. When this attribute is present the guest page will have web
      * security disabled. Web security is enabled by default.
+     *
+     * This value can only be modified before the first navigation.
      */
     disablewebsecurity: boolean;
     /**
@@ -13965,6 +14086,17 @@ declare namespace Electron {
      * The data URL containing either a base 64 encoded PNG or JPEG image.
      */
     dataURL?: string;
+  }
+
+  interface AdjustSelectionOptions {
+    /**
+     * Amount to shift the start index of the current selection.
+     */
+    start?: number;
+    /**
+     * Amount to shift the end index of the current selection.
+     */
+    end?: number;
   }
 
   interface AnimationSettings {
@@ -14367,6 +14499,14 @@ declare namespace Electron {
      * @platform darwin
      */
     vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+    /**
+     * Set the window's system-drawn background material, including behind the
+     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
+     * win.setBackgroundMaterial for more information.
+     *
+     * @platform win32
+     */
+    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
     /**
      * Controls the behavior on macOS when option-clicking the green stoplight button
      * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
@@ -18128,6 +18268,7 @@ declare namespace Electron {
     type Shell = Electron.Shell;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
+    type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
     type AnimationSettings = Electron.AnimationSettings;
     type AppDetailsOptions = Electron.AppDetailsOptions;
     type ApplicationInfoForProtocolReturnValue = Electron.ApplicationInfoForProtocolReturnValue;
@@ -18454,6 +18595,7 @@ declare namespace Electron {
     type WebRequest = Electron.WebRequest;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
+    type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
     type AnimationSettings = Electron.AnimationSettings;
     type AppDetailsOptions = Electron.AppDetailsOptions;
     type ApplicationInfoForProtocolReturnValue = Electron.ApplicationInfoForProtocolReturnValue;
@@ -18712,6 +18854,7 @@ declare namespace Electron {
     type WebviewTag = Electron.WebviewTag;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
+    type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
     type AnimationSettings = Electron.AnimationSettings;
     type AppDetailsOptions = Electron.AppDetailsOptions;
     type ApplicationInfoForProtocolReturnValue = Electron.ApplicationInfoForProtocolReturnValue;
@@ -19053,6 +19196,7 @@ declare namespace Electron {
     type WebviewTag = Electron.WebviewTag;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
+    type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
     type AnimationSettings = Electron.AnimationSettings;
     type AppDetailsOptions = Electron.AppDetailsOptions;
     type ApplicationInfoForProtocolReturnValue = Electron.ApplicationInfoForProtocolReturnValue;
