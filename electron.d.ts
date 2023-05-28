@@ -1,4 +1,4 @@
-// Type definitions for Electron 23.3.3+wvcus
+// Type definitions for Electron 23.3.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -13132,6 +13132,8 @@ declare namespace Electron {
     /**
      * A `boolean`. When this attribute is present the guest page will have web
      * security disabled. Web security is enabled by default.
+     *
+     * This value can only be modified before the first navigation.
      */
     disablewebsecurity: boolean;
     /**
@@ -14979,12 +14981,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
@@ -15068,12 +15069,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
