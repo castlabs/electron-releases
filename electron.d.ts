@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.3.1+wvcus
+// Type definitions for Electron 24.4.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -2732,6 +2732,17 @@ declare namespace Electron {
      * Sets the background color of the window. See Setting `backgroundColor`.
      */
     setBackgroundColor(backgroundColor: string): void;
+    /**
+     * This method sets the browser window's system-drawn background material,
+     * including behind the non-client area.
+     *
+     * See the Windows documentation for more details.
+     *
+     * **Note:** This method is only supported on Windows 11 22H2 and up.
+     *
+     * @platform win32
+     */
+    setBackgroundMaterial(material: 'auto' | 'none' | 'mica' | 'acrylic' | 'tabbed'): void;
     /**
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
@@ -10591,14 +10602,17 @@ declare namespace Electron {
     removeListener(event: 'crashed', listener: (event: Event,
                                     killed: boolean) => void): this;
     /**
-     * Emitted when the cursor's type changes. The `type` parameter can be `default`,
-     * `crosshair`, `pointer`, `text`, `wait`, `help`, `e-resize`, `n-resize`,
+     * Emitted when the cursor's type changes. The `type` parameter can be `pointer`,
+     * `crosshair`, `hand`, `text`, `wait`, `help`, `e-resize`, `n-resize`,
      * `ne-resize`, `nw-resize`, `s-resize`, `se-resize`, `sw-resize`, `w-resize`,
      * `ns-resize`, `ew-resize`, `nesw-resize`, `nwse-resize`, `col-resize`,
-     * `row-resize`, `m-panning`, `e-panning`, `n-panning`, `ne-panning`, `nw-panning`,
-     * `s-panning`, `se-panning`, `sw-panning`, `w-panning`, `move`, `vertical-text`,
-     * `cell`, `context-menu`, `alias`, `progress`, `nodrop`, `copy`, `none`,
-     * `not-allowed`, `zoom-in`, `zoom-out`, `grab`, `grabbing` or `custom`.
+     * `row-resize`, `m-panning`, `m-panning-vertical`, `m-panning-horizontal`,
+     * `e-panning`, `n-panning`, `ne-panning`, `nw-panning`, `s-panning`, `se-panning`,
+     * `sw-panning`, `w-panning`, `move`, `vertical-text`, `cell`, `context-menu`,
+     * `alias`, `progress`, `nodrop`, `copy`, `none`, `not-allowed`, `zoom-in`,
+     * `zoom-out`, `grab`, `grabbing`, `custom`, `null`, `drag-drop-none`,
+     * `drag-drop-move`, `drag-drop-copy`, `drag-drop-link`, `ns-no-resize`,
+     * `ew-no-resize`, `nesw-no-resize`, `nwse-no-resize`, or `default`.
      *
      * If the `type` parameter is `custom`, the `image` parameter will hold the custom
      * cursor image in a `NativeImage`, and `scale`, `size` and `hotspot` will hold
@@ -10689,22 +10703,22 @@ declare namespace Electron {
      * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
      * a link in its context menu.
      */
-    on(event: 'devtools-open-url', listener: (
+    on(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    once(event: 'devtools-open-url', listener: (
+    once(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    addListener(event: 'devtools-open-url', listener: (
+    addListener(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
                                               url: string) => void): this;
-    removeListener(event: 'devtools-open-url', listener: (
+    removeListener(event: 'devtools-open-url', listener: (event: Event,
                                               /**
                                                * URL of the link that was clicked or selected.
                                                */
@@ -13323,6 +13337,8 @@ declare namespace Electron {
     /**
      * A `boolean`. When this attribute is present the guest page will have web
      * security disabled. Web security is enabled by default.
+     *
+     * This value can only be modified before the first navigation.
      */
     disablewebsecurity: boolean;
     /**
@@ -13877,6 +13893,14 @@ declare namespace Electron {
      * @platform darwin
      */
     vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+    /**
+     * Set the window's system-drawn background material, including behind the
+     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
+     * win.setBackgroundMaterial for more information.
+     *
+     * @platform win32
+     */
+    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
     /**
      * Controls the behavior on macOS when option-clicking the green stoplight button
      * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
@@ -15175,12 +15199,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
@@ -15264,12 +15287,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
