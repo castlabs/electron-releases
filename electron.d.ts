@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0-beta.8+wvcus
+// Type definitions for Electron 25.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -15825,12 +15825,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
@@ -15914,12 +15913,11 @@ declare namespace Electron {
      */
     message: string;
     /**
-     * Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows,
-     * `"question"` displays the same icon as `"info"`, unless you set an icon using
-     * the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same
-     * warning icon.
+     * Can be `none`, `info`, `error`, `question` or `warning`. On Windows, `question`
+     * displays the same icon as `info`, unless you set an icon using the `icon`
+     * option. On macOS, both `warning` and `error` display the same warning icon.
      */
-    type?: string;
+    type?: ('none' | 'info' | 'error' | 'question' | 'warning');
     /**
      * Array of texts for buttons. On Windows, an empty array will result in one button
      * labeled "OK".
