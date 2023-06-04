@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.0.0+wvcus
+// Type definitions for Electron 26.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -805,7 +805,7 @@ declare namespace Electron {
     /**
      * Enables full sandbox mode on the app. This means that all renderers will be
      * launched sandboxed, regardless of the value of the `sandbox` flag in
-     * WebPreferences.
+     * `WebPreferences`.
      *
      * This method can only be called before app is ready.
      */
@@ -3318,6 +3318,312 @@ declare namespace Electron {
      *
      */
     readonly webContents: WebContents;
+  }
+
+  interface BrowserWindowConstructorOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/browser-window-options
+
+    /**
+     * Whether clicking an inactive window will also click through to the web contents.
+     * Default is `false` on macOS. This option is not configurable on other platforms.
+     *
+     * @platform darwin
+     */
+    acceptFirstMouse?: boolean;
+    /**
+     * Whether the window should always stay on top of other windows. Default is
+     * `false`.
+     */
+    alwaysOnTop?: boolean;
+    /**
+     * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
+     */
+    autoHideMenuBar?: boolean;
+    /**
+     * The window's background color in Hex, RGB, RGBA, HSL, HSLA or named CSS color
+     * format. Alpha in #AARRGGBB format is supported if `transparent` is set to
+     * `true`. Default is `#FFF` (white). See win.setBackgroundColor for more
+     * information.
+     */
+    backgroundColor?: string;
+    /**
+     * Set the window's system-drawn background material, including behind the
+     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
+     * win.setBackgroundMaterial for more information.
+     *
+     * @platform win32
+     */
+    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
+    /**
+     * Show window in the center of the screen. Default is `false`.
+     */
+    center?: boolean;
+    /**
+     * Whether window is closable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
+     */
+    closable?: boolean;
+    /**
+     * Forces using dark theme for the window, only works on some GTK+3 desktop
+     * environments. Default is `false`.
+     */
+    darkTheme?: boolean;
+    /**
+     * Whether to hide cursor when typing. Default is `false`.
+     */
+    disableAutoHideCursor?: boolean;
+    /**
+     * Enable the window to be resized larger than screen. Only relevant for macOS, as
+     * other OSes allow larger-than-screen windows by default. Default is `false`.
+     *
+     * @platform darwin
+     */
+    enableLargerThanScreen?: boolean;
+    /**
+     * Whether the window can be focused. Default is `true`. On Windows setting
+     * `focusable: false` also implies setting `skipTaskbar: true`. On Linux setting
+     * `focusable: false` makes the window stop interacting with wm, so the window will
+     * always stay on top in all workspaces.
+     */
+    focusable?: boolean;
+    /**
+     * Specify `false` to create a frameless window. Default is `true`.
+     */
+    frame?: boolean;
+    /**
+     * Whether the window should show in fullscreen. When explicitly set to `false` the
+     * fullscreen button will be hidden or disabled on macOS. Default is `false`.
+     */
+    fullscreen?: boolean;
+    /**
+     * Whether the window can be put into fullscreen mode. On macOS, also whether the
+     * maximize/zoom button should toggle full screen mode or maximize window. Default
+     * is `true`.
+     */
+    fullscreenable?: boolean;
+    /**
+     * Shows the title in the title bar in full screen mode on macOS for `hiddenInset`
+     * titleBarStyle. Default is `false`.
+     *
+     * @deprecated
+     * @platform darwin
+     */
+    fullscreenWindowTitle?: boolean;
+    /**
+     * Whether window should have a shadow. Default is `true`.
+     */
+    hasShadow?: boolean;
+    /**
+     * Window's height in pixels. Default is `600`.
+     */
+    height?: number;
+    /**
+     * Whether window should be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    hiddenInMissionControl?: boolean;
+    /**
+     * The window icon. On Windows it is recommended to use `ICO` icons to get best
+     * visual effects, you can also leave it undefined so the executable's icon will be
+     * used.
+     */
+    icon?: (NativeImage) | (string);
+    /**
+     * Whether the window is in kiosk mode. Default is `false`.
+     */
+    kiosk?: boolean;
+    /**
+     * Window's maximum height. Default is no limit.
+     */
+    maxHeight?: number;
+    /**
+     * Whether window is maximizable. This is not implemented on Linux. Default is
+     * `true`.
+     *
+     * @platform darwin,win32
+     */
+    maximizable?: boolean;
+    /**
+     * Window's maximum width. Default is no limit.
+     */
+    maxWidth?: number;
+    /**
+     * Window's minimum height. Default is `0`.
+     */
+    minHeight?: number;
+    /**
+     * Whether window is minimizable. This is not implemented on Linux. Default is
+     * `true`.
+     *
+     * @platform darwin,win32
+     */
+    minimizable?: boolean;
+    /**
+     * Window's minimum width. Default is `0`.
+     */
+    minWidth?: number;
+    /**
+     * Whether this is a modal window. This only works when the window is a child
+     * window. Default is `false`.
+     */
+    modal?: boolean;
+    /**
+     * Whether window is movable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
+     */
+    movable?: boolean;
+    /**
+     * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
+     * (fully opaque). This is only implemented on Windows and macOS.
+     *
+     * @platform darwin,win32
+     */
+    opacity?: number;
+    /**
+     * Whether the renderer should be active when `show` is `false` and it has just
+     * been created.  In order for `document.visibilityState` to work correctly on
+     * first load with `show: false` you should set this to `false`.  Setting this to
+     * `false` will cause the `ready-to-show` event to not fire.  Default is `true`.
+     */
+    paintWhenInitiallyHidden?: boolean;
+    /**
+     * Specify parent window. Default is `null`.
+     */
+    parent?: BrowserWindow;
+    /**
+     * Whether window is resizable. Default is `true`.
+     */
+    resizable?: boolean;
+    /**
+     * Whether frameless window should have rounded corners on macOS. Default is
+     * `true`. Setting this property to `false` will prevent the window from being
+     * fullscreenable.
+     *
+     * @platform darwin
+     */
+    roundedCorners?: boolean;
+    /**
+     * Whether window should be shown when created. Default is `true`.
+     */
+    show?: boolean;
+    /**
+     * Use pre-Lion fullscreen on macOS. Default is `false`.
+     *
+     * @platform darwin
+     */
+    simpleFullscreen?: boolean;
+    /**
+     * Whether to show the window in taskbar. Default is `false`.
+     *
+     * @platform darwin,win32
+     */
+    skipTaskbar?: boolean;
+    /**
+     * Tab group name, allows opening the window as a native tab. Windows with the same
+     * tabbing identifier will be grouped together. This also adds a native new tab
+     * button to your window's tab bar and allows your `app` and window to receive the
+     * `new-window-for-tab` event.
+     *
+     * @platform darwin
+     */
+    tabbingIdentifier?: string;
+    /**
+     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
+     * window frame. Setting it to `false` will remove window shadow and window
+     * animations. Default is `true`.
+     */
+    thickFrame?: boolean;
+    /**
+     * Default window title. Default is `"Electron"`. If the HTML tag `<title>` is
+     * defined in the HTML file loaded by `loadURL()`, this property will be ignored.
+     */
+    title?: string;
+    /**
+     *  When using a frameless window in conjunction with
+     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
+     * that the standard window controls ("traffic lights" on macOS) are visible, this
+     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
+     * Variables. Specifying `true` will result in an overlay with default system
+     * colors. Default is `false`.
+     */
+    titleBarOverlay?: (TitleBarOverlay) | (boolean);
+    /**
+     * The style of window title bar. Default is `default`. Possible values are:
+     *
+     * @platform darwin,win32
+     */
+    titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
+    /**
+     * Set a custom position for the traffic light buttons in frameless windows.
+     *
+     * @platform darwin
+     */
+    trafficLightPosition?: Point;
+    /**
+     * Makes the window transparent. Default is `false`. On Windows, does not work
+     * unless the window is frameless.
+     */
+    transparent?: boolean;
+    /**
+     * The type of window, default is normal window. See more about this below.
+     */
+    type?: string;
+    /**
+     * The `width` and `height` would be used as web page's size, which means the
+     * actual window's size will include window frame's size and be slightly larger.
+     * Default is `false`.
+     */
+    useContentSize?: boolean;
+    /**
+     * Add a type of vibrancy effect to the window, only on macOS. Can be
+     * `appearance-based`, `light`, `dark`, `titlebar`, `selection`, `menu`, `popover`,
+     * `sidebar`, `medium-light`, `ultra-dark`, `header`, `sheet`, `window`, `hud`,
+     * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`. Please
+     * note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
+     * are deprecated and have been removed in macOS Catalina (10.15).
+     *
+     * @platform darwin
+     */
+    vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+    /**
+     * Specify how the material appearance should reflect window activity state on
+     * macOS. Must be used with the `vibrancy` property. Possible values are:
+     *
+     * @platform darwin
+     */
+    visualEffectState?: ('followWindow' | 'active' | 'inactive');
+    /**
+     * Settings of web page's features.
+     */
+    webPreferences?: WebPreferences;
+    /**
+     * Window's width in pixels. Default is `800`.
+     */
+    width?: number;
+    /**
+     * (**required** if y is used) Window's left offset from screen. Default is to
+     * center the window.
+     */
+    x?: number;
+    /**
+     * (**required** if x is used) Window's top offset from screen. Default is to
+     * center the window.
+     */
+    y?: number;
+    /**
+     * Controls the behavior on macOS when option-clicking the green stoplight button
+     * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
+     * will grow to the preferred width of the web page when zoomed, `false` will cause
+     * it to zoom to the width of the screen. This will also affect the behavior when
+     * calling `maximize()` directly. Default is `false`.
+     *
+     * @platform darwin
+     */
+    zoomToPageWidth?: boolean;
   }
 
   interface Certificate {
@@ -8779,6 +9085,26 @@ declare namespace Electron {
      */
     setSSLConfig(config: SSLConfigConfig): void;
     /**
+     * Sets the handler which can be used to override which USB classes are protected.
+     * The return value for the handler is a string array of USB classes which should
+     * be considered protected (eg not available in the renderer).  Valid values for
+     * the array are:
+     *
+     * * `audio`
+     * * `audio-video`
+     * * `hid`
+     * * `mass-storage`
+     * * `smart-card`
+     * * `video`
+     * * `wireless`
+     *
+     * Returning an empty string array from the handler will allow all USB classes;
+     * returning the passed in array will maintain the default list of protected USB
+     * classes (this is also the default behavior if a handler is not defined). To
+     * clear the handler, call `setUSBProtectedClassesHandler(null)`.
+     */
+    setUSBProtectedClassesHandler(handler: ((details: USBProtectedClassesHandlerHandlerDetails) => string[]) | (null)): void;
+    /**
      * Overrides the `userAgent` and `acceptLanguages` for this session.
      *
      * The `acceptLanguages` must a comma separated ordered list of language codes, for
@@ -13236,6 +13562,241 @@ declare namespace Electron {
     readonly visibilityState: string;
   }
 
+  interface WebPreferences {
+
+    // Docs: https://electronjs.org/docs/api/structures/web-preferences
+
+    /**
+     * An alternative title string provided only to accessibility tools such as screen
+     * readers. This string is not directly visible to users.
+     */
+    accessibleTitle?: string;
+    /**
+     * A list of strings that will be appended to `process.argv` in the renderer
+     * process of this app.  Useful for passing small bits of data down to renderer
+     * process preload scripts.
+     */
+    additionalArguments?: string[];
+    /**
+     * Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is
+     * `false`.
+     */
+    allowRunningInsecureContent?: boolean;
+    /**
+     * Autoplay policy to apply to content in the window, can be
+     * `no-user-gesture-required`, `user-gesture-required`,
+     * `document-user-activation-required`. Defaults to `no-user-gesture-required`.
+     */
+    autoplayPolicy?: ('no-user-gesture-required' | 'user-gesture-required' | 'document-user-activation-required');
+    /**
+     * Whether to throttle animations and timers when the page becomes background. This
+     * also affects the Page Visibility API. Defaults to `true`.
+     */
+    backgroundThrottling?: boolean;
+    /**
+     * Whether to run Electron APIs and the specified `preload` script in a separate
+     * JavaScript context. Defaults to `true`. The context that the `preload` script
+     * runs in will only have access to its own dedicated `document` and `window`
+     * globals, as well as its own set of JavaScript builtins (`Array`, `Object`,
+     * `JSON`, etc.), which are all invisible to the loaded content. The Electron API
+     * will only be available in the `preload` script and not the loaded page. This
+     * option should be used when loading potentially untrusted remote content to
+     * ensure the loaded content cannot tamper with the `preload` script and any
+     * Electron APIs being used.  This option uses the same technique used by Chrome
+     * Content Scripts.  You can access this context in the dev tools by selecting the
+     * 'Electron Isolated Context' entry in the combo box at the top of the Console
+     * tab.
+     */
+    contextIsolation?: boolean;
+    /**
+     * Defaults to `ISO-8859-1`.
+     */
+    defaultEncoding?: string;
+    /**
+     * Sets the default font for the font-family.
+     */
+    defaultFontFamily?: DefaultFontFamily;
+    /**
+     * Defaults to `16`.
+     */
+    defaultFontSize?: number;
+    /**
+     * Defaults to `13`.
+     */
+    defaultMonospaceFontSize?: number;
+    /**
+     * Whether to enable DevTools. If it is set to `false`, can not use
+     * `BrowserWindow.webContents.openDevTools()` to open DevTools. Default is `true`.
+     */
+    devTools?: boolean;
+    /**
+     * A list of feature strings separated by `,`, like `CSSVariables,KeyboardEventKey`
+     * to disable. The full list of supported feature strings can be found in the
+     * RuntimeEnabledFeatures.json5 file.
+     */
+    disableBlinkFeatures?: string;
+    /**
+     * Whether to disable dialogs completely. Overrides `safeDialogs`. Default is
+     * `false`.
+     */
+    disableDialogs?: boolean;
+    /**
+     * Whether to prevent the window from resizing when entering HTML Fullscreen.
+     * Default is `false`.
+     */
+    disableHtmlFullscreenWindowResize?: boolean;
+    /**
+     * A list of feature strings separated by `,`, like `CSSVariables,KeyboardEventKey`
+     * to enable. The full list of supported feature strings can be found in the
+     * RuntimeEnabledFeatures.json5 file.
+     */
+    enableBlinkFeatures?: string;
+    /**
+     * Whether to enable preferred size mode. The preferred size is the minimum size
+     * needed to contain the layout of the document—without requiring scrolling.
+     * Enabling this will cause the `preferred-size-changed` event to be emitted on the
+     * `WebContents` when the preferred size changes. Default is `false`.
+     */
+    enablePreferredSizeMode?: boolean;
+    /**
+     * Whether to enable the WebSQL api. Default is `true`.
+     */
+    enableWebSQL?: boolean;
+    /**
+     * Enables Chromium's experimental features. Default is `false`.
+     */
+    experimentalFeatures?: boolean;
+    /**
+     * Specifies how to run image animations (E.g. GIFs).  Can be `animate`,
+     * `animateOnce` or `noAnimation`.  Default is `animate`.
+     */
+    imageAnimationPolicy?: ('animate' | 'animateOnce' | 'noAnimation');
+    /**
+     * Enables image support. Default is `true`.
+     */
+    images?: boolean;
+    /**
+     * Enables JavaScript support. Default is `true`.
+     */
+    javascript?: boolean;
+    /**
+     * Defaults to `0`.
+     */
+    minimumFontSize?: number;
+    /**
+     * Whether dragging and dropping a file or link onto the page causes a navigation.
+     * Default is `false`.
+     */
+    navigateOnDragDrop?: boolean;
+    /**
+     * Whether node integration is enabled. Default is `false`.
+     */
+    nodeIntegration?: boolean;
+    /**
+     * Experimental option for enabling Node.js support in sub-frames such as iframes
+     * and child windows. All your preloads will load for every iframe, you can use
+     * `process.isMainFrame` to determine if you are in the main frame or not.
+     */
+    nodeIntegrationInSubFrames?: boolean;
+    /**
+     * Whether node integration is enabled in web workers. Default is `false`. More
+     * about this can be found in Multithreading.
+     */
+    nodeIntegrationInWorker?: boolean;
+    /**
+     * Whether to enable offscreen rendering for the browser window. Defaults to
+     * `false`. See the offscreen rendering tutorial for more details.
+     */
+    offscreen?: boolean;
+    /**
+     * Sets the session used by the page according to the session's partition string.
+     * If `partition` starts with `persist:`, the page will use a persistent session
+     * available to all pages in the app with the same `partition`. If there is no
+     * `persist:` prefix, the page will use an in-memory session. By assigning the same
+     * `partition`, multiple pages can share the same session. Default is the default
+     * session.
+     */
+    partition?: string;
+    /**
+     * Whether plugins should be enabled. Default is `false`.
+     */
+    plugins?: boolean;
+    /**
+     * Specifies a script that will be loaded before other scripts run in the page.
+     * This script will always have access to node APIs no matter whether node
+     * integration is turned on or off. The value should be the absolute file path to
+     * the script. When node integration is turned off, the preload script can
+     * reintroduce Node global symbols back to the global scope. See example here.
+     */
+    preload?: string;
+    /**
+     * Whether to enable browser style consecutive dialog protection. Default is
+     * `false`.
+     */
+    safeDialogs?: boolean;
+    /**
+     * The message to display when consecutive dialog protection is triggered. If not
+     * defined the default message would be used, note that currently the default
+     * message is in English and not localized.
+     */
+    safeDialogsMessage?: string;
+    /**
+     * If set, this will sandbox the renderer associated with the window, making it
+     * compatible with the Chromium OS-level sandbox and disabling the Node.js engine.
+     * This is not the same as the `nodeIntegration` option and the APIs available to
+     * the preload script are more limited. Read more about the option here.
+     */
+    sandbox?: boolean;
+    /**
+     * Enables scroll bounce (rubber banding) effect on macOS. Default is `false`.
+     *
+     * @platform darwin
+     */
+    scrollBounce?: boolean;
+    /**
+     * Sets the session used by the page. Instead of passing the Session object
+     * directly, you can also choose to use the `partition` option instead, which
+     * accepts a partition string. When both `session` and `partition` are provided,
+     * `session` will be preferred. Default is the default session.
+     */
+    session?: Session;
+    /**
+     * Whether to enable the builtin spellchecker. Default is `true`.
+     */
+    spellcheck?: boolean;
+    /**
+     * Make TextArea elements resizable. Default is `true`.
+     */
+    textAreasAreResizable?: boolean;
+    /**
+     * Enforces the v8 code caching policy used by blink. Accepted values are
+     */
+    v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
+    /**
+     * Enables WebGL support. Default is `true`.
+     */
+    webgl?: boolean;
+    /**
+     * When `false`, it will disable the same-origin policy (usually using testing
+     * websites by people), and set `allowRunningInsecureContent` to `true` if this
+     * options has not been set by user. Default is `true`.
+     */
+    webSecurity?: boolean;
+    /**
+     * Whether to enable the `<webview>` tag. Defaults to `false`. **Note:** The
+     * `preload` script configured for the `<webview>` will have node integration
+     * enabled when it is executed so you should ensure remote/untrusted content is not
+     * able to create a `<webview>` tag with a possibly malicious `preload` script. You
+     * can use the `will-attach-webview` event on webContents to strip away the
+     * `preload` script and to validate or alter the `<webview>`'s initial settings.
+     */
+    webviewTag?: boolean;
+    /**
+     * The default zoom factor of the page, `3.0` represents `300%`. Default is `1.0`.
+     */
+    zoomFactor?: number;
+  }
+
   class WebRequest {
 
     // Docs: https://electronjs.org/docs/api/web-request
@@ -14233,312 +14794,9 @@ declare namespace Electron {
 
   interface BrowserViewConstructorOptions {
     /**
-     * See BrowserWindow.
-     */
-    webPreferences?: WebPreferences;
-  }
-
-  interface BrowserWindowConstructorOptions {
-    /**
-     * Window's width in pixels. Default is `800`.
-     */
-    width?: number;
-    /**
-     * Window's height in pixels. Default is `600`.
-     */
-    height?: number;
-    /**
-     * (**required** if y is used) Window's left offset from screen. Default is to
-     * center the window.
-     */
-    x?: number;
-    /**
-     * (**required** if x is used) Window's top offset from screen. Default is to
-     * center the window.
-     */
-    y?: number;
-    /**
-     * The `width` and `height` would be used as web page's size, which means the
-     * actual window's size will include window frame's size and be slightly larger.
-     * Default is `false`.
-     */
-    useContentSize?: boolean;
-    /**
-     * Show window in the center of the screen. Default is `false`.
-     */
-    center?: boolean;
-    /**
-     * Window's minimum width. Default is `0`.
-     */
-    minWidth?: number;
-    /**
-     * Window's minimum height. Default is `0`.
-     */
-    minHeight?: number;
-    /**
-     * Window's maximum width. Default is no limit.
-     */
-    maxWidth?: number;
-    /**
-     * Window's maximum height. Default is no limit.
-     */
-    maxHeight?: number;
-    /**
-     * Whether window is resizable. Default is `true`.
-     */
-    resizable?: boolean;
-    /**
-     * Whether window is movable. This is not implemented on Linux. Default is `true`.
-     *
-     * @platform darwin,win32
-     */
-    movable?: boolean;
-    /**
-     * Whether window is minimizable. This is not implemented on Linux. Default is
-     * `true`.
-     *
-     * @platform darwin,win32
-     */
-    minimizable?: boolean;
-    /**
-     * Whether window is maximizable. This is not implemented on Linux. Default is
-     * `true`.
-     *
-     * @platform darwin,win32
-     */
-    maximizable?: boolean;
-    /**
-     * Whether window is closable. This is not implemented on Linux. Default is `true`.
-     *
-     * @platform darwin,win32
-     */
-    closable?: boolean;
-    /**
-     * Whether the window can be focused. Default is `true`. On Windows setting
-     * `focusable: false` also implies setting `skipTaskbar: true`. On Linux setting
-     * `focusable: false` makes the window stop interacting with wm, so the window will
-     * always stay on top in all workspaces.
-     */
-    focusable?: boolean;
-    /**
-     * Whether the window should always stay on top of other windows. Default is
-     * `false`.
-     */
-    alwaysOnTop?: boolean;
-    /**
-     * Whether the window should show in fullscreen. When explicitly set to `false` the
-     * fullscreen button will be hidden or disabled on macOS. Default is `false`.
-     */
-    fullscreen?: boolean;
-    /**
-     * Whether the window can be put into fullscreen mode. On macOS, also whether the
-     * maximize/zoom button should toggle full screen mode or maximize window. Default
-     * is `true`.
-     */
-    fullscreenable?: boolean;
-    /**
-     * Use pre-Lion fullscreen on macOS. Default is `false`.
-     *
-     * @platform darwin
-     */
-    simpleFullscreen?: boolean;
-    /**
-     * Whether to show the window in taskbar. Default is `false`.
-     *
-     * @platform darwin,win32
-     */
-    skipTaskbar?: boolean;
-    /**
-     * Whether window should be hidden when the user toggles into mission control.
-     *
-     * @platform darwin
-     */
-    hiddenInMissionControl?: boolean;
-    /**
-     * Whether the window is in kiosk mode. Default is `false`.
-     */
-    kiosk?: boolean;
-    /**
-     * Default window title. Default is `"Electron"`. If the HTML tag `<title>` is
-     * defined in the HTML file loaded by `loadURL()`, this property will be ignored.
-     */
-    title?: string;
-    /**
-     * The window icon. On Windows it is recommended to use `ICO` icons to get best
-     * visual effects, you can also leave it undefined so the executable's icon will be
-     * used.
-     */
-    icon?: (NativeImage) | (string);
-    /**
-     * Whether window should be shown when created. Default is `true`.
-     */
-    show?: boolean;
-    /**
-     * Whether the renderer should be active when `show` is `false` and it has just
-     * been created.  In order for `document.visibilityState` to work correctly on
-     * first load with `show: false` you should set this to `false`.  Setting this to
-     * `false` will cause the `ready-to-show` event to not fire.  Default is `true`.
-     */
-    paintWhenInitiallyHidden?: boolean;
-    /**
-     * Specify `false` to create a frameless window. Default is `true`.
-     */
-    frame?: boolean;
-    /**
-     * Specify parent window. Default is `null`.
-     */
-    parent?: BrowserWindow;
-    /**
-     * Whether this is a modal window. This only works when the window is a child
-     * window. Default is `false`.
-     */
-    modal?: boolean;
-    /**
-     * Whether clicking an inactive window will also click through to the web contents.
-     * Default is `false` on macOS. This option is not configurable on other platforms.
-     *
-     * @platform darwin
-     */
-    acceptFirstMouse?: boolean;
-    /**
-     * Whether to hide cursor when typing. Default is `false`.
-     */
-    disableAutoHideCursor?: boolean;
-    /**
-     * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
-     */
-    autoHideMenuBar?: boolean;
-    /**
-     * Enable the window to be resized larger than screen. Only relevant for macOS, as
-     * other OSes allow larger-than-screen windows by default. Default is `false`.
-     *
-     * @platform darwin
-     */
-    enableLargerThanScreen?: boolean;
-    /**
-     * The window's background color in Hex, RGB, RGBA, HSL, HSLA or named CSS color
-     * format. Alpha in #AARRGGBB format is supported if `transparent` is set to
-     * `true`. Default is `#FFF` (white). See win.setBackgroundColor for more
-     * information.
-     */
-    backgroundColor?: string;
-    /**
-     * Whether window should have a shadow. Default is `true`.
-     */
-    hasShadow?: boolean;
-    /**
-     * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
-     * (fully opaque). This is only implemented on Windows and macOS.
-     *
-     * @platform darwin,win32
-     */
-    opacity?: number;
-    /**
-     * Forces using dark theme for the window, only works on some GTK+3 desktop
-     * environments. Default is `false`.
-     */
-    darkTheme?: boolean;
-    /**
-     * Makes the window transparent. Default is `false`. On Windows, does not work
-     * unless the window is frameless.
-     */
-    transparent?: boolean;
-    /**
-     * The type of window, default is normal window. See more about this below.
-     */
-    type?: string;
-    /**
-     * Specify how the material appearance should reflect window activity state on
-     * macOS. Must be used with the `vibrancy` property. Possible values are:
-     *
-     * @platform darwin
-     */
-    visualEffectState?: ('followWindow' | 'active' | 'inactive');
-    /**
-     * The style of window title bar. Default is `default`. Possible values are:
-     *
-     * @platform darwin,win32
-     */
-    titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
-    /**
-     * Set a custom position for the traffic light buttons in frameless windows.
-     *
-     * @platform darwin
-     */
-    trafficLightPosition?: Point;
-    /**
-     * Whether frameless window should have rounded corners on macOS. Default is
-     * `true`. Setting this property to `false` will prevent the window from being
-     * fullscreenable.
-     *
-     * @platform darwin
-     */
-    roundedCorners?: boolean;
-    /**
-     * Shows the title in the title bar in full screen mode on macOS for `hiddenInset`
-     * titleBarStyle. Default is `false`.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    fullscreenWindowTitle?: boolean;
-    /**
-     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
-     * window frame. Setting it to `false` will remove window shadow and window
-     * animations. Default is `true`.
-     */
-    thickFrame?: boolean;
-    /**
-     * Add a type of vibrancy effect to the window, only on macOS. Can be
-     * `appearance-based`, `light`, `dark`, `titlebar`, `selection`, `menu`, `popover`,
-     * `sidebar`, `medium-light`, `ultra-dark`, `header`, `sheet`, `window`, `hud`,
-     * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`. Please
-     * note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
-     * are deprecated and have been removed in macOS Catalina (10.15).
-     *
-     * @platform darwin
-     */
-    vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
-    /**
-     * Set the window's system-drawn background material, including behind the
-     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
-     * win.setBackgroundMaterial for more information.
-     *
-     * @platform win32
-     */
-    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
-    /**
-     * Controls the behavior on macOS when option-clicking the green stoplight button
-     * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
-     * will grow to the preferred width of the web page when zoomed, `false` will cause
-     * it to zoom to the width of the screen. This will also affect the behavior when
-     * calling `maximize()` directly. Default is `false`.
-     *
-     * @platform darwin
-     */
-    zoomToPageWidth?: boolean;
-    /**
-     * Tab group name, allows opening the window as a native tab. Windows with the same
-     * tabbing identifier will be grouped together. This also adds a native new tab
-     * button to your window's tab bar and allows your `app` and window to receive the
-     * `new-window-for-tab` event.
-     *
-     * @platform darwin
-     */
-    tabbingIdentifier?: string;
-    /**
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
-    /**
-     *  When using a frameless window in conjunction with
-     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
-     * that the standard window controls ("traffic lights" on macOS) are visible, this
-     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
-     * Variables. Specifying `true` will result in an overlay with default system
-     * colors. Default is `false`.
-     */
-    titleBarOverlay?: (TitleBarOverlay) | (boolean);
   }
 
   interface CallbackResponse {
@@ -15078,6 +15336,33 @@ declare namespace Electron {
      * The title of the URL at `text`.
      */
     bookmark?: string;
+  }
+
+  interface DefaultFontFamily {
+    /**
+     * Defaults to `Times New Roman`.
+     */
+    standard?: string;
+    /**
+     * Defaults to `Times New Roman`.
+     */
+    serif?: string;
+    /**
+     * Defaults to `Arial`.
+     */
+    sansSerif?: string;
+    /**
+     * Defaults to `Courier New`.
+     */
+    monospace?: string;
+    /**
+     * Defaults to `Script`.
+     */
+    cursive?: string;
+    /**
+     * Defaults to `Impact`.
+     */
+    fantasy?: string;
   }
 
   interface Details {
@@ -17041,6 +17326,9 @@ declare namespace Electron {
     swapFree: number;
   }
 
+  interface TitleBarOverlay {
+  }
+
   interface TitleBarOverlayOptions {
     /**
      * The CSS color of the Window Controls Overlay when enabled.
@@ -17313,6 +17601,13 @@ declare namespace Electron {
      * The origin that the device has been revoked from.
      */
     origin?: string;
+  }
+
+  interface USBProtectedClassesHandlerHandlerDetails {
+    /**
+     * The current list of protected USB classes. Possible class values are:
+     */
+    protectedClasses: Array<'audio' | 'audio-video' | 'hid' | 'mass-storage' | 'smart-card' | 'video' | 'wireless'>;
   }
 
   interface VisibleOnAllWorkspacesOptions {
@@ -17917,30 +18212,6 @@ declare namespace Electron {
     editFlags: EditFlags;
   }
 
-  interface TitleBarOverlay {
-    /**
-     * The CSS color of the Window Controls Overlay when enabled. Default is the system
-     * color.
-     *
-     * @platform win32
-     */
-    color?: string;
-    /**
-     * The CSS color of the symbols on the Window Controls Overlay when enabled.
-     * Default is the system color.
-     *
-     * @platform win32
-     */
-    symbolColor?: string;
-    /**
-     * The height of the title bar and Window Controls Overlay in pixels. Default is
-     * system height.
-     *
-     * @platform darwin,win32
-     */
-    height?: number;
-  }
-
   interface Video {
     /**
      * The id of the stream being granted. This will usually come from a
@@ -17952,265 +18223,6 @@ declare namespace Electron {
      * DesktopCapturerSource object.
      */
     name: string;
-  }
-
-  interface WebPreferences {
-    /**
-     * Whether to enable DevTools. If it is set to `false`, can not use
-     * `BrowserWindow.webContents.openDevTools()` to open DevTools. Default is `true`.
-     */
-    devTools?: boolean;
-    /**
-     * Whether node integration is enabled. Default is `false`.
-     */
-    nodeIntegration?: boolean;
-    /**
-     * Whether node integration is enabled in web workers. Default is `false`. More
-     * about this can be found in Multithreading.
-     */
-    nodeIntegrationInWorker?: boolean;
-    /**
-     * Experimental option for enabling Node.js support in sub-frames such as iframes
-     * and child windows. All your preloads will load for every iframe, you can use
-     * `process.isMainFrame` to determine if you are in the main frame or not.
-     */
-    nodeIntegrationInSubFrames?: boolean;
-    /**
-     * Specifies a script that will be loaded before other scripts run in the page.
-     * This script will always have access to node APIs no matter whether node
-     * integration is turned on or off. The value should be the absolute file path to
-     * the script. When node integration is turned off, the preload script can
-     * reintroduce Node global symbols back to the global scope. See example here.
-     */
-    preload?: string;
-    /**
-     * If set, this will sandbox the renderer associated with the window, making it
-     * compatible with the Chromium OS-level sandbox and disabling the Node.js engine.
-     * This is not the same as the `nodeIntegration` option and the APIs available to
-     * the preload script are more limited. Read more about the option here.
-     */
-    sandbox?: boolean;
-    /**
-     * Sets the session used by the page. Instead of passing the Session object
-     * directly, you can also choose to use the `partition` option instead, which
-     * accepts a partition string. When both `session` and `partition` are provided,
-     * `session` will be preferred. Default is the default session.
-     */
-    session?: Session;
-    /**
-     * Sets the session used by the page according to the session's partition string.
-     * If `partition` starts with `persist:`, the page will use a persistent session
-     * available to all pages in the app with the same `partition`. If there is no
-     * `persist:` prefix, the page will use an in-memory session. By assigning the same
-     * `partition`, multiple pages can share the same session. Default is the default
-     * session.
-     */
-    partition?: string;
-    /**
-     * The default zoom factor of the page, `3.0` represents `300%`. Default is `1.0`.
-     */
-    zoomFactor?: number;
-    /**
-     * Enables JavaScript support. Default is `true`.
-     */
-    javascript?: boolean;
-    /**
-     * When `false`, it will disable the same-origin policy (usually using testing
-     * websites by people), and set `allowRunningInsecureContent` to `true` if this
-     * options has not been set by user. Default is `true`.
-     */
-    webSecurity?: boolean;
-    /**
-     * Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is
-     * `false`.
-     */
-    allowRunningInsecureContent?: boolean;
-    /**
-     * Enables image support. Default is `true`.
-     */
-    images?: boolean;
-    /**
-     * Specifies how to run image animations (E.g. GIFs).  Can be `animate`,
-     * `animateOnce` or `noAnimation`.  Default is `animate`.
-     */
-    imageAnimationPolicy?: ('animate' | 'animateOnce' | 'noAnimation');
-    /**
-     * Make TextArea elements resizable. Default is `true`.
-     */
-    textAreasAreResizable?: boolean;
-    /**
-     * Enables WebGL support. Default is `true`.
-     */
-    webgl?: boolean;
-    /**
-     * Whether plugins should be enabled. Default is `false`.
-     */
-    plugins?: boolean;
-    /**
-     * Enables Chromium's experimental features. Default is `false`.
-     */
-    experimentalFeatures?: boolean;
-    /**
-     * Enables scroll bounce (rubber banding) effect on macOS. Default is `false`.
-     *
-     * @platform darwin
-     */
-    scrollBounce?: boolean;
-    /**
-     * A list of feature strings separated by `,`, like `CSSVariables,KeyboardEventKey`
-     * to enable. The full list of supported feature strings can be found in the
-     * RuntimeEnabledFeatures.json5 file.
-     */
-    enableBlinkFeatures?: string;
-    /**
-     * A list of feature strings separated by `,`, like `CSSVariables,KeyboardEventKey`
-     * to disable. The full list of supported feature strings can be found in the
-     * RuntimeEnabledFeatures.json5 file.
-     */
-    disableBlinkFeatures?: string;
-    /**
-     * Sets the default font for the font-family.
-     */
-    defaultFontFamily?: DefaultFontFamily;
-    /**
-     * Defaults to `16`.
-     */
-    defaultFontSize?: number;
-    /**
-     * Defaults to `13`.
-     */
-    defaultMonospaceFontSize?: number;
-    /**
-     * Defaults to `0`.
-     */
-    minimumFontSize?: number;
-    /**
-     * Defaults to `ISO-8859-1`.
-     */
-    defaultEncoding?: string;
-    /**
-     * Whether to throttle animations and timers when the page becomes background. This
-     * also affects the Page Visibility API. Defaults to `true`.
-     */
-    backgroundThrottling?: boolean;
-    /**
-     * Whether to enable offscreen rendering for the browser window. Defaults to
-     * `false`. See the offscreen rendering tutorial for more details.
-     */
-    offscreen?: boolean;
-    /**
-     * Whether to run Electron APIs and the specified `preload` script in a separate
-     * JavaScript context. Defaults to `true`. The context that the `preload` script
-     * runs in will only have access to its own dedicated `document` and `window`
-     * globals, as well as its own set of JavaScript builtins (`Array`, `Object`,
-     * `JSON`, etc.), which are all invisible to the loaded content. The Electron API
-     * will only be available in the `preload` script and not the loaded page. This
-     * option should be used when loading potentially untrusted remote content to
-     * ensure the loaded content cannot tamper with the `preload` script and any
-     * Electron APIs being used.  This option uses the same technique used by Chrome
-     * Content Scripts.  You can access this context in the dev tools by selecting the
-     * 'Electron Isolated Context' entry in the combo box at the top of the Console
-     * tab.
-     */
-    contextIsolation?: boolean;
-    /**
-     * Whether to enable the `<webview>` tag. Defaults to `false`. **Note:** The
-     * `preload` script configured for the `<webview>` will have node integration
-     * enabled when it is executed so you should ensure remote/untrusted content is not
-     * able to create a `<webview>` tag with a possibly malicious `preload` script. You
-     * can use the `will-attach-webview` event on webContents to strip away the
-     * `preload` script and to validate or alter the `<webview>`'s initial settings.
-     */
-    webviewTag?: boolean;
-    /**
-     * A list of strings that will be appended to `process.argv` in the renderer
-     * process of this app.  Useful for passing small bits of data down to renderer
-     * process preload scripts.
-     */
-    additionalArguments?: string[];
-    /**
-     * Whether to enable browser style consecutive dialog protection. Default is
-     * `false`.
-     */
-    safeDialogs?: boolean;
-    /**
-     * The message to display when consecutive dialog protection is triggered. If not
-     * defined the default message would be used, note that currently the default
-     * message is in English and not localized.
-     */
-    safeDialogsMessage?: string;
-    /**
-     * Whether to disable dialogs completely. Overrides `safeDialogs`. Default is
-     * `false`.
-     */
-    disableDialogs?: boolean;
-    /**
-     * Whether dragging and dropping a file or link onto the page causes a navigation.
-     * Default is `false`.
-     */
-    navigateOnDragDrop?: boolean;
-    /**
-     * Autoplay policy to apply to content in the window, can be
-     * `no-user-gesture-required`, `user-gesture-required`,
-     * `document-user-activation-required`. Defaults to `no-user-gesture-required`.
-     */
-    autoplayPolicy?: ('no-user-gesture-required' | 'user-gesture-required' | 'document-user-activation-required');
-    /**
-     * Whether to prevent the window from resizing when entering HTML Fullscreen.
-     * Default is `false`.
-     */
-    disableHtmlFullscreenWindowResize?: boolean;
-    /**
-     * An alternative title string provided only to accessibility tools such as screen
-     * readers. This string is not directly visible to users.
-     */
-    accessibleTitle?: string;
-    /**
-     * Whether to enable the builtin spellchecker. Default is `true`.
-     */
-    spellcheck?: boolean;
-    /**
-     * Whether to enable the WebSQL api. Default is `true`.
-     */
-    enableWebSQL?: boolean;
-    /**
-     * Enforces the v8 code caching policy used by blink. Accepted values are
-     */
-    v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
-    /**
-     * Whether to enable preferred size mode. The preferred size is the minimum size
-     * needed to contain the layout of the document—without requiring scrolling.
-     * Enabling this will cause the `preferred-size-changed` event to be emitted on the
-     * `WebContents` when the preferred size changes. Default is `false`.
-     */
-    enablePreferredSizeMode?: boolean;
-  }
-
-  interface DefaultFontFamily {
-    /**
-     * Defaults to `Times New Roman`.
-     */
-    standard?: string;
-    /**
-     * Defaults to `Times New Roman`.
-     */
-    serif?: string;
-    /**
-     * Defaults to `Arial`.
-     */
-    sansSerif?: string;
-    /**
-     * Defaults to `Courier New`.
-     */
-    monospace?: string;
-    /**
-     * Defaults to `Script`.
-     */
-    cursive?: string;
-    /**
-     * Defaults to `Impact`.
-     */
-    fantasy?: string;
   }
 
   interface RemoteMainInterface {
@@ -18278,7 +18290,6 @@ declare namespace Electron {
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
-    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
@@ -18298,6 +18309,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
@@ -18401,6 +18413,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
@@ -18420,6 +18433,7 @@ declare namespace Electron {
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
@@ -18440,11 +18454,9 @@ declare namespace Electron {
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
-    type TitleBarOverlay = Electron.TitleBarOverlay;
     type Video = Electron.Video;
-    type WebPreferences = Electron.WebPreferences;
-    type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
+    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
     type ComponentStatus = Electron.ComponentStatus;
@@ -18510,6 +18522,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
@@ -18605,7 +18618,6 @@ declare namespace Electron {
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
-    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
@@ -18625,6 +18637,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
@@ -18728,6 +18741,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
@@ -18747,6 +18761,7 @@ declare namespace Electron {
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
@@ -18767,11 +18782,9 @@ declare namespace Electron {
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
-    type TitleBarOverlay = Electron.TitleBarOverlay;
     type Video = Electron.Video;
-    type WebPreferences = Electron.WebPreferences;
-    type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
+    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
     type ComponentStatus = Electron.ComponentStatus;
@@ -18837,6 +18850,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
@@ -18864,7 +18878,6 @@ declare namespace Electron {
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
-    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
@@ -18884,6 +18897,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
@@ -18987,6 +19001,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
@@ -19006,6 +19021,7 @@ declare namespace Electron {
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
@@ -19026,11 +19042,9 @@ declare namespace Electron {
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
-    type TitleBarOverlay = Electron.TitleBarOverlay;
     type Video = Electron.Video;
-    type WebPreferences = Electron.WebPreferences;
-    type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
+    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
     type ComponentStatus = Electron.ComponentStatus;
@@ -19096,6 +19110,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
@@ -19206,7 +19221,6 @@ declare namespace Electron {
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
-    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
@@ -19226,6 +19240,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
@@ -19329,6 +19344,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
@@ -19348,6 +19364,7 @@ declare namespace Electron {
     type UpdateTargetUrlEvent = Electron.UpdateTargetUrlEvent;
     type UploadProgress = Electron.UploadProgress;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
@@ -19368,11 +19385,9 @@ declare namespace Electron {
     type MediaFlags = Electron.MediaFlags;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
-    type TitleBarOverlay = Electron.TitleBarOverlay;
     type Video = Electron.Video;
-    type WebPreferences = Electron.WebPreferences;
-    type DefaultFontFamily = Electron.DefaultFontFamily;
     type BluetoothDevice = Electron.BluetoothDevice;
+    type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
     type ComponentStatus = Electron.ComponentStatus;
@@ -19438,6 +19453,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
   }
