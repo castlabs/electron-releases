@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-alpha.2+wvcus
+// Type definitions for Electron 26.0.0-alpha.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8118,12 +8118,14 @@ declare namespace Electron {
 
     /**
      * A stable identifier on Windows that can be used for device permissions.
+     *
+     * @platform win32
      */
     deviceInstanceId?: string;
     /**
      * A string suitable for display to the user for describing this device.
      */
-    displayName: string;
+    displayName?: string;
     /**
      * Unique identifier for the port.
      */
@@ -8133,21 +8135,23 @@ declare namespace Electron {
      */
     portName: string;
     /**
-     * Optional USB product ID.
+     * The USB product ID.
      */
-    productId: string;
+    productId?: string;
     /**
      * The USB device serial number.
      */
-    serialNumber: string;
+    serialNumber?: string;
     /**
      * Represents a single serial port on macOS can be enumerated by multiple drivers.
+     *
+     * @platform darwin
      */
     usbDriverName?: string;
     /**
-     * Optional USB vendor ID.
+     * The USB vendor ID.
      */
-    vendorId: string;
+    vendorId?: string;
   }
 
   interface ServiceWorkerInfo {
