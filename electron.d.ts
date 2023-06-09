@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.4.1+wvcus
+// Type definitions for Electron 24.5.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -7681,12 +7681,14 @@ declare namespace Electron {
 
     /**
      * A stable identifier on Windows that can be used for device permissions.
+     *
+     * @platform win32
      */
     deviceInstanceId?: string;
     /**
      * A string suitable for display to the user for describing this device.
      */
-    displayName: string;
+    displayName?: string;
     /**
      * Unique identifier for the port.
      */
@@ -7696,21 +7698,23 @@ declare namespace Electron {
      */
     portName: string;
     /**
-     * Optional USB product ID.
+     * The USB product ID.
      */
-    productId: string;
+    productId?: string;
     /**
      * The USB device serial number.
      */
-    serialNumber: string;
+    serialNumber?: string;
     /**
      * Represents a single serial port on macOS can be enumerated by multiple drivers.
+     *
+     * @platform darwin
      */
     usbDriverName?: string;
     /**
-     * Optional USB vendor ID.
+     * The USB vendor ID.
      */
-    vendorId: string;
+    vendorId?: string;
   }
 
   interface ServiceWorkerInfo {
@@ -8599,6 +8603,26 @@ declare namespace Electron {
      * reused for new connections.
      */
     setSSLConfig(config: SSLConfigConfig): void;
+    /**
+     * Sets the handler which can be used to override which USB classes are protected.
+     * The return value for the handler is a string array of USB classes which should
+     * be considered protected (eg not available in the renderer).  Valid values for
+     * the array are:
+     *
+     * * `audio`
+     * * `audio-video`
+     * * `hid`
+     * * `mass-storage`
+     * * `smart-card`
+     * * `video`
+     * * `wireless`
+     *
+     * Returning an empty string array from the handler will allow all USB classes;
+     * returning the passed in array will maintain the default list of protected USB
+     * classes (this is also the default behavior if a handler is not defined). To
+     * clear the handler, call `setUSBProtectedClassesHandler(null)`.
+     */
+    setUSBProtectedClassesHandler(handler: ((details: USBProtectedClassesHandlerHandlerDetails) => string[]) | (null)): void;
     /**
      * Overrides the `userAgent` and `acceptLanguages` for this session.
      *
@@ -16699,6 +16723,13 @@ declare namespace Electron {
     origin?: string;
   }
 
+  interface USBProtectedClassesHandlerHandlerDetails {
+    /**
+     * The current list of protected USB classes. Possible class values are:
+     */
+    protectedClasses: Array<'audio' | 'audio-video' | 'hid' | 'mass-storage' | 'smart-card' | 'video' | 'wireless'>;
+  }
+
   interface VisibleOnAllWorkspacesOptions {
     /**
      * Sets whether the window should be visible above fullscreen windows.
@@ -17655,6 +17686,7 @@ declare namespace Electron {
     type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -17975,6 +18007,7 @@ declare namespace Electron {
     type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -18226,6 +18259,7 @@ declare namespace Electron {
     type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
@@ -18560,6 +18594,7 @@ declare namespace Electron {
     type UsbDeviceAddedDetails = Electron.UsbDeviceAddedDetails;
     type UsbDeviceRemovedDetails = Electron.UsbDeviceRemovedDetails;
     type UsbDeviceRevokedDetails = Electron.UsbDeviceRevokedDetails;
+    type USBProtectedClassesHandlerHandlerDetails = Electron.USBProtectedClassesHandlerHandlerDetails;
     type VisibleOnAllWorkspacesOptions = Electron.VisibleOnAllWorkspacesOptions;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebviewTagPrintOptions = Electron.WebviewTagPrintOptions;
