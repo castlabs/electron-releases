@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-alpha.4+wvcus
+// Type definitions for Electron 26.0.0-alpha.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -12420,66 +12420,12 @@ declare namespace Electron {
      * Before:
      *
      * <img width="487" alt="Image Before Text Selection Adjustment"
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * thubusercontent.com/2036040/231761306-cd4e7b15-c2ed-46cf-8e80-10811f6de83e.png">
+     * src="../images/web-contents-text-selection-before.png"/>
      *
      * After:
      *
      * <img width="487" alt="Image After Text Selection Adjustment"
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * thubusercontent.com/2036040/231761169-887eb8ef-06fb-46e4-9efa-898bcb0d6a2b.png">
+     * src="../images/web-contents-text-selection-after.png"/>
      */
     adjustSelection(options: AdjustSelectionOptions): void;
     /**
