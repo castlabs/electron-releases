@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.5.0+wvcus
+// Type definitions for Electron 24.5.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
