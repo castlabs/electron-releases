@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-alpha.6+wvcus
+// Type definitions for Electron 26.0.0-alpha.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7073,73 +7073,7 @@ declare namespace Electron {
      * repeatedly.
      *
      * See
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * nce/Conceptual/power_efficiency_guidelines_osx/RespondToThermalStateChanges.html
+     * https://developer.apple.com/library/archive/documentation/Performance/Conceptual/power_efficiency_guidelines_osx/RespondToThermalStateChanges.html
      *
      * @platform darwin
      */
@@ -7768,31 +7702,7 @@ declare namespace Electron {
 
     /**
      * Emitted when the app receives a remote notification while running. See:
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * com/documentation/appkit/nsapplicationdelegate/1428430-application?language=objc
+     * https://developer.apple.com/documentation/appkit/nsapplicationdelegate/1428430-application?language=objc
      *
      * @platform darwin
      */
@@ -7809,88 +7719,14 @@ declare namespace Electron {
      * Sound, and Alert notifications. If registration is successful, the promise will
      * be resolved with the APNS device token. Otherwise, the promise will be rejected
      * with an error message. See:
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * tion/appkit/nsapplication/1428476-registerforremotenotificationtyp?language=objc
+     * https://developer.apple.com/documentation/appkit/nsapplication/1428476-registerforremotenotificationtyp?language=objc
      *
      * @platform darwin
      */
     registerForAPNSNotifications(): Promise<string>;
     /**
      * Unregisters the app from notifications received from APNS. See:
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * tion/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc
+     * https://developer.apple.com/documentation/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc
      *
      * @platform darwin
      */
@@ -14836,7 +14672,7 @@ declare namespace Electron {
      * Can be `http:` or `https:`. The protocol scheme in the form 'scheme:'. Defaults
      * to 'http:'.
      */
-    protocol?: string;
+    protocol?: ('http:' | 'https:');
     /**
      * The server host provided as a concatenation of the hostname and the port number
      * 'hostname:port'.
@@ -16787,7 +16623,7 @@ declare namespace Electron {
      * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
      * `height` and `width` in inches. Defaults to `Letter`.
      */
-    pageSize?: (string) | (Size);
+    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
     margins?: Margins;
     /**
      * Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string,
@@ -17203,12 +17039,12 @@ declare namespace Electron {
      * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
      * when connecting to remote servers. Defaults to `tls1`.
      */
-    minVersion?: string;
+    minVersion?: ('tls1' | 'tls1.1' | 'tls1.2' | 'tls1.3');
     /**
      * Can be `tls1.2` or `tls1.3`. The maximum SSL version to allow when connecting to
      * remote servers. Defaults to `tls1.3`.
      */
-    maxVersion?: string;
+    maxVersion?: ('tls1.2' | 'tls1.3');
     /**
      * List of cipher suites which should be explicitly prevented from being used in
      * addition to those disabled by the net built-in policy. Supported literal forms:
@@ -17705,7 +17541,7 @@ declare namespace Electron {
      * `A5`, `A6`, `Legal`, `Letter`, `Tabloid` or an Object containing `height` and
      * `width`.
      */
-    pageSize?: (string) | (Size);
+    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid')) | (Size);
   }
 
   interface WebContentsWillFrameNavigateEventParams {
@@ -17713,6 +17549,12 @@ declare namespace Electron {
      * The URL the frame is navigating to.
      */
     url: string;
+    /**
+     * This event does not fire for same document navigations using window.history api
+     * and reference fragment navigations. This property is always set to `false` for
+     * this event.
+     */
+    isSameDocument: boolean;
     /**
      * True if the navigation is taking place in a main frame.
      */
@@ -17736,9 +17578,9 @@ declare namespace Electron {
      */
     url: string;
     /**
-     * Whether the navigation happened without changing document. Examples of same
-     * document navigations are reference fragment navigations, pushState/replaceState,
-     * and same page history navigation.
+     * This event does not fire for same document navigations using window.history api
+     * and reference fragment navigations. This property is always set to `false` for
+     * this event.
      */
     isSameDocument: boolean;
     /**
@@ -17848,7 +17690,7 @@ declare namespace Electron {
      * Specify page size of the printed document. Can be `A3`, `A4`, `A5`, `Legal`,
      * `Letter`, `Tabloid` or an Object containing `height` in microns.
      */
-    pageSize?: (string) | (Size);
+    pageSize?: (('A3' | 'A4' | 'A5' | 'Legal' | 'Letter' | 'Tabloid')) | (Size);
   }
 
   interface WillFrameNavigateEvent extends DOMEvent {
@@ -19447,15 +19289,15 @@ declare module 'electron' {
 }
 
 declare module 'electron/main' {
-  export = Electron.Main
+  export = Electron.Main;
 }
 
 declare module 'electron/common' {
-  export = Electron.Common
+  export = Electron.Common;
 }
 
 declare module 'electron/renderer' {
-  export = Electron.Renderer
+  export = Electron.Renderer;
 }
 
 interface NodeRequireFunction {
@@ -19473,9 +19315,9 @@ interface NodeRequire {
 }
 
 interface File {
- /**
-  * The real path to the file on the users filesystem
-  */
+  /**
+   * The real path to the file on the users filesystem
+   */
   path: string;
 }
 
@@ -19484,9 +19326,15 @@ declare module 'original-fs' {
   export = fs;
 }
 
+declare module 'node:original-fs' {
+  import * as fs from 'fs';
+  export = fs;
+}
+
 interface Document {
   createElement(tagName: 'webview'): Electron.WebviewTag;
 }
+
 
 declare namespace NodeJS {
   interface Process extends NodeJS.EventEmitter {
