@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-beta.2+wvcus
+// Type definitions for Electron 26.0.0-beta.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -16591,6 +16591,16 @@ declare namespace Electron {
      * @platform darwin
      */
     positioningItem?: number;
+    /**
+     * This should map to the `menuSourceType` provided by the `context-menu` event. It
+     * is not recommended to set this value manually, only provide values you receive
+     * from other APIs or leave it `undefined`. Can be `none`, `mouse`, `keyboard`,
+     * `touch`, `touchMenu`, `longPress`, `longTap`, `touchHandle`, `stylus`,
+     * `adjustSelection`, or `adjustSelectionReset`.
+     *
+     * @platform win32,linux
+     */
+    sourceType?: ('none' | 'mouse' | 'keyboard' | 'touch' | 'touchMenu' | 'longPress' | 'longTap' | 'touchHandle' | 'stylus' | 'adjustSelection' | 'adjustSelectionReset');
     /**
      * Called when menu is closed.
      */
