@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-beta.4+wvcus
+// Type definitions for Electron 26.0.0-beta.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7810,6 +7810,27 @@ declare namespace Electron {
      */
     encryptString(plainText: string): Buffer;
     /**
+     * User friendly name of the password manager selected on Linux.
+     *
+     * This function will return one of the following values:
+     *
+     * * `basic_text` - When the desktop environment is not recognised or if the
+     * following command line flag is provided `--password-store="basic"`.
+     * * `gnome_libsecret` - When the desktop environment is `X-Cinnamon`, `Deepin`,
+     * `GNOME`, `Pantheon`, `XFCE`, `UKUI`, `unity` or if the following command line
+     * flag is provided `--password-store="gnome-libsecret"`.
+     * * `kwallet` - When the desktop session is `kde4` or if the following command
+     * line flag is provided `--password-store="kwallet"`.
+     * * `kwallet5` - When the desktop session is `kde5` or if the following command
+     * line flag is provided `--password-store="kwallet5"`.
+     * * `kwallet6` - When the desktop session is `kde6`.
+     * * `unknown` - When the function is called before app has emitted the `ready`
+     * event.
+     *
+     * @platform linux
+     */
+    getSelectedStorageBackend(): ('basic_text' | 'gnome_libsecret' | 'kwallet' | 'kwallet5' | 'kwallet6' | 'unknown');
+    /**
      * Whether encryption is available.
      *
      * On Linux, returns true if the app has emitted the `ready` event and the secret
@@ -7817,6 +7838,13 @@ declare namespace Electron {
      * returns true once the app has emitted the `ready` event.
      */
     isEncryptionAvailable(): boolean;
+    /**
+     * This function on Linux will force the module to use an in memory password for
+     * creating symmetric key that is used for encrypt/decrypt functions when a valid
+     * OS password manager cannot be determined for the current active desktop
+     * environment. This function is a no-op on Windows and MacOS.
+     */
+    setUsePlainTextEncryption(usePlainText: boolean): void;
   }
 
   interface Screen extends NodeJS.EventEmitter {
