@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-beta.9+wvcus
+// Type definitions for Electron 26.0.0-beta.10+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14654,16 +14654,16 @@ declare namespace Electron {
      */
     origin?: string;
     /**
-     * The types of storages to clear, can contain: `cookies`, `filesystem`, `indexdb`,
+     * The types of storages to clear, can be `cookies`, `filesystem`, `indexdb`,
      * `localstorage`, `shadercache`, `websql`, `serviceworkers`, `cachestorage`. If
      * not specified, clear all storage types.
      */
-    storages?: string[];
+    storages?: Array<'cookies' | 'filesystem' | 'indexdb' | 'localstorage' | 'shadercache' | 'websql' | 'serviceworkers' | 'cachestorage'>;
     /**
-     * The types of quotas to clear, can contain: `temporary`, `syncable`. If not
-     * specified, clear all quotas.
+     * The types of quotas to clear, can be `temporary`, `syncable`. If not specified,
+     * clear all quotas.
      */
-    quotas?: string[];
+    quotas?: Array<'temporary' | 'syncable'>;
   }
 
   interface ClientRequestConstructorOptions {
@@ -14925,9 +14925,9 @@ declare namespace Electron {
     frameCharset: string;
     /**
      * If the context menu was invoked on an input field, the type of that field.
-     * Possible values are `none`, `plainText`, `password`, `other`.
+     * Possible values include `none`, `plainText`, `password`, `other`.
      */
-    inputFieldType: string;
+    inputFieldType: ('none' | 'plainText' | 'password' | 'other');
     /**
      * If the context is editable, whether or not spellchecking is enabled.
      */
@@ -16818,13 +16818,14 @@ declare namespace Electron {
      */
     height?: number;
     /**
-     * The desired quality of the resize image. Possible values are `good`, `better`,
-     * or `best`. The default is `best`. These values express a desired quality/speed
-     * tradeoff. They are translated into an algorithm-specific method that depends on
-     * the capabilities (CPU, GPU) of the underlying platform. It is possible for all
-     * three methods to be mapped to the same algorithm on a given platform.
+     * The desired quality of the resize image. Possible values include `good`,
+     * `better`, or `best`. The default is `best`. These values express a desired
+     * quality/speed tradeoff. They are translated into an algorithm-specific method
+     * that depends on the capabilities (CPU, GPU) of the underlying platform. It is
+     * possible for all three methods to be mapped to the same algorithm on a given
+     * platform.
      */
-    quality?: string;
+    quality?: ('good' | 'better' | 'best');
   }
 
   interface ResolveHostOptions {
@@ -17067,9 +17068,9 @@ declare namespace Electron {
   interface SourcesOptions {
     /**
      * An array of strings that lists the types of desktop sources to be captured,
-     * available types are `screen` and `window`.
+     * available types can be `screen` and `window`.
      */
-    types: string[];
+    types: Array<'screen' | 'window'>;
     /**
      * The size that the media source thumbnail should be scaled to. Default is `150` x
      * `150`. Set width or height to 0 when you do not need the thumbnails. This will
@@ -17442,7 +17443,7 @@ declare namespace Electron {
 
   interface USBProtectedClassesHandlerHandlerDetails {
     /**
-     * The current list of protected USB classes. Possible class values are:
+     * The current list of protected USB classes. Possible class values include:
      */
     protectedClasses: Array<'audio' | 'audio-video' | 'hid' | 'mass-storage' | 'smart-card' | 'video' | 'wireless'>;
   }
@@ -18031,9 +18032,9 @@ declare namespace Electron {
     frameCharset: string;
     /**
      * If the context menu was invoked on an input field, the type of that field.
-     * Possible values are `none`, `plainText`, `password`, `other`.
+     * Possible values include `none`, `plainText`, `password`, `other`.
      */
-    inputFieldType: string;
+    inputFieldType: ('none' | 'plainText' | 'password' | 'other');
     /**
      * If the context is editable, whether or not spellchecking is enabled.
      */
