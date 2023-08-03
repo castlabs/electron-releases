@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.6.5+wvcus
+// Type definitions for Electron 24.7.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -5521,6 +5521,12 @@ declare namespace Electron {
      * `event.senderId` to `0`.
      */
     senderId: number;
+    /**
+     * Whether the message sent via ipcRenderer.sendTo was sent by the main frame. This
+     * is relevant when `nodeIntegrationInSubFrames` is enabled in the originating
+     * `webContents`.
+     */
+    senderIsMainFrame?: boolean;
   }
 
   interface JumpListCategory {
