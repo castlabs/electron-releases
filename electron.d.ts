@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-beta.10+wvcus
+// Type definitions for Electron 26.0.0-beta.11+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5639,12 +5639,12 @@ declare namespace Electron {
      * are serialized and only the `message` property from the original error is
      * provided to the renderer process. Please refer to #24427 for details.
      */
-    handle(channel: string, listener: (event: IpcMainInvokeEvent, ...args: any[]) => (Promise<void>) | (any)): void;
+    handle(channel: string, listener: (event: IpcMainInvokeEvent, ...args: any[]) => (Promise<any>) | (any)): void;
     /**
      * Handles a single `invoke`able IPC message, then removes the listener. See
      * `ipcMain.handle(channel, listener)`.
      */
-    handleOnce(channel: string, listener: (event: IpcMainInvokeEvent, ...args: any[]) => (Promise<void>) | (any)): void;
+    handleOnce(channel: string, listener: (event: IpcMainInvokeEvent, ...args: any[]) => (Promise<any>) | (any)): void;
     /**
      * Listens to `channel`, when a new message arrives `listener` would be called with
      * `listener(event, args...)`.
@@ -7178,8 +7178,10 @@ declare namespace Electron {
     start(type: 'prevent-app-suspension' | 'prevent-display-sleep'): number;
     /**
      * Stops the specified power save blocker.
+     *
+     * Whether the specified `powerSaveBlocker` has been stopped.
      */
-    stop(id: number): void;
+    stop(id: number): boolean;
   }
 
   interface PrinterInfo {
@@ -9409,36 +9411,6 @@ declare namespace Electron {
      * @platform win32
      */
     isAeroGlassEnabled(): boolean;
-    /**
-     * Whether the system is in Dark Mode.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseDarkColors` API.
-     *
-     * @deprecated
-     * @platform darwin,win32
-     */
-    isDarkMode(): boolean;
-    /**
-     * `true` if a high contrast theme is active, `false` otherwise.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseHighContrastColors`
-     * API.
-     *
-     * @deprecated
-     * @platform darwin,win32
-     */
-    isHighContrastColorScheme(): boolean;
-    /**
-     * `true` if an inverted color scheme (a high contrast color scheme with light text
-     * and dark backgrounds) is active, `false` otherwise.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseInvertedColorScheme`
-     * API.
-     *
-     * @deprecated
-     * @platform win32
-     */
-    isInvertedColorScheme(): boolean;
     /**
      * Whether the Swipe between pages setting is on.
      *
