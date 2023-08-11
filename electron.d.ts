@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.7.0+wvcus
+// Type definitions for Electron 24.7.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -9054,36 +9054,6 @@ declare namespace Electron {
      * @platform win32
      */
     isAeroGlassEnabled(): boolean;
-    /**
-     * Whether the system is in Dark Mode.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseDarkColors` API.
-     *
-     * @deprecated
-     * @platform darwin,win32
-     */
-    isDarkMode(): boolean;
-    /**
-     * `true` if a high contrast theme is active, `false` otherwise.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseHighContrastColors`
-     * API.
-     *
-     * @deprecated
-     * @platform darwin,win32
-     */
-    isHighContrastColorScheme(): boolean;
-    /**
-     * `true` if an inverted color scheme (a high contrast color scheme with light text
-     * and dark backgrounds) is active, `false` otherwise.
-     *
-     * **Deprecated:** Should use the new `nativeTheme.shouldUseInvertedColorScheme`
-     * API.
-     *
-     * @deprecated
-     * @platform win32
-     */
-    isInvertedColorScheme(): boolean;
     /**
      * Whether the Swipe between pages setting is on.
      *
