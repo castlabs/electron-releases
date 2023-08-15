@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0-beta.12+wvcus
+// Type definitions for Electron 26.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9575,6 +9575,7 @@ declare namespace Electron {
      *
      * This property is only available on macOS 10.14 Mojave or newer.
      *
+     * @deprecated
      * @platform darwin
      */
     appLevelAppearance: ('dark' | 'light' | 'unknown');
