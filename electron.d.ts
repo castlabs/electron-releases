@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.0.0+wvcus
+// Type definitions for Electron 27.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -426,9 +426,9 @@ declare namespace Electron {
      * `CFBundleURLTypes` key, and set `NSPrincipalClass` to `AtomApplication`.
      *
      * As with the `open-file` event, be sure to register a listener for the `open-url`
-     * event early in your application startup to detect if the the application being
-     * is being opened to handle a URL. If you register the listener in response to a
-     * `ready` event, you'll miss URLs that trigger the launch of your application.
+     * event early in your application startup to detect if the application is being
+     * opened to handle a URL. If you register the listener in response to a `ready`
+     * event, you'll miss URLs that trigger the launch of your application.
      *
      * @platform darwin
      */
@@ -1337,6 +1337,9 @@ declare namespace Electron {
      *
      * **Note:** Unity launcher requires a `.desktop` file to work. For more
      * information, please read the Unity integration documentation.
+     *
+     * **Note:** On macOS, you need to ensure that your application has the permission
+     * to display notifications for this method to work.
      *
      * @platform linux,darwin
      */
@@ -2323,8 +2326,9 @@ declare namespace Electron {
      */
     getBrowserView(): (BrowserView) | (null);
     /**
-     * an array of all BrowserViews that have been attached with `addBrowserView` or
-     * `setBrowserView`.
+     * a sorted by z-index array of all BrowserViews that have been attached with
+     * `addBrowserView` or `setBrowserView`. The top-most BrowserView is the last
+     * element of the array.
      *
      * **Note:** The BrowserView API is currently experimental and may change or be
      * removed in future Electron releases.
@@ -3109,12 +3113,9 @@ declare namespace Electron {
      * Adds a vibrancy effect to the browser window. Passing `null` or an empty string
      * will remove the vibrancy effect on the window.
      *
-     * Note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
-     * have been deprecated and will be removed in an upcoming version of macOS.
-     *
      * @platform darwin
      */
-    setVibrancy(type: (('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page')) | (null)): void;
+    setVibrancy(type: (('titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page')) | (null)): void;
     /**
      * Sets whether the window should be visible on all workspaces.
      *
@@ -3140,6 +3141,12 @@ declare namespace Electron {
      * Shows and gives focus to the window.
      */
     show(): void;
+    /**
+     * Shows or hides the tab overview when native tabs are enabled.
+     *
+     * @platform darwin
+     */
+    showAllTabs(): void;
     /**
      * Same as `webContents.showDefinitionForSelection()`.
      *
@@ -3580,15 +3587,13 @@ declare namespace Electron {
     useContentSize?: boolean;
     /**
      * Add a type of vibrancy effect to the window, only on macOS. Can be
-     * `appearance-based`, `light`, `dark`, `titlebar`, `selection`, `menu`, `popover`,
-     * `sidebar`, `medium-light`, `ultra-dark`, `header`, `sheet`, `window`, `hud`,
-     * `fullscreen-ui`, `tooltip`, `content`, `under-window`, or `under-page`. Please
-     * note that `appearance-based`, `light`, `dark`, `medium-light`, and `ultra-dark`
-     * are deprecated and have been removed in macOS Catalina (10.15).
+     * `appearance-based`, `titlebar`, `selection`, `menu`, `popover`, `sidebar`,
+     * `header`, `sheet`, `window`, `hud`, `fullscreen-ui`, `tooltip`, `content`,
+     * `under-window`, or `under-page`.
      *
      * @platform darwin
      */
-    vibrancy?: ('appearance-based' | 'light' | 'dark' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'medium-light' | 'ultra-dark' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+    vibrancy?: ('appearance-based' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
     /**
      * Specify how the material appearance should reflect window activity state on
      * macOS. Must be used with the `vibrancy` property. Possible values are:
@@ -5851,6 +5856,8 @@ declare namespace Electron {
     sendSync(channel: string, ...args: any[]): any;
     /**
      * Sends a message to a window with `webContentsId` via `channel`.
+     *
+     * @deprecated
      */
     sendTo(webContentsId: number, channel: string, ...args: any[]): void;
     /**
@@ -5878,12 +5885,16 @@ declare namespace Electron {
      * ipcRenderer.sendTo for more information. This only applies to messages sent from
      * a different renderer. Messages sent directly from the main process set
      * `event.senderId` to `0`.
+     *
+     * @deprecated
      */
     senderId: number;
     /**
      * Whether the message sent via ipcRenderer.sendTo was sent by the main frame. This
      * is relevant when `nodeIntegrationInSubFrames` is enabled in the originating
      * `webContents`.
+     *
+     * @deprecated
      */
     senderIsMainFrame?: boolean;
   }
@@ -6203,10 +6214,10 @@ declare namespace Electron {
      * `about`, `services`, `hide`, `hideOthers`, `unhide`, `quit`, `startSpeaking`,
      * `stopSpeaking`, `zoom`, `front`, `appMenu`, `fileMenu`, `editMenu`, `viewMenu`,
      * `shareMenu`, `recentDocuments`, `toggleTabBar`, `selectNextTab`,
-     * `selectPreviousTab`, `mergeAllWindows`, `clearRecentDocuments`,
+     * `selectPreviousTab`, `showAllTabs`, `mergeAllWindows`, `clearRecentDocuments`,
      * `moveTabToNewWindow` or `windowMenu`
      */
-    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
+    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'showAllTabs' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
     /**
      * A `SharingItem` indicating the item to share when the `role` is `shareMenu`.
      *
@@ -7290,14 +7301,6 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/product
 
-    /**
-     * The total size of the content, in bytes.
-     */
-    contentLengths: number[];
-    /**
-     * A string that identifies the version of the content.
-     */
-    contentVersion: string;
     /**
      * 3 character code presenting a product's currency based on the ISO 4217 standard.
      */
@@ -9225,62 +9228,6 @@ declare namespace Electron {
     once(event: 'color-changed', listener: (event: Event) => void): this;
     addListener(event: 'color-changed', listener: (event: Event) => void): this;
     removeListener(event: 'color-changed', listener: (event: Event) => void): this;
-    /**
-     * **Deprecated:** Should use the new `updated` event on the `nativeTheme` module.
-     *
-     * @deprecated
-     * @platform win32
-     */
-    on(event: 'high-contrast-color-scheme-changed', listener: (event: Event,
-                                                               /**
-                                                                * `true` if a high contrast theme is being used, `false` otherwise.
-                                                                */
-                                                               highContrastColorScheme: boolean) => void): this;
-    once(event: 'high-contrast-color-scheme-changed', listener: (event: Event,
-                                                               /**
-                                                                * `true` if a high contrast theme is being used, `false` otherwise.
-                                                                */
-                                                               highContrastColorScheme: boolean) => void): this;
-    addListener(event: 'high-contrast-color-scheme-changed', listener: (event: Event,
-                                                               /**
-                                                                * `true` if a high contrast theme is being used, `false` otherwise.
-                                                                */
-                                                               highContrastColorScheme: boolean) => void): this;
-    removeListener(event: 'high-contrast-color-scheme-changed', listener: (event: Event,
-                                                               /**
-                                                                * `true` if a high contrast theme is being used, `false` otherwise.
-                                                                */
-                                                               highContrastColorScheme: boolean) => void): this;
-    /**
-     * **Deprecated:** Should use the new `updated` event on the `nativeTheme` module.
-     *
-     * @deprecated
-     * @platform win32
-     */
-    on(event: 'inverted-color-scheme-changed', listener: (event: Event,
-                                                          /**
-                                                           * `true` if an inverted color scheme (a high contrast color scheme with light text
-                                                           * and dark backgrounds) is being used, `false` otherwise.
-                                                           */
-                                                          invertedColorScheme: boolean) => void): this;
-    once(event: 'inverted-color-scheme-changed', listener: (event: Event,
-                                                          /**
-                                                           * `true` if an inverted color scheme (a high contrast color scheme with light text
-                                                           * and dark backgrounds) is being used, `false` otherwise.
-                                                           */
-                                                          invertedColorScheme: boolean) => void): this;
-    addListener(event: 'inverted-color-scheme-changed', listener: (event: Event,
-                                                          /**
-                                                           * `true` if an inverted color scheme (a high contrast color scheme with light text
-                                                           * and dark backgrounds) is being used, `false` otherwise.
-                                                           */
-                                                          invertedColorScheme: boolean) => void): this;
-    removeListener(event: 'inverted-color-scheme-changed', listener: (event: Event,
-                                                          /**
-                                                           * `true` if an inverted color scheme (a high contrast color scheme with light text
-                                                           * and dark backgrounds) is being used, `false` otherwise.
-                                                           */
-                                                          invertedColorScheme: boolean) => void): this;
     /**
      * A promise that resolves with `true` if consent was granted and `false` if it was
      * denied. If an invalid `mediaType` is passed, the promise will be rejected. If an
@@ -12422,6 +12369,11 @@ declare namespace Electron {
      */
     getBackgroundThrottling(): boolean;
     /**
+     * the current title of the DevTools window. This will only be visible if DevTools
+     * is opened in `undocked` or `detach` mode.
+     */
+    getDevToolsTitle(): string;
+    /**
      * If _offscreen rendering_ is enabled returns the current frame rate.
      */
     getFrameRate(): number;
@@ -12766,6 +12718,11 @@ declare namespace Electron {
      * when the page becomes backgrounded. This also affects the Page Visibility API.
      */
     setBackgroundThrottling(allowed: boolean): void;
+    /**
+     * Changes the title of the DevTools window to `title`. This will only be visible
+     * if DevTools is opened in `undocked` or `detach` mode.
+     */
+    setDevToolsTitle(title: string): void;
     /**
      * Uses the `devToolsWebContents` as the target `WebContents` to show devtools.
      *
@@ -15156,6 +15113,10 @@ declare namespace Electron {
      * Defaults to `Impact`.
      */
     fantasy?: string;
+    /**
+     * Defaults to `Latin Modern Math`.
+     */
+    math?: string;
   }
 
   interface Details {
@@ -15815,12 +15776,12 @@ declare namespace Electron {
      * `showSubstitutions`, `toggleSmartQuotes`, `toggleSmartDashes`,
      * `toggleTextReplacement`, `startSpeaking`, `stopSpeaking`, `zoom`, `front`,
      * `appMenu`, `fileMenu`, `editMenu`, `viewMenu`, `shareMenu`, `recentDocuments`,
-     * `toggleTabBar`, `selectNextTab`, `selectPreviousTab`, `mergeAllWindows`,
-     * `clearRecentDocuments`, `moveTabToNewWindow` or `windowMenu` - Define the action
-     * of the menu item, when specified the `click` property will be ignored. See
-     * roles.
+     * `toggleTabBar`, `selectNextTab`, `selectPreviousTab`, `showAllTabs`,
+     * `mergeAllWindows`, `clearRecentDocuments`, `moveTabToNewWindow` or `windowMenu`
+     * - Define the action of the menu item, when specified the `click` property will
+     * be ignored. See roles.
      */
-    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'showSubstitutions' | 'toggleSmartQuotes' | 'toggleSmartDashes' | 'toggleTextReplacement' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
+    role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'showSubstitutions' | 'toggleSmartQuotes' | 'toggleSmartDashes' | 'toggleTextReplacement' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'showAllTabs' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
     /**
      * Can be `normal`, `separator`, `submenu`, `checkbox` or `radio`.
      */
@@ -16348,6 +16309,10 @@ declare namespace Electron {
      * `true`.
      */
     activate?: boolean;
+    /**
+     * A title for the DevTools window (only in `undocked` or `detach` mode).
+     */
+    title?: string;
   }
 
   interface OpenDialogOptions {
@@ -16650,8 +16615,8 @@ declare namespace Electron {
     pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
     margins?: Margins;
     /**
-     * Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string,
-     * which means print all pages.
+     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
+     * means print all pages.
      */
     pageRanges?: string;
     /**
