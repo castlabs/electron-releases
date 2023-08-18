@@ -1,4 +1,4 @@
-// Type definitions for Electron 24.7.1+wvcus
+// Type definitions for Electron 24.8.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/electron-typescript-definitions
@@ -6854,8 +6854,10 @@ declare namespace Electron {
     start(type: 'prevent-app-suspension' | 'prevent-display-sleep'): number;
     /**
      * Stops the specified power save blocker.
+     *
+     * Whether the specified `powerSaveBlocker` has been stopped.
      */
-    stop(id: number): void;
+    stop(id: number): boolean;
   }
 
   interface PrinterInfo {
