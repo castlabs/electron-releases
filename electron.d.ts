@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.0-alpha.1+wvcus
+// Type definitions for Electron 27.0.0-alpha.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2316,6 +2316,11 @@ declare namespace Electron {
     getBackgroundColor(): string;
     /**
      * The `bounds` of the window as `Object`.
+     *
+     * **Note:** On macOS, the y-coordinate value returned will be at minimum the Tray
+     * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
+     * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
+     * 25, y: 38, width: 800, height: 600 }`.
      */
     getBounds(): Rectangle;
     /**
@@ -2796,6 +2801,11 @@ declare namespace Electron {
     /**
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
+     *
+     * **Note:** On macOS, the y-coordinate value cannot be smaller than the Tray
+     * height. The tray height has changed over time and depends on the operating
+     * system, but is between 20-40px. Passing a value lower than the tray height will
+     * result in a window that is flush to the tray.
      */
     setBounds(bounds: Partial<Rectangle>, animate?: boolean): void;
     /**
@@ -7780,6 +7790,21 @@ declare namespace Electron {
      * HTTP Referrer URL.
      */
     url: string;
+  }
+
+  interface RenderProcessGoneDetails {
+
+    // Docs: https://electronjs.org/docs/api/structures/render-process-gone-details
+
+    /**
+     * The exit code of the process, unless `reason` is `launch-failed`, in which case
+     * `exitCode` will be a platform-specific launch failure error code.
+     */
+    exitCode: number;
+    /**
+     * The reason the render process is gone.  Possible values:
+     */
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
   }
 
   interface ResolvedEndpoint {
@@ -13852,10 +13877,22 @@ declare namespace Electron {
     addEventListener(event: 'ipc-message', listener: (event: IpcMessageEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'ipc-message', listener: (event: IpcMessageEvent) => void): this;
     /**
-     * Fired when the renderer process is crashed.
+     * Fired when the renderer process crashes or is killed.
+     *
+     * **Deprecated:** This event is superceded by the `render-process-gone` event
+     * which contains more information about why the render process disappeared. It
+     * isn't always because it crashed.
+     *
+     * @deprecated
      */
     addEventListener(event: 'crashed', listener: (event: DOMEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'crashed', listener: (event: DOMEvent) => void): this;
+    /**
+     * Fired when the renderer process unexpectedly disappears. This is normally
+     * because it was crashed or killed.
+     */
+    addEventListener(event: 'render-process-gone', listener: (event: RenderProcessGoneEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'render-process-gone', listener: (event: RenderProcessGoneEvent) => void): this;
     /**
      * Fired when a plugin process is crashed.
      */
@@ -16713,16 +16750,8 @@ declare namespace Electron {
     execPath?: string;
   }
 
-  interface RenderProcessGoneDetails {
-    /**
-     * The reason the render process is gone.  Possible values:
-     */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
-    /**
-     * The exit code of the process, unless `reason` is `launch-failed`, in which case
-     * `exitCode` will be a platform-specific launch failure error code.
-     */
-    exitCode: number;
+  interface RenderProcessGoneEvent extends DOMEvent {
+    details: RenderProcessGoneDetails;
   }
 
   interface Request {
@@ -18177,7 +18206,7 @@ declare namespace Electron {
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
-    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
+    type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
     type ResolveHostOptions = Electron.ResolveHostOptions;
@@ -18285,6 +18314,7 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type ResolvedEndpoint = Electron.ResolvedEndpoint;
     type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
@@ -18506,7 +18536,7 @@ declare namespace Electron {
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
-    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
+    type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
     type ResolveHostOptions = Electron.ResolveHostOptions;
@@ -18614,6 +18644,7 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type ResolvedEndpoint = Electron.ResolvedEndpoint;
     type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
@@ -18767,7 +18798,7 @@ declare namespace Electron {
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
-    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
+    type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
     type ResolveHostOptions = Electron.ResolveHostOptions;
@@ -18875,6 +18906,7 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type ResolvedEndpoint = Electron.ResolvedEndpoint;
     type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
@@ -19111,7 +19143,7 @@ declare namespace Electron {
     type ReadBookmark = Electron.ReadBookmark;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
-    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
+    type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
     type Request = Electron.Request;
     type ResizeOptions = Electron.ResizeOptions;
     type ResolveHostOptions = Electron.ResolveHostOptions;
@@ -19219,6 +19251,7 @@ declare namespace Electron {
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
+    type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
     type ResolvedEndpoint = Electron.ResolvedEndpoint;
     type ResolvedHost = Electron.ResolvedHost;
     type ScrubberItem = Electron.ScrubberItem;
