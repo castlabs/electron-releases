@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.0-alpha.5+wvcus
+// Type definitions for Electron 27.0.0-alpha.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8702,12 +8702,12 @@ declare namespace Electron {
      */
     getCacheSize(): Promise<number>;
     /**
-     * | `null` - The loaded extension with the given ID.
+     * The loaded extension with the given ID.
      *
      * **Note:** This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      */
-    getExtension(extensionId: string): Extension;
+    getExtension(extensionId: string): (Extension) | (null);
     /**
      * an array of paths to preload scripts that have been registered.
      */
@@ -12413,15 +12413,6 @@ declare namespace Electron {
      * The operating system `pid` of the associated renderer process.
      */
     getOSProcessId(): number;
-    /**
-     * Get the system printer list.
-     *
-     *
-     * **Deprecated:** Should use the new `contents.getPrintersAsync` API.
-     *
-     * @deprecated
-     */
-    getPrinters(): PrinterInfo[];
     /**
      * Get the system printer list.
      *
