@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.1.0+wvcus
+// Type definitions for Electron 26.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -12385,7 +12385,7 @@ declare namespace Electron {
      * Initiates a download of the resource at `url` without navigating. The
      * `will-download` event of `session` will be triggered.
      */
-    downloadURL(url: string): void;
+    downloadURL(url: string, options?: DownloadURLOptions): void;
     /**
      * Enable device emulation with the given parameters.
      */
@@ -14052,7 +14052,7 @@ declare namespace Electron {
     /**
      * Initiates a download of the resource at `url` without navigating.
      */
-    downloadURL(url: string): void;
+    downloadURL(url: string, options?: DownloadURLOptions): void;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
      * the result of the code is a rejected promise.
