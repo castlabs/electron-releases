@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.0-beta.3+wvcus
+// Type definitions for Electron 27.0.0-beta.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -4333,7 +4333,12 @@ declare namespace Electron {
     /**
      * A promise which resolves when the cookie store has been flushed
      *
-     * Writes any unwritten cookies data to disk.
+     * Writes any unwritten cookies data to disk
+     *
+     * Cookies written by any method will not be written to disk immediately, but will
+     * be written every 30 seconds or 512 operations
+     *
+     * Calling this method can cause the cookie to be written to disk immediately.
      */
     flushStore(): Promise<void>;
     /**
