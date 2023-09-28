@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.0-beta.6+wvcus
+// Type definitions for Electron 27.0.0-beta.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9307,17 +9307,6 @@ declare namespace Electron {
      */
     getAnimationSettings(): AnimationSettings;
     /**
-     * | `null` - Can be `dark`, `light` or `unknown`.
-     *
-     * Gets the macOS appearance setting that you have declared you want for your
-     * application, maps to NSApplication.appearance. You can use the
-     * `setAppLevelAppearance` API to set this value.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    getAppLevelAppearance(): ('dark' | 'light' | 'unknown');
-    /**
      * The system color setting in RGB hexadecimal form (`#ABCDEF`). See the Windows
      * docs and the macOS docs for more details.
      *
@@ -9328,7 +9317,7 @@ declare namespace Electron {
      *
      * @platform win32,darwin
      */
-    getColor(color: '3d-dark-shadow' | '3d-face' | '3d-highlight' | '3d-light' | '3d-shadow' | 'active-border' | 'active-caption' | 'active-caption-gradient' | 'app-workspace' | 'button-text' | 'caption-text' | 'desktop' | 'disabled-text' | 'highlight' | 'highlight-text' | 'hotlight' | 'inactive-border' | 'inactive-caption' | 'inactive-caption-gradient' | 'inactive-caption-text' | 'info-background' | 'info-text' | 'menu' | 'menu-highlight' | 'menubar' | 'menu-text' | 'scrollbar' | 'window' | 'window-frame' | 'window-text' | 'alternate-selected-control-text' | 'control-background' | 'control' | 'control-text' | 'disabled-control-text' | 'find-highlight' | 'grid' | 'header-text' | 'highlight' | 'keyboard-focus-indicator' | 'label' | 'link' | 'placeholder-text' | 'quaternary-label' | 'scrubber-textured-background' | 'secondary-label' | 'selected-content-background' | 'selected-control' | 'selected-control-text' | 'selected-menu-item-text' | 'selected-text-background' | 'selected-text' | 'separator' | 'shadow' | 'tertiary-label' | 'text-background' | 'text' | 'under-page-background' | 'unemphasized-selected-content-background' | 'unemphasized-selected-text-background' | 'unemphasized-selected-text' | 'window-background' | 'window-frame-text'): string;
+    getColor(color: '3d-dark-shadow' | '3d-face' | '3d-highlight' | '3d-light' | '3d-shadow' | 'active-border' | 'active-caption' | 'active-caption-gradient' | 'app-workspace' | 'button-text' | 'caption-text' | 'desktop' | 'disabled-text' | 'highlight' | 'highlight-text' | 'hotlight' | 'inactive-border' | 'inactive-caption' | 'inactive-caption-gradient' | 'inactive-caption-text' | 'info-background' | 'info-text' | 'menu' | 'menu-highlight' | 'menubar' | 'menu-text' | 'scrollbar' | 'window' | 'window-frame' | 'window-text' | 'control-background' | 'control' | 'control-text' | 'disabled-control-text' | 'find-highlight' | 'grid' | 'header-text' | 'highlight' | 'keyboard-focus-indicator' | 'label' | 'link' | 'placeholder-text' | 'quaternary-label' | 'scrubber-textured-background' | 'secondary-label' | 'selected-content-background' | 'selected-control' | 'selected-control-text' | 'selected-menu-item-text' | 'selected-text-background' | 'selected-text' | 'separator' | 'shadow' | 'tertiary-label' | 'text-background' | 'text' | 'under-page-background' | 'unemphasized-selected-content-background' | 'unemphasized-selected-text-background' | 'unemphasized-selected-text' | 'window-background' | 'window-frame-text'): string;
     /**
      * Can be `dark`, `light` or `unknown`.
      *
@@ -9449,14 +9438,6 @@ declare namespace Electron {
      */
     removeUserDefault(key: string): void;
     /**
-     * Sets the appearance setting for your application, this should override the
-     * system default and override the value of `getEffectiveAppearance`.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    setAppLevelAppearance(appearance: (('dark' | 'light')) | (null)): void;
-    /**
      * Set the value of `key` in `NSUserDefaults`.
      *
      * Note that `type` should match actual type of `value`. An exception is thrown if
@@ -9541,21 +9522,6 @@ declare namespace Electron {
      * @platform darwin
      */
     unsubscribeWorkspaceNotification(id: number): void;
-    /**
-     * A `string` property that can be `dark`, `light` or `unknown`. It determines the
-     * macOS appearance setting for your application. This maps to values in:
-     * NSApplication.appearance. Setting this will override the system default as well
-     * as the value of `getEffectiveAppearance`.
-     *
-     * Possible values that can be set are `dark` and `light`, and possible return
-     * values are `dark`, `light`, and `unknown`.
-     *
-     * This property is only available on macOS 10.14 Mojave or newer.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    appLevelAppearance: ('dark' | 'light' | 'unknown');
     /**
      * A `string` property that can be `dark`, `light` or `unknown`.
      *
