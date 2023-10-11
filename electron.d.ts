@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.0-beta.9+wvcus
+// Type definitions for Electron 27.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3311,6 +3311,13 @@ declare namespace Electron {
      * fullscreen mode.
      */
     simpleFullScreen: boolean;
+    /**
+     * A `string` (optional) property that is equal to the `tabbingIdentifier` passed
+     * to the `BrowserWindow` constructor or `undefined` if none was set.
+     *
+     * @platform darwin
+     */
+    readonly tabbingIdentifier?: string;
     /**
      * A `string` property that determines the title of the native window.
      *
@@ -9522,6 +9529,14 @@ declare namespace Electron {
      * @platform darwin
      */
     unsubscribeWorkspaceNotification(id: number): void;
+    /**
+     * A `boolean` property which determines whether the app avoids using
+     * semitransparent backgrounds. This maps to
+     * NSWorkspace.accessibilityDisplayShouldReduceTransparency
+     *
+     * @platform darwin
+     */
+    accessibilityDisplayShouldReduceTransparency(): boolean;
     /**
      * A `string` property that can be `dark`, `light` or `unknown`.
      *

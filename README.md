@@ -21,7 +21,7 @@ The provided builds are VMP-signed for development and can be used with Widevine
 To install prebuilt ECS binaries, use [npm](https://docs.npmjs.com/). The preferred method is to install ECS as a development dependency in your app:
 
 ```
-npm install "https://github.com/castlabs/electron-releases#v26.0.0+wvcus" --save-dev
+npm install "https://github.com/castlabs/electron-releases#v27.0.0+wvcus" --save-dev
 ```
 
 Since ECS is not published in the npm package index a GitHub URL is used instead to reference a particular release, just modify the `#` tag at the end to the version you want to use.
