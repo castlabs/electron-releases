@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.3.0+wvcus
+// Type definitions for Electron 26.4.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9594,6 +9594,14 @@ declare namespace Electron {
      * @platform darwin
      */
     unsubscribeWorkspaceNotification(id: number): void;
+    /**
+     * A `boolean` property which determines whether the app avoids using
+     * semitransparent backgrounds. This maps to
+     * NSWorkspace.accessibilityDisplayShouldReduceTransparency
+     *
+     * @platform darwin
+     */
+    accessibilityDisplayShouldReduceTransparency(): boolean;
     /**
      * A `string` property that can be `dark`, `light` or `unknown`. It determines the
      * macOS appearance setting for your application. This maps to values in:
