@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.4.0+wvcus
+// Type definitions for Electron 26.4.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6749,6 +6749,13 @@ declare namespace Electron {
      *
      * This event is not guaranteed to be emitted in all cases where the notification
      * is closed.
+     *
+     * On Windows, the `close` event can be emitted in one of three ways: programmatic
+     * dismissal with `notification.close()`, by the user closing the notification, or
+     * via system timeout. If a notification is in the Action Center after the initial
+     * `close` event is emitted, a call to `notification.close()` will remove the
+     * notification from the action center but the `close` event will not be emitted
+     * again.
      */
     on(event: 'close', listener: (event: Event) => void): this;
     once(event: 'close', listener: (event: Event) => void): this;
@@ -6825,6 +6832,12 @@ declare namespace Electron {
     static isSupported(): boolean;
     /**
      * Dismisses the notification.
+     *
+     * On Windows, calling `notification.close()` while the notification is visible on
+     * screen will dismiss the notification and remove it from the Action Center. If
+     * `notification.close()` is called after the notification is no longer visible on
+     * screen, calling `notification.close()` will try remove it from the Action
+     * Center.
      */
     close(): void;
     /**
@@ -14811,13 +14824,13 @@ declare namespace Electron {
      */
     enableBuiltInResolver?: boolean;
     /**
-     * Can be "off", "automatic" or "secure". Configures the DNS-over-HTTP mode. When
-     * "off", no DoH lookups will be performed. When "automatic", DoH lookups will be
+     * Can be 'off', 'automatic' or 'secure'. Configures the DNS-over-HTTP mode. When
+     * 'off', no DoH lookups will be performed. When 'automatic', DoH lookups will be
      * performed first if DoH is available, and insecure DNS lookups will be performed
-     * as a fallback. When "secure", only DoH lookups will be performed. Defaults to
-     * "automatic".
+     * as a fallback. When 'secure', only DoH lookups will be performed. Defaults to
+     * 'automatic'.
      */
-    secureDnsMode?: string;
+    secureDnsMode?: ('off' | 'automatic' | 'secure');
     /**
      * A list of DNS-over-HTTP server templates. See RFC8484 § 3 for details on the
      * template format. Most servers support the POST method; the template for such
@@ -15691,10 +15704,10 @@ declare namespace Electron {
 
   interface InsertCSSOptions {
     /**
-     * Can be either 'user' or 'author'. Sets the cascade origin of the inserted
-     * stylesheet. Default is 'author'.
+     * Can be 'user' or 'author'. Sets the cascade origin of the inserted stylesheet.
+     * Default is 'author'.
      */
-    cssOrigin?: string;
+    cssOrigin?: ('user' | 'author');
   }
 
   interface IpcMessageEvent extends DOMEvent {
