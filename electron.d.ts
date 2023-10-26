@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.4.1+wvcus
+// Type definitions for Electron 26.4.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -15504,7 +15504,7 @@ declare namespace Electron {
     stdio?: (Array<'pipe' | 'ignore' | 'inherit'>) | (string);
     /**
      * Name of the process that will appear in `name` property of `child-process-gone`
-     * event of `app`. Default is `node.mojom.NodeService`.
+     * event of `app`. Default is `Node Utility Process`.
      */
     serviceName?: string;
     /**
