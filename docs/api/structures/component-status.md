@@ -1,5 +1,5 @@
 # ComponentStatus Object
 
 * `status` String - Status of component.
-* `name` String (optional) - Name of component.
-* `version` String | null (optional) - Version of component (or `null` if not installed).
+* `title` String | null - Name of component (or `null` if not supported).
+* `version` String | null - Version of component (or `null` if not supported/installed).

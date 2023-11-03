@@ -2,7 +2,7 @@
 
 > Enable apps install and update components, such as the Widevine Content Decryption Module, using the Chromium Component Updater Service.
 
-Process: Main
+Process: [Main](../glossary.md#main-process)
 
 Currently supported components are:
 
@@ -31,11 +31,15 @@ This method can be used to check the state of any registered components. Support
 
 This API must be called after the `ready` event is emitted.
 
-### `components.whenReady()`
+### `components.whenReady([required])`
 
-Returns `Promise<void[]>` - Fulfilled when all components are ready to be used.
+* `required` string[] (optional)
 
-If the components are already installed this will happen as soon as they are registered, otherwise an immediate installation will be triggered and the promise will fulfill once the missing components have been properly installed. The promise will be rejected if the installation fails.
+Returns `Promise<ComponentResult[]>` - Fulfilled with an array of [ComponentResult](structures/component-result.md) when all required components are ready to be used.
+
+If the components are already installed this will happen as soon as they are registered, otherwise an immediate installation will be triggered and the promise will fulfill once the missing components have been properly installed. The promise will be rejected with a [ComponentsError](structures/components-error.md) if the installation fails. This in turn has an `errors` property, which is an array of [ComponentError](structures/component-error.md) detailing individual errors that occured.
+
+The `required` argument can be used to control which components are required to successfully install. If no argument is provided all supported components are implicitly required. An empty array would mean no components are required. In this case the updater promises are still guarnteed to settle before the returned promise resolves, but errors won't cause a promise rejection.. Finally, an array of component identifiers may be provided to require a specific component or set of components (any unknown identifiers will yield an error).
 
 This API must be called after the `ready` event is emitted.
 
