@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.9.3+wvcus
+// Type definitions for Electron 25.9.3+wvcus.2
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3771,6 +3771,26 @@ declare namespace Electron {
     removeSwitch(the_switch: string): void;
   }
 
+  interface ComponentError extends Error {
+
+    // Docs: https://electronjs.org/docs/api/structures/component-error
+
+    /**
+     * Component result record.
+     */
+    detail: ComponentResult;
+  }
+
+  interface ComponentResult extends ComponentStatus {
+
+    // Docs: https://electronjs.org/docs/api/structures/component-result
+
+    /**
+     * Identifier of component.
+     */
+    id: string;
+  }
+
   interface Components extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/components
@@ -3785,16 +3805,27 @@ declare namespace Electron {
      */
     status(): Record<string, ComponentStatus>;
     /**
-     * Fulfilled when all components are ready to be used.
+     * Fulfilled with an array of ComponentResult when all required components are
+     * ready to be used.
      *
      * If the components are already installed this will happen as soon as they are
      * registered, otherwise an immediate installation will be triggered and the
      * promise will fulfill once the missing components have been properly installed.
-     * The promise will be rejected if the installation fails.
+     * The promise will be rejected with a ComponentsError if the installation fails.
+     * This in turn has an `errors` property, which is an array of ComponentError
+     * detailing individual errors that occured.
+     *
+     * The `required` argument can be used to control which components are required to
+     * successfully install. If no argument is provided all supported components are
+     * implicitly required. An empty array would mean no components are required. In
+     * this case the updater promises are still guarnteed to settle before the returned
+     * promise resolves, but errors won't cause a promise rejection.. Finally, an array
+     * of component identifiers may be provided to require a specific component or set
+     * of components (any unknown identifiers will yield an error).
      *
      * This API must be called after the `ready` event is emitted.
      */
-    whenReady(): Promise<void[]>;
+    whenReady(required?: string[]): Promise<Electron.ComponentResult[]>;
     /**
      * A `String` which is the identifier of the Google Widevine Windows CDM (a.k.a.
      * the Media Foundation Widewine CDM).
@@ -3824,22 +3855,32 @@ declare namespace Electron {
     readonly WIDEVINE_CDM_ID: string;
   }
 
+  interface ComponentsError extends Error {
+
+    // Docs: https://electronjs.org/docs/api/structures/components-error
+
+    /**
+     * Array of individual component errors.
+     */
+    errors: ComponentError[];
+  }
+
   interface ComponentStatus {
 
     // Docs: https://electronjs.org/docs/api/structures/component-status
 
     /**
-     * Name of component.
-     */
-    name?: string;
-    /**
      * Status of component.
      */
     status: string;
     /**
-     * Version of component (or `null` if not installed).
+     * Name of component (or `null` if not supported).
      */
-    version?: (string) | (null);
+    title: (string) | (null);
+    /**
+     * Version of component (or `null` if not supported/installed).
+     */
+    version: (string) | (null);
   }
 
   interface ContentTracing {
@@ -18479,6 +18520,9 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentError = Electron.ComponentError;
+    type ComponentResult = Electron.ComponentResult;
+    type ComponentsError = Electron.ComponentsError;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -18809,6 +18853,9 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentError = Electron.ComponentError;
+    type ComponentResult = Electron.ComponentResult;
+    type ComponentsError = Electron.ComponentsError;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -19071,6 +19118,9 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentError = Electron.ComponentError;
+    type ComponentResult = Electron.ComponentResult;
+    type ComponentsError = Electron.ComponentsError;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -19416,6 +19466,9 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ComponentError = Electron.ComponentError;
+    type ComponentResult = Electron.ComponentResult;
+    type ComponentsError = Electron.ComponentsError;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
