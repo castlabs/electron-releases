@@ -1,4 +1,4 @@
-// Type definitions for Electron 28.0.0-alpha.7+wcus
+// Type definitions for Electron 28.0.0-beta.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -16158,8 +16158,9 @@ declare namespace Electron {
      */
     stdio?: (Array<'pipe' | 'ignore' | 'inherit'>) | (string);
     /**
-     * Name of the process that will appear in `name` property of `child-process-gone`
-     * event of `app`. Default is `Node Utility Process`.
+     * Name of the process that will appear in `name` property of `ProcessMetric`
+     * returned by `app.getAppMetrics` and `child-process-gone` event of `app`. Default
+     * is `Node Utility Process`.
      */
     serviceName?: string;
     /**
