@@ -1,4 +1,4 @@
-// Type definitions for Electron 28.0.0-beta.1+wcus
+// Type definitions for Electron 28.0.0-beta.2+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9018,7 +9018,7 @@ declare namespace Electron {
      * intercepted request to the built-in handler. webRequest handlers will still be
      * triggered when bypassing custom protocols.
      */
-    fetch(input: (string) | (GlobalRequest), init?: RequestInit): Promise<GlobalResponse>;
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
     /**
      * Writes any unwritten DOMStorage data to disk.
      */
@@ -15611,8 +15611,21 @@ declare namespace Electron {
      */
     frameCharset: string;
     /**
+     * The source that the context menu was invoked on. Possible values include `none`,
+     * `button-button`, `field-set`, `input-button`, `input-checkbox`, `input-color`,
+     * `input-date`, `input-datetime-local`, `input-email`, `input-file`,
+     * `input-hidden`, `input-image`, `input-month`, `input-number`, `input-password`,
+     * `input-radio`, `input-range`, `input-reset`, `input-search`, `input-submit`,
+     * `input-telephone`, `input-text`, `input-time`, `input-url`, `input-week`,
+     * `output`, `reset-button`, `select-list`, `select-list`, `select-multiple`,
+     * `select-one`, `submit-button`, and `text-area`,
+     */
+    formControlType: ('none' | 'button-button' | 'field-set' | 'input-button' | 'input-checkbox' | 'input-color' | 'input-date' | 'input-datetime-local' | 'input-email' | 'input-file' | 'input-hidden' | 'input-image' | 'input-month' | 'input-number' | 'input-password' | 'input-radio' | 'input-range' | 'input-reset' | 'input-search' | 'input-submit' | 'input-telephone' | 'input-text' | 'input-time' | 'input-url' | 'input-week' | 'output' | 'reset-button' | 'select-list' | 'select-list' | 'select-multiple' | 'select-one' | 'submit-button' | 'text-area');
+    /**
      * If the context menu was invoked on an input field, the type of that field.
      * Possible values include `none`, `plainText`, `password`, `other`.
+     *
+     * @deprecated
      */
     inputFieldType: ('none' | 'plainText' | 'password' | 'other');
     /**
@@ -18770,8 +18783,21 @@ declare namespace Electron {
      */
     frameCharset: string;
     /**
+     * The source that the context menu was invoked on. Possible values include `none`,
+     * `button-button`, `field-set`, `input-button`, `input-checkbox`, `input-color`,
+     * `input-date`, `input-datetime-local`, `input-email`, `input-file`,
+     * `input-hidden`, `input-image`, `input-month`, `input-number`, `input-password`,
+     * `input-radio`, `input-range`, `input-reset`, `input-search`, `input-submit`,
+     * `input-telephone`, `input-text`, `input-time`, `input-url`, `input-week`,
+     * `output`, `reset-button`, `select-list`, `select-list`, `select-multiple`,
+     * `select-one`, `submit-button`, and `text-area`,
+     */
+    formControlType: ('none' | 'button-button' | 'field-set' | 'input-button' | 'input-checkbox' | 'input-color' | 'input-date' | 'input-datetime-local' | 'input-email' | 'input-file' | 'input-hidden' | 'input-image' | 'input-month' | 'input-number' | 'input-password' | 'input-radio' | 'input-range' | 'input-reset' | 'input-search' | 'input-submit' | 'input-telephone' | 'input-text' | 'input-time' | 'input-url' | 'input-week' | 'output' | 'reset-button' | 'select-list' | 'select-list' | 'select-multiple' | 'select-one' | 'submit-button' | 'text-area');
+    /**
      * If the context menu was invoked on an input field, the type of that field.
      * Possible values include `none`, `plainText`, `password`, `other`.
+     *
+     * @deprecated
      */
     inputFieldType: ('none' | 'plainText' | 'password' | 'other');
     /**
