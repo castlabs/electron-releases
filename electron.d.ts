@@ -1,4 +1,4 @@
-// Type definitions for Electron 25.9.3+wvcus.2
+// Type definitions for Electron 25.9.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8582,7 +8582,7 @@ declare namespace Electron {
      * intercepted request to the built-in handler. webRequest handlers will still be
      * triggered when bypassing custom protocols.
      */
-    fetch(input: (string) | (GlobalRequest), init?: RequestInit): Promise<GlobalResponse>;
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
     /**
      * Writes any unwritten DOMStorage data to disk.
      */
