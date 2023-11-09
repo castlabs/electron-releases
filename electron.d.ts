@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.3+wvcus
+// Type definitions for Electron 27.0.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8741,7 +8741,7 @@ declare namespace Electron {
      * intercepted request to the built-in handler. webRequest handlers will still be
      * triggered when bypassing custom protocols.
      */
-    fetch(input: (string) | (GlobalRequest), init?: RequestInit): Promise<GlobalResponse>;
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
     /**
      * Writes any unwritten DOMStorage data to disk.
      */
@@ -15567,17 +15567,17 @@ declare namespace Electron {
   }
 
   interface HidDeviceAddedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     frame: WebFrameMain;
   }
 
   interface HidDeviceRemovedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     frame: WebFrameMain;
   }
 
   interface HidDeviceRevokedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     /**
      * The origin that the device has been revoked from.
      */
