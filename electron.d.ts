@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.4.3+wvcus
+// Type definitions for Electron 26.5.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3304,6 +3304,13 @@ declare namespace Electron {
      * fullscreen mode.
      */
     simpleFullScreen: boolean;
+    /**
+     * A `string` (optional) property that is equal to the `tabbingIdentifier` passed
+     * to the `BrowserWindow` constructor or `undefined` if none was set.
+     *
+     * @platform darwin
+     */
+    readonly tabbingIdentifier?: string;
     /**
      * A `string` property that determines the title of the native window.
      *
@@ -8731,7 +8738,7 @@ declare namespace Electron {
      * intercepted request to the built-in handler. webRequest handlers will still be
      * triggered when bypassing custom protocols.
      */
-    fetch(input: (string) | (GlobalRequest), init?: RequestInit): Promise<GlobalResponse>;
+    fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
     /**
      * Writes any unwritten DOMStorage data to disk.
      */
