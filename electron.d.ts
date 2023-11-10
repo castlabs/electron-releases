@@ -1,4 +1,4 @@
-// Type definitions for Electron 28.0.0-beta.3+wcus
+// Type definitions for Electron 28.0.0-beta.4+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -16270,17 +16270,17 @@ declare namespace Electron {
   }
 
   interface HidDeviceAddedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     frame: WebFrameMain;
   }
 
   interface HidDeviceRemovedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     frame: WebFrameMain;
   }
 
   interface HidDeviceRevokedDetails {
-    device: HIDDevice[];
+    device: HIDDevice;
     /**
      * The origin that the device has been revoked from.
      */
