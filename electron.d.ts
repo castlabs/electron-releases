@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.0.4+wvcus
+// Type definitions for Electron 27.1.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8946,7 +8946,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
