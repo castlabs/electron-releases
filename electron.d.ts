@@ -1,4 +1,4 @@
-// Type definitions for Electron 28.0.0-beta.10+wcus
+// Type definitions for Electron 28.0.0-beta.11+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5121,7 +5121,7 @@ declare namespace Electron {
     colorDepth: number;
     /**
      *  represent a color space (three-dimensional object which contains all realizable
-     * color combinations) for the purpose of color conversions
+     * color combinations) for the purpose of color conversions.
      */
     colorSpace: string;
     /**
@@ -5129,15 +5129,21 @@ declare namespace Electron {
      */
     depthPerComponent: number;
     /**
+     * `true`` if the display is detected by the system.
+     */
+    detected: boolean;
+    /**
      * The display refresh rate.
      */
     displayFrequency: number;
     /**
-     * Unique identifier associated with the display.
+     * Unique identifier associated with the display. A value of of -1 means the
+     * display is invalid or the correct `id` is not yet known, and a value of -10
+     * means the display is a virtual display assigned to a unified desktop.
      */
     id: number;
     /**
-     * `true` for an internal display and `false` for an external display
+     * `true` for an internal display and `false` for an external display.
      */
     internal: boolean;
     /**
@@ -5145,9 +5151,18 @@ declare namespace Electron {
      */
     label: string;
     /**
+     * Maximum cursor size in native pixels.
+     */
+    maximumCursorSize: Size;
+    /**
      * Whether or not the display is a monochrome display.
      */
     monochrome: boolean;
+    /**
+     * Returns the display's origin in pixel coordinates. Only available on windowing
+     * systems like X11 that position displays in pixel coordinates.
+     */
+    nativeOrigin: Point;
     /**
      * Can be 0, 90, 180, 270, represents screen rotation in clock-wise degrees.
      */
@@ -5165,6 +5180,9 @@ declare namespace Electron {
      * the work area of the display in DIP points.
      */
     workArea: Rectangle;
+    /**
+     * The size of the work area.
+     */
     workAreaSize: Size;
   }
 
