@@ -1,4 +1,4 @@
-// Type definitions for Electron 27.1.3+wcus
+// Type definitions for Electron 27.2.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7608,9 +7608,9 @@ declare namespace Electron {
      * module gets emitted and can be called only once.
      *
      * Registers the `scheme` as standard, secure, bypasses content security policy for
-     * resources, allows registering ServiceWorker, supports fetch API, and streaming
-     * video/audio. Specify a privilege with the value of `true` to enable the
-     * capability.
+     * resources, allows registering ServiceWorker, supports fetch API, streaming
+     * video/audio, and V8 code cache. Specify a privilege with the value of `true` to
+     * enable the capability.
      *
      * An example of registering a privileged scheme, that bypasses Content Security
      * Policy:
@@ -8896,6 +8896,10 @@ declare namespace Electron {
      * all operations related to code cache will fail silently inside the runtime. By
      * default, the directory will be `Code Cache` under the respective user data
      * folder.
+     *
+     * Note that by default code cache is only enabled for http(s) URLs, to enable code
+     * cache for custom protocols, `codeCache: true` and `standard: true` must be
+     * specified when registering the protocol.
      */
     setCodeCachePath(path: string): void;
     /**
@@ -16736,6 +16740,11 @@ declare namespace Electron {
      * Default false.
      */
     stream?: boolean;
+    /**
+     * Enable V8 code cache for the scheme, only works when `standard` is also set to
+     * true. Default false.
+     */
+    codeCache?: boolean;
   }
 
   interface ProgressBarOptions {
