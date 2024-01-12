@@ -7,9 +7,9 @@ Process: [Main](../glossary.md#main-process)
 Currently supported components are:
 
 * Widevine Content Decryption Module
-* Google Widevine Windows CDM (exprimental)
+* Google Widevine Windows CDM (experimental)
 
-The Google Widevine Windows CDM is still exprimental, and is currently disabled in releases builds.
+The Google Widevine Windows CDM is still experimental, and is currently disabled in releases builds.
 
 ## Platform Notices
 
