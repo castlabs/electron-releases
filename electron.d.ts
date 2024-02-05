@@ -1,4 +1,4 @@
-// Type definitions for Electron 29.0.0-beta.4+wcus
+// Type definitions for Electron 29.0.0-beta.5+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -18087,6 +18087,13 @@ declare namespace Electron {
      * @experimental
      */
     generateTaggedPDF?: boolean;
+    /**
+     * Whether or not to generate a PDF document outline from content headers. Defaults
+     * to false.
+     *
+     * @experimental
+     */
+    generateDocumentOutline?: boolean;
   }
 
   interface Privileges {
