@@ -1,4 +1,4 @@
-// Type definitions for Electron 29.0.0-beta.6+wcus
+// Type definitions for Electron 29.0.0-beta.7+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -16811,9 +16811,9 @@ declare namespace Electron {
      * Default is `inherit`. String value can be one of `pipe`, `ignore`, `inherit`,
      * for more details on these values you can refer to stdio documentation from
      * Node.js. Currently this option only supports configuring `stdout` and `stderr`
-     * to either `pipe`, `inherit` or `ignore`. Configuring `stdin` is not supported;
-     * `stdin` will always be ignored. For example, the supported values will be
-     * processed as following:
+     * to either `pipe`, `inherit` or `ignore`. Configuring `stdin` to any property
+     * other than `ignore` is not supported and will result in an error. For example,
+     * the supported values will be processed as following:
      */
     stdio?: (Array<'pipe' | 'ignore' | 'inherit'>) | (string);
     /**
