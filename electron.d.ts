@@ -1,4 +1,4 @@
-// Type definitions for Electron 29.0.0+wcus
+// Type definitions for Electron 30.0.0-alpha.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1924,80 +1924,9 @@ declare namespace Electron {
     setFeedURL(options: FeedURLOptions): void;
   }
 
-  interface BluetoothDevice {
+  class BaseWindow extends NodeEventEmitter {
 
-    // Docs: https://electronjs.org/docs/api/structures/bluetooth-device
-
-    deviceId: string;
-    deviceName: string;
-  }
-
-  class BrowserView {
-
-    // Docs: https://electronjs.org/docs/api/browser-view
-
-    /**
-     * BrowserView
-     */
-    constructor(options?: BrowserViewConstructorOptions);
-    /**
-     * The `bounds` of this BrowserView instance as `Object`.
-     *
-     * @experimental
-     */
-    getBounds(): Rectangle;
-    /**
-     * @experimental
-     */
-    setAutoResize(options: AutoResizeOptions): void;
-    /**
-     * Examples of valid `color` values:
-     *
-     * * Hex
-     *   * #fff (RGB)
-     *   * #ffff (ARGB)
-     *   * #ffffff (RRGGBB)
-     *   * #ffffffff (AARRGGBB)
-     * * RGB
-     *   * rgb(([\d]+),\s*([\d]+),\s*([\d]+))
-     *     * e.g. rgb(255, 255, 255)
-     * * RGBA
-     *   * rgba(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+))
-     *     * e.g. rgba(255, 255, 255, 1.0)
-     * * HSL
-     *   * hsl((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%)
-     *     * e.g. hsl(200, 20%, 50%)
-     * * HSLA
-     *   * hsla((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+))
-     *     * e.g. hsla(200, 20%, 50%, 0.5)
-     * * Color name
-     *   * Options are listed in SkParseColor.cpp
-     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
-     *     * e.g. `blueviolet` or `red`
-     *
-     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBA` or
-     * `RGA`.
-     *
-     * @experimental
-     */
-    setBackgroundColor(color: string): void;
-    /**
-     * Resizes and moves the view to the supplied bounds relative to the window.
-     *
-     * @experimental
-     */
-    setBounds(bounds: Rectangle): void;
-    /**
-     * A `WebContents` object owned by this view.
-     *
-     * @experimental
-     */
-    webContents: WebContents;
-  }
-
-  class BrowserWindow extends NodeEventEmitter {
-
-    // Docs: https://electronjs.org/docs/api/browser-window
+    // Docs: https://electronjs.org/docs/api/base-window
 
     /**
      * Emitted when the window is set or unset to show always on top of other windows.
@@ -2097,14 +2026,6 @@ declare namespace Electron {
     addListener(event: 'enter-full-screen', listener: Function): this;
     removeListener(event: 'enter-full-screen', listener: Function): this;
     /**
-     * Emitted when the window enters a full-screen state triggered by HTML API.
-     */
-    on(event: 'enter-html-full-screen', listener: Function): this;
-    off(event: 'enter-html-full-screen', listener: Function): this;
-    once(event: 'enter-html-full-screen', listener: Function): this;
-    addListener(event: 'enter-html-full-screen', listener: Function): this;
-    removeListener(event: 'enter-html-full-screen', listener: Function): this;
-    /**
      * Emitted when the window gains focus.
      */
     on(event: 'focus', listener: Function): this;
@@ -2128,14 +2049,6 @@ declare namespace Electron {
     once(event: 'leave-full-screen', listener: Function): this;
     addListener(event: 'leave-full-screen', listener: Function): this;
     removeListener(event: 'leave-full-screen', listener: Function): this;
-    /**
-     * Emitted when the window leaves a full-screen state triggered by HTML API.
-     */
-    on(event: 'leave-html-full-screen', listener: Function): this;
-    off(event: 'leave-html-full-screen', listener: Function): this;
-    once(event: 'leave-html-full-screen', listener: Function): this;
-    addListener(event: 'leave-html-full-screen', listener: Function): this;
-    removeListener(event: 'leave-html-full-screen', listener: Function): this;
     /**
      * Emitted when window is maximized.
      */
@@ -2207,39 +2120,6 @@ declare namespace Electron {
      */
     removeListener(event: 'new-window-for-tab', listener: Function): this;
     /**
-     * Emitted when the document changed its title, calling `event.preventDefault()`
-     * will prevent the native window's title from changing. `explicitSet` is false
-     * when title is synthesized from file URL.
-     */
-    on(event: 'page-title-updated', listener: (event: Event,
-                                               title: string,
-                                               explicitSet: boolean) => void): this;
-    off(event: 'page-title-updated', listener: (event: Event,
-                                               title: string,
-                                               explicitSet: boolean) => void): this;
-    once(event: 'page-title-updated', listener: (event: Event,
-                                               title: string,
-                                               explicitSet: boolean) => void): this;
-    addListener(event: 'page-title-updated', listener: (event: Event,
-                                               title: string,
-                                               explicitSet: boolean) => void): this;
-    removeListener(event: 'page-title-updated', listener: (event: Event,
-                                               title: string,
-                                               explicitSet: boolean) => void): this;
-    /**
-     * Emitted when the web page has been rendered (while not being shown) and window
-     * can be displayed without a visual flash.
-     *
-     * Please note that using this event implies that the renderer will be considered
-     * "visible" and paint even though `show` is false.  This event will never fire if
-     * you use `paintWhenInitiallyHidden: false`
-     */
-    on(event: 'ready-to-show', listener: Function): this;
-    off(event: 'ready-to-show', listener: Function): this;
-    once(event: 'ready-to-show', listener: Function): this;
-    addListener(event: 'ready-to-show', listener: Function): this;
-    removeListener(event: 'ready-to-show', listener: Function): this;
-    /**
      * Emitted after the window has been resized.
      */
     on(event: 'resize', listener: Function): this;
@@ -2273,14 +2153,6 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     removeListener(event: 'resized', listener: Function): this;
-    /**
-     * Emitted when the unresponsive web page becomes responsive again.
-     */
-    on(event: 'responsive', listener: Function): this;
-    off(event: 'responsive', listener: Function): this;
-    once(event: 'responsive', listener: Function): this;
-    addListener(event: 'responsive', listener: Function): this;
-    removeListener(event: 'responsive', listener: Function): this;
     /**
      * Emitted when the window is restored from a minimized state.
      */
@@ -2486,6 +2358,2394 @@ declare namespace Electron {
     addListener(event: 'unmaximize', listener: Function): this;
     removeListener(event: 'unmaximize', listener: Function): this;
     /**
+     * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
+     * will prevent the window from being moved.
+     *
+     * Note that this is only emitted when the window is being moved manually. Moving
+     * the window with `setPosition`/`setBounds`/`center` will not emit this event.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * Emitted before the window is resized. Calling `event.preventDefault()` will
+     * prevent the window from being resized.
+     *
+     * Note that this is only emitted when the window is being resized manually.
+     * Resizing the window with `setBounds`/`setSize` will not emit this event.
+     *
+     * The possible values and behaviors of the `edge` option are platform dependent.
+     * Possible values are:
+     *
+     * * On Windows, possible values are `bottom`, `top`, `left`, `right`, `top-left`,
+     * `top-right`, `bottom-left`, `bottom-right`.
+     * * On macOS, possible values are `bottom` and `right`.
+     *   * The value `bottom` is used to denote vertical resizing.
+     *   * The value `right` is used to denote horizontal resizing.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * BaseWindow
+     */
+    constructor(options?: BaseWindowConstructorOptions);
+    /**
+     * The window with the given `id`.
+     */
+    static fromId(id: number): (BaseWindow) | (null);
+    /**
+     * An array of all opened browser windows.
+     */
+    static getAllWindows(): BaseWindow[];
+    /**
+     * The window that is focused in this application, otherwise returns `null`.
+     */
+    static getFocusedWindow(): (BaseWindow) | (null);
+    /**
+     * Adds a window as a tab on this window, after the tab for the window instance.
+     *
+     * @platform darwin
+     */
+    addTabbedWindow(baseWindow: BaseWindow): void;
+    /**
+     * Removes focus from the window.
+     */
+    blur(): void;
+    /**
+     * Moves window to the center of the screen.
+     */
+    center(): void;
+    /**
+     * Try to close the window. This has the same effect as a user manually clicking
+     * the close button of the window. The web page may cancel the close though. See
+     * the close event.
+     */
+    close(): void;
+    /**
+     * Closes the currently open Quick Look panel.
+     *
+     * @platform darwin
+     */
+    closeFilePreview(): void;
+    /**
+     * Force closing the window, the `unload` and `beforeunload` event won't be emitted
+     * for the web page, and `close` event will also not be emitted for this window,
+     * but it guarantees the `closed` event will be emitted.
+     */
+    destroy(): void;
+    /**
+     * Starts or stops flashing the window to attract user's attention.
+     */
+    flashFrame(flag: boolean): void;
+    /**
+     * Focuses on the window.
+     */
+    focus(): void;
+    /**
+     * Gets the background color of the window in Hex (`#RRGGBB`) format.
+     *
+     * See Setting `backgroundColor`.
+     *
+     * **Note:** The alpha value is _not_ returned alongside the red, green, and blue
+     * values.
+     */
+    getBackgroundColor(): string;
+    /**
+     * The `bounds` of the window as `Object`.
+     *
+     * **Note:** On macOS, the y-coordinate value returned will be at minimum the Tray
+     * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
+     * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
+     * 25, y: 38, width: 800, height: 600 }`.
+     */
+    getBounds(): Rectangle;
+    /**
+     * All child windows.
+     */
+    getChildWindows(): BaseWindow[];
+    /**
+     * The `bounds` of the window's client area as `Object`.
+     */
+    getContentBounds(): Rectangle;
+    /**
+     * Contains the window's client area's width and height.
+     */
+    getContentSize(): number[];
+    /**
+     * Returns View - The content view of the window.
+     */
+    getContentView(): void;
+    /**
+     * Contains the window's maximum width and height.
+     */
+    getMaximumSize(): number[];
+    /**
+     * Window id in the format of DesktopCapturerSource's id. For example
+     * "window:1324:0".
+     *
+     * More precisely the format is `window:id:other_id` where `id` is `HWND` on
+     * Windows, `CGWindowID` (`uint64_t`) on macOS and `Window` (`unsigned long`) on
+     * Linux. `other_id` is used to identify web contents (tabs) so within the same top
+     * level window.
+     */
+    getMediaSourceId(): string;
+    /**
+     * Contains the window's minimum width and height.
+     */
+    getMinimumSize(): number[];
+    /**
+     * The platform-specific handle of the window.
+     *
+     * The native type of the handle is `HWND` on Windows, `NSView*` on macOS, and
+     * `Window` (`unsigned long`) on Linux.
+     */
+    getNativeWindowHandle(): Buffer;
+    /**
+     * Contains the window bounds of the normal state
+     *
+     * **Note:** whatever the current state of the window : maximized, minimized or in
+     * fullscreen, this function always returns the position and size of the window in
+     * normal state. In normal state, getBounds and getNormalBounds returns the same
+     * `Rectangle`.
+     */
+    getNormalBounds(): Rectangle;
+    /**
+     * between 0.0 (fully transparent) and 1.0 (fully opaque). On Linux, always returns
+     * 1.
+     */
+    getOpacity(): number;
+    /**
+     * The parent window or `null` if there is no parent.
+     */
+    getParentWindow(): (BaseWindow) | (null);
+    /**
+     * Contains the window's current position.
+     */
+    getPosition(): number[];
+    /**
+     * The pathname of the file the window represents.
+     *
+     * @platform darwin
+     */
+    getRepresentedFilename(): string;
+    /**
+     * Contains the window's width and height.
+     */
+    getSize(): number[];
+    /**
+     * The title of the native window.
+     *
+     * **Note:** The title of the web page can be different from the title of the
+     * native window.
+     */
+    getTitle(): string;
+    /**
+     * The custom position for the traffic light buttons in frameless window, `null`
+     * will be returned when there is no custom position.
+     *
+     * @platform darwin
+     */
+    getWindowButtonPosition(): (Point) | (null);
+    /**
+     * Whether the window has a shadow.
+     */
+    hasShadow(): boolean;
+    /**
+     * Hides the window.
+     */
+    hide(): void;
+    /**
+     * Hooks a windows message. The `callback` is called when the message is received
+     * in the WndProc.
+     *
+     * @platform win32
+     */
+    hookWindowMessage(message: number, callback: (wParam: Buffer, lParam: Buffer) => void): void;
+    /**
+     * Invalidates the window shadow so that it is recomputed based on the current
+     * window shape.
+     *
+     * `BaseWindow`s that are transparent can sometimes leave behind visual artifacts
+     * on macOS. This method can be used to clear these artifacts when, for example,
+     * performing an animation.
+     *
+     * @platform darwin
+     */
+    invalidateShadow(): void;
+    /**
+     * Whether the window is always on top of other windows.
+     */
+    isAlwaysOnTop(): boolean;
+    /**
+     * Whether the window can be manually closed by user.
+     *
+     * On Linux always returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    isClosable(): boolean;
+    /**
+     * Whether the window is destroyed.
+     */
+    isDestroyed(): boolean;
+    /**
+     * Whether the window's document has been edited.
+     *
+     * @platform darwin
+     */
+    isDocumentEdited(): boolean;
+    /**
+     * whether the window is enabled.
+     */
+    isEnabled(): boolean;
+    /**
+     * Whether the window can be focused.
+     *
+     * @platform darwin,win32
+     */
+    isFocusable(): boolean;
+    /**
+     * Whether the window is focused.
+     */
+    isFocused(): boolean;
+    /**
+     * Whether the window is in fullscreen mode.
+     */
+    isFullScreen(): boolean;
+    /**
+     * Whether the maximize/zoom window button toggles fullscreen mode or maximizes the
+     * window.
+     */
+    isFullScreenable(): boolean;
+    /**
+     * Whether the window will be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    isHiddenInMissionControl(): boolean;
+    /**
+     * Whether the window is in kiosk mode.
+     */
+    isKiosk(): boolean;
+    /**
+     * Whether the window can be manually maximized by user.
+     *
+     * On Linux always returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    isMaximizable(): boolean;
+    /**
+     * Whether the window is maximized.
+     */
+    isMaximized(): boolean;
+    /**
+     * Whether menu bar automatically hides itself.
+     *
+     * @platform win32,linux
+     */
+    isMenuBarAutoHide(): boolean;
+    /**
+     * Whether the menu bar is visible.
+     *
+     * @platform win32,linux
+     */
+    isMenuBarVisible(): boolean;
+    /**
+     * Whether the window can be manually minimized by the user.
+     *
+     * On Linux always returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    isMinimizable(): boolean;
+    /**
+     * Whether the window is minimized.
+     */
+    isMinimized(): boolean;
+    /**
+     * Whether current window is a modal window.
+     */
+    isModal(): boolean;
+    /**
+     * Whether the window can be moved by user.
+     *
+     * On Linux always returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    isMovable(): boolean;
+    /**
+     * Whether the window is in normal state (not maximized, not minimized, not in
+     * fullscreen mode).
+     */
+    isNormal(): boolean;
+    /**
+     * Whether the window can be manually resized by the user.
+     */
+    isResizable(): boolean;
+    /**
+     * Whether the window is in simple (pre-Lion) fullscreen mode.
+     *
+     * @platform darwin
+     */
+    isSimpleFullScreen(): boolean;
+    /**
+     * Whether the window is in Windows 10 tablet mode.
+     *
+     * Since Windows 10 users can use their PC as tablet, under this mode apps can
+     * choose to optimize their UI for tablets, such as enlarging the titlebar and
+     * hiding titlebar buttons.
+     *
+     * This API returns whether the window is in tablet mode, and the `resize` event
+     * can be be used to listen to changes to tablet mode.
+     *
+     * @platform win32
+     */
+    isTabletMode(): boolean;
+    /**
+     * Whether the window is visible to the user in the foreground of the app.
+     */
+    isVisible(): boolean;
+    /**
+     * Whether the window is visible on all workspaces.
+     *
+     * **Note:** This API always returns false on Windows.
+     *
+     * @platform darwin,linux
+     */
+    isVisibleOnAllWorkspaces(): boolean;
+    /**
+     * `true` or `false` depending on whether the message is hooked.
+     *
+     * @platform win32
+     */
+    isWindowMessageHooked(message: number): boolean;
+    /**
+     * Maximizes the window. This will also show (but not focus) the window if it isn't
+     * being displayed already.
+     */
+    maximize(): void;
+    /**
+     * Merges all windows into one window with multiple tabs when native tabs are
+     * enabled and there is more than one open window.
+     *
+     * @platform darwin
+     */
+    mergeAllWindows(): void;
+    /**
+     * Minimizes the window. On some platforms the minimized window will be shown in
+     * the Dock.
+     */
+    minimize(): void;
+    /**
+     * Moves window above the source window in the sense of z-order. If the
+     * `mediaSourceId` is not of type window or if the window does not exist then this
+     * method throws an error.
+     */
+    moveAbove(mediaSourceId: string): void;
+    /**
+     * Moves the current tab into a new window if native tabs are enabled and there is
+     * more than one tab in the current window.
+     *
+     * @platform darwin
+     */
+    moveTabToNewWindow(): void;
+    /**
+     * Moves window to top(z-order) regardless of focus
+     */
+    moveTop(): void;
+    /**
+     * Uses Quick Look to preview a file at a given path.
+     *
+     * @platform darwin
+     */
+    previewFile(path: string, displayName?: string): void;
+    /**
+     * Remove the window's menu bar.
+     *
+     * @platform linux,win32
+     */
+    removeMenu(): void;
+    /**
+     * Restores the window from minimized state to its previous state.
+     */
+    restore(): void;
+    /**
+     * Selects the next tab when native tabs are enabled and there are other tabs in
+     * the window.
+     *
+     * @platform darwin
+     */
+    selectNextTab(): void;
+    /**
+     * Selects the previous tab when native tabs are enabled and there are other tabs
+     * in the window.
+     *
+     * @platform darwin
+     */
+    selectPreviousTab(): void;
+    /**
+     * Sets whether the window should show always on top of other windows. After
+     * setting this, the window is still a normal window, not a toolbox window which
+     * can not be focused on.
+     */
+    setAlwaysOnTop(flag: boolean, level?: 'normal' | 'floating' | 'torn-off-menu' | 'modal-panel' | 'main-menu' | 'status' | 'pop-up-menu' | 'screen-saver', relativeLevel?: number): void;
+    /**
+     * Sets the properties for the window's taskbar button.
+     *
+     * **Note:** `relaunchCommand` and `relaunchDisplayName` must always be set
+     * together. If one of those properties is not set, then neither will be used.
+     *
+     * @platform win32
+     */
+    setAppDetails(options: AppDetailsOptions): void;
+    /**
+     * This will make a window maintain an aspect ratio. The extra size allows a
+     * developer to have space, specified in pixels, not included within the aspect
+     * ratio calculations. This API already takes into account the difference between a
+     * window's size and its content size.
+     *
+     * Consider a normal window with an HD video player and associated controls.
+     * Perhaps there are 15 pixels of controls on the left edge, 25 pixels of controls
+     * on the right edge and 50 pixels of controls below the player. In order to
+     * maintain a 16:9 aspect ratio (standard aspect ratio for HD @1920x1080) within
+     * the player itself we would call this function with arguments of 16/9 and {
+     * width: 40, height: 50 }. The second argument doesn't care where the extra width
+     * and height are within the content view--only that they exist. Sum any extra
+     * width and height areas you have within the overall content view.
+     *
+     * The aspect ratio is not respected when window is resized programmatically with
+     * APIs like `win.setSize`.
+     *
+     * To reset an aspect ratio, pass 0 as the `aspectRatio` value:
+     * `win.setAspectRatio(0)`.
+     */
+    setAspectRatio(aspectRatio: number, extraSize?: Size): void;
+    /**
+     * Controls whether to hide cursor when typing.
+     *
+     * @platform darwin
+     */
+    setAutoHideCursor(autoHide: boolean): void;
+    /**
+     * Sets whether the window menu bar should hide itself automatically. Once set the
+     * menu bar will only show when users press the single `Alt` key.
+     *
+     * If the menu bar is already visible, calling `setAutoHideMenuBar(true)` won't
+     * hide it immediately.
+     *
+     * @platform win32,linux
+     */
+    setAutoHideMenuBar(hide: boolean): void;
+    /**
+     * Examples of valid `backgroundColor` values:
+     *
+     * * Hex
+     *   * #fff (shorthand RGB)
+     *   * #ffff (shorthand ARGB)
+     *   * #ffffff (RGB)
+     *   * #ffffffff (ARGB)
+     * * RGB
+     *   * `rgb\(([\d]+),\s*([\d]+),\s*([\d]+)\)`
+     *     * e.g. rgb(255, 255, 255)
+     * * RGBA
+     *   * `rgba\(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+)\)`
+     *     * e.g. rgba(255, 255, 255, 1.0)
+     * * HSL
+     *   * `hsl\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)`
+     *     * e.g. hsl(200, 20%, 50%)
+     * * HSLA
+     *   * `hsla\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)`
+     *     * e.g. hsla(200, 20%, 50%, 0.5)
+     * * Color name
+     *   * Options are listed in SkParseColor.cpp
+     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
+     *     * e.g. `blueviolet` or `red`
+     *
+     * Sets the background color of the window. See Setting `backgroundColor`.
+     */
+    setBackgroundColor(backgroundColor: string): void;
+    /**
+     * This method sets the browser window's system-drawn background material,
+     * including behind the non-client area.
+     *
+     * See the Windows documentation for more details.
+     *
+     * **Note:** This method is only supported on Windows 11 22H2 and up.
+     *
+     * @platform win32
+     */
+    setBackgroundMaterial(material: 'auto' | 'none' | 'mica' | 'acrylic' | 'tabbed'): void;
+    /**
+     * Resizes and moves the window to the supplied bounds. Any properties that are not
+     * supplied will default to their current values.
+     *
+     * **Note:** On macOS, the y-coordinate value cannot be smaller than the Tray
+     * height. The tray height has changed over time and depends on the operating
+     * system, but is between 20-40px. Passing a value lower than the tray height will
+     * result in a window that is flush to the tray.
+     */
+    setBounds(bounds: Partial<Rectangle>, animate?: boolean): void;
+    /**
+     * Sets whether the window can be manually closed by user. On Linux does nothing.
+     *
+     * @platform darwin,win32
+     */
+    setClosable(closable: boolean): void;
+    /**
+     * Resizes and moves the window's client area (e.g. the web page) to the supplied
+     * bounds.
+     */
+    setContentBounds(bounds: Rectangle, animate?: boolean): void;
+    /**
+     * Prevents the window contents from being captured by other apps.
+     *
+     * On macOS it sets the NSWindow's sharingType to NSWindowSharingNone. On Windows
+     * it calls SetWindowDisplayAffinity with `WDA_EXCLUDEFROMCAPTURE`. For Windows 10
+     * version 2004 and up the window will be removed from capture entirely, older
+     * Windows versions behave as if `WDA_MONITOR` is applied capturing a black window.
+     *
+     * @platform darwin,win32
+     */
+    setContentProtection(enable: boolean): void;
+    /**
+     * Resizes the window's client area (e.g. the web page) to `width` and `height`.
+     */
+    setContentSize(width: number, height: number, animate?: boolean): void;
+    /**
+     * Sets the content view of the window.
+     */
+    setContentView(view: View): void;
+    /**
+     * Specifies whether the window’s document has been edited, and the icon in title
+     * bar will become gray when set to `true`.
+     *
+     * @platform darwin
+     */
+    setDocumentEdited(edited: boolean): void;
+    /**
+     * Disable or enable the window.
+     */
+    setEnabled(enable: boolean): void;
+    /**
+     * Changes whether the window can be focused.
+     *
+     * On macOS it does not remove the focus from the window.
+     *
+     * @platform darwin,win32
+     */
+    setFocusable(focusable: boolean): void;
+    /**
+     * Sets whether the window should be in fullscreen mode.
+     *
+     * **Note:** On macOS, fullscreen transitions take place asynchronously. If further
+     * actions depend on the fullscreen state, use the 'enter-full-screen' or
+     * 'leave-full-screen' events.
+     */
+    setFullScreen(flag: boolean): void;
+    /**
+     * Sets whether the maximize/zoom window button toggles fullscreen mode or
+     * maximizes the window.
+     */
+    setFullScreenable(fullscreenable: boolean): void;
+    /**
+     * Sets whether the window should have a shadow.
+     */
+    setHasShadow(hasShadow: boolean): void;
+    /**
+     * Sets whether the window will be hidden when the user toggles into mission
+     * control.
+     *
+     * @platform darwin
+     */
+    setHiddenInMissionControl(hidden: boolean): void;
+    /**
+     * Changes window icon.
+     *
+     * @platform win32,linux
+     */
+    setIcon(icon: (NativeImage) | (string)): void;
+    /**
+     * Makes the window ignore all mouse events.
+     *
+     * All mouse events happened in this window will be passed to the window below this
+     * window, but if this window has focus, it will still receive keyboard events.
+     */
+    setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
+    /**
+     * Enters or leaves kiosk mode.
+     */
+    setKiosk(flag: boolean): void;
+    /**
+     * Sets whether the window can be manually maximized by user. On Linux does
+     * nothing.
+     *
+     * @platform darwin,win32
+     */
+    setMaximizable(maximizable: boolean): void;
+    /**
+     * Sets the maximum size of window to `width` and `height`.
+     */
+    setMaximumSize(width: number, height: number): void;
+    /**
+     * Sets the `menu` as the window's menu bar.
+     *
+     * @platform linux,win32
+     */
+    setMenu(menu: (Menu) | (null)): void;
+    /**
+     * Sets whether the menu bar should be visible. If the menu bar is auto-hide, users
+     * can still bring up the menu bar by pressing the single `Alt` key.
+     *
+     * @platform win32,linux
+     */
+    setMenuBarVisibility(visible: boolean): void;
+    /**
+     * Sets whether the window can be manually minimized by user. On Linux does
+     * nothing.
+     *
+     * @platform darwin,win32
+     */
+    setMinimizable(minimizable: boolean): void;
+    /**
+     * Sets the minimum size of window to `width` and `height`.
+     */
+    setMinimumSize(width: number, height: number): void;
+    /**
+     * Sets whether the window can be moved by user. On Linux does nothing.
+     *
+     * @platform darwin,win32
+     */
+    setMovable(movable: boolean): void;
+    /**
+     * Sets the opacity of the window. On Linux, does nothing. Out of bound number
+     * values are clamped to the [0, 1] range.
+     *
+     * @platform win32,darwin
+     */
+    setOpacity(opacity: number): void;
+    /**
+     * Sets a 16 x 16 pixel overlay onto the current taskbar icon, usually used to
+     * convey some sort of application status or to passively notify the user.
+     *
+     * @platform win32
+     */
+    setOverlayIcon(overlay: (NativeImage) | (null), description: string): void;
+    /**
+     * Sets `parent` as current window's parent window, passing `null` will turn
+     * current window into a top-level window.
+     */
+    setParentWindow(parent: (BaseWindow) | (null)): void;
+    /**
+     * Moves window to `x` and `y`.
+     */
+    setPosition(x: number, y: number, animate?: boolean): void;
+    /**
+     * Sets progress value in progress bar. Valid range is [0, 1.0].
+     *
+     * Remove progress bar when progress < 0; Change to indeterminate mode when
+     * progress > 1.
+     *
+     * On Linux platform, only supports Unity desktop environment, you need to specify
+     * the `*.desktop` file name to `desktopName` field in `package.json`. By default,
+     * it will assume `{app.name}.desktop`.
+     *
+     * On Windows, a mode can be passed. Accepted values are `none`, `normal`,
+     * `indeterminate`, `error`, and `paused`. If you call `setProgressBar` without a
+     * mode set (but with a value within the valid range), `normal` will be assumed.
+     */
+    setProgressBar(progress: number, options?: ProgressBarOptions): void;
+    /**
+     * Sets the pathname of the file the window represents, and the icon of the file
+     * will show in window's title bar.
+     *
+     * @platform darwin
+     */
+    setRepresentedFilename(filename: string): void;
+    /**
+     * Sets whether the window can be manually resized by the user.
+     */
+    setResizable(resizable: boolean): void;
+    /**
+     * Setting a window shape determines the area within the window where the system
+     * permits drawing and user interaction. Outside of the given region, no pixels
+     * will be drawn and no mouse events will be registered. Mouse events outside of
+     * the region will not be received by that window, but will fall through to
+     * whatever is behind the window.
+     *
+     * @experimental
+     * @platform win32,linux
+     */
+    setShape(rects: Rectangle[]): void;
+    /**
+     * Changes the attachment point for sheets on macOS. By default, sheets are
+     * attached just below the window frame, but you may want to display them beneath a
+     * HTML-rendered toolbar. For example:
+     *
+     * @platform darwin
+     */
+    setSheetOffset(offsetY: number, offsetX?: number): void;
+    /**
+     * Enters or leaves simple fullscreen mode.
+     *
+     * Simple fullscreen mode emulates the native fullscreen behavior found in versions
+     * of macOS prior to Lion (10.7).
+     *
+     * @platform darwin
+     */
+    setSimpleFullScreen(flag: boolean): void;
+    /**
+     * Resizes the window to `width` and `height`. If `width` or `height` are below any
+     * set minimum size constraints the window will snap to its minimum size.
+     */
+    setSize(width: number, height: number, animate?: boolean): void;
+    /**
+     * Makes the window not show in the taskbar.
+     *
+     * @platform darwin,win32
+     */
+    setSkipTaskbar(skip: boolean): void;
+    /**
+     * Whether the buttons were added successfully
+     *
+     * Add a thumbnail toolbar with a specified set of buttons to the thumbnail image
+     * of a window in a taskbar button layout. Returns a `boolean` object indicates
+     * whether the thumbnail has been added successfully.
+     *
+     * The number of buttons in thumbnail toolbar should be no greater than 7 due to
+     * the limited room. Once you setup the thumbnail toolbar, the toolbar cannot be
+     * removed due to the platform's limitation. But you can call the API with an empty
+     * array to clean the buttons.
+     *
+     * The `buttons` is an array of `Button` objects:
+     *
+     * * `Button` Object
+     *   * `icon` NativeImage - The icon showing in thumbnail toolbar.
+     *   * `click` Function
+     *   * `tooltip` string (optional) - The text of the button's tooltip.
+     *   * `flags` string[] (optional) - Control specific states and behaviors of the
+     * button. By default, it is `['enabled']`.
+     *
+     * The `flags` is an array that can include following `string`s:
+     *
+     * * `enabled` - The button is active and available to the user.
+     * * `disabled` - The button is disabled. It is present, but has a visual state
+     * indicating it will not respond to user action.
+     * * `dismissonclick` - When the button is clicked, the thumbnail window closes
+     * immediately.
+     * * `nobackground` - Do not draw a button border, use only the image.
+     * * `hidden` - The button is not shown to the user.
+     * * `noninteractive` - The button is enabled but not interactive; no pressed
+     * button state is drawn. This value is intended for instances where the button is
+     * used in a notification.
+     *
+     * @platform win32
+     */
+    setThumbarButtons(buttons: ThumbarButton[]): boolean;
+    /**
+     * Sets the region of the window to show as the thumbnail image displayed when
+     * hovering over the window in the taskbar. You can reset the thumbnail to be the
+     * entire window by specifying an empty region: `{ x: 0, y: 0, width: 0, height: 0
+     * }`.
+     *
+     * @platform win32
+     */
+    setThumbnailClip(region: Rectangle): void;
+    /**
+     * Sets the toolTip that is displayed when hovering over the window thumbnail in
+     * the taskbar.
+     *
+     * @platform win32
+     */
+    setThumbnailToolTip(toolTip: string): void;
+    /**
+     * Changes the title of native window to `title`.
+     */
+    setTitle(title: string): void;
+    /**
+     * On a Window with Window Controls Overlay already enabled, this method updates
+     * the style of the title bar overlay.
+     *
+     * @platform win32
+     */
+    setTitleBarOverlay(options: TitleBarOverlayOptions): void;
+    /**
+     * Sets the touchBar layout for the current window. Specifying `null` or
+     * `undefined` clears the touch bar. This method only has an effect if the machine
+     * has a touch bar.
+     *
+     * **Note:** The TouchBar API is currently experimental and may change or be
+     * removed in future Electron releases.
+     *
+     * @platform darwin
+     */
+    setTouchBar(touchBar: (TouchBar) | (null)): void;
+    /**
+     * Adds a vibrancy effect to the window. Passing `null` or an empty string will
+     * remove the vibrancy effect on the window.
+     *
+     * @platform darwin
+     */
+    setVibrancy(type: (('titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page')) | (null)): void;
+    /**
+     * Sets whether the window should be visible on all workspaces.
+     *
+     * **Note:** This API does nothing on Windows.
+     *
+     * @platform darwin,linux
+     */
+    setVisibleOnAllWorkspaces(visible: boolean, options?: VisibleOnAllWorkspacesOptions): void;
+    /**
+     * Set a custom position for the traffic light buttons in frameless window. Passing
+     * `null` will reset the position to default.
+     *
+     * @platform darwin
+     */
+    setWindowButtonPosition(position: (Point) | (null)): void;
+    /**
+     * Sets whether the window traffic light buttons should be visible.
+     *
+     * @platform darwin
+     */
+    setWindowButtonVisibility(visible: boolean): void;
+    /**
+     * Shows and gives focus to the window.
+     */
+    show(): void;
+    /**
+     * Shows or hides the tab overview when native tabs are enabled.
+     *
+     * @platform darwin
+     */
+    showAllTabs(): void;
+    /**
+     * Shows the window but doesn't focus on it.
+     */
+    showInactive(): void;
+    /**
+     * Toggles the visibility of the tab bar if native tabs are enabled and there is
+     * only one tab in the current window.
+     *
+     * @platform darwin
+     */
+    toggleTabBar(): void;
+    /**
+     * Unhooks all of the window messages.
+     *
+     * @platform win32
+     */
+    unhookAllWindowMessages(): void;
+    /**
+     * Unhook the window message.
+     *
+     * @platform win32
+     */
+    unhookWindowMessage(message: number): void;
+    /**
+     * Unmaximizes the window.
+     */
+    unmaximize(): void;
+    /**
+     * A `string` property that defines an alternative title provided only to
+     * accessibility tools such as screen readers. This string is not directly visible
+     * to users.
+     */
+    accessibleTitle: string;
+    /**
+     * A `boolean` property that determines whether the window menu bar should hide
+     * itself automatically. Once set, the menu bar will only show when users press the
+     * single `Alt` key.
+     *
+     * If the menu bar is already visible, setting this property to `true` won't hide
+     * it immediately.
+     */
+    autoHideMenuBar: boolean;
+    /**
+     * A `boolean` property that determines whether the window can be manually closed
+     * by user.
+     *
+     * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    closable: boolean;
+    /**
+     * A `View` property for the content view of the window.
+     */
+    contentView: View;
+    /**
+     * A `boolean` property that specifies whether the window’s document has been
+     * edited.
+     *
+     * The icon in title bar will become gray when set to `true`.
+     *
+     * @platform darwin
+     */
+    documentEdited: boolean;
+    /**
+     * A `boolean` property that determines whether the window is excluded from the
+     * application’s Windows menu. `false` by default.
+     *
+     * @platform darwin
+     */
+    excludedFromShownWindowsMenu: boolean;
+    /**
+     * A `boolean` property that determines whether the window is focusable.
+     *
+     * @platform win32,darwin
+     */
+    focusable: boolean;
+    /**
+     * A `boolean` property that determines whether the window is in fullscreen mode.
+     */
+    fullScreen: boolean;
+    /**
+     * A `boolean` property that determines whether the maximize/zoom window button
+     * toggles fullscreen mode or maximizes the window.
+     */
+    fullScreenable: boolean;
+    /**
+     * A `Integer` property representing the unique ID of the window. Each ID is unique
+     * among all `BaseWindow` instances of the entire Electron application.
+     *
+     */
+    readonly id: number;
+    /**
+     * A `boolean` property that determines whether the window is in kiosk mode.
+     */
+    kiosk: boolean;
+    /**
+     * A `boolean` property that determines whether the window can be manually
+     * maximized by user.
+     *
+     * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    maximizable: boolean;
+    /**
+     * A `boolean` property that determines whether the menu bar should be visible.
+     *
+     * **Note:** If the menu bar is auto-hide, users can still bring up the menu bar by
+     * pressing the single `Alt` key.
+     *
+     * @platform win32,linux
+     */
+    menuBarVisible: boolean;
+    /**
+     * A `boolean` property that determines whether the window can be manually
+     * minimized by user.
+     *
+     * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    minimizable: boolean;
+    /**
+     * A `boolean` property that determines Whether the window can be moved by user.
+     *
+     * On Linux the setter is a no-op, although the getter returns `true`.
+     *
+     * @platform darwin,win32
+     */
+    movable: boolean;
+    /**
+     * A `string` property that determines the pathname of the file the window
+     * represents, and the icon of the file will show in window's title bar.
+     *
+     * @platform darwin
+     */
+    representedFilename: string;
+    /**
+     * A `boolean` property that determines whether the window can be manually resized
+     * by user.
+     */
+    resizable: boolean;
+    /**
+     * A `boolean` property that determines whether the window has a shadow.
+     */
+    shadow: boolean;
+    /**
+     * A `boolean` property that determines whether the window is in simple (pre-Lion)
+     * fullscreen mode.
+     */
+    simpleFullScreen: boolean;
+    /**
+     * A `string` (optional) property that is equal to the `tabbingIdentifier` passed
+     * to the `BrowserWindow` constructor or `undefined` if none was set.
+     *
+     * @platform darwin
+     */
+    readonly tabbingIdentifier?: string;
+    /**
+     * A `string` property that determines the title of the native window.
+     *
+     * **Note:** The title of the web page can be different from the title of the
+     * native window.
+     */
+    title: string;
+    /**
+     * A `boolean` property that determines whether the window is visible on all
+     * workspaces.
+     *
+     * **Note:** Always returns false on Windows.
+     *
+     * @platform darwin,linux
+     */
+    visibleOnAllWorkspaces: boolean;
+  }
+
+  interface BaseWindowConstructorOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/base-window-options
+
+    /**
+     * Whether clicking an inactive window will also click through to the web contents.
+     * Default is `false` on macOS. This option is not configurable on other platforms.
+     *
+     * @platform darwin
+     */
+    acceptFirstMouse?: boolean;
+    /**
+     * Whether the window should always stay on top of other windows. Default is
+     * `false`.
+     */
+    alwaysOnTop?: boolean;
+    /**
+     * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
+     */
+    autoHideMenuBar?: boolean;
+    /**
+     * The window's background color in Hex, RGB, RGBA, HSL, HSLA or named CSS color
+     * format. Alpha in #AARRGGBB format is supported if `transparent` is set to
+     * `true`. Default is `#FFF` (white). See win.setBackgroundColor for more
+     * information.
+     */
+    backgroundColor?: string;
+    /**
+     * Set the window's system-drawn background material, including behind the
+     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
+     * win.setBackgroundMaterial for more information.
+     *
+     * @platform win32
+     */
+    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
+    /**
+     * Show window in the center of the screen. Default is `false`.
+     */
+    center?: boolean;
+    /**
+     * Whether window is closable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
+     */
+    closable?: boolean;
+    /**
+     * Forces using dark theme for the window, only works on some GTK+3 desktop
+     * environments. Default is `false`.
+     */
+    darkTheme?: boolean;
+    /**
+     * Whether to hide cursor when typing. Default is `false`.
+     */
+    disableAutoHideCursor?: boolean;
+    /**
+     * Enable the window to be resized larger than screen. Only relevant for macOS, as
+     * other OSes allow larger-than-screen windows by default. Default is `false`.
+     *
+     * @platform darwin
+     */
+    enableLargerThanScreen?: boolean;
+    /**
+     * Whether the window can be focused. Default is `true`. On Windows setting
+     * `focusable: false` also implies setting `skipTaskbar: true`. On Linux setting
+     * `focusable: false` makes the window stop interacting with wm, so the window will
+     * always stay on top in all workspaces.
+     */
+    focusable?: boolean;
+    /**
+     * Specify `false` to create a frameless window. Default is `true`.
+     */
+    frame?: boolean;
+    /**
+     * Whether the window should show in fullscreen. When explicitly set to `false` the
+     * fullscreen button will be hidden or disabled on macOS. Default is `false`.
+     */
+    fullscreen?: boolean;
+    /**
+     * Whether the window can be put into fullscreen mode. On macOS, also whether the
+     * maximize/zoom button should toggle full screen mode or maximize window. Default
+     * is `true`.
+     */
+    fullscreenable?: boolean;
+    /**
+     * Whether window should have a shadow. Default is `true`.
+     */
+    hasShadow?: boolean;
+    /**
+     * Window's height in pixels. Default is `600`.
+     */
+    height?: number;
+    /**
+     * Whether window should be hidden when the user toggles into mission control.
+     *
+     * @platform darwin
+     */
+    hiddenInMissionControl?: boolean;
+    /**
+     * The window icon. On Windows it is recommended to use `ICO` icons to get best
+     * visual effects, you can also leave it undefined so the executable's icon will be
+     * used.
+     */
+    icon?: (NativeImage) | (string);
+    /**
+     * Whether the window is in kiosk mode. Default is `false`.
+     */
+    kiosk?: boolean;
+    /**
+     * Window's maximum height. Default is no limit.
+     */
+    maxHeight?: number;
+    /**
+     * Whether window is maximizable. This is not implemented on Linux. Default is
+     * `true`.
+     *
+     * @platform darwin,win32
+     */
+    maximizable?: boolean;
+    /**
+     * Window's maximum width. Default is no limit.
+     */
+    maxWidth?: number;
+    /**
+     * Window's minimum height. Default is `0`.
+     */
+    minHeight?: number;
+    /**
+     * Whether window is minimizable. This is not implemented on Linux. Default is
+     * `true`.
+     *
+     * @platform darwin,win32
+     */
+    minimizable?: boolean;
+    /**
+     * Window's minimum width. Default is `0`.
+     */
+    minWidth?: number;
+    /**
+     * Whether this is a modal window. This only works when the window is a child
+     * window. Default is `false`.
+     */
+    modal?: boolean;
+    /**
+     * Whether window is movable. This is not implemented on Linux. Default is `true`.
+     *
+     * @platform darwin,win32
+     */
+    movable?: boolean;
+    /**
+     * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
+     * (fully opaque). This is only implemented on Windows and macOS.
+     *
+     * @platform darwin,win32
+     */
+    opacity?: number;
+    /**
+     * Specify parent window. Default is `null`.
+     */
+    parent?: BaseWindow;
+    /**
+     * Whether window is resizable. Default is `true`.
+     */
+    resizable?: boolean;
+    /**
+     * Whether frameless window should have rounded corners on macOS. Default is
+     * `true`. Setting this property to `false` will prevent the window from being
+     * fullscreenable.
+     *
+     * @platform darwin
+     */
+    roundedCorners?: boolean;
+    /**
+     * Whether window should be shown when created. Default is `true`.
+     */
+    show?: boolean;
+    /**
+     * Use pre-Lion fullscreen on macOS. Default is `false`.
+     *
+     * @platform darwin
+     */
+    simpleFullscreen?: boolean;
+    /**
+     * Whether to show the window in taskbar. Default is `false`.
+     *
+     * @platform darwin,win32
+     */
+    skipTaskbar?: boolean;
+    /**
+     * Tab group name, allows opening the window as a native tab. Windows with the same
+     * tabbing identifier will be grouped together. This also adds a native new tab
+     * button to your window's tab bar and allows your `app` and window to receive the
+     * `new-window-for-tab` event.
+     *
+     * @platform darwin
+     */
+    tabbingIdentifier?: string;
+    /**
+     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
+     * window frame. Setting it to `false` will remove window shadow and window
+     * animations. Default is `true`.
+     */
+    thickFrame?: boolean;
+    /**
+     * Default window title. Default is `"Electron"`. If the HTML tag `<title>` is
+     * defined in the HTML file loaded by `loadURL()`, this property will be ignored.
+     */
+    title?: string;
+    /**
+     * The style of window title bar. Default is `default`. Possible values are:
+     *
+     * @platform darwin,win32
+     */
+    titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
+    /**
+     * Set a custom position for the traffic light buttons in frameless windows.
+     *
+     * @platform darwin
+     */
+    trafficLightPosition?: Point;
+    /**
+     * Makes the window transparent. Default is `false`. On Windows, does not work
+     * unless the window is frameless.
+     */
+    transparent?: boolean;
+    /**
+     * The type of window, default is normal window. See more about this below.
+     */
+    type?: string;
+    /**
+     * The `width` and `height` would be used as web page's size, which means the
+     * actual window's size will include window frame's size and be slightly larger.
+     * Default is `false`.
+     */
+    useContentSize?: boolean;
+    /**
+     * Add a type of vibrancy effect to the window, only on macOS. Can be
+     * `appearance-based`, `titlebar`, `selection`, `menu`, `popover`, `sidebar`,
+     * `header`, `sheet`, `window`, `hud`, `fullscreen-ui`, `tooltip`, `content`,
+     * `under-window`, or `under-page`.
+     *
+     * @platform darwin
+     */
+    vibrancy?: ('appearance-based' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+    /**
+     * Specify how the material appearance should reflect window activity state on
+     * macOS. Must be used with the `vibrancy` property. Possible values are:
+     *
+     * @platform darwin
+     */
+    visualEffectState?: ('followWindow' | 'active' | 'inactive');
+    /**
+     * Window's width in pixels. Default is `800`.
+     */
+    width?: number;
+    /**
+     * (**required** if y is used) Window's left offset from screen. Default is to
+     * center the window.
+     */
+    x?: number;
+    /**
+     * (**required** if x is used) Window's top offset from screen. Default is to
+     * center the window.
+     */
+    y?: number;
+    /**
+     * Controls the behavior on macOS when option-clicking the green stoplight button
+     * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
+     * will grow to the preferred width of the web page when zoomed, `false` will cause
+     * it to zoom to the width of the screen. This will also affect the behavior when
+     * calling `maximize()` directly. Default is `false`.
+     *
+     * @platform darwin
+     */
+    zoomToPageWidth?: boolean;
+  }
+
+  interface BluetoothDevice {
+
+    // Docs: https://electronjs.org/docs/api/structures/bluetooth-device
+
+    deviceId: string;
+    deviceName: string;
+  }
+
+  class BrowserView {
+
+    // Docs: https://electronjs.org/docs/api/browser-view
+
+    /**
+     * BrowserView
+     */
+    constructor(options?: BrowserViewConstructorOptions);
+    /**
+     * The `bounds` of this BrowserView instance as `Object`.
+     *
+     * @experimental
+     * @deprecated
+     */
+    getBounds(): Rectangle;
+    /**
+     * @experimental
+     * @deprecated
+     */
+    setAutoResize(options: AutoResizeOptions): void;
+    /**
+     * Examples of valid `color` values:
+     *
+     * * Hex
+     *   * `#fff` (RGB)
+     *   * `#ffff` (ARGB)
+     *   * `#ffffff` (RRGGBB)
+     *   * `#ffffffff` (AARRGGBB)
+     * * RGB
+     *   * `rgb\(([\d]+),\s*([\d]+),\s*([\d]+)\)`
+     *     * e.g. `rgb(255, 255, 255)`
+     * * RGBA
+     *   * `rgba\(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+)\)`
+     *     * e.g. `rgba(255, 255, 255, 1.0)`
+     * * HSL
+     *   * `hsl\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)`
+     *     * e.g. `hsl(200, 20%, 50%)`
+     * * HSLA
+     *   * `hsla\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)`
+     *     * e.g. `hsla(200, 20%, 50%, 0.5)`
+     * * Color name
+     *   * Options are listed in SkParseColor.cpp
+     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
+     *     * e.g. `blueviolet` or `red`
+     *
+     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
+     * `RGB`.
+     *
+     * @experimental
+     * @deprecated
+     */
+    setBackgroundColor(color: string): void;
+    /**
+     * Resizes and moves the view to the supplied bounds relative to the window.
+     *
+     * @experimental
+     * @deprecated
+     */
+    setBounds(bounds: Rectangle): void;
+    /**
+     * A `WebContents` object owned by this view.
+     *
+     * @experimental
+     * @deprecated
+     */
+    webContents: WebContents;
+  }
+
+  class BrowserWindow extends BaseWindow {
+
+    // Docs: https://electronjs.org/docs/api/browser-window
+
+    /**
+     * Emitted when the window is set or unset to show always on top of other windows.
+     */
+    on(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    off(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    once(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    addListener(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    removeListener(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    /**
+     * Emitted when the window is set or unset to show always on top of other windows.
+     */
+    on(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    off(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    once(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    addListener(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    removeListener(event: 'always-on-top-changed', listener: (event: Event,
+                                                  isAlwaysOnTop: boolean) => void): this;
+    /**
+     * Emitted when an App Command is invoked. These are typically related to keyboard
+     * media keys or browser commands, as well as the "Back" button built into some
+     * mice on Windows.
+     *
+     * Commands are lowercased, underscores are replaced with hyphens, and the
+     * `APPCOMMAND_` prefix is stripped off. e.g. `APPCOMMAND_BROWSER_BACKWARD` is
+     * emitted as `browser-backward`.
+     *
+     * The following app commands are explicitly supported on Linux:
+     *
+     * * `browser-backward`
+     * * `browser-forward`
+     *
+     * @platform win32,linux
+     */
+    on(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    off(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    once(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    addListener(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    removeListener(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * Emitted when an App Command is invoked. These are typically related to keyboard
+     * media keys or browser commands, as well as the "Back" button built into some
+     * mice on Windows.
+     *
+     * Commands are lowercased, underscores are replaced with hyphens, and the
+     * `APPCOMMAND_` prefix is stripped off. e.g. `APPCOMMAND_BROWSER_BACKWARD` is
+     * emitted as `browser-backward`.
+     *
+     * The following app commands are explicitly supported on Linux:
+     *
+     * * `browser-backward`
+     * * `browser-forward`
+     *
+     * @platform win32,linux
+     */
+    on(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    off(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    once(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    addListener(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * @platform win32,linux
+     */
+    removeListener(event: 'app-command', listener: (event: Event,
+                                        command: string) => void): this;
+    /**
+     * Emitted when the window loses focus.
+     */
+    on(event: 'blur', listener: Function): this;
+    off(event: 'blur', listener: Function): this;
+    once(event: 'blur', listener: Function): this;
+    addListener(event: 'blur', listener: Function): this;
+    removeListener(event: 'blur', listener: Function): this;
+    /**
+     * Emitted when the window loses focus.
+     */
+    on(event: 'blur', listener: Function): this;
+    off(event: 'blur', listener: Function): this;
+    once(event: 'blur', listener: Function): this;
+    addListener(event: 'blur', listener: Function): this;
+    removeListener(event: 'blur', listener: Function): this;
+    /**
+     * Emitted when the window is going to be closed. It's emitted before the
+     * `beforeunload` and `unload` event of the DOM. Calling `event.preventDefault()`
+     * will cancel the close.
+     *
+     * Usually you would want to use the `beforeunload` handler to decide whether the
+     * window should be closed, which will also be called when the window is reloaded.
+     * In Electron, returning any value other than `undefined` would cancel the close.
+     * For example:
+     *
+     * _**Note**: There is a subtle difference between the behaviors of
+     * `window.onbeforeunload = handler` and `window.addEventListener('beforeunload',
+     * handler)`. It is recommended to always set the `event.returnValue` explicitly,
+     * instead of only returning a value, as the former works more consistently within
+     * Electron._
+     */
+    on(event: 'close', listener: (event: Event) => void): this;
+    off(event: 'close', listener: (event: Event) => void): this;
+    once(event: 'close', listener: (event: Event) => void): this;
+    addListener(event: 'close', listener: (event: Event) => void): this;
+    removeListener(event: 'close', listener: (event: Event) => void): this;
+    /**
+     * Emitted when the window is going to be closed. It's emitted before the
+     * `beforeunload` and `unload` event of the DOM. Calling `event.preventDefault()`
+     * will cancel the close.
+     *
+     * Usually you would want to use the `beforeunload` handler to decide whether the
+     * window should be closed, which will also be called when the window is reloaded.
+     * In Electron, returning any value other than `undefined` would cancel the close.
+     * For example:
+     *
+     * _**Note**: There is a subtle difference between the behaviors of
+     * `window.onbeforeunload = handler` and `window.addEventListener('beforeunload',
+     * handler)`. It is recommended to always set the `event.returnValue` explicitly,
+     * instead of only returning a value, as the former works more consistently within
+     * Electron._
+     */
+    on(event: 'close', listener: (event: Event) => void): this;
+    off(event: 'close', listener: (event: Event) => void): this;
+    once(event: 'close', listener: (event: Event) => void): this;
+    addListener(event: 'close', listener: (event: Event) => void): this;
+    removeListener(event: 'close', listener: (event: Event) => void): this;
+    /**
+     * Emitted when the window is closed. After you have received this event you should
+     * remove the reference to the window and avoid using it any more.
+     */
+    on(event: 'closed', listener: Function): this;
+    off(event: 'closed', listener: Function): this;
+    once(event: 'closed', listener: Function): this;
+    addListener(event: 'closed', listener: Function): this;
+    removeListener(event: 'closed', listener: Function): this;
+    /**
+     * Emitted when the window is closed. After you have received this event you should
+     * remove the reference to the window and avoid using it any more.
+     */
+    on(event: 'closed', listener: Function): this;
+    off(event: 'closed', listener: Function): this;
+    once(event: 'closed', listener: Function): this;
+    addListener(event: 'closed', listener: Function): this;
+    removeListener(event: 'closed', listener: Function): this;
+    /**
+     * Emitted when the window enters a full-screen state.
+     */
+    on(event: 'enter-full-screen', listener: Function): this;
+    off(event: 'enter-full-screen', listener: Function): this;
+    once(event: 'enter-full-screen', listener: Function): this;
+    addListener(event: 'enter-full-screen', listener: Function): this;
+    removeListener(event: 'enter-full-screen', listener: Function): this;
+    /**
+     * Emitted when the window enters a full-screen state.
+     */
+    on(event: 'enter-full-screen', listener: Function): this;
+    off(event: 'enter-full-screen', listener: Function): this;
+    once(event: 'enter-full-screen', listener: Function): this;
+    addListener(event: 'enter-full-screen', listener: Function): this;
+    removeListener(event: 'enter-full-screen', listener: Function): this;
+    /**
+     * Emitted when the window enters a full-screen state triggered by HTML API.
+     */
+    on(event: 'enter-html-full-screen', listener: Function): this;
+    off(event: 'enter-html-full-screen', listener: Function): this;
+    once(event: 'enter-html-full-screen', listener: Function): this;
+    addListener(event: 'enter-html-full-screen', listener: Function): this;
+    removeListener(event: 'enter-html-full-screen', listener: Function): this;
+    /**
+     * Emitted when the window gains focus.
+     */
+    on(event: 'focus', listener: Function): this;
+    off(event: 'focus', listener: Function): this;
+    once(event: 'focus', listener: Function): this;
+    addListener(event: 'focus', listener: Function): this;
+    removeListener(event: 'focus', listener: Function): this;
+    /**
+     * Emitted when the window gains focus.
+     */
+    on(event: 'focus', listener: Function): this;
+    off(event: 'focus', listener: Function): this;
+    once(event: 'focus', listener: Function): this;
+    addListener(event: 'focus', listener: Function): this;
+    removeListener(event: 'focus', listener: Function): this;
+    /**
+     * Emitted when the window is hidden.
+     */
+    on(event: 'hide', listener: Function): this;
+    off(event: 'hide', listener: Function): this;
+    once(event: 'hide', listener: Function): this;
+    addListener(event: 'hide', listener: Function): this;
+    removeListener(event: 'hide', listener: Function): this;
+    /**
+     * Emitted when the window is hidden.
+     */
+    on(event: 'hide', listener: Function): this;
+    off(event: 'hide', listener: Function): this;
+    once(event: 'hide', listener: Function): this;
+    addListener(event: 'hide', listener: Function): this;
+    removeListener(event: 'hide', listener: Function): this;
+    /**
+     * Emitted when the window leaves a full-screen state.
+     */
+    on(event: 'leave-full-screen', listener: Function): this;
+    off(event: 'leave-full-screen', listener: Function): this;
+    once(event: 'leave-full-screen', listener: Function): this;
+    addListener(event: 'leave-full-screen', listener: Function): this;
+    removeListener(event: 'leave-full-screen', listener: Function): this;
+    /**
+     * Emitted when the window leaves a full-screen state.
+     */
+    on(event: 'leave-full-screen', listener: Function): this;
+    off(event: 'leave-full-screen', listener: Function): this;
+    once(event: 'leave-full-screen', listener: Function): this;
+    addListener(event: 'leave-full-screen', listener: Function): this;
+    removeListener(event: 'leave-full-screen', listener: Function): this;
+    /**
+     * Emitted when the window leaves a full-screen state triggered by HTML API.
+     */
+    on(event: 'leave-html-full-screen', listener: Function): this;
+    off(event: 'leave-html-full-screen', listener: Function): this;
+    once(event: 'leave-html-full-screen', listener: Function): this;
+    addListener(event: 'leave-html-full-screen', listener: Function): this;
+    removeListener(event: 'leave-html-full-screen', listener: Function): this;
+    /**
+     * Emitted when window is maximized.
+     */
+    on(event: 'maximize', listener: Function): this;
+    off(event: 'maximize', listener: Function): this;
+    once(event: 'maximize', listener: Function): this;
+    addListener(event: 'maximize', listener: Function): this;
+    removeListener(event: 'maximize', listener: Function): this;
+    /**
+     * Emitted when window is maximized.
+     */
+    on(event: 'maximize', listener: Function): this;
+    off(event: 'maximize', listener: Function): this;
+    once(event: 'maximize', listener: Function): this;
+    addListener(event: 'maximize', listener: Function): this;
+    removeListener(event: 'maximize', listener: Function): this;
+    /**
+     * Emitted when the window is minimized.
+     */
+    on(event: 'minimize', listener: Function): this;
+    off(event: 'minimize', listener: Function): this;
+    once(event: 'minimize', listener: Function): this;
+    addListener(event: 'minimize', listener: Function): this;
+    removeListener(event: 'minimize', listener: Function): this;
+    /**
+     * Emitted when the window is minimized.
+     */
+    on(event: 'minimize', listener: Function): this;
+    off(event: 'minimize', listener: Function): this;
+    once(event: 'minimize', listener: Function): this;
+    addListener(event: 'minimize', listener: Function): this;
+    removeListener(event: 'minimize', listener: Function): this;
+    /**
+     * Emitted when the window is being moved to a new position.
+     */
+    on(event: 'move', listener: Function): this;
+    off(event: 'move', listener: Function): this;
+    once(event: 'move', listener: Function): this;
+    addListener(event: 'move', listener: Function): this;
+    removeListener(event: 'move', listener: Function): this;
+    /**
+     * Emitted when the window is being moved to a new position.
+     */
+    on(event: 'move', listener: Function): this;
+    off(event: 'move', listener: Function): this;
+    once(event: 'move', listener: Function): this;
+    addListener(event: 'move', listener: Function): this;
+    removeListener(event: 'move', listener: Function): this;
+    /**
+     * Emitted once when the window is moved to a new position.
+     *
+     * **Note**: On macOS this event is an alias of `move`.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'moved', listener: Function): this;
+    /**
+     * Emitted once when the window is moved to a new position.
+     *
+     * **Note**: On macOS this event is an alias of `move`.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'moved', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'moved', listener: Function): this;
+    /**
+     * Emitted when the native new tab button is clicked.
+     *
+     * @platform darwin
+     */
+    on(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * Emitted when the native new tab button is clicked.
+     *
+     * @platform darwin
+     */
+    on(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'new-window-for-tab', listener: Function): this;
+    /**
+     * Emitted when the document changed its title, calling `event.preventDefault()`
+     * will prevent the native window's title from changing. `explicitSet` is false
+     * when title is synthesized from file URL.
+     */
+    on(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    off(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    once(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    addListener(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    removeListener(event: 'page-title-updated', listener: (event: Event,
+                                               title: string,
+                                               explicitSet: boolean) => void): this;
+    /**
+     * Emitted when the web page has been rendered (while not being shown) and window
+     * can be displayed without a visual flash.
+     *
+     * Please note that using this event implies that the renderer will be considered
+     * "visible" and paint even though `show` is false.  This event will never fire if
+     * you use `paintWhenInitiallyHidden: false`
+     */
+    on(event: 'ready-to-show', listener: Function): this;
+    off(event: 'ready-to-show', listener: Function): this;
+    once(event: 'ready-to-show', listener: Function): this;
+    addListener(event: 'ready-to-show', listener: Function): this;
+    removeListener(event: 'ready-to-show', listener: Function): this;
+    /**
+     * Emitted after the window has been resized.
+     */
+    on(event: 'resize', listener: Function): this;
+    off(event: 'resize', listener: Function): this;
+    once(event: 'resize', listener: Function): this;
+    addListener(event: 'resize', listener: Function): this;
+    removeListener(event: 'resize', listener: Function): this;
+    /**
+     * Emitted after the window has been resized.
+     */
+    on(event: 'resize', listener: Function): this;
+    off(event: 'resize', listener: Function): this;
+    once(event: 'resize', listener: Function): this;
+    addListener(event: 'resize', listener: Function): this;
+    removeListener(event: 'resize', listener: Function): this;
+    /**
+     * Emitted once when the window has finished being resized.
+     *
+     * This is usually emitted when the window has been resized manually. On macOS,
+     * resizing the window with `setBounds`/`setSize` and setting the `animate`
+     * parameter to `true` will also emit this event once resizing has finished.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'resized', listener: Function): this;
+    /**
+     * Emitted once when the window has finished being resized.
+     *
+     * This is usually emitted when the window has been resized manually. On macOS,
+     * resizing the window with `setBounds`/`setSize` and setting the `animate`
+     * parameter to `true` will also emit this event once resizing has finished.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'resized', listener: Function): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'resized', listener: Function): this;
+    /**
+     * Emitted when the unresponsive web page becomes responsive again.
+     */
+    on(event: 'responsive', listener: Function): this;
+    off(event: 'responsive', listener: Function): this;
+    once(event: 'responsive', listener: Function): this;
+    addListener(event: 'responsive', listener: Function): this;
+    removeListener(event: 'responsive', listener: Function): this;
+    /**
+     * Emitted when the window is restored from a minimized state.
+     */
+    on(event: 'restore', listener: Function): this;
+    off(event: 'restore', listener: Function): this;
+    once(event: 'restore', listener: Function): this;
+    addListener(event: 'restore', listener: Function): this;
+    removeListener(event: 'restore', listener: Function): this;
+    /**
+     * Emitted when the window is restored from a minimized state.
+     */
+    on(event: 'restore', listener: Function): this;
+    off(event: 'restore', listener: Function): this;
+    once(event: 'restore', listener: Function): this;
+    addListener(event: 'restore', listener: Function): this;
+    removeListener(event: 'restore', listener: Function): this;
+    /**
+     * Emitted on trackpad rotation gesture. Continually emitted until rotation gesture
+     * is ended. The `rotation` value on each emission is the angle in degrees rotated
+     * since the last emission. The last emitted event upon a rotation gesture will
+     * always be of value `0`. Counter-clockwise rotation values are positive, while
+     * clockwise ones are negative.
+     *
+     * @platform darwin
+     */
+    on(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * Emitted on trackpad rotation gesture. Continually emitted until rotation gesture
+     * is ended. The `rotation` value on each emission is the angle in degrees rotated
+     * since the last emission. The last emitted event upon a rotation gesture will
+     * always be of value `0`. Counter-clockwise rotation values are positive, while
+     * clockwise ones are negative.
+     *
+     * @platform darwin
+     */
+    on(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'rotate-gesture', listener: (event: Event,
+                                           rotation: number) => void): this;
+    /**
+     * Emitted when window session is going to end due to force shutdown or machine
+     * restart or session log off.
+     *
+     * @platform win32
+     */
+    on(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    off(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    once(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    addListener(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    removeListener(event: 'session-end', listener: Function): this;
+    /**
+     * Emitted when window session is going to end due to force shutdown or machine
+     * restart or session log off.
+     *
+     * @platform win32
+     */
+    on(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    off(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    once(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    addListener(event: 'session-end', listener: Function): this;
+    /**
+     * @platform win32
+     */
+    removeListener(event: 'session-end', listener: Function): this;
+    /**
+     * Emitted when the window opens a sheet.
+     *
+     * @platform darwin
+     */
+    on(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'sheet-begin', listener: Function): this;
+    /**
+     * Emitted when the window opens a sheet.
+     *
+     * @platform darwin
+     */
+    on(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'sheet-begin', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'sheet-begin', listener: Function): this;
+    /**
+     * Emitted when the window has closed a sheet.
+     *
+     * @platform darwin
+     */
+    on(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'sheet-end', listener: Function): this;
+    /**
+     * Emitted when the window has closed a sheet.
+     *
+     * @platform darwin
+     */
+    on(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'sheet-end', listener: Function): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'sheet-end', listener: Function): this;
+    /**
+     * Emitted when the window is shown.
+     */
+    on(event: 'show', listener: Function): this;
+    off(event: 'show', listener: Function): this;
+    once(event: 'show', listener: Function): this;
+    addListener(event: 'show', listener: Function): this;
+    removeListener(event: 'show', listener: Function): this;
+    /**
+     * Emitted when the window is shown.
+     */
+    on(event: 'show', listener: Function): this;
+    off(event: 'show', listener: Function): this;
+    once(event: 'show', listener: Function): this;
+    addListener(event: 'show', listener: Function): this;
+    removeListener(event: 'show', listener: Function): this;
+    /**
+     * Emitted on 3-finger swipe. Possible directions are `up`, `right`, `down`,
+     * `left`.
+     *
+     * The method underlying this event is built to handle older macOS-style trackpad
+     * swiping, where the content on the screen doesn't move with the swipe. Most macOS
+     * trackpads are not configured to allow this kind of swiping anymore, so in order
+     * for it to emit properly the 'Swipe between pages' preference in `System
+     * Preferences > Trackpad > More Gestures` must be set to 'Swipe with two or three
+     * fingers'.
+     *
+     * @platform darwin
+     */
+    on(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * Emitted on 3-finger swipe. Possible directions are `up`, `right`, `down`,
+     * `left`.
+     *
+     * The method underlying this event is built to handle older macOS-style trackpad
+     * swiping, where the content on the screen doesn't move with the swipe. Most macOS
+     * trackpads are not configured to allow this kind of swiping anymore, so in order
+     * for it to emit properly the 'Swipe between pages' preference in `System
+     * Preferences > Trackpad > More Gestures` must be set to 'Swipe with two or three
+     * fingers'.
+     *
+     * @platform darwin
+     */
+    on(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'swipe', listener: (event: Event,
+                                  direction: string) => void): this;
+    /**
+     * Emitted when the system context menu is triggered on the window, this is
+     * normally only triggered when the user right clicks on the non-client area of
+     * your window.  This is the window titlebar or any area you have declared as
+     * `-webkit-app-region: drag` in a frameless window.
+     *
+     * Calling `event.preventDefault()` will prevent the menu from being displayed.
+     *
+     * @platform win32
+     */
+    on(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    off(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    once(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    addListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    removeListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * Emitted when the system context menu is triggered on the window, this is
+     * normally only triggered when the user right clicks on the non-client area of
+     * your window.  This is the window titlebar or any area you have declared as
+     * `-webkit-app-region: drag` in a frameless window.
+     *
+     * Calling `event.preventDefault()` will prevent the menu from being displayed.
+     *
+     * @platform win32
+     */
+    on(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    off(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    once(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    addListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * @platform win32
+     */
+    removeListener(event: 'system-context-menu', listener: (event: Event,
+                                                /**
+                                                 * The screen coordinates the context menu was triggered at
+                                                 */
+                                                point: Point) => void): this;
+    /**
+     * Emitted when the window exits from a maximized state.
+     */
+    on(event: 'unmaximize', listener: Function): this;
+    off(event: 'unmaximize', listener: Function): this;
+    once(event: 'unmaximize', listener: Function): this;
+    addListener(event: 'unmaximize', listener: Function): this;
+    removeListener(event: 'unmaximize', listener: Function): this;
+    /**
+     * Emitted when the window exits from a maximized state.
+     */
+    on(event: 'unmaximize', listener: Function): this;
+    off(event: 'unmaximize', listener: Function): this;
+    once(event: 'unmaximize', listener: Function): this;
+    addListener(event: 'unmaximize', listener: Function): this;
+    removeListener(event: 'unmaximize', listener: Function): this;
+    /**
      * Emitted when the web page becomes unresponsive.
      */
     on(event: 'unresponsive', listener: Function): this;
@@ -2493,6 +4753,52 @@ declare namespace Electron {
     once(event: 'unresponsive', listener: Function): this;
     addListener(event: 'unresponsive', listener: Function): this;
     removeListener(event: 'unresponsive', listener: Function): this;
+    /**
+     * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
+     * will prevent the window from being moved.
+     *
+     * Note that this is only emitted when the window is being moved manually. Moving
+     * the window with `setPosition`/`setBounds`/`center` will not emit this event.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'will-move', listener: (event: Event,
+                                      /**
+                                       * Location the window is being moved to.
+                                       */
+                                      newBounds: Rectangle) => void): this;
     /**
      * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
      * will prevent the window from being moved.
@@ -2600,12 +4906,77 @@ declare namespace Electron {
                                         newBounds: Rectangle,
                                         details: WillResizeDetails) => void): this;
     /**
+     * Emitted before the window is resized. Calling `event.preventDefault()` will
+     * prevent the window from being resized.
+     *
+     * Note that this is only emitted when the window is being resized manually.
+     * Resizing the window with `setBounds`/`setSize` will not emit this event.
+     *
+     * The possible values and behaviors of the `edge` option are platform dependent.
+     * Possible values are:
+     *
+     * * On Windows, possible values are `bottom`, `top`, `left`, `right`, `top-left`,
+     * `top-right`, `bottom-left`, `bottom-right`.
+     * * On macOS, possible values are `bottom` and `right`.
+     *   * The value `bottom` is used to denote vertical resizing.
+     *   * The value `right` is used to denote horizontal resizing.
+     *
+     * @platform darwin,win32
+     */
+    on(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    off(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    once(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    addListener(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
+     * @platform darwin,win32
+     */
+    removeListener(event: 'will-resize', listener: (event: Event,
+                                        /**
+                                         * Size the window is being resized to.
+                                         */
+                                        newBounds: Rectangle,
+                                        details: WillResizeDetails) => void): this;
+    /**
      * BrowserWindow
      */
     constructor(options?: BrowserWindowConstructorOptions);
     /**
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * The window that owns the given `browserView`. If the given view is not attached
      * to any window, returns `null`.
+     *
+     * @deprecated
      */
     static fromBrowserView(browserView: BrowserView): (BrowserWindow) | (null);
     /**
@@ -2628,7 +4999,11 @@ declare namespace Electron {
     /**
      * Replacement API for setBrowserView supporting work with multi browser views.
      *
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * @experimental
+     * @deprecated
      */
     addBrowserView(browserView: BrowserView): void;
     /**
@@ -2705,7 +5080,11 @@ declare namespace Electron {
      * The `BrowserView` attached to `win`. Returns `null` if one is not attached.
      * Throws an error if multiple `BrowserView`s are attached.
      *
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * @experimental
+     * @deprecated
      */
     getBrowserView(): (BrowserView) | (null);
     /**
@@ -2713,10 +5092,11 @@ declare namespace Electron {
      * `addBrowserView` or `setBrowserView`. The top-most BrowserView is the last
      * element of the array.
      *
-     * **Note:** The BrowserView API is currently experimental and may change or be
-     * removed in future Electron releases.
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
      *
      * @experimental
+     * @deprecated
      */
     getBrowserViews(): BrowserView[];
     /**
@@ -3047,7 +5427,11 @@ declare namespace Electron {
      */
     reload(): void;
     /**
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * @experimental
+     * @deprecated
      */
     removeBrowserView(browserView: BrowserView): void;
     /**
@@ -3136,16 +5520,16 @@ declare namespace Electron {
      *   * #ffffff (RGB)
      *   * #ffffffff (ARGB)
      * * RGB
-     *   * rgb(([\d]+),\s*([\d]+),\s*([\d]+))
+     *   * `rgb\(([\d]+),\s*([\d]+),\s*([\d]+)\)`
      *     * e.g. rgb(255, 255, 255)
      * * RGBA
-     *   * rgba(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+))
+     *   * `rgba\(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+)\)`
      *     * e.g. rgba(255, 255, 255, 1.0)
      * * HSL
-     *   * hsl((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%)
+     *   * `hsl\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)`
      *     * e.g. hsl(200, 20%, 50%)
      * * HSLA
-     *   * hsla((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+))
+     *   * `hsla\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)`
      *     * e.g. hsla(200, 20%, 50%, 0.5)
      * * Color name
      *   * Options are listed in SkParseColor.cpp
@@ -3177,7 +5561,11 @@ declare namespace Electron {
      */
     setBounds(bounds: Partial<Rectangle>, animate?: boolean): void;
     /**
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * @experimental
+     * @deprecated
      */
     setBrowserView(browserView: (BrowserView) | (null)): void;
     /**
@@ -3463,7 +5851,11 @@ declare namespace Electron {
      * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
      * error if `browserView` is not attached to `win`.
      *
+     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * `WebContentsView` class.
+     *
      * @experimental
+     * @deprecated
      */
     setTopBrowserView(browserView: BrowserView): void;
     /**
@@ -3702,161 +6094,10 @@ declare namespace Electron {
     readonly webContents: WebContents;
   }
 
-  interface BrowserWindowConstructorOptions {
+  interface BrowserWindowConstructorOptions extends BaseWindowConstructorOptions {
 
     // Docs: https://electronjs.org/docs/api/structures/browser-window-options
 
-    /**
-     * Whether clicking an inactive window will also click through to the web contents.
-     * Default is `false` on macOS. This option is not configurable on other platforms.
-     *
-     * @platform darwin
-     */
-    acceptFirstMouse?: boolean;
-    /**
-     * Whether the window should always stay on top of other windows. Default is
-     * `false`.
-     */
-    alwaysOnTop?: boolean;
-    /**
-     * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
-     */
-    autoHideMenuBar?: boolean;
-    /**
-     * The window's background color in Hex, RGB, RGBA, HSL, HSLA or named CSS color
-     * format. Alpha in #AARRGGBB format is supported if `transparent` is set to
-     * `true`. Default is `#FFF` (white). See win.setBackgroundColor for more
-     * information.
-     */
-    backgroundColor?: string;
-    /**
-     * Set the window's system-drawn background material, including behind the
-     * non-client area. Can be `auto`, `none`, `mica`, `acrylic` or `tabbed`. See
-     * win.setBackgroundMaterial for more information.
-     *
-     * @platform win32
-     */
-    backgroundMaterial?: ('auto' | 'none' | 'mica' | 'acrylic' | 'tabbed');
-    /**
-     * Show window in the center of the screen. Default is `false`.
-     */
-    center?: boolean;
-    /**
-     * Whether window is closable. This is not implemented on Linux. Default is `true`.
-     *
-     * @platform darwin,win32
-     */
-    closable?: boolean;
-    /**
-     * Forces using dark theme for the window, only works on some GTK+3 desktop
-     * environments. Default is `false`.
-     */
-    darkTheme?: boolean;
-    /**
-     * Whether to hide cursor when typing. Default is `false`.
-     */
-    disableAutoHideCursor?: boolean;
-    /**
-     * Enable the window to be resized larger than screen. Only relevant for macOS, as
-     * other OSes allow larger-than-screen windows by default. Default is `false`.
-     *
-     * @platform darwin
-     */
-    enableLargerThanScreen?: boolean;
-    /**
-     * Whether the window can be focused. Default is `true`. On Windows setting
-     * `focusable: false` also implies setting `skipTaskbar: true`. On Linux setting
-     * `focusable: false` makes the window stop interacting with wm, so the window will
-     * always stay on top in all workspaces.
-     */
-    focusable?: boolean;
-    /**
-     * Specify `false` to create a frameless window. Default is `true`.
-     */
-    frame?: boolean;
-    /**
-     * Whether the window should show in fullscreen. When explicitly set to `false` the
-     * fullscreen button will be hidden or disabled on macOS. Default is `false`.
-     */
-    fullscreen?: boolean;
-    /**
-     * Whether the window can be put into fullscreen mode. On macOS, also whether the
-     * maximize/zoom button should toggle full screen mode or maximize window. Default
-     * is `true`.
-     */
-    fullscreenable?: boolean;
-    /**
-     * Whether window should have a shadow. Default is `true`.
-     */
-    hasShadow?: boolean;
-    /**
-     * Window's height in pixels. Default is `600`.
-     */
-    height?: number;
-    /**
-     * Whether window should be hidden when the user toggles into mission control.
-     *
-     * @platform darwin
-     */
-    hiddenInMissionControl?: boolean;
-    /**
-     * The window icon. On Windows it is recommended to use `ICO` icons to get best
-     * visual effects, you can also leave it undefined so the executable's icon will be
-     * used.
-     */
-    icon?: (NativeImage) | (string);
-    /**
-     * Whether the window is in kiosk mode. Default is `false`.
-     */
-    kiosk?: boolean;
-    /**
-     * Window's maximum height. Default is no limit.
-     */
-    maxHeight?: number;
-    /**
-     * Whether window is maximizable. This is not implemented on Linux. Default is
-     * `true`.
-     *
-     * @platform darwin,win32
-     */
-    maximizable?: boolean;
-    /**
-     * Window's maximum width. Default is no limit.
-     */
-    maxWidth?: number;
-    /**
-     * Window's minimum height. Default is `0`.
-     */
-    minHeight?: number;
-    /**
-     * Whether window is minimizable. This is not implemented on Linux. Default is
-     * `true`.
-     *
-     * @platform darwin,win32
-     */
-    minimizable?: boolean;
-    /**
-     * Window's minimum width. Default is `0`.
-     */
-    minWidth?: number;
-    /**
-     * Whether this is a modal window. This only works when the window is a child
-     * window. Default is `false`.
-     */
-    modal?: boolean;
-    /**
-     * Whether window is movable. This is not implemented on Linux. Default is `true`.
-     *
-     * @platform darwin,win32
-     */
-    movable?: boolean;
-    /**
-     * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
-     * (fully opaque). This is only implemented on Windows and macOS.
-     *
-     * @platform darwin,win32
-     */
-    opacity?: number;
     /**
      * Whether the renderer should be active when `show` is `false` and it has just
      * been created.  In order for `document.visibilityState` to work correctly on
@@ -3864,58 +6105,6 @@ declare namespace Electron {
      * `false` will cause the `ready-to-show` event to not fire.  Default is `true`.
      */
     paintWhenInitiallyHidden?: boolean;
-    /**
-     * Specify parent window. Default is `null`.
-     */
-    parent?: BrowserWindow;
-    /**
-     * Whether window is resizable. Default is `true`.
-     */
-    resizable?: boolean;
-    /**
-     * Whether frameless window should have rounded corners on macOS. Default is
-     * `true`. Setting this property to `false` will prevent the window from being
-     * fullscreenable.
-     *
-     * @platform darwin
-     */
-    roundedCorners?: boolean;
-    /**
-     * Whether window should be shown when created. Default is `true`.
-     */
-    show?: boolean;
-    /**
-     * Use pre-Lion fullscreen on macOS. Default is `false`.
-     *
-     * @platform darwin
-     */
-    simpleFullscreen?: boolean;
-    /**
-     * Whether to show the window in taskbar. Default is `false`.
-     *
-     * @platform darwin,win32
-     */
-    skipTaskbar?: boolean;
-    /**
-     * Tab group name, allows opening the window as a native tab. Windows with the same
-     * tabbing identifier will be grouped together. This also adds a native new tab
-     * button to your window's tab bar and allows your `app` and window to receive the
-     * `new-window-for-tab` event.
-     *
-     * @platform darwin
-     */
-    tabbingIdentifier?: string;
-    /**
-     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
-     * window frame. Setting it to `false` will remove window shadow and window
-     * animations. Default is `true`.
-     */
-    thickFrame?: boolean;
-    /**
-     * Default window title. Default is `"Electron"`. If the HTML tag `<title>` is
-     * defined in the HTML file loaded by `loadURL()`, this property will be ignored.
-     */
-    title?: string;
     /**
      *  When using a frameless window in conjunction with
      * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
@@ -3926,76 +6115,9 @@ declare namespace Electron {
      */
     titleBarOverlay?: (TitleBarOverlay) | (boolean);
     /**
-     * The style of window title bar. Default is `default`. Possible values are:
-     *
-     * @platform darwin,win32
-     */
-    titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
-    /**
-     * Set a custom position for the traffic light buttons in frameless windows.
-     *
-     * @platform darwin
-     */
-    trafficLightPosition?: Point;
-    /**
-     * Makes the window transparent. Default is `false`. On Windows, does not work
-     * unless the window is frameless.
-     */
-    transparent?: boolean;
-    /**
-     * The type of window, default is normal window. See more about this below.
-     */
-    type?: string;
-    /**
-     * The `width` and `height` would be used as web page's size, which means the
-     * actual window's size will include window frame's size and be slightly larger.
-     * Default is `false`.
-     */
-    useContentSize?: boolean;
-    /**
-     * Add a type of vibrancy effect to the window, only on macOS. Can be
-     * `appearance-based`, `titlebar`, `selection`, `menu`, `popover`, `sidebar`,
-     * `header`, `sheet`, `window`, `hud`, `fullscreen-ui`, `tooltip`, `content`,
-     * `under-window`, or `under-page`.
-     *
-     * @platform darwin
-     */
-    vibrancy?: ('appearance-based' | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
-    /**
-     * Specify how the material appearance should reflect window activity state on
-     * macOS. Must be used with the `vibrancy` property. Possible values are:
-     *
-     * @platform darwin
-     */
-    visualEffectState?: ('followWindow' | 'active' | 'inactive');
-    /**
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
-    /**
-     * Window's width in pixels. Default is `800`.
-     */
-    width?: number;
-    /**
-     * (**required** if y is used) Window's left offset from screen. Default is to
-     * center the window.
-     */
-    x?: number;
-    /**
-     * (**required** if x is used) Window's top offset from screen. Default is to
-     * center the window.
-     */
-    y?: number;
-    /**
-     * Controls the behavior on macOS when option-clicking the green stoplight button
-     * on the toolbar or by clicking the Window > Zoom menu item. If `true`, the window
-     * will grow to the preferred width of the web page when zoomed, `false` will cause
-     * it to zoom to the width of the screen. This will also affect the behavior when
-     * calling `maximize()` directly. Default is `false`.
-     *
-     * @platform darwin
-     */
-    zoomToPageWidth?: boolean;
   }
 
   interface Certificate {
@@ -11791,6 +13913,67 @@ declare namespace Electron {
     stdout: (NodeJS.ReadableStream) | (null);
   }
 
+  class View extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/view
+
+    /**
+     * Emitted when the view's bounds have changed in response to being laid out. The
+     * new bounds can be retrieved with `view.getBounds()`.
+     */
+    on(event: 'bounds-changed', listener: Function): this;
+    off(event: 'bounds-changed', listener: Function): this;
+    once(event: 'bounds-changed', listener: Function): this;
+    addListener(event: 'bounds-changed', listener: Function): this;
+    removeListener(event: 'bounds-changed', listener: Function): this;
+    /**
+     * View
+     */
+    constructor();
+    addChildView(view: View, index?: number): void;
+    /**
+     * The bounds of this View, relative to its parent.
+     */
+    getBounds(): Rectangle;
+    removeChildView(view: View): void;
+    /**
+     * Examples of valid `color` values:
+     *
+     * * Hex
+     *   * `#fff` (RGB)
+     *   * `#ffff` (ARGB)
+     *   * `#ffffff` (RRGGBB)
+     *   * `#ffffffff` (AARRGGBB)
+     * * RGB
+     *   * `rgb\(([\d]+),\s*([\d]+),\s*([\d]+)\)`
+     *     * e.g. `rgb(255, 255, 255)`
+     * * RGBA
+     *   * `rgba\(([\d]+),\s*([\d]+),\s*([\d]+),\s*([\d.]+)\)`
+     *     * e.g. `rgba(255, 255, 255, 1.0)`
+     * * HSL
+     *   * `hsl\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)`
+     *     * e.g. `hsl(200, 20%, 50%)`
+     * * HSLA
+     *   * `hsla\((-?[\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)`
+     *     * e.g. `hsla(200, 20%, 50%, 0.5)`
+     * * Color name
+     *   * Options are listed in SkParseColor.cpp
+     *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
+     *     * e.g. `blueviolet` or `red`
+     *
+     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
+     * `RGB`.
+     */
+    setBackgroundColor(color: string): void;
+    setBounds(bounds: Rectangle): void;
+    setVisible(visible: boolean): void;
+    /**
+     * A `View[]` property representing the child views of this view.
+     *
+     */
+    readonly children: View[];
+  }
+
   class WebContents extends NodeEventEmitter {
 
     // Docs: https://electronjs.org/docs/api/web-contents
@@ -14341,6 +16524,31 @@ declare namespace Electron {
     zoomLevel: number;
   }
 
+  class WebContentsView extends View {
+
+    // Docs: https://electronjs.org/docs/api/web-contents-view
+
+    /**
+     * Emitted when the view's bounds have changed in response to being laid out. The
+     * new bounds can be retrieved with `view.getBounds()`.
+     */
+    on(event: 'bounds-changed', listener: Function): this;
+    off(event: 'bounds-changed', listener: Function): this;
+    once(event: 'bounds-changed', listener: Function): this;
+    addListener(event: 'bounds-changed', listener: Function): this;
+    removeListener(event: 'bounds-changed', listener: Function): this;
+    /**
+     * WebContentsView
+     */
+    constructor(options?: WebContentsViewConstructorOptions);
+    /**
+     * A `WebContents` property containing a reference to the displayed `WebContents`.
+     * Use this to interact with the `WebContents`, for instance to load a URL.
+     *
+     */
+    readonly webContents: WebContents;
+  }
+
   interface WebFrame {
 
     // Docs: https://electronjs.org/docs/api/web-frame
@@ -15722,7 +17930,14 @@ declare namespace Electron {
     /**
      * A `string` which is a comma separated list of strings which specifies the web
      * preferences to be set on the webview. The full list of supported preference
-     * strings can be found in BrowserWindow.
+     * strings can be found in BrowserWindow. In addition, webview supports the
+     * following preferences:
+     *
+     * * `transparent` boolean (optional) - Whether to enable background transparency
+     * for the guest page. Default is `true`. **Note:** The guest page's text and
+     * background colors are derived from the color scheme of its root element. When
+     * transparency is enabled, the text color will still change accordingly but the
+     * background will remain transparent.
      *
      * The string follows the same format as the features string in `window.open`. A
      * name by itself is given a `true` boolean value. A preference can be set to
@@ -15730,7 +17945,7 @@ declare namespace Electron {
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
      */
-    webpreferences: string;
+    webpreferences?: ('transparent');
   }
 
   interface AboutPanelOptionsOptions {
@@ -18595,6 +20810,27 @@ declare namespace Electron {
     height?: number;
   }
 
+  interface TitleBarOverlayOptions {
+    /**
+     * The CSS color of the Window Controls Overlay when enabled.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
+    /**
+     * The height of the title bar and Window Controls Overlay in pixels.
+     *
+     * @platform win32
+     */
+    height?: number;
+  }
+
   interface TitleOptions {
     /**
      * The font family variant to display, can be `monospaced` or `monospacedDigit`.
@@ -19012,6 +21248,13 @@ declare namespace Electron {
      * `width`.
      */
     pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid')) | (Size);
+  }
+
+  interface WebContentsViewConstructorOptions {
+    /**
+     * Settings of web page's features.
+     */
+    webPreferences?: WebPreferences;
   }
 
   interface WebContentsWillFrameNavigateEventParams {
@@ -19662,6 +21905,7 @@ declare namespace Electron {
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -19687,6 +21931,7 @@ declare namespace Electron {
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
     type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
     type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
@@ -19704,6 +21949,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Video = Electron.Video;
+    type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
@@ -19786,6 +22032,7 @@ declare namespace Electron {
     type App = Electron.App;
     const autoUpdater: AutoUpdater;
     type AutoUpdater = Electron.AutoUpdater;
+    class BaseWindow extends Electron.BaseWindow {}
     class BrowserView extends Electron.BrowserView {}
     class BrowserWindow extends Electron.BrowserWindow {}
     type ClientRequest = Electron.ClientRequest;
@@ -19852,8 +22099,10 @@ declare namespace Electron {
     class Tray extends Electron.Tray {}
     const utilityProcess: typeof UtilityProcess;
     type UtilityProcess = Electron.UtilityProcess;
+    class View extends Electron.View {}
     const webContents: typeof WebContents;
     type WebContents = Electron.WebContents;
+    class WebContentsView extends Electron.WebContentsView {}
     const webFrameMain: typeof WebFrameMain;
     type WebFrameMain = Electron.WebFrameMain;
     type WebRequest = Electron.WebRequest;
@@ -19996,6 +22245,7 @@ declare namespace Electron {
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -20021,6 +22271,7 @@ declare namespace Electron {
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
     type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
     type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
@@ -20038,6 +22289,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Video = Electron.Video;
+    type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
@@ -20264,6 +22516,7 @@ declare namespace Electron {
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -20289,6 +22542,7 @@ declare namespace Electron {
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
     type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
     type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
@@ -20306,6 +22560,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Video = Electron.Video;
+    type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
@@ -20527,6 +22782,7 @@ declare namespace Electron {
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -20552,6 +22808,7 @@ declare namespace Electron {
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
     type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
     type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
@@ -20569,6 +22826,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Video = Electron.Video;
+    type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
@@ -20651,6 +22909,7 @@ declare namespace Electron {
     type App = Electron.App;
     const autoUpdater: AutoUpdater;
     type AutoUpdater = Electron.AutoUpdater;
+    class BaseWindow extends Electron.BaseWindow {}
     class BrowserView extends Electron.BrowserView {}
     class BrowserWindow extends Electron.BrowserWindow {}
     type ClientRequest = Electron.ClientRequest;
@@ -20729,8 +22988,10 @@ declare namespace Electron {
     class Tray extends Electron.Tray {}
     const utilityProcess: typeof UtilityProcess;
     type UtilityProcess = Electron.UtilityProcess;
+    class View extends Electron.View {}
     const webContents: typeof WebContents;
     type WebContents = Electron.WebContents;
+    class WebContentsView extends Electron.WebContentsView {}
     const webFrame: WebFrame;
     type WebFrame = Electron.WebFrame;
     const webFrameMain: typeof WebFrameMain;
@@ -20878,6 +23139,7 @@ declare namespace Electron {
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
+    type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
     type ToBitmapOptions = Electron.ToBitmapOptions;
     type ToDataURLOptions = Electron.ToDataURLOptions;
@@ -20903,6 +23165,7 @@ declare namespace Electron {
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
+    type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
     type WebContentsWillNavigateEventParams = Electron.WebContentsWillNavigateEventParams;
     type WebContentsWillRedirectEventParams = Electron.WebContentsWillRedirectEventParams;
@@ -20920,6 +23183,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Video = Electron.Video;
+    type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
