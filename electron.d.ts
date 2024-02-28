@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0-alpha.1+wcus
+// Type definitions for Electron 30.0.0-alpha.2+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1471,6 +1471,11 @@ declare namespace Electron {
      */
     resignCurrentActivity(): void;
     /**
+     * Resolves with the proxy information for `url` that will be used when attempting
+     * to make requests using Net in the utility process.
+     */
+    resolveProxy(url: string): Promise<string>;
+    /**
      * Set the about panel options. This will override the values defined in the app's
      * `.plist` file on macOS. See the Apple docs for more details. On Linux, values
      * must be set in order to be shown; there are no defaults.
@@ -1639,6 +1644,7 @@ declare namespace Electron {
      * `sessionData` path before the `ready` event of the `app` module is emitted.
      */
     setPath(name: string, path: string): void;
+    setProxy(config: ProxyConfig): void;
     /**
      * Set the `Secure Keyboard Entry` is enabled in your application.
      *
@@ -10509,6 +10515,30 @@ declare namespace Electron {
     data: (string) | (Buffer);
   }
 
+  interface ProxyConfig {
+
+    // Docs: https://electronjs.org/docs/api/structures/proxy-config
+
+    /**
+     * The proxy mode. Should be one of `direct`, `auto_detect`, `pac_script`,
+     * `fixed_servers` or `system`. Defaults to `pac_script` proxy mode if `pacScript`
+     * option is specified otherwise defaults to `fixed_servers`.
+     */
+    mode?: ('direct' | 'auto_detect' | 'pac_script' | 'fixed_servers' | 'system');
+    /**
+     * The URL associated with the PAC file.
+     */
+    pacScript?: string;
+    /**
+     * Rules indicating which URLs should bypass the proxy settings.
+     */
+    proxyBypassRules?: string;
+    /**
+     * Rules indicating which proxies to use.
+     */
+    proxyRules?: string;
+  }
+
   interface PushNotifications extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/push-notifications
@@ -11778,7 +11808,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -11789,60 +11819,11 @@ declare namespace Electron {
      *
      * Sets the proxy settings.
      *
-     * When `mode` is unspecified, `pacScript` and `proxyRules` are provided together,
-     * the `proxyRules` option is ignored and `pacScript` configuration is applied.
-     *
      * You may need `ses.closeAllConnections` to close currently in flight connections
      * to prevent pooled sockets using previous proxy from being reused by future
      * requests.
-     *
-     * The `proxyRules` has to follow the rules below:
-     *
-     * For example:
-     *
-     * * `http=foopy:80;ftp=foopy2` - Use HTTP proxy `foopy:80` for `http://` URLs, and
-     * HTTP proxy `foopy2:80` for `ftp://` URLs.
-     * * `foopy:80` - Use HTTP proxy `foopy:80` for all URLs.
-     * * `foopy:80,bar,direct://` - Use HTTP proxy `foopy:80` for all URLs, failing
-     * over to `bar` if `foopy:80` is unavailable, and after that using no proxy.
-     * * `socks4://foopy` - Use SOCKS v4 proxy `foopy:1080` for all URLs.
-     * * `http=foopy,socks5://bar.com` - Use HTTP proxy `foopy` for http URLs, and fail
-     * over to the SOCKS5 proxy `bar.com` if `foopy` is unavailable.
-     * * `http=foopy,direct://` - Use HTTP proxy `foopy` for http URLs, and use no
-     * proxy if `foopy` is unavailable.
-     * * `http=foopy;socks=foopy2` - Use HTTP proxy `foopy` for http URLs, and use
-     * `socks4://foopy2` for all other URLs.
-     *
-     * The `proxyBypassRules` is a comma separated list of rules described below:
-     *
-     * * `[ URL_SCHEME "://" ] HOSTNAME_PATTERN [ ":" <port> ]`
-     *
-     * Match all hostnames that match the pattern HOSTNAME_PATTERN.
-     *
-     * Examples: "foobar.com", "*foobar.com", "*.foobar.com", "*foobar.com:99",
-     * "https://x.*.y.com:99"
-     * * `"." HOSTNAME_SUFFIX_PATTERN [ ":" PORT ]`
-     *
-     * Match a particular domain suffix.
-     *
-     * Examples: ".google.com", ".com", "http://.google.com"
-     * * `[ SCHEME "://" ] IP_LITERAL [ ":" PORT ]`
-     *
-     * Match URLs which are IP address literals.
-     *
-     * Examples: "127.0.1", "[0:0::1]", "[::1]", "http://[::1]:99"
-     * * `IP_LITERAL "/" PREFIX_LENGTH_IN_BITS`
-     *
-     * Match any URL that is to an IP literal that falls between the given range. IP
-     * range is specified using CIDR notation.
-     *
-     * Examples: "192.168.1.1/16", "fefe:13::abc/33".
-     * * `<local>`
-     *
-     * Match local addresses. The meaning of `<local>` is whether the host matches one
-     * of: "127.0.0.1", "::1", "localhost".
      */
-    setProxy(config: Config): Promise<void>;
+    setProxy(config: ProxyConfig): Promise<void>;
     /**
      * By default Electron will download hunspell dictionaries from the Chromium CDN.
      * If you want to override this behavior you can use this API to point the
@@ -11885,7 +11866,7 @@ declare namespace Electron {
      * connections) will not be terminated, but old sockets in the pool will not be
      * reused for new connections.
      */
-    setSSLConfig(config: SSLConfigConfig): void;
+    setSSLConfig(config: Config): void;
     /**
      * Sets the handler which can be used to override which USB classes are protected.
      * The return value for the handler is a string array of USB classes which should
@@ -18308,23 +18289,25 @@ declare namespace Electron {
 
   interface Config {
     /**
-     * The proxy mode. Should be one of `direct`, `auto_detect`, `pac_script`,
-     * `fixed_servers` or `system`. If it's unspecified, it will be automatically
-     * determined based on other specified options.
+     * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
+     * when connecting to remote servers. Defaults to `tls1`.
      */
-    mode?: ('direct' | 'auto_detect' | 'pac_script' | 'fixed_servers' | 'system');
+    minVersion?: ('tls1' | 'tls1.1' | 'tls1.2' | 'tls1.3');
     /**
-     * The URL associated with the PAC file.
+     * Can be `tls1.2` or `tls1.3`. The maximum SSL version to allow when connecting to
+     * remote servers. Defaults to `tls1.3`.
      */
-    pacScript?: string;
+    maxVersion?: ('tls1.2' | 'tls1.3');
     /**
-     * Rules indicating which proxies to use.
+     * List of cipher suites which should be explicitly prevented from being used in
+     * addition to those disabled by the net built-in policy. Supported literal forms:
+     * 0xAABB, where AA is `cipher_suite[0]` and BB is `cipher_suite[1]`, as defined in
+     * RFC 2246, Section 7.4.1.2. Unrecognized but parsable cipher suites in this form
+     * will not return an error. Ex: To disable TLS_RSA_WITH_RC4_128_MD5, specify
+     * 0x0004, while to disable TLS_ECDH_ECDSA_WITH_RC4_128_SHA, specify 0xC002. Note
+     * that TLSv1.3 ciphers cannot be disabled using this mechanism.
      */
-    proxyRules?: string;
-    /**
-     * Rules indicating which URLs should bypass the proxy settings.
-     */
-    proxyBypassRules?: string;
+    disabledCipherSuites?: number[];
   }
 
   interface ConfigureHostResolverOptions {
@@ -20708,29 +20691,6 @@ declare namespace Electron {
     fetchWindowIcons?: boolean;
   }
 
-  interface SSLConfigConfig {
-    /**
-     * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
-     * when connecting to remote servers. Defaults to `tls1`.
-     */
-    minVersion?: ('tls1' | 'tls1.1' | 'tls1.2' | 'tls1.3');
-    /**
-     * Can be `tls1.2` or `tls1.3`. The maximum SSL version to allow when connecting to
-     * remote servers. Defaults to `tls1.3`.
-     */
-    maxVersion?: ('tls1.2' | 'tls1.3');
-    /**
-     * List of cipher suites which should be explicitly prevented from being used in
-     * addition to those disabled by the net built-in policy. Supported literal forms:
-     * 0xAABB, where AA is `cipher_suite[0]` and BB is `cipher_suite[1]`, as defined in
-     * RFC 2246, Section 7.4.1.2. Unrecognized but parsable cipher suites in this form
-     * will not return an error. Ex: To disable TLS_RSA_WITH_RC4_128_MD5, specify
-     * 0x0004, while to disable TLS_ECDH_ECDSA_WITH_RC4_128_SHA, specify 0xC002. Note
-     * that TLSv1.3 ciphers cannot be disabled using this mechanism.
-     */
-    disabledCipherSuites?: number[];
-  }
-
   interface StartLoggingOptions {
     /**
      * What kinds of data should be captured. By default, only metadata about requests
@@ -21900,7 +21860,6 @@ declare namespace Electron {
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
-    type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
@@ -21998,6 +21957,7 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
@@ -22240,7 +22200,6 @@ declare namespace Electron {
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
-    type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
@@ -22338,6 +22297,7 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
@@ -22511,7 +22471,6 @@ declare namespace Electron {
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
-    type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
@@ -22609,6 +22568,7 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
@@ -22777,7 +22737,6 @@ declare namespace Electron {
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
-    type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
@@ -22875,6 +22834,7 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
@@ -23134,7 +23094,6 @@ declare namespace Electron {
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
     type SourcesOptions = Electron.SourcesOptions;
-    type SSLConfigConfig = Electron.SSLConfigConfig;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
@@ -23232,6 +23191,7 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
     type RenderProcessGoneDetails = Electron.RenderProcessGoneDetails;
