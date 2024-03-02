@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0-alpha.2+wcus
+// Type definitions for Electron 30.0.0-alpha.3+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8224,36 +8224,6 @@ declare namespace Electron {
     type: ('undefined' | 'mouseDown' | 'mouseUp' | 'mouseMove' | 'mouseEnter' | 'mouseLeave' | 'contextMenu' | 'mouseWheel' | 'rawKeyDown' | 'keyDown' | 'keyUp' | 'char' | 'gestureScrollBegin' | 'gestureScrollEnd' | 'gestureScrollUpdate' | 'gestureFlingStart' | 'gestureFlingCancel' | 'gesturePinchBegin' | 'gesturePinchEnd' | 'gesturePinchUpdate' | 'gestureTapDown' | 'gestureShowPress' | 'gestureTap' | 'gestureTapCancel' | 'gestureShortPress' | 'gestureLongPress' | 'gestureLongTap' | 'gestureTwoFingerTap' | 'gestureTapUnconfirmed' | 'gestureDoubleTap' | 'touchStart' | 'touchMove' | 'touchEnd' | 'touchCancel' | 'touchScrollStarted' | 'pointerDown' | 'pointerUp' | 'pointerMove' | 'pointerRawUpdate' | 'pointerCancel' | 'pointerCausedUaAction');
   }
 
-  interface IOCounters {
-
-    // Docs: https://electronjs.org/docs/api/structures/io-counters
-
-    /**
-     * Then number of I/O other operations.
-     */
-    otherOperationCount: number;
-    /**
-     * Then number of I/O other transfers.
-     */
-    otherTransferCount: number;
-    /**
-     * The number of I/O read operations.
-     */
-    readOperationCount: number;
-    /**
-     * The number of I/O read transfers.
-     */
-    readTransferCount: number;
-    /**
-     * The number of I/O write operations.
-     */
-    writeOperationCount: number;
-    /**
-     * The number of I/O write transfers.
-     */
-    writeTransferCount: number;
-  }
-
   interface IpcMain extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/ipc-main
@@ -14368,6 +14338,34 @@ declare namespace Electron {
     addListener(event: 'devtools-reload-page', listener: Function): this;
     removeListener(event: 'devtools-reload-page', listener: Function): this;
     /**
+     * Emitted when 'Search' is selected for text in its context menu.
+     */
+    on(event: 'devtools-search-query', listener: (event: Event,
+                                                  /**
+                                                   * text to query for.
+                                                   */
+                                                  query: string) => void): this;
+    off(event: 'devtools-search-query', listener: (event: Event,
+                                                  /**
+                                                   * text to query for.
+                                                   */
+                                                  query: string) => void): this;
+    once(event: 'devtools-search-query', listener: (event: Event,
+                                                  /**
+                                                   * text to query for.
+                                                   */
+                                                  query: string) => void): this;
+    addListener(event: 'devtools-search-query', listener: (event: Event,
+                                                  /**
+                                                   * text to query for.
+                                                   */
+                                                  query: string) => void): this;
+    removeListener(event: 'devtools-search-query', listener: (event: Event,
+                                                  /**
+                                                   * text to query for.
+                                                   */
+                                                  query: string) => void): this;
+    /**
      * Emitted when a `<webview>` has been attached to this web contents.
      */
     on(event: 'did-attach-webview', listener: (event: Event,
@@ -17479,12 +17477,13 @@ declare namespace Electron {
      */
     addEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void): this;
-    /**
-     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
-     * a link in its context menu.
-     */
     addEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void): this;
+    /**
+     * Emitted when 'Search' is selected for text in its context menu.
+     */
+    addEventListener(event: 'devtools-search-query', listener: (event: DevtoolsSearchQueryEvent) => void, useCapture?: boolean): this;
+    removeEventListener(event: 'devtools-search-query', listener: (event: DevtoolsSearchQueryEvent) => void): this;
     /**
      * Emitted when DevTools is opened.
      */
@@ -18466,13 +18465,6 @@ declare namespace Electron {
      */
     formControlType: ('none' | 'button-button' | 'field-set' | 'input-button' | 'input-checkbox' | 'input-color' | 'input-date' | 'input-datetime-local' | 'input-email' | 'input-file' | 'input-hidden' | 'input-image' | 'input-month' | 'input-number' | 'input-password' | 'input-radio' | 'input-range' | 'input-reset' | 'input-search' | 'input-submit' | 'input-telephone' | 'input-text' | 'input-time' | 'input-url' | 'input-week' | 'output' | 'reset-button' | 'select-list' | 'select-list' | 'select-multiple' | 'select-one' | 'submit-button' | 'text-area');
     /**
-     * If the context menu was invoked on an input field, the type of that field.
-     * Possible values include `none`, `plainText`, `password`, `other`.
-     *
-     * @deprecated
-     */
-    inputFieldType: ('none' | 'plainText' | 'password' | 'other');
-    /**
      * If the context is editable, whether or not spellchecking is enabled.
      */
     spellcheckEnabled: boolean;
@@ -18779,6 +18771,14 @@ declare namespace Electron {
      * URL of the link that was clicked or selected.
      */
     url: string;
+  }
+
+  interface DevtoolsSearchQueryEvent extends DOMEvent {
+    event: Event;
+    /**
+     * text to query for.
+     */
+    query: string;
   }
 
   interface DidChangeThemeColorEvent extends DOMEvent {
@@ -21674,13 +21674,6 @@ declare namespace Electron {
      */
     formControlType: ('none' | 'button-button' | 'field-set' | 'input-button' | 'input-checkbox' | 'input-color' | 'input-date' | 'input-datetime-local' | 'input-email' | 'input-file' | 'input-hidden' | 'input-image' | 'input-month' | 'input-number' | 'input-password' | 'input-radio' | 'input-range' | 'input-reset' | 'input-search' | 'input-submit' | 'input-telephone' | 'input-text' | 'input-time' | 'input-url' | 'input-week' | 'output' | 'reset-button' | 'select-list' | 'select-list' | 'select-multiple' | 'select-one' | 'submit-button' | 'text-area');
     /**
-     * If the context menu was invoked on an input field, the type of that field.
-     * Possible values include `none`, `plainText`, `password`, `other`.
-     *
-     * @deprecated
-     */
-    inputFieldType: ('none' | 'plainText' | 'password' | 'other');
-    /**
      * If the context is editable, whether or not spellchecking is enabled.
      */
     spellcheckEnabled: boolean;
@@ -21763,6 +21756,7 @@ declare namespace Electron {
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
+    type DevtoolsSearchQueryEvent = Electron.DevtoolsSearchQueryEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -21930,7 +21924,6 @@ declare namespace Electron {
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
-    type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
@@ -22103,6 +22096,7 @@ declare namespace Electron {
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
+    type DevtoolsSearchQueryEvent = Electron.DevtoolsSearchQueryEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -22270,7 +22264,6 @@ declare namespace Electron {
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
-    type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
@@ -22374,6 +22367,7 @@ declare namespace Electron {
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
+    type DevtoolsSearchQueryEvent = Electron.DevtoolsSearchQueryEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -22541,7 +22535,6 @@ declare namespace Electron {
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
-    type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
@@ -22640,6 +22633,7 @@ declare namespace Electron {
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
+    type DevtoolsSearchQueryEvent = Electron.DevtoolsSearchQueryEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -22807,7 +22801,6 @@ declare namespace Electron {
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
-    type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
@@ -22997,6 +22990,7 @@ declare namespace Electron {
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
     type DevtoolsOpenUrlEvent = Electron.DevtoolsOpenUrlEvent;
+    type DevtoolsSearchQueryEvent = Electron.DevtoolsSearchQueryEvent;
     type DidChangeThemeColorEvent = Electron.DidChangeThemeColorEvent;
     type DidCreateWindowDetails = Electron.DidCreateWindowDetails;
     type DidFailLoadEvent = Electron.DidFailLoadEvent;
@@ -23164,7 +23158,6 @@ declare namespace Electron {
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
-    type IOCounters = Electron.IOCounters;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
@@ -23365,10 +23358,6 @@ declare namespace NodeJS {
      * in Kilobytes.
      */
     getHeapStatistics(): Electron.HeapStatistics;
-    /**
-     * @platform win32,linux
-     */
-    getIOCounters(): Electron.IOCounters;
     /**
      * Resolves with a ProcessMemoryInfo
      * 
