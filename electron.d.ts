@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0-alpha.6+wcus
+// Type definitions for Electron 30.0.0-alpha.7+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8977,12 +8977,14 @@ declare namespace Electron {
      */
     static createFromBuffer(buffer: Buffer, options?: CreateFromBufferOptions): NativeImage;
     /**
-     * Creates a new `NativeImage` instance from `dataURL`.
+     * Creates a new `NativeImage` instance from `dataUrl`, a base 64 encoded Data URL
+     * string.
      */
     static createFromDataURL(dataURL: string): NativeImage;
     /**
-     * Creates a new `NativeImage` instance from the NSImage that maps to the given
-     * image name. See `System Icons` for a list of possible values.
+     * Creates a new `NativeImage` instance from the `NSImage` that maps to the given
+     * image name. See Apple's `NSImageName` documentation for a list of possible
+     * values.
      *
      * The `hslShift` is applied to the image with the following rules:
      *
@@ -9003,9 +9005,6 @@ declare namespace Electron {
      * actually be `NSFolder`. Therefore, you'll need to determine the correct string
      * representation for your image before passing it in. This can be done with the
      * following:
-     *
-     * `echo -e '#import <Cocoa/Cocoa.h>\nint main() { NSLog(@"%@", SYSTEM_IMAGE_NAME);
-     * }' | clang -otest -x objective-c -framework Cocoa - && ./test`
      *
      * where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
      *
@@ -9029,8 +9028,8 @@ declare namespace Electron {
     static createThumbnailFromPath(path: string, size: Size): Promise<Electron.NativeImage>;
     /**
      * Add an image representation for a specific scale factor. This can be used to
-     * explicitly add different scale factor representations to an image. This can be
-     * called on empty images.
+     * programmatically add different scale factor representations to an image. This
+     * can be called on empty images.
      */
     addRepresentation(options: AddRepresentationOptions): void;
     /**
@@ -9038,7 +9037,7 @@ declare namespace Electron {
      */
     crop(rect: Rectangle): NativeImage;
     /**
-     * The image's aspect ratio.
+     * The image's aspect ratio (width divided by height).
      *
      * If `scaleFactor` is passed, this will return the aspect ratio corresponding to
      * the image representation most closely matching the passed value.
@@ -9054,7 +9053,7 @@ declare namespace Electron {
     getBitmap(options?: BitmapOptions): Buffer;
     /**
      * A Buffer that stores C pointer to underlying native handle of the image. On
-     * macOS, a pointer to `NSImage` instance would be returned.
+     * macOS, a pointer to `NSImage` instance is returned.
      *
      * Notice that the returned pointer is a weak pointer to the underlying native
      * image instead of a copy, so you _must_ ensure that the associated `nativeImage`
@@ -9065,7 +9064,7 @@ declare namespace Electron {
     getNativeHandle(): Buffer;
     /**
      * An array of all scale factors corresponding to representations for a given
-     * nativeImage.
+     * `NativeImage`.
      */
     getScaleFactors(): number[];
     /**
@@ -9078,7 +9077,7 @@ declare namespace Electron {
      */
     isEmpty(): boolean;
     /**
-     * Whether the image is a template image.
+     * Whether the image is a macOS template image.
      */
     isTemplateImage(): boolean;
     /**
@@ -9089,7 +9088,7 @@ declare namespace Electron {
      */
     resize(options: ResizeOptions): NativeImage;
     /**
-     * Marks the image as a template image.
+     * Marks the image as a macOS template image.
      */
     setTemplateImage(option: boolean): void;
     /**
@@ -9097,7 +9096,7 @@ declare namespace Electron {
      */
     toBitmap(options?: ToBitmapOptions): Buffer;
     /**
-     * The data URL of the image.
+     * The Data URL of the image.
      */
     toDataURL(options?: ToDataURLOptions): string;
     /**
