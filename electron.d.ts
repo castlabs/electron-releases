@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0-beta.5+wcus
+// Type definitions for Electron 30.0.0-beta.6+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -18203,6 +18203,10 @@ declare namespace Electron {
      * specified as http or https.
      */
     url?: string;
+    /**
+     * Headers to be sent with the request.
+     */
+    headers?: Record<string, (string) | (string[])>;
     /**
      * The `Session` instance with which the request is associated.
      */
