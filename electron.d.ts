@@ -1,4 +1,4 @@
-// Type definitions for Electron 29.2.0+wcus
+// Type definitions for Electron 29.3.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7108,6 +7108,28 @@ declare namespace Electron {
      * CSS to apply.
      */
     themeSource: ('system' | 'light' | 'dark');
+  }
+
+  class NavigationHistory extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/navigation-history
+
+    /**
+     * The index of the current page, from which we would go back/forward or reload.
+     */
+    getActiveIndex(): number;
+    /**
+     * * `url` string - The URL of the navigation entry at the given index.
+     * * `title` string - The page title of the navigation entry at the given index.
+     *
+     * If index is out of bounds (greater than history length or less than 0), null
+     * will be returned.
+     */
+    getEntryAtIndex(index: number): EntryAtIndex;
+    /**
+     * History length.
+     */
+    length(): number;
   }
 
   interface Net {
@@ -14290,6 +14312,11 @@ declare namespace Electron {
      */
     readonly mainFrame: WebFrameMain;
     /**
+     * A `NavigationHistory` used by this webContents.
+     *
+     */
+    readonly navigationHistory: NavigationHistory;
+    /**
      * A `WebFrameMain` property that represents the frame that opened this
      * WebContents, either with open(), or by navigating a link with a target
      * attribute.
@@ -16732,6 +16759,17 @@ declare namespace Electron {
      * Upload rate in Bps. Defaults to 0 which will disable upload throttling.
      */
     uploadThroughput?: number;
+  }
+
+  interface EntryAtIndex {
+    /**
+     * The URL of the navigation entry at the given index.
+     */
+    url: string;
+    /**
+     * The page title of the navigation entry at the given index.
+     */
+    title: string;
   }
 
   interface FeedURLOptions {
@@ -19536,6 +19574,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
@@ -19778,6 +19817,7 @@ declare namespace Electron {
     type MessagePortMain = Electron.MessagePortMain;
     const nativeTheme: NativeTheme;
     type NativeTheme = Electron.NativeTheme;
+    type NavigationHistory = Electron.NavigationHistory;
     const net: Net;
     type Net = Electron.Net;
     const netLog: NetLog;
@@ -19870,6 +19910,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
@@ -20138,6 +20179,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
@@ -20401,6 +20443,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
@@ -20653,6 +20696,7 @@ declare namespace Electron {
     type NativeImage = Electron.NativeImage;
     const nativeTheme: NativeTheme;
     type NativeTheme = Electron.NativeTheme;
+    type NavigationHistory = Electron.NavigationHistory;
     const net: Net;
     type Net = Electron.Net;
     const netLog: NetLog;
@@ -20752,6 +20796,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FindInPageOptions = Electron.FindInPageOptions;
