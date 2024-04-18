@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0+wcus
+// Type definitions for Electron 31.0.0-alpha.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11584,6 +11584,25 @@ declare namespace Electron {
      */
     clearCodeCaches(options: ClearCodeCachesOptions): Promise<void>;
     /**
+     * resolves when all data has been cleared.
+     *
+     * Clears various different types of data.
+     *
+     * This method clears more types of data and is more thourough than the
+     * `clearStorageData` method.
+     *
+     * **Note:** Cookies are stored at a broader scope than origins. When removing
+     * cookies and filtering by `origins` (or `excludeOrigins`), the cookies will be
+     * removed at the registrable domain level. For example, clearing cookies for the
+     * origin `https://really.specific.origin.example.com/` will end up clearing all
+     * cookies for `example.com`. Clearing cookies for the origin
+     * `https://my.website.example.co.uk/` will end up clearing all cookies for
+     * `example.co.uk`.
+     *
+     * For more information, refer to Chromium's `BrowsingDataRemover` interface.
+     */
+    clearData(options?: ClearDataOptions): Promise<void>;
+    /**
      * Resolves when the operation is complete.
      *
      * Clears the host resolver cache.
@@ -16409,8 +16428,11 @@ declare namespace Electron {
      * by `window.open()`, a link with `target="_blank"`, shift+clicking on a link, or
      * submitting a form with `<form target="_blank">`. See `window.open()` for more
      * details and how to use this in conjunction with `did-create-window`.
+     *
+     * An example showing how to customize the process of new `BrowserWindow` creation
+     * to be `BrowserView` attached to main window instead:
      */
-    setWindowOpenHandler(handler: (details: HandlerDetails) => ({action: 'deny'}) | ({action: 'allow', outlivesOpener?: boolean, overrideBrowserWindowOptions?: BrowserWindowConstructorOptions})): void;
+    setWindowOpenHandler(handler: (details: HandlerDetails) => WindowOpenHandlerResponse): void;
     /**
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
@@ -18015,6 +18037,33 @@ declare namespace Electron {
     webpreferences?: ('transparent');
   }
 
+  interface WindowOpenHandlerResponse {
+
+    // Docs: https://electronjs.org/docs/api/structures/window-open-handler-response
+
+    /**
+     * Can be `allow` or `deny`. Controls whether new window should be created.
+     */
+    action: ('allow' | 'deny');
+    /**
+     * If specified, will be called instead of `new BrowserWindow` to create the new
+     * child window and event `did-create-window` will not be emitted. Constructed
+     * child window should use passed `options` object. This can be used for example to
+     * have the new window open as a BrowserView instead of in a separate window.
+     */
+    createWindow?: (options: BrowserWindowConstructorOptions) => WebContents;
+    /**
+     * By default, child windows are closed when their opener is closed. This can be
+     * changed by specifying `outlivesOpener: true`, in which case the opened window
+     * will not be closed when its opener is closed.
+     */
+    outlivesOpener?: boolean;
+    /**
+     * Allows customization of the created window.
+     */
+    overrideBrowserWindowOptions?: BrowserWindowConstructorOptions;
+  }
+
   interface AboutPanelOptionsOptions {
     /**
      * The app's name.
@@ -18261,6 +18310,30 @@ declare namespace Electron {
      * be removed.
      */
     urls?: string[];
+  }
+
+  interface ClearDataOptions {
+    /**
+     * The types of data to clear. By default, this will clear all types of data.
+     */
+    dataTypes?: Array<'backgroundFetch' | 'cache' | 'cookies' | 'downloads' | 'fileSystems' | 'indexedDB' | 'localStorage' | 'serviceWorkers' | 'webSQL'>;
+    /**
+     * Clear data for only these origins. Cannot be used with `excludeOrigins`.
+     */
+    origins?: string[];
+    /**
+     * Clear data for all origins except these ones. Cannot be used with `origins`.
+     */
+    excludeOrigins?: string[];
+    /**
+     * Skips deleting cookies that would close current network connections. (Default:
+     * `false`)
+     */
+    avoidClosingConnections?: boolean;
+    /**
+     * The behavior for matching data to origins.
+     */
+    originMatchingMode?: ('third-parties-included' | 'origin-in-all-contexts');
   }
 
   interface ClearStorageDataOptions {
@@ -21812,6 +21885,7 @@ declare namespace Electron {
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
+    type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
@@ -22057,6 +22131,7 @@ declare namespace Electron {
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
+    type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
   }
 
   namespace Main {
@@ -22157,6 +22232,7 @@ declare namespace Electron {
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
+    type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
@@ -22402,6 +22478,7 @@ declare namespace Electron {
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
+    type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
   }
 
   namespace Renderer {
@@ -22432,6 +22509,7 @@ declare namespace Electron {
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
+    type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
@@ -22677,6 +22755,7 @@ declare namespace Electron {
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
+    type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
   }
 
   namespace Utility {
@@ -22702,6 +22781,7 @@ declare namespace Electron {
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
+    type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
@@ -22947,6 +23027,7 @@ declare namespace Electron {
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
+    type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
   }
 
   namespace CrossProcessExports {
@@ -23064,6 +23145,7 @@ declare namespace Electron {
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
+    type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
@@ -23309,6 +23391,7 @@ declare namespace Electron {
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
+    type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
   }
 
   const app: App;
