@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.0-beta.8+wcus
+// Type definitions for Electron 30.0.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -632,6 +632,11 @@ declare namespace Electron {
      * launched from Notification Center. You can also call `app.isReady()` to check if
      * this event has already fired and `app.whenReady()` to get a Promise that is
      * fulfilled when Electron is initialized.
+     *
+     * **Note**: The `ready` event is only fired after the main process has finished
+     * running the first tick of the event loop. If an Electron API needs to be called
+     * before the `ready` event, ensure that it is called synchronously in the
+     * top-level context of the main process.
      */
     on(event: 'ready', listener: (event: Event,
                                   /**
@@ -7890,6 +7895,24 @@ declare namespace Electron {
     path: string;
   }
 
+  interface FilesystemPermissionRequest extends PermissionRequest {
+
+    // Docs: https://electronjs.org/docs/api/structures/filesystem-permission-request
+
+    /**
+     * The access type of the `fileSystem` request. Can be `writable` or `readable`.
+     */
+    fileAccessType?: ('writable' | 'readable');
+    /**
+     * The path of the `fileSystem` request.
+     */
+    filePath?: string;
+    /**
+     * Whether the `fileSystem` request is a directory.
+     */
+    isDirectory?: boolean;
+  }
+
   interface GlobalShortcut {
 
     // Docs: https://electronjs.org/docs/api/global-shortcut
@@ -8593,6 +8616,20 @@ declare namespace Electron {
      * The type of the event, can be `rawKeyDown`, `keyDown`, `keyUp` or `char`.
      */
     type: ('rawKeyDown' | 'keyDown' | 'keyUp' | 'char');
+  }
+
+  interface MediaAccessPermissionRequest extends PermissionRequest {
+
+    // Docs: https://electronjs.org/docs/api/structures/media-access-permission-request
+
+    /**
+     * The types of media access being requested - elements can be `video` or `audio`.
+     */
+    mediaTypes?: Array<'video' | 'audio'>;
+    /**
+     * The security origin of the request.
+     */
+    securityOrigin?: string;
   }
 
   interface MemoryInfo {
@@ -9614,6 +9651,16 @@ declare namespace Electron {
     userText?: string;
   }
 
+  interface OpenExternalPermissionRequest extends PermissionRequest {
+
+    // Docs: https://electronjs.org/docs/api/structures/open-external-permission-request
+
+    /**
+     * The url of the `openExternal` request.
+     */
+    externalURL?: string;
+  }
+
   interface ParentPort extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/parent-port
@@ -9659,6 +9706,20 @@ declare namespace Electron {
      * epoch time.
      */
     timestamp: number;
+  }
+
+  interface PermissionRequest {
+
+    // Docs: https://electronjs.org/docs/api/structures/permission-request
+
+    /**
+     * Whether the frame making the request is the main frame.
+     */
+    isMainFrame: boolean;
+    /**
+     * The last URL the requesting frame loaded.
+     */
+    requestingUrl: string;
   }
 
   interface Point {
@@ -11799,7 +11860,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'storage-access' | 'top-level-storage-access' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: PermissionRequestHandlerHandlerDetails) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'storage-access' | 'top-level-storage-access' | 'window-management' | 'unknown' | 'fileSystem', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -19521,27 +19582,24 @@ declare namespace Electron {
      */
     id?: string;
     /**
-     * Inserts this item before the item with the specified label. If the referenced
-     * item doesn't exist the item will be inserted at the end of  the menu. Also
-     * implies that the menu item in question should be placed in the same “group” as
-     * the item.
+     * Inserts this item before the item with the specified id. If the referenced item
+     * doesn't exist the item will be inserted at the end of  the menu. Also implies
+     * that the menu item in question should be placed in the same “group” as the item.
      */
     before?: string[];
     /**
-     * Inserts this item after the item with the specified label. If the referenced
-     * item doesn't exist the item will be inserted at the end of the menu.
+     * Inserts this item after the item with the specified id. If the referenced item
+     * doesn't exist the item will be inserted at the end of the menu.
      */
     after?: string[];
     /**
      * Provides a means for a single context menu to declare the placement of their
-     * containing group before the containing group of the item with the specified
-     * label.
+     * containing group before the containing group of the item with the specified id.
      */
     beforeGroupContaining?: string[];
     /**
      * Provides a means for a single context menu to declare the placement of their
-     * containing group after the containing group of the item with the specified
-     * label.
+     * containing group after the containing group of the item with the specified id.
      */
     afterGroupContaining?: string[];
   }
@@ -20188,29 +20246,6 @@ declare namespace Electron {
      * sub frames making permission checks.
      */
     requestingUrl?: string;
-    /**
-     * Whether the frame making the request is the main frame
-     */
-    isMainFrame: boolean;
-  }
-
-  interface PermissionRequestHandlerHandlerDetails {
-    /**
-     * The url of the `openExternal` request.
-     */
-    externalURL?: string;
-    /**
-     * The security origin of the `media` request.
-     */
-    securityOrigin?: string;
-    /**
-     * The types of media access being requested, elements can be `video` or `audio`
-     */
-    mediaTypes?: Array<'video' | 'audio'>;
-    /**
-     * The last URL the requesting frame loaded
-     */
-    requestingUrl: string;
     /**
      * Whether the frame making the request is the main frame
      */
@@ -21869,7 +21904,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PreconnectOptions = Electron.PreconnectOptions;
@@ -21963,6 +21997,7 @@ declare namespace Electron {
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type FilesystemPermissionRequest = Electron.FilesystemPermissionRequest;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
@@ -21973,6 +22008,7 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
@@ -21980,7 +22016,9 @@ declare namespace Electron {
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
+    type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -22211,7 +22249,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PreconnectOptions = Electron.PreconnectOptions;
@@ -22305,6 +22342,7 @@ declare namespace Electron {
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type FilesystemPermissionRequest = Electron.FilesystemPermissionRequest;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
@@ -22315,6 +22353,7 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
@@ -22322,7 +22361,9 @@ declare namespace Electron {
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
+    type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -22483,7 +22524,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PreconnectOptions = Electron.PreconnectOptions;
@@ -22577,6 +22617,7 @@ declare namespace Electron {
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type FilesystemPermissionRequest = Electron.FilesystemPermissionRequest;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
@@ -22587,6 +22628,7 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
@@ -22594,7 +22636,9 @@ declare namespace Electron {
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
+    type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -22750,7 +22794,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PreconnectOptions = Electron.PreconnectOptions;
@@ -22844,6 +22887,7 @@ declare namespace Electron {
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type FilesystemPermissionRequest = Electron.FilesystemPermissionRequest;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
@@ -22854,6 +22898,7 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
@@ -22861,7 +22906,9 @@ declare namespace Electron {
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
+    type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
@@ -23109,7 +23156,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PermissionRequestHandlerHandlerDetails = Electron.PermissionRequestHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PreconnectOptions = Electron.PreconnectOptions;
@@ -23203,6 +23249,7 @@ declare namespace Electron {
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
     type FilePathWithHeaders = Electron.FilePathWithHeaders;
+    type FilesystemPermissionRequest = Electron.FilesystemPermissionRequest;
     type GPUFeatureStatus = Electron.GPUFeatureStatus;
     type HIDDevice = Electron.HIDDevice;
     type InputEvent = Electron.InputEvent;
@@ -23213,6 +23260,7 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
@@ -23220,7 +23268,9 @@ declare namespace Electron {
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
+    type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
     type PrinterInfo = Electron.PrinterInfo;
