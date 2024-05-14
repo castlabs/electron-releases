@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.0.0-alpha.4+wcus
+// Type definitions for Electron 31.0.0-alpha.5+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -13980,6 +13980,10 @@ declare namespace Electron {
      * View
      */
     constructor();
+    /**
+     * If the same View is added to a parent which already contains it, it will be
+     * reordered such that it becomes the topmost view.
+     */
     addChildView(view: View, index?: number): void;
     /**
      * The bounds of this View, relative to its parent.
