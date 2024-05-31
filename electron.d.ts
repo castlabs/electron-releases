@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.0.8+wcus
+// Type definitions for Electron 30.0.9+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -17181,6 +17181,13 @@ declare namespace Electron {
      */
     textAreasAreResizable?: boolean;
     /**
+     * Whether to enable background transparency for the guest page. Default is `true`.
+     * **Note:** The guest page's text and background colors are derived from the color
+     * scheme of its root element. When transparency is enabled, the text color will
+     * still change accordingly but the background will remain transparent.
+     */
+    transparent?: boolean;
+    /**
      * Enforces the v8 code caching policy used by blink. Accepted values are
      */
     v8CacheOptions?: ('none' | 'code' | 'bypassHeatCheck' | 'bypassHeatCheckAndEagerCompile');
@@ -17999,14 +18006,7 @@ declare namespace Electron {
     /**
      * A `string` which is a comma separated list of strings which specifies the web
      * preferences to be set on the webview. The full list of supported preference
-     * strings can be found in BrowserWindow. In addition, webview supports the
-     * following preferences:
-     *
-     * * `transparent` boolean (optional) - Whether to enable background transparency
-     * for the guest page. Default is `true`. **Note:** The guest page's text and
-     * background colors are derived from the color scheme of its root element. When
-     * transparency is enabled, the text color will still change accordingly but the
-     * background will remain transparent.
+     * strings can be found in BrowserWindow.
      *
      * The string follows the same format as the features string in `window.open`. A
      * name by itself is given a `true` boolean value. A preference can be set to
@@ -18014,7 +18014,7 @@ declare namespace Electron {
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
      */
-    webpreferences?: ('transparent');
+    webpreferences: string;
   }
 
   interface AboutPanelOptionsOptions {
@@ -20699,8 +20699,8 @@ declare namespace Electron {
      * `true` to open the app as hidden. Defaults to `false`. The user can edit this
      * setting from the System Preferences so
      * `app.getLoginItemSettings().wasOpenedAsHidden` should be checked when the app is
-     * opened to know the current value. This setting is not available on MAS build s
-     * or on macOS 13 and up.
+     * opened to know the current value. This setting is not available on MAS builds or
+     * on macOS 13 and up.
      *
      * @deprecated
      * @platform darwin
