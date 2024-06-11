@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.0.0-beta.10+wcus
+// Type definitions for Electron 31.0.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1170,9 +1170,8 @@ declare namespace Electron {
      * * `openAtLogin` boolean - `true` if the app is set to open at login.
      * * `openAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app is set to open
      * as hidden at login. This does not work on macOS 13 and up.
-     * * `wasOpenedAtLogin` boolean _macOS_ _Deprecated_ - `true` if the app was opened
-     * at login automatically. This setting is not available on MAS builds or on macOS
-     * 13 and up.
+     * * `wasOpenedAtLogin` boolean _macOS_ - `true` if the app was opened at login
+     * automatically.
      * * `wasOpenedAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app was
      * opened as a hidden login item. This indicates that the app should not open any
      * windows at startup. This setting is not available on MAS builds or on macOS 13
@@ -19505,10 +19504,8 @@ declare namespace Electron {
      */
     openAsHidden: boolean;
     /**
-     * `true` if the app was opened at login automatically. This setting is not
-     * available on MAS builds or on macOS 13 and up.
+     * `true` if the app was opened at login automatically.
      *
-     * @deprecated
      * @platform darwin
      */
     wasOpenedAtLogin: boolean;
@@ -21366,6 +21363,11 @@ declare namespace Electron {
      * Settings of web page's features.
      */
     webPreferences?: WebPreferences;
+    /**
+     * If present, the given WebContents will be adopted by the WebContentsView. A
+     * WebContents may only be presented in one WebContentsView at a time.
+     */
+    webContents?: WebContents;
   }
 
   interface WebContentsWillFrameNavigateEventParams {
