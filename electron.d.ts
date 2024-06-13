@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.1.0+wcus
+// Type definitions for Electron 30.1.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1170,9 +1170,8 @@ declare namespace Electron {
      * * `openAtLogin` boolean - `true` if the app is set to open at login.
      * * `openAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app is set to open
      * as hidden at login. This does not work on macOS 13 and up.
-     * * `wasOpenedAtLogin` boolean _macOS_ _Deprecated_ - `true` if the app was opened
-     * at login automatically. This setting is not available on MAS builds or on macOS
-     * 13 and up.
+     * * `wasOpenedAtLogin` boolean _macOS_ - `true` if the app was opened at login
+     * automatically.
      * * `wasOpenedAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app was
      * opened as a hidden login item. This indicates that the app should not open any
      * windows at startup. This setting is not available on MAS builds or on macOS 13
@@ -19432,10 +19431,8 @@ declare namespace Electron {
      */
     openAsHidden: boolean;
     /**
-     * `true` if the app was opened at login automatically. This setting is not
-     * available on MAS builds or on macOS 13 and up.
+     * `true` if the app was opened at login automatically.
      *
-     * @deprecated
      * @platform darwin
      */
     wasOpenedAtLogin: boolean;
