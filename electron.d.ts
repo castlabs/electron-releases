@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.0.0+wcus
+// Type definitions for Electron 32.0.0-alpha.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6610,7 +6610,7 @@ declare namespace Electron {
     id: string;
   }
 
-  interface Components extends NodeJS.EventEmitter {
+  interface Components {
 
     // Docs: https://electronjs.org/docs/api/components
 
@@ -6928,6 +6928,10 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/cpu-usage
 
+    /**
+     * Total seconds of CPU time used since process startup.
+     */
+    cumulativeCPUUsage?: number;
     /**
      * The number of average idle CPU wakeups per second since the last call to
      * getCPUUsage. First call returns 0. Will always return 0 on Windows.
@@ -8884,7 +8888,7 @@ declare namespace Electron {
     visible: boolean;
   }
 
-  class MessageChannelMain extends NodeEventEmitter {
+  class MessageChannelMain {
 
     // Docs: https://electronjs.org/docs/api/message-channel-main
 
@@ -9236,10 +9240,26 @@ declare namespace Electron {
     themeSource: ('system' | 'light' | 'dark');
   }
 
-  class NavigationHistory extends NodeEventEmitter {
+  class NavigationHistory {
 
     // Docs: https://electronjs.org/docs/api/navigation-history
 
+    /**
+     * Whether the browser can go back to previous web page.
+     */
+    canGoBack(): boolean;
+    /**
+     * Whether the browser can go forward to next web page.
+     */
+    canGoForward(): boolean;
+    /**
+     * Whether the web page can go to the specified `offset` from the current entry.
+     */
+    canGoToOffset(offset: number): boolean;
+    /**
+     * Clears the navigation history.
+     */
+    clear(): void;
     /**
      * The index of the current page, from which we would go back/forward or reload.
      */
@@ -9252,6 +9272,22 @@ declare namespace Electron {
      * will be returned.
      */
     getEntryAtIndex(index: number): EntryAtIndex;
+    /**
+     * Makes the browser go back a web page.
+     */
+    goBack(): void;
+    /**
+     * Makes the browser go forward a web page.
+     */
+    goForward(): void;
+    /**
+     * Navigates browser to the specified absolute web page index.
+     */
+    goToIndex(index: number): void;
+    /**
+     * Navigates to the specified offset from the current entry.
+     */
+    goToOffset(offset: number): void;
     /**
      * History length.
      */
@@ -10713,7 +10749,7 @@ declare namespace Electron {
     endpoints: ResolvedEndpoint[];
   }
 
-  interface SafeStorage extends NodeJS.EventEmitter {
+  interface SafeStorage {
 
     // Docs: https://electronjs.org/docs/api/safe-storage
 
@@ -12023,7 +12059,7 @@ declare namespace Electron {
     url: string;
   }
 
-  class ShareMenu extends NodeEventEmitter {
+  class ShareMenu {
 
     // Docs: https://electronjs.org/docs/api/share-menu
 
@@ -12668,7 +12704,7 @@ declare namespace Electron {
     label: string;
   }
 
-  class TouchBarColorPicker extends NodeEventEmitter {
+  class TouchBarColorPicker {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-color-picker
 
@@ -12688,7 +12724,7 @@ declare namespace Electron {
     selectedColor: string;
   }
 
-  class TouchBarGroup extends NodeEventEmitter {
+  class TouchBarGroup {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-group
 
@@ -12698,7 +12734,7 @@ declare namespace Electron {
     constructor(options: TouchBarGroupConstructorOptions);
   }
 
-  class TouchBarLabel extends NodeEventEmitter {
+  class TouchBarLabel {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-label
 
@@ -12723,7 +12759,7 @@ declare namespace Electron {
     textColor: string;
   }
 
-  class TouchBarOtherItemsProxy extends NodeEventEmitter {
+  class TouchBarOtherItemsProxy {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-other-items-proxy
 
@@ -12733,7 +12769,7 @@ declare namespace Electron {
     constructor();
   }
 
-  class TouchBarPopover extends NodeEventEmitter {
+  class TouchBarPopover {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-popover
 
@@ -12753,7 +12789,7 @@ declare namespace Electron {
     label: string;
   }
 
-  class TouchBarScrubber extends NodeEventEmitter {
+  class TouchBarScrubber {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-scrubber
 
@@ -12809,7 +12845,7 @@ declare namespace Electron {
     showArrowButtons: boolean;
   }
 
-  class TouchBarSegmentedControl extends NodeEventEmitter {
+  class TouchBarSegmentedControl {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-segmented-control
 
@@ -12841,7 +12877,7 @@ declare namespace Electron {
     selectedIndex: number;
   }
 
-  class TouchBarSlider extends NodeEventEmitter {
+  class TouchBarSlider {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-slider
 
@@ -12871,7 +12907,7 @@ declare namespace Electron {
     value: number;
   }
 
-  class TouchBarSpacer extends NodeEventEmitter {
+  class TouchBarSpacer {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-spacer
 
@@ -15885,14 +15921,28 @@ declare namespace Electron {
     beginFrameSubscription(callback: (image: NativeImage, dirtyRect: Rectangle) => void): void;
     /**
      * Whether the browser can go back to previous web page.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.canGoBack` API.
+     *
+     * @deprecated
      */
     canGoBack(): boolean;
     /**
      * Whether the browser can go forward to next web page.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.canGoForward`
+     * API.
+     *
+     * @deprecated
      */
     canGoForward(): boolean;
     /**
      * Whether the web page can go to `offset`.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.canGoToOffset`
+     * API.
+     *
+     * @deprecated
      */
     canGoToOffset(offset: number): boolean;
     /**
@@ -15910,6 +15960,10 @@ declare namespace Electron {
     centerSelection(): void;
     /**
      * Clears the navigation history.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.clear` API.
+     *
+     * @deprecated
      */
     clearHistory(): void;
     /**
@@ -16080,18 +16134,34 @@ declare namespace Electron {
     getZoomLevel(): number;
     /**
      * Makes the browser go back a web page.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.goBack` API.
+     *
+     * @deprecated
      */
     goBack(): void;
     /**
      * Makes the browser go forward a web page.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.goForward` API.
+     *
+     * @deprecated
      */
     goForward(): void;
     /**
      * Navigates browser to the specified absolute web page index.
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.goToIndex` API.
+     *
+     * @deprecated
      */
     goToIndex(index: number): void;
     /**
      * Navigates to the specified offset from the "current entry".
+     *
+     * **Deprecated:** Should use the new `contents.navigationHistory.goToOffset` API.
+     *
+     * @deprecated
      */
     goToOffset(offset: number): void;
     /**
@@ -17373,7 +17443,7 @@ declare namespace Electron {
     url?: string;
   }
 
-  interface WebUtils extends NodeJS.EventEmitter {
+  interface WebUtils {
 
     // Docs: https://electronjs.org/docs/api/web-utils
 
@@ -23505,6 +23575,11 @@ declare namespace NodeJS {
     once(event: 'loaded', listener: Function): this;
     addListener(event: 'loaded', listener: Function): this;
     removeListener(event: 'loaded', listener: Function): this;
+    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    off(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    once(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    addListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
     /**
      * Causes the main thread of the current process crash.
      */
