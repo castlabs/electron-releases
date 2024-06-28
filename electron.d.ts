@@ -1,4 +1,4 @@
-// Type definitions for Electron 29.4.2+wcus
+// Type definitions for Electron 29.4.3+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1165,9 +1165,8 @@ declare namespace Electron {
      * * `openAtLogin` boolean - `true` if the app is set to open at login.
      * * `openAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app is set to open
      * as hidden at login. This does not work on macOS 13 and up.
-     * * `wasOpenedAtLogin` boolean _macOS_ _Deprecated_ - `true` if the app was opened
-     * at login automatically. This setting is not available on MAS builds or on macOS
-     * 13 and up.
+     * * `wasOpenedAtLogin` boolean _macOS_ - `true` if the app was opened at login
+     * automatically.
      * * `wasOpenedAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app was
      * opened as a hidden login item. This indicates that the app should not open any
      * windows at startup. This setting is not available on MAS builds or on macOS 13
@@ -4484,7 +4483,7 @@ declare namespace Electron {
     id: string;
   }
 
-  interface Components extends NodeJS.EventEmitter {
+  interface Components {
 
     // Docs: https://electronjs.org/docs/api/components
 
@@ -6756,7 +6755,7 @@ declare namespace Electron {
     visible: boolean;
   }
 
-  class MessageChannelMain extends NodeEventEmitter {
+  class MessageChannelMain {
 
     // Docs: https://electronjs.org/docs/api/message-channel-main
 
@@ -7108,7 +7107,7 @@ declare namespace Electron {
     themeSource: ('system' | 'light' | 'dark');
   }
 
-  class NavigationHistory extends NodeEventEmitter {
+  class NavigationHistory {
 
     // Docs: https://electronjs.org/docs/api/navigation-history
 
@@ -8561,7 +8560,7 @@ declare namespace Electron {
     endpoints: ResolvedEndpoint[];
   }
 
-  interface SafeStorage extends NodeJS.EventEmitter {
+  interface SafeStorage {
 
     // Docs: https://electronjs.org/docs/api/safe-storage
 
@@ -9852,7 +9851,7 @@ declare namespace Electron {
     url: string;
   }
 
-  class ShareMenu extends NodeEventEmitter {
+  class ShareMenu {
 
     // Docs: https://electronjs.org/docs/api/share-menu
 
@@ -10497,7 +10496,7 @@ declare namespace Electron {
     label: string;
   }
 
-  class TouchBarColorPicker extends NodeEventEmitter {
+  class TouchBarColorPicker {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-color-picker
 
@@ -10517,7 +10516,7 @@ declare namespace Electron {
     selectedColor: string;
   }
 
-  class TouchBarGroup extends NodeEventEmitter {
+  class TouchBarGroup {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-group
 
@@ -10527,7 +10526,7 @@ declare namespace Electron {
     constructor(options: TouchBarGroupConstructorOptions);
   }
 
-  class TouchBarLabel extends NodeEventEmitter {
+  class TouchBarLabel {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-label
 
@@ -10552,7 +10551,7 @@ declare namespace Electron {
     textColor: string;
   }
 
-  class TouchBarOtherItemsProxy extends NodeEventEmitter {
+  class TouchBarOtherItemsProxy {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-other-items-proxy
 
@@ -10562,7 +10561,7 @@ declare namespace Electron {
     constructor();
   }
 
-  class TouchBarPopover extends NodeEventEmitter {
+  class TouchBarPopover {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-popover
 
@@ -10582,7 +10581,7 @@ declare namespace Electron {
     label: string;
   }
 
-  class TouchBarScrubber extends NodeEventEmitter {
+  class TouchBarScrubber {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-scrubber
 
@@ -10638,7 +10637,7 @@ declare namespace Electron {
     showArrowButtons: boolean;
   }
 
-  class TouchBarSegmentedControl extends NodeEventEmitter {
+  class TouchBarSegmentedControl {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-segmented-control
 
@@ -10670,7 +10669,7 @@ declare namespace Electron {
     selectedIndex: number;
   }
 
-  class TouchBarSlider extends NodeEventEmitter {
+  class TouchBarSlider {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-slider
 
@@ -10700,7 +10699,7 @@ declare namespace Electron {
     value: number;
   }
 
-  class TouchBarSpacer extends NodeEventEmitter {
+  class TouchBarSpacer {
 
     // Docs: https://electronjs.org/docs/api/touch-bar-spacer
 
@@ -15074,7 +15073,7 @@ declare namespace Electron {
     url?: string;
   }
 
-  interface WebUtils extends NodeJS.EventEmitter {
+  interface WebUtils {
 
     // Docs: https://electronjs.org/docs/api/web-utils
 
@@ -17152,10 +17151,8 @@ declare namespace Electron {
      */
     openAsHidden: boolean;
     /**
-     * `true` if the app was opened at login automatically. This setting is not
-     * available on MAS builds or on macOS 13 and up.
+     * `true` if the app was opened at login automatically.
      *
-     * @deprecated
      * @platform darwin
      */
     wasOpenedAtLogin: boolean;
@@ -21109,6 +21106,11 @@ declare namespace NodeJS {
     once(event: 'loaded', listener: Function): this;
     addListener(event: 'loaded', listener: Function): this;
     removeListener(event: 'loaded', listener: Function): this;
+    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    off(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    once(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    addListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
     /**
      * Causes the main thread of the current process crash.
      */
