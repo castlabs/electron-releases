@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.0.2+wcus
+// Type definitions for Electron 31.1.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -22768,6 +22768,8 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const net: Net;
     type Net = Electron.Net;
+    const systemPreferences: SystemPreferences;
+    type SystemPreferences = Electron.SystemPreferences;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
