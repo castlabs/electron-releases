@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.1.0+wcus
+// Type definitions for Electron 31.2.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3255,7 +3255,10 @@ declare namespace Electron {
      * On a Window with Window Controls Overlay already enabled, this method updates
      * the style of the title bar overlay.
      *
-     * @platform win32
+     * On Linux, the `symbolColor` is automatically calculated to have minimum
+     * accessible contrast to the `color` if not explicitly set.
+     *
+     * @platform win32,linux
      */
     setTitleBarOverlay(options: TitleBarOverlayOptions): void;
     /**
@@ -3693,8 +3696,6 @@ declare namespace Electron {
     title?: string;
     /**
      * The style of window title bar. Default is `default`. Possible values are:
-     *
-     * @platform darwin,win32
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
     /**
@@ -5851,12 +5852,15 @@ declare namespace Electron {
      */
     setTitle(title: string): void;
     /**
-     * On a Window with Window Controls Overlay already enabled, this method updates
+     * On a window with Window Controls Overlay already enabled, this method updates
      * the style of the title bar overlay.
      *
-     * @platform win32
+     * On Linux, the `symbolColor` is automatically calculated to have minimum
+     * accessible contrast to the `color` if not explicitly set.
+     *
+     * @platform win32,linux
      */
-    setTitleBarOverlay(options: TitleBarOverlay): void;
+    setTitleBarOverlay(options: TitleBarOverlayOptions): void;
     /**
      * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
      * error if `browserView` is not attached to `win`.
@@ -20899,7 +20903,7 @@ declare namespace Electron {
      * The CSS color of the Window Controls Overlay when enabled. Default is the system
      * color.
      *
-     * @platform win32
+     * @platform win32,linux
      */
     color?: string;
     /**
@@ -20912,8 +20916,6 @@ declare namespace Electron {
     /**
      * The height of the title bar and Window Controls Overlay in pixels. Default is
      * system height.
-     *
-     * @platform darwin,win32
      */
     height?: number;
   }
@@ -20921,20 +20923,14 @@ declare namespace Electron {
   interface TitleBarOverlayOptions {
     /**
      * The CSS color of the Window Controls Overlay when enabled.
-     *
-     * @platform win32
      */
     color?: string;
     /**
      * The CSS color of the symbols on the Window Controls Overlay when enabled.
-     *
-     * @platform win32
      */
     symbolColor?: string;
     /**
      * The height of the title bar and Window Controls Overlay in pixels.
-     *
-     * @platform win32
      */
     height?: number;
   }
