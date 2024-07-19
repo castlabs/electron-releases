@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.0-alpha.9+wcus
+// Type definitions for Electron 32.0.0-alpha.10+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7745,6 +7745,14 @@ declare namespace Electron {
      */
     getContentDisposition(): string;
     /**
+     * The current download speed in bytes per second.
+     */
+    getCurrentBytesPerSecond(): number;
+    /**
+     * Number of seconds since the UNIX epoch when the download ended.
+     */
+    getEndTime(): number;
+    /**
      * ETag header value.
      */
     getETag(): string;
@@ -7764,6 +7772,10 @@ declare namespace Electron {
      * The files mime type.
      */
     getMimeType(): string;
+    /**
+     * The download completion in percent.
+     */
+    getPercentComplete(): number;
     /**
      * The received bytes of the download item.
      */
