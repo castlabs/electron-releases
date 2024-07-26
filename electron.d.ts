@@ -1,4 +1,4 @@
-// Type definitions for Electron 30.3.0+wcus
+// Type definitions for Electron 30.3.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5257,6 +5257,10 @@ declare namespace Electron {
     isFocused(): boolean;
     /**
      * Whether the window is in fullscreen mode.
+     *
+     * **Note:** On macOS, fullscreen transitions take place asynchronously. When
+     * querying for a BrowserWindow's fullscreen status, you should ensure that either
+     * the 'enter-full-screen' or 'leave-full-screen' events have been emitted.
      */
     isFullScreen(): boolean;
     /**
