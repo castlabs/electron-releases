@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.0-beta.1+wcus
+// Type definitions for Electron 32.0.0-beta.2+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5257,6 +5257,10 @@ declare namespace Electron {
     isFocused(): boolean;
     /**
      * Whether the window is in fullscreen mode.
+     *
+     * **Note:** On macOS, fullscreen transitions take place asynchronously. When
+     * querying for a BrowserWindow's fullscreen status, you should ensure that either
+     * the 'enter-full-screen' or 'leave-full-screen' events have been emitted.
      */
     isFullScreen(): boolean;
     /**
@@ -9196,6 +9200,12 @@ declare namespace Electron {
      */
     readonly inForcedColorsMode: boolean;
     /**
+     * A `boolean` that indicates the whether the user has chosen via system
+     * accessibility settings to reduce transparency at the OS level.
+     *
+     */
+    readonly prefersReducedTransparency: boolean;
+    /**
      * A `boolean` for if the OS / Chromium currently has a dark mode enabled or is
      * being instructed to show a dark-style UI.  If you want to modify this value you
      * should use `themeSource` below.
@@ -11176,6 +11186,21 @@ declare namespace Electron {
                                                extension: Extension) => void): this;
     removeListener(event: 'extension-unloaded', listener: (event: Event,
                                                extension: Extension) => void): this;
+    on(event: 'file-system-access-restricted', listener: (event: Event,
+                                                          details: FileSystemAccessRestrictedDetails,
+                                                          callback: (action: 'allow' | 'deny' | 'tryAgain') => void) => void): this;
+    off(event: 'file-system-access-restricted', listener: (event: Event,
+                                                          details: FileSystemAccessRestrictedDetails,
+                                                          callback: (action: 'allow' | 'deny' | 'tryAgain') => void) => void): this;
+    once(event: 'file-system-access-restricted', listener: (event: Event,
+                                                          details: FileSystemAccessRestrictedDetails,
+                                                          callback: (action: 'allow' | 'deny' | 'tryAgain') => void) => void): this;
+    addListener(event: 'file-system-access-restricted', listener: (event: Event,
+                                                          details: FileSystemAccessRestrictedDetails,
+                                                          callback: (action: 'allow' | 'deny' | 'tryAgain') => void) => void): this;
+    removeListener(event: 'file-system-access-restricted', listener: (event: Event,
+                                                          details: FileSystemAccessRestrictedDetails,
+                                                          callback: (action: 'allow' | 'deny' | 'tryAgain') => void) => void): this;
     /**
      * Emitted after `navigator.hid.requestDevice` has been called and
      * `select-hid-device` has fired if a new device becomes available before the
@@ -12551,9 +12576,12 @@ declare namespace Electron {
      * semitransparent backgrounds. This maps to
      * NSWorkspace.accessibilityDisplayShouldReduceTransparency
      *
+     * **Deprecated:** Use the new `nativeTheme.prefersReducedTransparency` API.
+     *
+     * @deprecated
      * @platform darwin
      */
-    accessibilityDisplayShouldReduceTransparency(): boolean;
+    accessibilityDisplayShouldReduceTransparency: boolean;
     /**
      * A `string` property that can be `dark`, `light` or `unknown`.
      *
@@ -15902,13 +15930,7 @@ declare namespace Electron {
      *
      * Before:
      *
-     * <img width="487" alt="Image Before Text Selection Adjustment"
-     * src="../images/web-contents-text-selection-before.png"/>
-     *
      * After:
-     *
-     * <img width="487" alt="Image After Text Selection Adjustment"
-     * src="../images/web-contents-text-selection-after.png"/>
      */
     adjustSelection(options: AdjustSelectionOptions): void;
     /**
@@ -19228,6 +19250,21 @@ declare namespace Electron {
     size: ('small' | 'normal' | 'large');
   }
 
+  interface FileSystemAccessRestrictedDetails {
+    /**
+     * The origin that initiated access to the blocked path.
+     */
+    origin: string;
+    /**
+     * Whether or not the path is a directory.
+     */
+    isDirectory: boolean;
+    /**
+     * The blocked path attempting to be accessed.
+     */
+    path: string;
+  }
+
   interface FindInPageOptions {
     /**
      * Whether to search forward or backward, defaults to `true`.
@@ -22005,6 +22042,7 @@ declare namespace Electron {
     type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
+    type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type ForkOptions = Electron.ForkOptions;
@@ -22352,6 +22390,7 @@ declare namespace Electron {
     type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
+    type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type ForkOptions = Electron.ForkOptions;
@@ -22629,6 +22668,7 @@ declare namespace Electron {
     type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
+    type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type ForkOptions = Electron.ForkOptions;
@@ -22903,6 +22943,7 @@ declare namespace Electron {
     type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
+    type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type ForkOptions = Electron.ForkOptions;
@@ -23267,6 +23308,7 @@ declare namespace Electron {
     type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
+    type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
     type FindInPageOptions = Electron.FindInPageOptions;
     type FocusOptions = Electron.FocusOptions;
     type ForkOptions = Electron.ForkOptions;
