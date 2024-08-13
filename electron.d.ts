@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.0-beta.4+wcus
+// Type definitions for Electron 32.0.0-beta.5+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -18212,7 +18212,8 @@ declare namespace Electron {
     website?: string;
     /**
      * Path to the app's icon in a JPEG or PNG file format. On Linux, will be shown as
-     * 64x64 pixels while retaining aspect ratio.
+     * 64x64 pixels while retaining aspect ratio. On Windows, a 48x48 PNG will result
+     * in the best visual quality.
      *
      * @platform linux,win32
      */
