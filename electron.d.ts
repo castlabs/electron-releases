@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.3.1+wcus
+// Type definitions for Electron 31.4.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9196,6 +9196,12 @@ declare namespace Electron {
      */
     readonly inForcedColorsMode: boolean;
     /**
+     * A `boolean` that indicates the whether the user has chosen via system
+     * accessibility settings to reduce transparency at the OS level.
+     *
+     */
+    readonly prefersReducedTransparency: boolean;
+    /**
      * A `boolean` for if the OS / Chromium currently has a dark mode enabled or is
      * being instructed to show a dark-style UI.  If you want to modify this value you
      * should use `themeSource` below.
@@ -18139,7 +18145,8 @@ declare namespace Electron {
     website?: string;
     /**
      * Path to the app's icon in a JPEG or PNG file format. On Linux, will be shown as
-     * 64x64 pixels while retaining aspect ratio.
+     * 64x64 pixels while retaining aspect ratio. On Windows, a 48x48 PNG will result
+     * in the best visual quality.
      *
      * @platform linux,win32
      */
