@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.0-beta.7+wcus
+// Type definitions for Electron 32.0.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -480,7 +480,7 @@ declare namespace Electron {
     addListener(event: 'gpu-info-update', listener: Function): this;
     removeListener(event: 'gpu-info-update', listener: Function): this;
     /**
-     * Emitted when `webContents` wants to do basic auth.
+     * Emitted when `webContents` or Utility process wants to do basic auth.
      *
      * The default behavior is to cancel all authentications. To override this you
      * should prevent the default behavior with `event.preventDefault()` and call
@@ -7256,32 +7256,32 @@ declare namespace Electron {
      *
      * On macOS, this displays a modal dialog that shows a message and certificate
      * information, and gives the user the option of trusting/importing the
-     * certificate. If you provide a `browserWindow` argument the dialog will be
-     * attached to the parent window, making it modal.
+     * certificate. If you provide a `window` argument the dialog will be attached to
+     * the parent window, making it modal.
      *
      * On Windows the options are more limited, due to the Win32 APIs used:
      *
      * * The `message` argument is not used, as the OS provides its own confirmation
      * dialog.
-     * * The `browserWindow` argument is ignored since it is not possible to make this
+     * * The `window` argument is ignored since it is not possible to make this
      * confirmation dialog modal.
      *
      * @platform darwin,win32
      */
-    showCertificateTrustDialog(browserWindow: BrowserWindow, options: CertificateTrustDialogOptions): Promise<void>;
+    showCertificateTrustDialog(window: BaseWindow, options: CertificateTrustDialogOptions): Promise<void>;
     /**
      * resolves when the certificate trust dialog is shown.
      *
      * On macOS, this displays a modal dialog that shows a message and certificate
      * information, and gives the user the option of trusting/importing the
-     * certificate. If you provide a `browserWindow` argument the dialog will be
-     * attached to the parent window, making it modal.
+     * certificate. If you provide a `window` argument the dialog will be attached to
+     * the parent window, making it modal.
      *
      * On Windows the options are more limited, due to the Win32 APIs used:
      *
      * * The `message` argument is not used, as the OS provides its own confirmation
      * dialog.
-     * * The `browserWindow` argument is ignored since it is not possible to make this
+     * * The `window` argument is ignored since it is not possible to make this
      * confirmation dialog modal.
      *
      * @platform darwin,win32
@@ -7305,10 +7305,10 @@ declare namespace Electron {
      *
      * Shows a message box.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      */
-    showMessageBox(browserWindow: BrowserWindow, options: MessageBoxOptions): Promise<Electron.MessageBoxReturnValue>;
+    showMessageBox(window: BaseWindow, options: MessageBoxOptions): Promise<Electron.MessageBoxReturnValue>;
     /**
      * resolves with a promise containing the following properties:
      *
@@ -7318,8 +7318,8 @@ declare namespace Electron {
      *
      * Shows a message box.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      */
     showMessageBox(options: MessageBoxOptions): Promise<Electron.MessageBoxReturnValue>;
     /**
@@ -7328,20 +7328,20 @@ declare namespace Electron {
      * Shows a message box, it will block the process until the message box is closed.
      * It returns the index of the clicked button.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal. If `browserWindow` is not shown dialog will not be
-     * attached to it. In such case it will be displayed as an independent window.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal. If `window` is not shown dialog will not be attached to it. In
+     * such case it will be displayed as an independent window.
      */
-    showMessageBoxSync(browserWindow: BrowserWindow, options: MessageBoxSyncOptions): number;
+    showMessageBoxSync(window: BaseWindow, options: MessageBoxSyncOptions): number;
     /**
      * the index of the clicked button.
      *
      * Shows a message box, it will block the process until the message box is closed.
      * It returns the index of the clicked button.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal. If `browserWindow` is not shown dialog will not be
-     * attached to it. In such case it will be displayed as an independent window.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal. If `window` is not shown dialog will not be attached to it. In
+     * such case it will be displayed as an independent window.
      */
     showMessageBoxSync(options: MessageBoxSyncOptions): number;
     /**
@@ -7355,8 +7355,8 @@ declare namespace Electron {
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
      * populated. (For return values, see table here.)
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed or selected
      * when you want to limit the user to a specific type. For example:
@@ -7369,7 +7369,7 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialog(browserWindow: BrowserWindow, options: OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
+    showOpenDialog(window: BaseWindow, options: OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
     /**
      * Resolve with an object containing the following:
      *
@@ -7381,8 +7381,8 @@ declare namespace Electron {
      * bookmark data. `securityScopedBookmarks` must be enabled for this to be
      * populated. (For return values, see table here.)
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed or selected
      * when you want to limit the user to a specific type. For example:
@@ -7400,8 +7400,8 @@ declare namespace Electron {
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed or selected
      * when you want to limit the user to a specific type. For example:
@@ -7414,13 +7414,13 @@ declare namespace Electron {
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      */
-    showOpenDialogSync(browserWindow: BrowserWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
+    showOpenDialogSync(window: BaseWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
      * the file paths chosen by the user; if the dialog is cancelled it returns
      * `undefined`.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed or selected
      * when you want to limit the user to a specific type. For example:
@@ -7444,8 +7444,8 @@ declare namespace Electron {
      * `securityScopedBookmarks` must be enabled for this to be present. (For return
      * values, see table here.)
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
@@ -7453,7 +7453,7 @@ declare namespace Electron {
      * **Note:** On macOS, using the asynchronous version is recommended to avoid
      * issues when expanding and collapsing the dialog.
      */
-    showSaveDialog(browserWindow: BrowserWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    showSaveDialog(window: BaseWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     /**
      * Resolve with an object containing the following:
      *
@@ -7464,8 +7464,8 @@ declare namespace Electron {
      * `securityScopedBookmarks` must be enabled for this to be present. (For return
      * values, see table here.)
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
@@ -7478,19 +7478,19 @@ declare namespace Electron {
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * an empty string.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
      */
-    showSaveDialogSync(browserWindow: BrowserWindow, options: SaveDialogSyncOptions): string;
+    showSaveDialogSync(window: BaseWindow, options: SaveDialogSyncOptions): string;
     /**
      * the path of the file chosen by the user; if the dialog is cancelled it returns
      * an empty string.
      *
-     * The `browserWindow` argument allows the dialog to attach itself to a parent
-     * window, making it modal.
+     * The `window` argument allows the dialog to attach itself to a parent window,
+     * making it modal.
      *
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
@@ -15261,23 +15261,23 @@ declare namespace Electron {
      * The usage is the same with the `login` event of `app`.
      */
     on(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     off(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
@@ -18314,6 +18314,7 @@ declare namespace Electron {
 
   interface AuthenticationResponseDetails {
     url: string;
+    pid: number;
   }
 
   interface AuthInfo {
@@ -19331,6 +19332,12 @@ declare namespace Electron {
      * @platform darwin
      */
     allowLoadingUnsignedLibraries?: boolean;
+    /**
+     * With this flag, all HTTP 401 and 407 network requests created via the net module
+     * will allow responding to them via the `app#login` event in the main process
+     * instead of the default `login` event on the `ClientRequest` object.
+     */
+    respondToAuthRequestsFromMainProcess?: boolean;
   }
 
   interface FoundInPageEvent extends DOMEvent {
@@ -19612,6 +19619,10 @@ declare namespace Electron {
      * files.
      */
     baseURLForDataURL?: string;
+  }
+
+  interface LoginAuthenticationResponseDetails {
+    url: string;
   }
 
   interface LoginItemSettings {
@@ -22069,6 +22080,7 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -22417,6 +22429,7 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -22695,6 +22708,7 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -22970,6 +22984,7 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -23335,6 +23350,7 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
+    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
