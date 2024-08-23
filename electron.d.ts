@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.0+wcus
+// Type definitions for Electron 33.0.0-alpha.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1577,6 +1577,11 @@ declare namespace Electron {
      * @platform linux,darwin
      */
     setBadgeCount(count?: number): boolean;
+    /**
+     * The handler is called when a password is needed to unlock a client certificate
+     * for `hostname`.
+     */
+    setClientCertRequestPasswordHandler(handler: (clientCertRequestParams: ClientCertRequestParams) => Promise<string>): void;
     /**
      * Sets or removes a custom Jump List for the application, and returns one of the
      * following strings:
@@ -9266,6 +9271,14 @@ declare namespace Electron {
     themeSource: ('system' | 'light' | 'dark');
   }
 
+  interface NavigationEntry {
+
+    // Docs: https://electronjs.org/docs/api/structures/navigation-entry
+
+    title: string;
+    url: string;
+  }
+
   class NavigationHistory {
 
     // Docs: https://electronjs.org/docs/api/navigation-history
@@ -9291,13 +9304,16 @@ declare namespace Electron {
      */
     getActiveIndex(): number;
     /**
-     * * `url` string - The URL of the navigation entry at the given index.
-     * * `title` string - The page title of the navigation entry at the given index.
+     * WebContents complete history.
+     */
+    getAllEntries(): NavigationEntry[];
+    /**
+     * Navigation entry at the given index.
      *
      * If index is out of bounds (greater than history length or less than 0), null
      * will be returned.
      */
-    getEntryAtIndex(index: number): EntryAtIndex;
+    getEntryAtIndex(index: number): NavigationEntry;
     /**
      * Makes the browser go back a web page.
      */
@@ -9318,6 +9334,13 @@ declare namespace Electron {
      * History length.
      */
     length(): number;
+    /**
+     * Removes the navigation entry at the given index. Can't remove entry at the
+     * "current active index".
+     *
+     * Whether the navigation entry was removed from the webContents history.
+     */
+    removeEntryAtIndex(index: number): boolean;
   }
 
   interface Net {
@@ -14098,6 +14121,10 @@ declare namespace Electron {
      * `RGB`.
      */
     setBackgroundColor(color: string): void;
+    /**
+     * **Note:** The area cutout of the view's border still captures clicks.
+     */
+    setBorderRadius(radius: number): void;
     setBounds(bounds: Rectangle): void;
     setVisible(visible: boolean): void;
     /**
@@ -16243,7 +16270,7 @@ declare namespace Electron {
     isAudioMuted(): boolean;
     /**
      * Whether this page is being captured. It returns true when the capturer count is
-     * large then 0.
+     * greater than 0.
      */
     isBeingCaptured(): boolean;
     /**
@@ -18465,6 +18492,21 @@ declare namespace Electron {
     quotas?: Array<'temporary' | 'syncable'>;
   }
 
+  interface ClientCertRequestParams {
+    /**
+     * the hostname of the site requiring a client certificate
+     */
+    hostname: string;
+    /**
+     * the token (or slot) name of the cryptographic device
+     */
+    tokenName: string;
+    /**
+     * whether there have been previous failed attempts at prompting the password
+     */
+    isRetry: boolean;
+  }
+
   interface ClientRequestConstructorOptions {
     /**
      * The HTTP request method. Defaults to the GET method.
@@ -18779,7 +18821,7 @@ declare namespace Electron {
      */
     name?: string;
     /**
-     * Retrieves cookies whose domains match or are subdomains of `domains`.
+     * Retrieves cookies whose domains match or are subdomains of `domain`.
      */
     domain?: string;
     /**
@@ -19219,17 +19261,6 @@ declare namespace Electron {
      * Upload rate in Bps. Defaults to 0 which will disable upload throttling.
      */
     uploadThroughput?: number;
-  }
-
-  interface EntryAtIndex {
-    /**
-     * The URL of the navigation entry at the given index.
-     */
-    url: string;
-    /**
-     * The page title of the navigation entry at the given index.
-     */
-    title: string;
   }
 
   interface FeedURLOptions {
@@ -22018,6 +22049,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
@@ -22051,7 +22083,6 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
-    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -22221,6 +22252,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
@@ -22367,6 +22399,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
@@ -22400,7 +22433,6 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
-    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -22570,6 +22602,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
@@ -22646,6 +22679,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
@@ -22679,7 +22713,6 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
-    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -22849,6 +22882,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
@@ -22922,6 +22956,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
@@ -22955,7 +22990,6 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
-    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -23125,6 +23159,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
@@ -23288,6 +23323,7 @@ declare namespace Electron {
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
+    type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
     type Config = Electron.Config;
@@ -23321,7 +23357,6 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
-    type EntryAtIndex = Electron.EntryAtIndex;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -23491,6 +23526,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
