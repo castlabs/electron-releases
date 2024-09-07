@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.1+wcus
+// Type definitions for Electron 32.0.2+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3695,6 +3695,15 @@ declare namespace Electron {
      */
     title?: string;
     /**
+     *  When using a frameless window in conjunction with
+     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
+     * that the standard window controls ("traffic lights" on macOS) are visible, this
+     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
+     * Variables. Specifying `true` will result in an overlay with default system
+     * colors. Default is `false`.
+     */
+    titleBarOverlay?: (TitleBarOverlay) | (boolean);
+    /**
      * The style of window title bar. Default is `default`. Possible values are:
      */
     titleBarStyle?: ('default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover');
@@ -6123,15 +6132,6 @@ declare namespace Electron {
      * `false` will cause the `ready-to-show` event to not fire.  Default is `true`.
      */
     paintWhenInitiallyHidden?: boolean;
-    /**
-     *  When using a frameless window in conjunction with
-     * `win.setWindowButtonVisibility(true)` on macOS or using a `titleBarStyle` so
-     * that the standard window controls ("traffic lights" on macOS) are visible, this
-     * property enables the Window Controls Overlay JavaScript APIs and CSS Environment
-     * Variables. Specifying `true` will result in an overlay with default system
-     * colors. Default is `false`.
-     */
-    titleBarOverlay?: (TitleBarOverlay) | (boolean);
     /**
      * Settings of web page's features.
      */
@@ -8813,7 +8813,7 @@ declare namespace Electron {
      * called with `menuItem.click(event, focusedWindow, focusedWebContents)`.
      *
      * * `event` KeyboardEvent
-     * * `focusedWindow` BrowserWindow
+     * * `focusedWindow` BaseWindow
      * * `focusedWebContents` WebContents
      */
     click: Function;
@@ -11662,7 +11662,7 @@ declare namespace Electron {
      *
      * Clears various different types of data.
      *
-     * This method clears more types of data and is more thourough than the
+     * This method clears more types of data and is more thorough than the
      * `clearStorageData` method.
      *
      * **Note:** Cookies are stored at a broader scope than origins. When removing
@@ -12862,9 +12862,9 @@ declare namespace Electron {
     mode: ('fixed' | 'free');
     /**
      * A `string` representing the style that selected items in the scrubber should
-     * have. This style is overlayed on top of the scrubber item instead of being
-     * placed behind it. Updating this value immediately updates the control in the
-     * touch bar. Possible values:
+     * have. This style is overlaid on top of the scrubber item instead of being placed
+     * behind it. Updating this value immediately updates the control in the touch bar.
+     * Possible values:
      *
      * * `background` - Maps to `[NSScrubberSelectionStyle roundedBackgroundStyle]`.
      * * `outline` - Maps to `[NSScrubberSelectionStyle outlineOverlayStyle]`.
@@ -17491,7 +17491,7 @@ declare namespace Electron {
      * where the File object passed in was constructed in JS and is not backed by a
      * file on disk an empty string is returned.
      *
-     * This method superceded the previous augmentation to the `File` object with the
+     * This method superseded the previous augmentation to the `File` object with the
      * `path` property.  An example is included below.
      */
     getPathForFile(file: File): string;
@@ -19713,10 +19713,10 @@ declare namespace Electron {
 
   interface MenuItemConstructorOptions {
     /**
-     * Will be called with `click(menuItem, browserWindow, event)` when the menu item
-     * is clicked.
+     * Will be called with `click(menuItem, window, event)` when the menu item is
+     * clicked.
      */
-    click?: (menuItem: MenuItem, browserWindow: (BrowserWindow) | (undefined), event: KeyboardEvent) => void;
+    click?: (menuItem: MenuItem, window: (BaseWindow) | (undefined), event: KeyboardEvent) => void;
     /**
      * Can be `undo`, `redo`, `cut`, `copy`, `paste`, `pasteAndMatchStyle`, `delete`,
      * `selectAll`, `reload`, `forceReload`, `toggleDevTools`, `resetZoom`, `zoomIn`,
@@ -20026,7 +20026,8 @@ declare namespace Electron {
      */
     silent?: boolean;
     /**
-     * An icon to use in the notification.
+     * An icon to use in the notification. If a string is passed, it must be a valid
+     * path to a local icon file.
      */
     icon?: (string) | (NativeImage);
     /**
