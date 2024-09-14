@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.0.2+wcus
+// Type definitions for Electron 32.1.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11925,12 +11925,18 @@ declare namespace Electron {
      * via the `navigator.mediaDevices.getDisplayMedia` API. Use the desktopCapturer
      * API to choose which stream(s) to grant access to.
      *
+     * `useSystemPicker` allows an application to use the system picker instead of
+     * providing a specific video source from `getSources`. This option is
+     * experimental, and currently available for MacOS 15+ only. If the system picker
+     * is available and `useSystemPicker` is set to `true`, the handler will not be
+     * invoked.
+     *
      * Passing a WebFrameMain object as a video or audio stream will capture the video
      * or audio stream from that frame.
      *
      * Passing `null` instead of a function resets the handler to its default state.
      */
-    setDisplayMediaRequestHandler(handler: ((request: DisplayMediaRequestHandlerHandlerRequest, callback: (streams: Streams) => void) => void) | (null)): void;
+    setDisplayMediaRequestHandler(handler: ((request: DisplayMediaRequestHandlerHandlerRequest, callback: (streams: Streams) => void) => void) | (null), opts?: DisplayMediaRequestHandlerOpts): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -19195,6 +19201,14 @@ declare namespace Electron {
     userGesture: boolean;
   }
 
+  interface DisplayMediaRequestHandlerOpts {
+    /**
+     * true if the available native system picker should be used. Default is `false`.
+     * _macOS_ _Experimental_
+     */
+    useSystemPicker: boolean;
+  }
+
   interface DownloadURLOptions {
     /**
      * HTTP request headers.
@@ -22050,6 +22064,7 @@ declare namespace Electron {
     type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
+    type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type EntryAtIndex = Electron.EntryAtIndex;
@@ -22399,6 +22414,7 @@ declare namespace Electron {
     type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
+    type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type EntryAtIndex = Electron.EntryAtIndex;
@@ -22678,6 +22694,7 @@ declare namespace Electron {
     type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
+    type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type EntryAtIndex = Electron.EntryAtIndex;
@@ -22954,6 +22971,7 @@ declare namespace Electron {
     type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
+    type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type EntryAtIndex = Electron.EntryAtIndex;
@@ -23320,6 +23338,7 @@ declare namespace Electron {
     type DidStartNavigationEvent = Electron.DidStartNavigationEvent;
     type DisplayBalloonOptions = Electron.DisplayBalloonOptions;
     type DisplayMediaRequestHandlerHandlerRequest = Electron.DisplayMediaRequestHandlerHandlerRequest;
+    type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
     type EntryAtIndex = Electron.EntryAtIndex;
