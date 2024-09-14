@@ -1,4 +1,4 @@
-// Type definitions for Electron 31.5.0+wcus
+// Type definitions for Electron 31.6.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
