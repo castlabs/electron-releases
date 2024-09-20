@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.1.0+wcus
+// Type definitions for Electron 32.1.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14074,6 +14074,10 @@ declare namespace Electron {
      * The bounds of this View, relative to its parent.
      */
     getBounds(): Rectangle;
+    /**
+     * If the view passed as a parameter is not a child of this view, this method is a
+     * no-op.
+     */
     removeChildView(view: View): void;
     /**
      * Examples of valid `color` values:
