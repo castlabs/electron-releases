@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.0-beta.4+wcus
+// Type definitions for Electron 33.0.0-beta.5+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -13985,6 +13985,89 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/utility-process
 
     static fork(modulePath: string, args?: string[], options?: ForkOptions): UtilityProcess;
+    /**
+     * Emitted when the child process needs to terminate due to non continuable error
+     * from V8.
+     *
+     * @experimental
+     */
+    on(event: 'error', listener: (
+                                  /**
+                                   * Type of error. One of the following values:
+                                   */
+                                  type: ('FatalError'),
+                                  /**
+                                   * Source location from where the error originated.
+                                   */
+                                  location: string,
+                                  /**
+                                   * `Node.js diagnostic report`.
+                                   */
+                                  report: string) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'error', listener: (
+                                  /**
+                                   * Type of error. One of the following values:
+                                   */
+                                  type: ('FatalError'),
+                                  /**
+                                   * Source location from where the error originated.
+                                   */
+                                  location: string,
+                                  /**
+                                   * `Node.js diagnostic report`.
+                                   */
+                                  report: string) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'error', listener: (
+                                  /**
+                                   * Type of error. One of the following values:
+                                   */
+                                  type: ('FatalError'),
+                                  /**
+                                   * Source location from where the error originated.
+                                   */
+                                  location: string,
+                                  /**
+                                   * `Node.js diagnostic report`.
+                                   */
+                                  report: string) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'error', listener: (
+                                  /**
+                                   * Type of error. One of the following values:
+                                   */
+                                  type: ('FatalError'),
+                                  /**
+                                   * Source location from where the error originated.
+                                   */
+                                  location: string,
+                                  /**
+                                   * `Node.js diagnostic report`.
+                                   */
+                                  report: string) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'error', listener: (
+                                  /**
+                                   * Type of error. One of the following values:
+                                   */
+                                  type: ('FatalError'),
+                                  /**
+                                   * Source location from where the error originated.
+                                   */
+                                  location: string,
+                                  /**
+                                   * `Node.js diagnostic report`.
+                                   */
+                                  report: string) => void): this;
     /**
      * Emitted after the child process ends.
      */
