@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.0-beta.5+wcus
+// Type definitions for Electron 33.0.0-beta.6+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -474,11 +474,11 @@ declare namespace Electron {
     /**
      * Emitted whenever there is a GPU info update.
      */
-    on(event: 'gpu-info-update', listener: Function): this;
-    off(event: 'gpu-info-update', listener: Function): this;
-    once(event: 'gpu-info-update', listener: Function): this;
-    addListener(event: 'gpu-info-update', listener: Function): this;
-    removeListener(event: 'gpu-info-update', listener: Function): this;
+    on(event: 'gpu-info-update', listener: () => void): this;
+    off(event: 'gpu-info-update', listener: () => void): this;
+    once(event: 'gpu-info-update', listener: () => void): this;
+    addListener(event: 'gpu-info-update', listener: () => void): this;
+    removeListener(event: 'gpu-info-update', listener: () => void): this;
     /**
      * Emitted when `webContents` or Utility process wants to do basic auth.
      *
@@ -941,11 +941,11 @@ declare namespace Electron {
      *
      * In most cases, you should do everything in the `ready` event handler.
      */
-    on(event: 'will-finish-launching', listener: Function): this;
-    off(event: 'will-finish-launching', listener: Function): this;
-    once(event: 'will-finish-launching', listener: Function): this;
-    addListener(event: 'will-finish-launching', listener: Function): this;
-    removeListener(event: 'will-finish-launching', listener: Function): this;
+    on(event: 'will-finish-launching', listener: () => void): this;
+    off(event: 'will-finish-launching', listener: () => void): this;
+    once(event: 'will-finish-launching', listener: () => void): this;
+    addListener(event: 'will-finish-launching', listener: () => void): this;
+    removeListener(event: 'will-finish-launching', listener: () => void): this;
     /**
      * Emitted when all windows have been closed and the application will quit. Calling
      * `event.preventDefault()` will prevent the default behavior, which is terminating
@@ -972,11 +972,11 @@ declare namespace Electron {
      * `will-quit` event, and in this case the `window-all-closed` event would not be
      * emitted.
      */
-    on(event: 'window-all-closed', listener: Function): this;
-    off(event: 'window-all-closed', listener: Function): this;
-    once(event: 'window-all-closed', listener: Function): this;
-    addListener(event: 'window-all-closed', listener: Function): this;
-    removeListener(event: 'window-all-closed', listener: Function): this;
+    on(event: 'window-all-closed', listener: () => void): this;
+    off(event: 'window-all-closed', listener: () => void): this;
+    once(event: 'window-all-closed', listener: () => void): this;
+    addListener(event: 'window-all-closed', listener: () => void): this;
+    removeListener(event: 'window-all-closed', listener: () => void): this;
     /**
      * Adds `path` to the recent documents list.
      *
@@ -1837,19 +1837,19 @@ declare namespace Electron {
      * perform actions before the windows are closed while a process is quitting, as
      * well as listening to `before-quit`.
      */
-    on(event: 'before-quit-for-update', listener: Function): this;
-    off(event: 'before-quit-for-update', listener: Function): this;
-    once(event: 'before-quit-for-update', listener: Function): this;
-    addListener(event: 'before-quit-for-update', listener: Function): this;
-    removeListener(event: 'before-quit-for-update', listener: Function): this;
+    on(event: 'before-quit-for-update', listener: () => void): this;
+    off(event: 'before-quit-for-update', listener: () => void): this;
+    once(event: 'before-quit-for-update', listener: () => void): this;
+    addListener(event: 'before-quit-for-update', listener: () => void): this;
+    removeListener(event: 'before-quit-for-update', listener: () => void): this;
     /**
      * Emitted when checking if an update has started.
      */
-    on(event: 'checking-for-update', listener: Function): this;
-    off(event: 'checking-for-update', listener: Function): this;
-    once(event: 'checking-for-update', listener: Function): this;
-    addListener(event: 'checking-for-update', listener: Function): this;
-    removeListener(event: 'checking-for-update', listener: Function): this;
+    on(event: 'checking-for-update', listener: () => void): this;
+    off(event: 'checking-for-update', listener: () => void): this;
+    once(event: 'checking-for-update', listener: () => void): this;
+    addListener(event: 'checking-for-update', listener: () => void): this;
+    removeListener(event: 'checking-for-update', listener: () => void): this;
     /**
      * Emitted when there is an error while updating.
      */
@@ -1862,11 +1862,11 @@ declare namespace Electron {
      * Emitted when there is an available update. The update is downloaded
      * automatically.
      */
-    on(event: 'update-available', listener: Function): this;
-    off(event: 'update-available', listener: Function): this;
-    once(event: 'update-available', listener: Function): this;
-    addListener(event: 'update-available', listener: Function): this;
-    removeListener(event: 'update-available', listener: Function): this;
+    on(event: 'update-available', listener: () => void): this;
+    off(event: 'update-available', listener: () => void): this;
+    once(event: 'update-available', listener: () => void): this;
+    addListener(event: 'update-available', listener: () => void): this;
+    removeListener(event: 'update-available', listener: () => void): this;
     /**
      * Emitted when an update has been downloaded.
      *
@@ -1903,11 +1903,11 @@ declare namespace Electron {
     /**
      * Emitted when there is no available update.
      */
-    on(event: 'update-not-available', listener: Function): this;
-    off(event: 'update-not-available', listener: Function): this;
-    once(event: 'update-not-available', listener: Function): this;
-    addListener(event: 'update-not-available', listener: Function): this;
-    removeListener(event: 'update-not-available', listener: Function): this;
+    on(event: 'update-not-available', listener: () => void): this;
+    off(event: 'update-not-available', listener: () => void): this;
+    once(event: 'update-not-available', listener: () => void): this;
+    addListener(event: 'update-not-available', listener: () => void): this;
+    removeListener(event: 'update-not-available', listener: () => void): this;
     /**
      * Asks the server whether there is an update. You must call `setFeedURL` before
      * using this API.
@@ -1997,11 +1997,11 @@ declare namespace Electron {
     /**
      * Emitted when the window loses focus.
      */
-    on(event: 'blur', listener: Function): this;
-    off(event: 'blur', listener: Function): this;
-    once(event: 'blur', listener: Function): this;
-    addListener(event: 'blur', listener: Function): this;
-    removeListener(event: 'blur', listener: Function): this;
+    on(event: 'blur', listener: (event: Event) => void): this;
+    off(event: 'blur', listener: (event: Event) => void): this;
+    once(event: 'blur', listener: (event: Event) => void): this;
+    addListener(event: 'blur', listener: (event: Event) => void): this;
+    removeListener(event: 'blur', listener: (event: Event) => void): this;
     /**
      * Emitted when the window is going to be closed. It's emitted before the
      * `beforeunload` and `unload` event of the DOM. Calling `event.preventDefault()`
@@ -2027,67 +2027,67 @@ declare namespace Electron {
      * Emitted when the window is closed. After you have received this event you should
      * remove the reference to the window and avoid using it any more.
      */
-    on(event: 'closed', listener: Function): this;
-    off(event: 'closed', listener: Function): this;
-    once(event: 'closed', listener: Function): this;
-    addListener(event: 'closed', listener: Function): this;
-    removeListener(event: 'closed', listener: Function): this;
+    on(event: 'closed', listener: () => void): this;
+    off(event: 'closed', listener: () => void): this;
+    once(event: 'closed', listener: () => void): this;
+    addListener(event: 'closed', listener: () => void): this;
+    removeListener(event: 'closed', listener: () => void): this;
     /**
      * Emitted when the window enters a full-screen state.
      */
-    on(event: 'enter-full-screen', listener: Function): this;
-    off(event: 'enter-full-screen', listener: Function): this;
-    once(event: 'enter-full-screen', listener: Function): this;
-    addListener(event: 'enter-full-screen', listener: Function): this;
-    removeListener(event: 'enter-full-screen', listener: Function): this;
+    on(event: 'enter-full-screen', listener: () => void): this;
+    off(event: 'enter-full-screen', listener: () => void): this;
+    once(event: 'enter-full-screen', listener: () => void): this;
+    addListener(event: 'enter-full-screen', listener: () => void): this;
+    removeListener(event: 'enter-full-screen', listener: () => void): this;
     /**
      * Emitted when the window gains focus.
      */
-    on(event: 'focus', listener: Function): this;
-    off(event: 'focus', listener: Function): this;
-    once(event: 'focus', listener: Function): this;
-    addListener(event: 'focus', listener: Function): this;
-    removeListener(event: 'focus', listener: Function): this;
+    on(event: 'focus', listener: (event: Event) => void): this;
+    off(event: 'focus', listener: (event: Event) => void): this;
+    once(event: 'focus', listener: (event: Event) => void): this;
+    addListener(event: 'focus', listener: (event: Event) => void): this;
+    removeListener(event: 'focus', listener: (event: Event) => void): this;
     /**
      * Emitted when the window is hidden.
      */
-    on(event: 'hide', listener: Function): this;
-    off(event: 'hide', listener: Function): this;
-    once(event: 'hide', listener: Function): this;
-    addListener(event: 'hide', listener: Function): this;
-    removeListener(event: 'hide', listener: Function): this;
+    on(event: 'hide', listener: () => void): this;
+    off(event: 'hide', listener: () => void): this;
+    once(event: 'hide', listener: () => void): this;
+    addListener(event: 'hide', listener: () => void): this;
+    removeListener(event: 'hide', listener: () => void): this;
     /**
      * Emitted when the window leaves a full-screen state.
      */
-    on(event: 'leave-full-screen', listener: Function): this;
-    off(event: 'leave-full-screen', listener: Function): this;
-    once(event: 'leave-full-screen', listener: Function): this;
-    addListener(event: 'leave-full-screen', listener: Function): this;
-    removeListener(event: 'leave-full-screen', listener: Function): this;
+    on(event: 'leave-full-screen', listener: () => void): this;
+    off(event: 'leave-full-screen', listener: () => void): this;
+    once(event: 'leave-full-screen', listener: () => void): this;
+    addListener(event: 'leave-full-screen', listener: () => void): this;
+    removeListener(event: 'leave-full-screen', listener: () => void): this;
     /**
      * Emitted when window is maximized.
      */
-    on(event: 'maximize', listener: Function): this;
-    off(event: 'maximize', listener: Function): this;
-    once(event: 'maximize', listener: Function): this;
-    addListener(event: 'maximize', listener: Function): this;
-    removeListener(event: 'maximize', listener: Function): this;
+    on(event: 'maximize', listener: () => void): this;
+    off(event: 'maximize', listener: () => void): this;
+    once(event: 'maximize', listener: () => void): this;
+    addListener(event: 'maximize', listener: () => void): this;
+    removeListener(event: 'maximize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
      */
-    on(event: 'minimize', listener: Function): this;
-    off(event: 'minimize', listener: Function): this;
-    once(event: 'minimize', listener: Function): this;
-    addListener(event: 'minimize', listener: Function): this;
-    removeListener(event: 'minimize', listener: Function): this;
+    on(event: 'minimize', listener: () => void): this;
+    off(event: 'minimize', listener: () => void): this;
+    once(event: 'minimize', listener: () => void): this;
+    addListener(event: 'minimize', listener: () => void): this;
+    removeListener(event: 'minimize', listener: () => void): this;
     /**
      * Emitted when the window is being moved to a new position.
      */
-    on(event: 'move', listener: Function): this;
-    off(event: 'move', listener: Function): this;
-    once(event: 'move', listener: Function): this;
-    addListener(event: 'move', listener: Function): this;
-    removeListener(event: 'move', listener: Function): this;
+    on(event: 'move', listener: () => void): this;
+    off(event: 'move', listener: () => void): this;
+    once(event: 'move', listener: () => void): this;
+    addListener(event: 'move', listener: () => void): this;
+    removeListener(event: 'move', listener: () => void): this;
     /**
      * Emitted once when the window is moved to a new position.
      *
@@ -2095,53 +2095,53 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'moved', listener: Function): this;
+    on(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'moved', listener: Function): this;
+    off(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'moved', listener: Function): this;
+    once(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'moved', listener: Function): this;
+    addListener(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'moved', listener: Function): this;
+    removeListener(event: 'moved', listener: () => void): this;
     /**
      * Emitted when the native new tab button is clicked.
      *
      * @platform darwin
      */
-    on(event: 'new-window-for-tab', listener: Function): this;
+    on(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'new-window-for-tab', listener: Function): this;
+    off(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'new-window-for-tab', listener: Function): this;
+    once(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'new-window-for-tab', listener: Function): this;
+    addListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'new-window-for-tab', listener: Function): this;
+    removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * Emitted after the window has been resized.
      */
-    on(event: 'resize', listener: Function): this;
-    off(event: 'resize', listener: Function): this;
-    once(event: 'resize', listener: Function): this;
-    addListener(event: 'resize', listener: Function): this;
-    removeListener(event: 'resize', listener: Function): this;
+    on(event: 'resize', listener: () => void): this;
+    off(event: 'resize', listener: () => void): this;
+    once(event: 'resize', listener: () => void): this;
+    addListener(event: 'resize', listener: () => void): this;
+    removeListener(event: 'resize', listener: () => void): this;
     /**
      * Emitted once when the window has finished being resized.
      *
@@ -2151,31 +2151,31 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'resized', listener: Function): this;
+    on(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'resized', listener: Function): this;
+    off(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'resized', listener: Function): this;
+    once(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'resized', listener: Function): this;
+    addListener(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'resized', listener: Function): this;
+    removeListener(event: 'resized', listener: () => void): this;
     /**
      * Emitted when the window is restored from a minimized state.
      */
-    on(event: 'restore', listener: Function): this;
-    off(event: 'restore', listener: Function): this;
-    once(event: 'restore', listener: Function): this;
-    addListener(event: 'restore', listener: Function): this;
-    removeListener(event: 'restore', listener: Function): this;
+    on(event: 'restore', listener: () => void): this;
+    off(event: 'restore', listener: () => void): this;
+    once(event: 'restore', listener: () => void): this;
+    addListener(event: 'restore', listener: () => void): this;
+    removeListener(event: 'restore', listener: () => void): this;
     /**
      * Emitted on trackpad rotation gesture. Continually emitted until rotation gesture
      * is ended. The `rotation` value on each emission is the angle in degrees rotated
@@ -2213,75 +2213,75 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    on(event: 'session-end', listener: Function): this;
+    on(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'session-end', listener: Function): this;
+    off(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'session-end', listener: Function): this;
+    once(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'session-end', listener: Function): this;
+    addListener(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'session-end', listener: Function): this;
+    removeListener(event: 'session-end', listener: () => void): this;
     /**
      * Emitted when the window opens a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-begin', listener: Function): this;
+    on(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-begin', listener: Function): this;
+    off(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-begin', listener: Function): this;
+    once(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-begin', listener: Function): this;
+    addListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-begin', listener: Function): this;
+    removeListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * Emitted when the window has closed a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-end', listener: Function): this;
+    on(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-end', listener: Function): this;
+    off(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-end', listener: Function): this;
+    once(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-end', listener: Function): this;
+    addListener(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-end', listener: Function): this;
+    removeListener(event: 'sheet-end', listener: () => void): this;
     /**
      * Emitted when the window is shown.
      */
-    on(event: 'show', listener: Function): this;
-    off(event: 'show', listener: Function): this;
-    once(event: 'show', listener: Function): this;
-    addListener(event: 'show', listener: Function): this;
-    removeListener(event: 'show', listener: Function): this;
+    on(event: 'show', listener: () => void): this;
+    off(event: 'show', listener: () => void): this;
+    once(event: 'show', listener: () => void): this;
+    addListener(event: 'show', listener: () => void): this;
+    removeListener(event: 'show', listener: () => void): this;
     /**
      * Emitted on 3-finger swipe. Possible directions are `up`, `right`, `down`,
      * `left`.
@@ -2367,11 +2367,11 @@ declare namespace Electron {
     /**
      * Emitted when the window exits from a maximized state.
      */
-    on(event: 'unmaximize', listener: Function): this;
-    off(event: 'unmaximize', listener: Function): this;
-    once(event: 'unmaximize', listener: Function): this;
-    addListener(event: 'unmaximize', listener: Function): this;
-    removeListener(event: 'unmaximize', listener: Function): this;
+    on(event: 'unmaximize', listener: () => void): this;
+    off(event: 'unmaximize', listener: () => void): this;
+    once(event: 'unmaximize', listener: () => void): this;
+    addListener(event: 'unmaximize', listener: () => void): this;
+    removeListener(event: 'unmaximize', listener: () => void): this;
     /**
      * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
      * will prevent the window from being moved.
@@ -2883,7 +2883,7 @@ declare namespace Electron {
      * setting this, the window is still a normal window, not a toolbox window which
      * can not be focused on.
      */
-    setAlwaysOnTop(flag: boolean, level?: 'normal' | 'floating' | 'torn-off-menu' | 'modal-panel' | 'main-menu' | 'status' | 'pop-up-menu' | 'screen-saver', relativeLevel?: number): void;
+    setAlwaysOnTop(flag: boolean, level?: 'normal' | 'floating' | 'torn-off-menu' | 'modal-panel' | 'main-menu' | 'status' | 'pop-up-menu' | 'screen-saver' | 'dock', relativeLevel?: number): void;
     /**
      * Sets the properties for the window's taskbar button.
      *
@@ -3960,19 +3960,19 @@ declare namespace Electron {
     /**
      * Emitted when the window loses focus.
      */
-    on(event: 'blur', listener: Function): this;
-    off(event: 'blur', listener: Function): this;
-    once(event: 'blur', listener: Function): this;
-    addListener(event: 'blur', listener: Function): this;
-    removeListener(event: 'blur', listener: Function): this;
+    on(event: 'blur', listener: () => void): this;
+    off(event: 'blur', listener: () => void): this;
+    once(event: 'blur', listener: () => void): this;
+    addListener(event: 'blur', listener: () => void): this;
+    removeListener(event: 'blur', listener: () => void): this;
     /**
      * Emitted when the window loses focus.
      */
-    on(event: 'blur', listener: Function): this;
-    off(event: 'blur', listener: Function): this;
-    once(event: 'blur', listener: Function): this;
-    addListener(event: 'blur', listener: Function): this;
-    removeListener(event: 'blur', listener: Function): this;
+    on(event: 'blur', listener: (event: Event) => void): this;
+    off(event: 'blur', listener: (event: Event) => void): this;
+    once(event: 'blur', listener: (event: Event) => void): this;
+    addListener(event: 'blur', listener: (event: Event) => void): this;
+    removeListener(event: 'blur', listener: (event: Event) => void): this;
     /**
      * Emitted when the window is going to be closed. It's emitted before the
      * `beforeunload` and `unload` event of the DOM. Calling `event.preventDefault()`
@@ -4019,148 +4019,148 @@ declare namespace Electron {
      * Emitted when the window is closed. After you have received this event you should
      * remove the reference to the window and avoid using it any more.
      */
-    on(event: 'closed', listener: Function): this;
-    off(event: 'closed', listener: Function): this;
-    once(event: 'closed', listener: Function): this;
-    addListener(event: 'closed', listener: Function): this;
-    removeListener(event: 'closed', listener: Function): this;
+    on(event: 'closed', listener: () => void): this;
+    off(event: 'closed', listener: () => void): this;
+    once(event: 'closed', listener: () => void): this;
+    addListener(event: 'closed', listener: () => void): this;
+    removeListener(event: 'closed', listener: () => void): this;
     /**
      * Emitted when the window is closed. After you have received this event you should
      * remove the reference to the window and avoid using it any more.
      */
-    on(event: 'closed', listener: Function): this;
-    off(event: 'closed', listener: Function): this;
-    once(event: 'closed', listener: Function): this;
-    addListener(event: 'closed', listener: Function): this;
-    removeListener(event: 'closed', listener: Function): this;
+    on(event: 'closed', listener: () => void): this;
+    off(event: 'closed', listener: () => void): this;
+    once(event: 'closed', listener: () => void): this;
+    addListener(event: 'closed', listener: () => void): this;
+    removeListener(event: 'closed', listener: () => void): this;
     /**
      * Emitted when the window enters a full-screen state.
      */
-    on(event: 'enter-full-screen', listener: Function): this;
-    off(event: 'enter-full-screen', listener: Function): this;
-    once(event: 'enter-full-screen', listener: Function): this;
-    addListener(event: 'enter-full-screen', listener: Function): this;
-    removeListener(event: 'enter-full-screen', listener: Function): this;
+    on(event: 'enter-full-screen', listener: () => void): this;
+    off(event: 'enter-full-screen', listener: () => void): this;
+    once(event: 'enter-full-screen', listener: () => void): this;
+    addListener(event: 'enter-full-screen', listener: () => void): this;
+    removeListener(event: 'enter-full-screen', listener: () => void): this;
     /**
      * Emitted when the window enters a full-screen state.
      */
-    on(event: 'enter-full-screen', listener: Function): this;
-    off(event: 'enter-full-screen', listener: Function): this;
-    once(event: 'enter-full-screen', listener: Function): this;
-    addListener(event: 'enter-full-screen', listener: Function): this;
-    removeListener(event: 'enter-full-screen', listener: Function): this;
+    on(event: 'enter-full-screen', listener: () => void): this;
+    off(event: 'enter-full-screen', listener: () => void): this;
+    once(event: 'enter-full-screen', listener: () => void): this;
+    addListener(event: 'enter-full-screen', listener: () => void): this;
+    removeListener(event: 'enter-full-screen', listener: () => void): this;
     /**
      * Emitted when the window enters a full-screen state triggered by HTML API.
      */
-    on(event: 'enter-html-full-screen', listener: Function): this;
-    off(event: 'enter-html-full-screen', listener: Function): this;
-    once(event: 'enter-html-full-screen', listener: Function): this;
-    addListener(event: 'enter-html-full-screen', listener: Function): this;
-    removeListener(event: 'enter-html-full-screen', listener: Function): this;
+    on(event: 'enter-html-full-screen', listener: () => void): this;
+    off(event: 'enter-html-full-screen', listener: () => void): this;
+    once(event: 'enter-html-full-screen', listener: () => void): this;
+    addListener(event: 'enter-html-full-screen', listener: () => void): this;
+    removeListener(event: 'enter-html-full-screen', listener: () => void): this;
     /**
      * Emitted when the window gains focus.
      */
-    on(event: 'focus', listener: Function): this;
-    off(event: 'focus', listener: Function): this;
-    once(event: 'focus', listener: Function): this;
-    addListener(event: 'focus', listener: Function): this;
-    removeListener(event: 'focus', listener: Function): this;
+    on(event: 'focus', listener: () => void): this;
+    off(event: 'focus', listener: () => void): this;
+    once(event: 'focus', listener: () => void): this;
+    addListener(event: 'focus', listener: () => void): this;
+    removeListener(event: 'focus', listener: () => void): this;
     /**
      * Emitted when the window gains focus.
      */
-    on(event: 'focus', listener: Function): this;
-    off(event: 'focus', listener: Function): this;
-    once(event: 'focus', listener: Function): this;
-    addListener(event: 'focus', listener: Function): this;
-    removeListener(event: 'focus', listener: Function): this;
+    on(event: 'focus', listener: (event: Event) => void): this;
+    off(event: 'focus', listener: (event: Event) => void): this;
+    once(event: 'focus', listener: (event: Event) => void): this;
+    addListener(event: 'focus', listener: (event: Event) => void): this;
+    removeListener(event: 'focus', listener: (event: Event) => void): this;
     /**
      * Emitted when the window is hidden.
      */
-    on(event: 'hide', listener: Function): this;
-    off(event: 'hide', listener: Function): this;
-    once(event: 'hide', listener: Function): this;
-    addListener(event: 'hide', listener: Function): this;
-    removeListener(event: 'hide', listener: Function): this;
+    on(event: 'hide', listener: () => void): this;
+    off(event: 'hide', listener: () => void): this;
+    once(event: 'hide', listener: () => void): this;
+    addListener(event: 'hide', listener: () => void): this;
+    removeListener(event: 'hide', listener: () => void): this;
     /**
      * Emitted when the window is hidden.
      */
-    on(event: 'hide', listener: Function): this;
-    off(event: 'hide', listener: Function): this;
-    once(event: 'hide', listener: Function): this;
-    addListener(event: 'hide', listener: Function): this;
-    removeListener(event: 'hide', listener: Function): this;
+    on(event: 'hide', listener: () => void): this;
+    off(event: 'hide', listener: () => void): this;
+    once(event: 'hide', listener: () => void): this;
+    addListener(event: 'hide', listener: () => void): this;
+    removeListener(event: 'hide', listener: () => void): this;
     /**
      * Emitted when the window leaves a full-screen state.
      */
-    on(event: 'leave-full-screen', listener: Function): this;
-    off(event: 'leave-full-screen', listener: Function): this;
-    once(event: 'leave-full-screen', listener: Function): this;
-    addListener(event: 'leave-full-screen', listener: Function): this;
-    removeListener(event: 'leave-full-screen', listener: Function): this;
+    on(event: 'leave-full-screen', listener: () => void): this;
+    off(event: 'leave-full-screen', listener: () => void): this;
+    once(event: 'leave-full-screen', listener: () => void): this;
+    addListener(event: 'leave-full-screen', listener: () => void): this;
+    removeListener(event: 'leave-full-screen', listener: () => void): this;
     /**
      * Emitted when the window leaves a full-screen state.
      */
-    on(event: 'leave-full-screen', listener: Function): this;
-    off(event: 'leave-full-screen', listener: Function): this;
-    once(event: 'leave-full-screen', listener: Function): this;
-    addListener(event: 'leave-full-screen', listener: Function): this;
-    removeListener(event: 'leave-full-screen', listener: Function): this;
+    on(event: 'leave-full-screen', listener: () => void): this;
+    off(event: 'leave-full-screen', listener: () => void): this;
+    once(event: 'leave-full-screen', listener: () => void): this;
+    addListener(event: 'leave-full-screen', listener: () => void): this;
+    removeListener(event: 'leave-full-screen', listener: () => void): this;
     /**
      * Emitted when the window leaves a full-screen state triggered by HTML API.
      */
-    on(event: 'leave-html-full-screen', listener: Function): this;
-    off(event: 'leave-html-full-screen', listener: Function): this;
-    once(event: 'leave-html-full-screen', listener: Function): this;
-    addListener(event: 'leave-html-full-screen', listener: Function): this;
-    removeListener(event: 'leave-html-full-screen', listener: Function): this;
+    on(event: 'leave-html-full-screen', listener: () => void): this;
+    off(event: 'leave-html-full-screen', listener: () => void): this;
+    once(event: 'leave-html-full-screen', listener: () => void): this;
+    addListener(event: 'leave-html-full-screen', listener: () => void): this;
+    removeListener(event: 'leave-html-full-screen', listener: () => void): this;
     /**
      * Emitted when window is maximized.
      */
-    on(event: 'maximize', listener: Function): this;
-    off(event: 'maximize', listener: Function): this;
-    once(event: 'maximize', listener: Function): this;
-    addListener(event: 'maximize', listener: Function): this;
-    removeListener(event: 'maximize', listener: Function): this;
+    on(event: 'maximize', listener: () => void): this;
+    off(event: 'maximize', listener: () => void): this;
+    once(event: 'maximize', listener: () => void): this;
+    addListener(event: 'maximize', listener: () => void): this;
+    removeListener(event: 'maximize', listener: () => void): this;
     /**
      * Emitted when window is maximized.
      */
-    on(event: 'maximize', listener: Function): this;
-    off(event: 'maximize', listener: Function): this;
-    once(event: 'maximize', listener: Function): this;
-    addListener(event: 'maximize', listener: Function): this;
-    removeListener(event: 'maximize', listener: Function): this;
+    on(event: 'maximize', listener: () => void): this;
+    off(event: 'maximize', listener: () => void): this;
+    once(event: 'maximize', listener: () => void): this;
+    addListener(event: 'maximize', listener: () => void): this;
+    removeListener(event: 'maximize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
      */
-    on(event: 'minimize', listener: Function): this;
-    off(event: 'minimize', listener: Function): this;
-    once(event: 'minimize', listener: Function): this;
-    addListener(event: 'minimize', listener: Function): this;
-    removeListener(event: 'minimize', listener: Function): this;
+    on(event: 'minimize', listener: () => void): this;
+    off(event: 'minimize', listener: () => void): this;
+    once(event: 'minimize', listener: () => void): this;
+    addListener(event: 'minimize', listener: () => void): this;
+    removeListener(event: 'minimize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
      */
-    on(event: 'minimize', listener: Function): this;
-    off(event: 'minimize', listener: Function): this;
-    once(event: 'minimize', listener: Function): this;
-    addListener(event: 'minimize', listener: Function): this;
-    removeListener(event: 'minimize', listener: Function): this;
+    on(event: 'minimize', listener: () => void): this;
+    off(event: 'minimize', listener: () => void): this;
+    once(event: 'minimize', listener: () => void): this;
+    addListener(event: 'minimize', listener: () => void): this;
+    removeListener(event: 'minimize', listener: () => void): this;
     /**
      * Emitted when the window is being moved to a new position.
      */
-    on(event: 'move', listener: Function): this;
-    off(event: 'move', listener: Function): this;
-    once(event: 'move', listener: Function): this;
-    addListener(event: 'move', listener: Function): this;
-    removeListener(event: 'move', listener: Function): this;
+    on(event: 'move', listener: () => void): this;
+    off(event: 'move', listener: () => void): this;
+    once(event: 'move', listener: () => void): this;
+    addListener(event: 'move', listener: () => void): this;
+    removeListener(event: 'move', listener: () => void): this;
     /**
      * Emitted when the window is being moved to a new position.
      */
-    on(event: 'move', listener: Function): this;
-    off(event: 'move', listener: Function): this;
-    once(event: 'move', listener: Function): this;
-    addListener(event: 'move', listener: Function): this;
-    removeListener(event: 'move', listener: Function): this;
+    on(event: 'move', listener: () => void): this;
+    off(event: 'move', listener: () => void): this;
+    once(event: 'move', listener: () => void): this;
+    addListener(event: 'move', listener: () => void): this;
+    removeListener(event: 'move', listener: () => void): this;
     /**
      * Emitted once when the window is moved to a new position.
      *
@@ -4168,23 +4168,23 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'moved', listener: Function): this;
+    on(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'moved', listener: Function): this;
+    off(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'moved', listener: Function): this;
+    once(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'moved', listener: Function): this;
+    addListener(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'moved', listener: Function): this;
+    removeListener(event: 'moved', listener: () => void): this;
     /**
      * Emitted once when the window is moved to a new position.
      *
@@ -4192,67 +4192,67 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'moved', listener: Function): this;
+    on(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'moved', listener: Function): this;
+    off(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'moved', listener: Function): this;
+    once(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'moved', listener: Function): this;
+    addListener(event: 'moved', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'moved', listener: Function): this;
+    removeListener(event: 'moved', listener: () => void): this;
     /**
      * Emitted when the native new tab button is clicked.
      *
      * @platform darwin
      */
-    on(event: 'new-window-for-tab', listener: Function): this;
+    on(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'new-window-for-tab', listener: Function): this;
+    off(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'new-window-for-tab', listener: Function): this;
+    once(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'new-window-for-tab', listener: Function): this;
+    addListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'new-window-for-tab', listener: Function): this;
+    removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * Emitted when the native new tab button is clicked.
      *
      * @platform darwin
      */
-    on(event: 'new-window-for-tab', listener: Function): this;
+    on(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'new-window-for-tab', listener: Function): this;
+    off(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'new-window-for-tab', listener: Function): this;
+    once(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'new-window-for-tab', listener: Function): this;
+    addListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'new-window-for-tab', listener: Function): this;
+    removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
      * Emitted when the document changed its title, calling `event.preventDefault()`
      * will prevent the native window's title from changing. `explicitSet` is false
@@ -4281,27 +4281,27 @@ declare namespace Electron {
      * "visible" and paint even though `show` is false.  This event will never fire if
      * you use `paintWhenInitiallyHidden: false`
      */
-    on(event: 'ready-to-show', listener: Function): this;
-    off(event: 'ready-to-show', listener: Function): this;
-    once(event: 'ready-to-show', listener: Function): this;
-    addListener(event: 'ready-to-show', listener: Function): this;
-    removeListener(event: 'ready-to-show', listener: Function): this;
+    on(event: 'ready-to-show', listener: () => void): this;
+    off(event: 'ready-to-show', listener: () => void): this;
+    once(event: 'ready-to-show', listener: () => void): this;
+    addListener(event: 'ready-to-show', listener: () => void): this;
+    removeListener(event: 'ready-to-show', listener: () => void): this;
     /**
      * Emitted after the window has been resized.
      */
-    on(event: 'resize', listener: Function): this;
-    off(event: 'resize', listener: Function): this;
-    once(event: 'resize', listener: Function): this;
-    addListener(event: 'resize', listener: Function): this;
-    removeListener(event: 'resize', listener: Function): this;
+    on(event: 'resize', listener: () => void): this;
+    off(event: 'resize', listener: () => void): this;
+    once(event: 'resize', listener: () => void): this;
+    addListener(event: 'resize', listener: () => void): this;
+    removeListener(event: 'resize', listener: () => void): this;
     /**
      * Emitted after the window has been resized.
      */
-    on(event: 'resize', listener: Function): this;
-    off(event: 'resize', listener: Function): this;
-    once(event: 'resize', listener: Function): this;
-    addListener(event: 'resize', listener: Function): this;
-    removeListener(event: 'resize', listener: Function): this;
+    on(event: 'resize', listener: () => void): this;
+    off(event: 'resize', listener: () => void): this;
+    once(event: 'resize', listener: () => void): this;
+    addListener(event: 'resize', listener: () => void): this;
+    removeListener(event: 'resize', listener: () => void): this;
     /**
      * Emitted once when the window has finished being resized.
      *
@@ -4311,23 +4311,23 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'resized', listener: Function): this;
+    on(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'resized', listener: Function): this;
+    off(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'resized', listener: Function): this;
+    once(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'resized', listener: Function): this;
+    addListener(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'resized', listener: Function): this;
+    removeListener(event: 'resized', listener: () => void): this;
     /**
      * Emitted once when the window has finished being resized.
      *
@@ -4337,47 +4337,47 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'resized', listener: Function): this;
+    on(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'resized', listener: Function): this;
+    off(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'resized', listener: Function): this;
+    once(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'resized', listener: Function): this;
+    addListener(event: 'resized', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'resized', listener: Function): this;
+    removeListener(event: 'resized', listener: () => void): this;
     /**
      * Emitted when the unresponsive web page becomes responsive again.
      */
-    on(event: 'responsive', listener: Function): this;
-    off(event: 'responsive', listener: Function): this;
-    once(event: 'responsive', listener: Function): this;
-    addListener(event: 'responsive', listener: Function): this;
-    removeListener(event: 'responsive', listener: Function): this;
+    on(event: 'responsive', listener: () => void): this;
+    off(event: 'responsive', listener: () => void): this;
+    once(event: 'responsive', listener: () => void): this;
+    addListener(event: 'responsive', listener: () => void): this;
+    removeListener(event: 'responsive', listener: () => void): this;
     /**
      * Emitted when the window is restored from a minimized state.
      */
-    on(event: 'restore', listener: Function): this;
-    off(event: 'restore', listener: Function): this;
-    once(event: 'restore', listener: Function): this;
-    addListener(event: 'restore', listener: Function): this;
-    removeListener(event: 'restore', listener: Function): this;
+    on(event: 'restore', listener: () => void): this;
+    off(event: 'restore', listener: () => void): this;
+    once(event: 'restore', listener: () => void): this;
+    addListener(event: 'restore', listener: () => void): this;
+    removeListener(event: 'restore', listener: () => void): this;
     /**
      * Emitted when the window is restored from a minimized state.
      */
-    on(event: 'restore', listener: Function): this;
-    off(event: 'restore', listener: Function): this;
-    once(event: 'restore', listener: Function): this;
-    addListener(event: 'restore', listener: Function): this;
-    removeListener(event: 'restore', listener: Function): this;
+    on(event: 'restore', listener: () => void): this;
+    off(event: 'restore', listener: () => void): this;
+    once(event: 'restore', listener: () => void): this;
+    addListener(event: 'restore', listener: () => void): this;
+    removeListener(event: 'restore', listener: () => void): this;
     /**
      * Emitted on trackpad rotation gesture. Continually emitted until rotation gesture
      * is ended. The `rotation` value on each emission is the angle in degrees rotated
@@ -4446,150 +4446,150 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    on(event: 'session-end', listener: Function): this;
+    on(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'session-end', listener: Function): this;
+    off(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'session-end', listener: Function): this;
+    once(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'session-end', listener: Function): this;
+    addListener(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'session-end', listener: Function): this;
+    removeListener(event: 'session-end', listener: () => void): this;
     /**
      * Emitted when window session is going to end due to force shutdown or machine
      * restart or session log off.
      *
      * @platform win32
      */
-    on(event: 'session-end', listener: Function): this;
+    on(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'session-end', listener: Function): this;
+    off(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'session-end', listener: Function): this;
+    once(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'session-end', listener: Function): this;
+    addListener(event: 'session-end', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'session-end', listener: Function): this;
+    removeListener(event: 'session-end', listener: () => void): this;
     /**
      * Emitted when the window opens a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-begin', listener: Function): this;
+    on(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-begin', listener: Function): this;
+    off(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-begin', listener: Function): this;
+    once(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-begin', listener: Function): this;
+    addListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-begin', listener: Function): this;
+    removeListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * Emitted when the window opens a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-begin', listener: Function): this;
+    on(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-begin', listener: Function): this;
+    off(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-begin', listener: Function): this;
+    once(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-begin', listener: Function): this;
+    addListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-begin', listener: Function): this;
+    removeListener(event: 'sheet-begin', listener: () => void): this;
     /**
      * Emitted when the window has closed a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-end', listener: Function): this;
+    on(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-end', listener: Function): this;
+    off(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-end', listener: Function): this;
+    once(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-end', listener: Function): this;
+    addListener(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-end', listener: Function): this;
+    removeListener(event: 'sheet-end', listener: () => void): this;
     /**
      * Emitted when the window has closed a sheet.
      *
      * @platform darwin
      */
-    on(event: 'sheet-end', listener: Function): this;
+    on(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'sheet-end', listener: Function): this;
+    off(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'sheet-end', listener: Function): this;
+    once(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'sheet-end', listener: Function): this;
+    addListener(event: 'sheet-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'sheet-end', listener: Function): this;
+    removeListener(event: 'sheet-end', listener: () => void): this;
     /**
      * Emitted when the window is shown.
      */
-    on(event: 'show', listener: Function): this;
-    off(event: 'show', listener: Function): this;
-    once(event: 'show', listener: Function): this;
-    addListener(event: 'show', listener: Function): this;
-    removeListener(event: 'show', listener: Function): this;
+    on(event: 'show', listener: () => void): this;
+    off(event: 'show', listener: () => void): this;
+    once(event: 'show', listener: () => void): this;
+    addListener(event: 'show', listener: () => void): this;
+    removeListener(event: 'show', listener: () => void): this;
     /**
      * Emitted when the window is shown.
      */
-    on(event: 'show', listener: Function): this;
-    off(event: 'show', listener: Function): this;
-    once(event: 'show', listener: Function): this;
-    addListener(event: 'show', listener: Function): this;
-    removeListener(event: 'show', listener: Function): this;
+    on(event: 'show', listener: () => void): this;
+    off(event: 'show', listener: () => void): this;
+    once(event: 'show', listener: () => void): this;
+    addListener(event: 'show', listener: () => void): this;
+    removeListener(event: 'show', listener: () => void): this;
     /**
      * Emitted on 3-finger swipe. Possible directions are `up`, `right`, `down`,
      * `left`.
@@ -4757,27 +4757,27 @@ declare namespace Electron {
     /**
      * Emitted when the window exits from a maximized state.
      */
-    on(event: 'unmaximize', listener: Function): this;
-    off(event: 'unmaximize', listener: Function): this;
-    once(event: 'unmaximize', listener: Function): this;
-    addListener(event: 'unmaximize', listener: Function): this;
-    removeListener(event: 'unmaximize', listener: Function): this;
+    on(event: 'unmaximize', listener: () => void): this;
+    off(event: 'unmaximize', listener: () => void): this;
+    once(event: 'unmaximize', listener: () => void): this;
+    addListener(event: 'unmaximize', listener: () => void): this;
+    removeListener(event: 'unmaximize', listener: () => void): this;
     /**
      * Emitted when the window exits from a maximized state.
      */
-    on(event: 'unmaximize', listener: Function): this;
-    off(event: 'unmaximize', listener: Function): this;
-    once(event: 'unmaximize', listener: Function): this;
-    addListener(event: 'unmaximize', listener: Function): this;
-    removeListener(event: 'unmaximize', listener: Function): this;
+    on(event: 'unmaximize', listener: () => void): this;
+    off(event: 'unmaximize', listener: () => void): this;
+    once(event: 'unmaximize', listener: () => void): this;
+    addListener(event: 'unmaximize', listener: () => void): this;
+    removeListener(event: 'unmaximize', listener: () => void): this;
     /**
      * Emitted when the web page becomes unresponsive.
      */
-    on(event: 'unresponsive', listener: Function): this;
-    off(event: 'unresponsive', listener: Function): this;
-    once(event: 'unresponsive', listener: Function): this;
-    addListener(event: 'unresponsive', listener: Function): this;
-    removeListener(event: 'unresponsive', listener: Function): this;
+    on(event: 'unresponsive', listener: () => void): this;
+    off(event: 'unresponsive', listener: () => void): this;
+    once(event: 'unresponsive', listener: () => void): this;
+    addListener(event: 'unresponsive', listener: () => void): this;
+    removeListener(event: 'unresponsive', listener: () => void): this;
     /**
      * Emitted before the window is moved. On Windows, calling `event.preventDefault()`
      * will prevent the window from being moved.
@@ -5492,7 +5492,7 @@ declare namespace Electron {
      * setting this, the window is still a normal window, not a toolbox window which
      * can not be focused on.
      */
-    setAlwaysOnTop(flag: boolean, level?: 'normal' | 'floating' | 'torn-off-menu' | 'modal-panel' | 'main-menu' | 'status' | 'pop-up-menu' | 'screen-saver', relativeLevel?: number): void;
+    setAlwaysOnTop(flag: boolean, level?: 'normal' | 'floating' | 'torn-off-menu' | 'modal-panel' | 'main-menu' | 'status' | 'pop-up-menu' | 'screen-saver' | 'dock', relativeLevel?: number): void;
     /**
      * Sets the properties for the window's taskbar button.
      *
@@ -6227,21 +6227,21 @@ declare namespace Electron {
      * Emitted when the `request` is aborted. The `abort` event will not be fired if
      * the `request` is already closed.
      */
-    on(event: 'abort', listener: Function): this;
-    off(event: 'abort', listener: Function): this;
-    once(event: 'abort', listener: Function): this;
-    addListener(event: 'abort', listener: Function): this;
-    removeListener(event: 'abort', listener: Function): this;
+    on(event: 'abort', listener: () => void): this;
+    off(event: 'abort', listener: () => void): this;
+    once(event: 'abort', listener: () => void): this;
+    addListener(event: 'abort', listener: () => void): this;
+    removeListener(event: 'abort', listener: () => void): this;
     /**
      * Emitted as the last event in the HTTP request-response transaction. The `close`
      * event indicates that no more events will be emitted on either the `request` or
      * `response` objects.
      */
-    on(event: 'close', listener: Function): this;
-    off(event: 'close', listener: Function): this;
-    once(event: 'close', listener: Function): this;
-    addListener(event: 'close', listener: Function): this;
-    removeListener(event: 'close', listener: Function): this;
+    on(event: 'close', listener: () => void): this;
+    off(event: 'close', listener: () => void): this;
+    once(event: 'close', listener: () => void): this;
+    addListener(event: 'close', listener: () => void): this;
+    removeListener(event: 'close', listener: () => void): this;
     /**
      * Emitted when the `net` module fails to issue a network request. Typically when
      * the `request` object emits an `error` event, a `close` event will subsequently
@@ -6276,11 +6276,11 @@ declare namespace Electron {
      * Emitted just after the last chunk of the `request`'s data has been written into
      * the `request` object.
      */
-    on(event: 'finish', listener: Function): this;
-    off(event: 'finish', listener: Function): this;
-    once(event: 'finish', listener: Function): this;
-    addListener(event: 'finish', listener: Function): this;
-    removeListener(event: 'finish', listener: Function): this;
+    on(event: 'finish', listener: () => void): this;
+    off(event: 'finish', listener: () => void): this;
+    once(event: 'finish', listener: () => void): this;
+    addListener(event: 'finish', listener: () => void): this;
+    removeListener(event: 'finish', listener: () => void): this;
     /**
      * Emitted when an authenticating proxy is asking for user credentials.
      *
@@ -8091,11 +8091,11 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/in-app-purchase
 
-    on(event: 'transactions-updated', listener: Function): this;
-    off(event: 'transactions-updated', listener: Function): this;
-    once(event: 'transactions-updated', listener: Function): this;
-    addListener(event: 'transactions-updated', listener: Function): this;
-    removeListener(event: 'transactions-updated', listener: Function): this;
+    on(event: 'transactions-updated', listener: () => void): this;
+    off(event: 'transactions-updated', listener: () => void): this;
+    once(event: 'transactions-updated', listener: () => void): this;
+    addListener(event: 'transactions-updated', listener: () => void): this;
+    removeListener(event: 'transactions-updated', listener: () => void): this;
     /**
      * whether a user can make a payment.
      */
@@ -8144,11 +8144,11 @@ declare namespace Electron {
     /**
      * Emitted when a request has been canceled during an ongoing HTTP transaction.
      */
-    on(event: 'aborted', listener: Function): this;
-    off(event: 'aborted', listener: Function): this;
-    once(event: 'aborted', listener: Function): this;
-    addListener(event: 'aborted', listener: Function): this;
-    removeListener(event: 'aborted', listener: Function): this;
+    on(event: 'aborted', listener: () => void): this;
+    off(event: 'aborted', listener: () => void): this;
+    once(event: 'aborted', listener: () => void): this;
+    addListener(event: 'aborted', listener: () => void): this;
+    removeListener(event: 'aborted', listener: () => void): this;
     /**
      * The `data` event is the usual method of transferring response data into
      * applicative code.
@@ -8181,26 +8181,42 @@ declare namespace Electron {
     /**
      * Indicates that response body has ended. Must be placed before 'data' event.
      */
-    on(event: 'end', listener: Function): this;
-    off(event: 'end', listener: Function): this;
-    once(event: 'end', listener: Function): this;
-    addListener(event: 'end', listener: Function): this;
-    removeListener(event: 'end', listener: Function): this;
+    on(event: 'end', listener: () => void): this;
+    off(event: 'end', listener: () => void): this;
+    once(event: 'end', listener: () => void): this;
+    addListener(event: 'end', listener: () => void): this;
+    removeListener(event: 'end', listener: () => void): this;
     /**
-     * Returns:
-     *
-     * `error` Error - Typically holds an error string identifying failure root cause.
-     *
      * Emitted when an error was encountered while streaming response data events. For
      * instance, if the server closes the underlying while the response is still
      * streaming, an `error` event will be emitted on the response object and a `close`
      * event will subsequently follow on the request object.
      */
-    on(event: 'error', listener: Function): this;
-    off(event: 'error', listener: Function): this;
-    once(event: 'error', listener: Function): this;
-    addListener(event: 'error', listener: Function): this;
-    removeListener(event: 'error', listener: Function): this;
+    on(event: 'error', listener: (
+                                  /**
+                                   * Typically holds an error string identifying failure root cause.
+                                   */
+                                  error: Error) => void): this;
+    off(event: 'error', listener: (
+                                  /**
+                                   * Typically holds an error string identifying failure root cause.
+                                   */
+                                  error: Error) => void): this;
+    once(event: 'error', listener: (
+                                  /**
+                                   * Typically holds an error string identifying failure root cause.
+                                   */
+                                  error: Error) => void): this;
+    addListener(event: 'error', listener: (
+                                  /**
+                                   * Typically holds an error string identifying failure root cause.
+                                   */
+                                  error: Error) => void): this;
+    removeListener(event: 'error', listener: (
+                                  /**
+                                   * Typically holds an error string identifying failure root cause.
+                                   */
+                                  error: Error) => void): this;
     /**
      * A `Record<string, string | string[]>` representing the HTTP response headers.
      * The `headers` object is formatted as follows:
@@ -8934,11 +8950,11 @@ declare namespace Electron {
     /**
      * Emitted when the remote end of a MessagePortMain object becomes disconnected.
      */
-    on(event: 'close', listener: Function): this;
-    off(event: 'close', listener: Function): this;
-    once(event: 'close', listener: Function): this;
-    addListener(event: 'close', listener: Function): this;
-    removeListener(event: 'close', listener: Function): this;
+    on(event: 'close', listener: () => void): this;
+    off(event: 'close', listener: () => void): this;
+    once(event: 'close', listener: () => void): this;
+    addListener(event: 'close', listener: () => void): this;
+    removeListener(event: 'close', listener: () => void): this;
     /**
      * Emitted when a MessagePortMain object receives a message.
      */
@@ -9191,11 +9207,11 @@ declare namespace Electron {
      * `shouldUseHighContrastColors` or `shouldUseInvertedColorScheme` has changed. You
      * will have to check them to determine which one has changed.
      */
-    on(event: 'updated', listener: Function): this;
-    off(event: 'updated', listener: Function): this;
-    once(event: 'updated', listener: Function): this;
-    addListener(event: 'updated', listener: Function): this;
-    removeListener(event: 'updated', listener: Function): this;
+    on(event: 'updated', listener: () => void): this;
+    off(event: 'updated', listener: () => void): this;
+    once(event: 'updated', listener: () => void): this;
+    addListener(event: 'updated', listener: () => void): this;
+    removeListener(event: 'updated', listener: () => void): this;
     /**
      * A `boolean` indicating whether Chromium is in forced colors mode, controlled by
      * system accessibility settings. Currently, Windows high contrast is the only
@@ -9842,75 +9858,75 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'lock-screen', listener: Function): this;
+    on(event: 'lock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'lock-screen', listener: Function): this;
+    off(event: 'lock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'lock-screen', listener: Function): this;
+    once(event: 'lock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'lock-screen', listener: Function): this;
+    addListener(event: 'lock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'lock-screen', listener: Function): this;
+    removeListener(event: 'lock-screen', listener: () => void): this;
     /**
      * Emitted when the system changes to AC power.
      *
      * @platform darwin,win32
      */
-    on(event: 'on-ac', listener: Function): this;
+    on(event: 'on-ac', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'on-ac', listener: Function): this;
+    off(event: 'on-ac', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'on-ac', listener: Function): this;
+    once(event: 'on-ac', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'on-ac', listener: Function): this;
+    addListener(event: 'on-ac', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'on-ac', listener: Function): this;
+    removeListener(event: 'on-ac', listener: () => void): this;
     /**
      * Emitted when system changes to battery power.
      *
      * @platform darwin
      */
-    on(event: 'on-battery', listener: Function): this;
+    on(event: 'on-battery', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'on-battery', listener: Function): this;
+    off(event: 'on-battery', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'on-battery', listener: Function): this;
+    once(event: 'on-battery', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'on-battery', listener: Function): this;
+    addListener(event: 'on-battery', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'on-battery', listener: Function): this;
+    removeListener(event: 'on-battery', listener: () => void): this;
     /**
      * Emitted when system is resuming.
      */
-    on(event: 'resume', listener: Function): this;
-    off(event: 'resume', listener: Function): this;
-    once(event: 'resume', listener: Function): this;
-    addListener(event: 'resume', listener: Function): this;
-    removeListener(event: 'resume', listener: Function): this;
+    on(event: 'resume', listener: () => void): this;
+    off(event: 'resume', listener: () => void): this;
+    once(event: 'resume', listener: () => void): this;
+    addListener(event: 'resume', listener: () => void): this;
+    removeListener(event: 'resume', listener: () => void): this;
     /**
      * Emitted when the system is about to reboot or shut down. If the event handler
      * invokes `e.preventDefault()`, Electron will attempt to delay system shutdown in
@@ -9919,23 +9935,23 @@ declare namespace Electron {
      *
      * @platform linux,darwin
      */
-    on(event: 'shutdown', listener: Function): this;
+    on(event: 'shutdown', listener: () => void): this;
     /**
      * @platform linux,darwin
      */
-    off(event: 'shutdown', listener: Function): this;
+    off(event: 'shutdown', listener: () => void): this;
     /**
      * @platform linux,darwin
      */
-    once(event: 'shutdown', listener: Function): this;
+    once(event: 'shutdown', listener: () => void): this;
     /**
      * @platform linux,darwin
      */
-    addListener(event: 'shutdown', listener: Function): this;
+    addListener(event: 'shutdown', listener: () => void): this;
     /**
      * @platform linux,darwin
      */
-    removeListener(event: 'shutdown', listener: Function): this;
+    removeListener(event: 'shutdown', listener: () => void): this;
     /**
      * Notification of a change in the operating system's advertised speed limit for
      * CPUs, in percent. Values below 100 indicate that the system is impairing
@@ -9943,31 +9959,31 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'speed-limit-change', listener: Function): this;
+    on(event: 'speed-limit-change', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'speed-limit-change', listener: Function): this;
+    off(event: 'speed-limit-change', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'speed-limit-change', listener: Function): this;
+    once(event: 'speed-limit-change', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'speed-limit-change', listener: Function): this;
+    addListener(event: 'speed-limit-change', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'speed-limit-change', listener: Function): this;
+    removeListener(event: 'speed-limit-change', listener: () => void): this;
     /**
      * Emitted when the system is suspending.
      */
-    on(event: 'suspend', listener: Function): this;
-    off(event: 'suspend', listener: Function): this;
-    once(event: 'suspend', listener: Function): this;
-    addListener(event: 'suspend', listener: Function): this;
-    removeListener(event: 'suspend', listener: Function): this;
+    on(event: 'suspend', listener: () => void): this;
+    off(event: 'suspend', listener: () => void): this;
+    once(event: 'suspend', listener: () => void): this;
+    addListener(event: 'suspend', listener: () => void): this;
+    removeListener(event: 'suspend', listener: () => void): this;
     /**
      * Emitted when the thermal state of the system changes. Notification of a change
      * in the thermal status of the system, such as entering a critical temperature
@@ -9984,91 +10000,91 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'thermal-state-change', listener: Function): this;
+    on(event: 'thermal-state-change', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'thermal-state-change', listener: Function): this;
+    off(event: 'thermal-state-change', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'thermal-state-change', listener: Function): this;
+    once(event: 'thermal-state-change', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'thermal-state-change', listener: Function): this;
+    addListener(event: 'thermal-state-change', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'thermal-state-change', listener: Function): this;
+    removeListener(event: 'thermal-state-change', listener: () => void): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
      * @platform darwin,win32
      */
-    on(event: 'unlock-screen', listener: Function): this;
+    on(event: 'unlock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'unlock-screen', listener: Function): this;
+    off(event: 'unlock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'unlock-screen', listener: Function): this;
+    once(event: 'unlock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'unlock-screen', listener: Function): this;
+    addListener(event: 'unlock-screen', listener: () => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'unlock-screen', listener: Function): this;
+    removeListener(event: 'unlock-screen', listener: () => void): this;
     /**
      * Emitted when a login session is activated. See documentation for more
      * information.
      *
      * @platform darwin
      */
-    on(event: 'user-did-become-active', listener: Function): this;
+    on(event: 'user-did-become-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'user-did-become-active', listener: Function): this;
+    off(event: 'user-did-become-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'user-did-become-active', listener: Function): this;
+    once(event: 'user-did-become-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'user-did-become-active', listener: Function): this;
+    addListener(event: 'user-did-become-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'user-did-become-active', listener: Function): this;
+    removeListener(event: 'user-did-become-active', listener: () => void): this;
     /**
      * Emitted when a login session is deactivated. See documentation for more
      * information.
      *
      * @platform darwin
      */
-    on(event: 'user-did-resign-active', listener: Function): this;
+    on(event: 'user-did-resign-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'user-did-resign-active', listener: Function): this;
+    off(event: 'user-did-resign-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'user-did-resign-active', listener: Function): this;
+    once(event: 'user-did-resign-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'user-did-resign-active', listener: Function): this;
+    addListener(event: 'user-did-resign-active', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'user-did-resign-active', listener: Function): this;
+    removeListener(event: 'user-did-resign-active', listener: () => void): this;
     /**
      * The system's current thermal state. Can be `unknown`, `nominal`, `fair`,
      * `serious`, or `critical`.
@@ -13115,68 +13131,68 @@ declare namespace Electron {
      *
      * @platform win32
      */
-    on(event: 'balloon-click', listener: Function): this;
+    on(event: 'balloon-click', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'balloon-click', listener: Function): this;
+    off(event: 'balloon-click', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'balloon-click', listener: Function): this;
+    once(event: 'balloon-click', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'balloon-click', listener: Function): this;
+    addListener(event: 'balloon-click', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'balloon-click', listener: Function): this;
+    removeListener(event: 'balloon-click', listener: () => void): this;
     /**
      * Emitted when the tray balloon is closed because of timeout or user manually
      * closes it.
      *
      * @platform win32
      */
-    on(event: 'balloon-closed', listener: Function): this;
+    on(event: 'balloon-closed', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'balloon-closed', listener: Function): this;
+    off(event: 'balloon-closed', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'balloon-closed', listener: Function): this;
+    once(event: 'balloon-closed', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'balloon-closed', listener: Function): this;
+    addListener(event: 'balloon-closed', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'balloon-closed', listener: Function): this;
+    removeListener(event: 'balloon-closed', listener: () => void): this;
     /**
      * Emitted when the tray balloon shows.
      *
      * @platform win32
      */
-    on(event: 'balloon-show', listener: Function): this;
+    on(event: 'balloon-show', listener: () => void): this;
     /**
      * @platform win32
      */
-    off(event: 'balloon-show', listener: Function): this;
+    off(event: 'balloon-show', listener: () => void): this;
     /**
      * @platform win32
      */
-    once(event: 'balloon-show', listener: Function): this;
+    once(event: 'balloon-show', listener: () => void): this;
     /**
      * @platform win32
      */
-    addListener(event: 'balloon-show', listener: Function): this;
+    addListener(event: 'balloon-show', listener: () => void): this;
     /**
      * @platform win32
      */
-    removeListener(event: 'balloon-show', listener: Function): this;
+    removeListener(event: 'balloon-show', listener: () => void): this;
     /**
      * Emitted when the tray icon is clicked.
      *
@@ -13275,89 +13291,89 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'drag-end', listener: Function): this;
+    on(event: 'drag-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'drag-end', listener: Function): this;
+    off(event: 'drag-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'drag-end', listener: Function): this;
+    once(event: 'drag-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'drag-end', listener: Function): this;
+    addListener(event: 'drag-end', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'drag-end', listener: Function): this;
+    removeListener(event: 'drag-end', listener: () => void): this;
     /**
      * Emitted when a drag operation enters the tray icon.
      *
      * @platform darwin
      */
-    on(event: 'drag-enter', listener: Function): this;
+    on(event: 'drag-enter', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'drag-enter', listener: Function): this;
+    off(event: 'drag-enter', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'drag-enter', listener: Function): this;
+    once(event: 'drag-enter', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'drag-enter', listener: Function): this;
+    addListener(event: 'drag-enter', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'drag-enter', listener: Function): this;
+    removeListener(event: 'drag-enter', listener: () => void): this;
     /**
      * Emitted when a drag operation exits the tray icon.
      *
      * @platform darwin
      */
-    on(event: 'drag-leave', listener: Function): this;
+    on(event: 'drag-leave', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'drag-leave', listener: Function): this;
+    off(event: 'drag-leave', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'drag-leave', listener: Function): this;
+    once(event: 'drag-leave', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'drag-leave', listener: Function): this;
+    addListener(event: 'drag-leave', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'drag-leave', listener: Function): this;
+    removeListener(event: 'drag-leave', listener: () => void): this;
     /**
      * Emitted when any dragged items are dropped on the tray icon.
      *
      * @platform darwin
      */
-    on(event: 'drop', listener: Function): this;
+    on(event: 'drop', listener: () => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'drop', listener: Function): this;
+    off(event: 'drop', listener: () => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'drop', listener: Function): this;
+    once(event: 'drop', listener: () => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'drop', listener: Function): this;
+    addListener(event: 'drop', listener: () => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'drop', listener: Function): this;
+    removeListener(event: 'drop', listener: () => void): this;
     /**
      * Emitted when dragged files are dropped in the tray icon.
      *
@@ -14113,11 +14129,11 @@ declare namespace Electron {
     /**
      * Emitted once the child process has spawned successfully.
      */
-    on(event: 'spawn', listener: Function): this;
-    off(event: 'spawn', listener: Function): this;
-    once(event: 'spawn', listener: Function): this;
-    addListener(event: 'spawn', listener: Function): this;
-    removeListener(event: 'spawn', listener: Function): this;
+    on(event: 'spawn', listener: () => void): this;
+    off(event: 'spawn', listener: () => void): this;
+    once(event: 'spawn', listener: () => void): this;
+    addListener(event: 'spawn', listener: () => void): this;
+    removeListener(event: 'spawn', listener: () => void): this;
     /**
      * Terminates the process gracefully. On POSIX, it uses SIGTERM but will ensure the
      * process is reaped on exit. This function returns true if the kill is successful,
@@ -14162,11 +14178,11 @@ declare namespace Electron {
      * Emitted when the view's bounds have changed in response to being laid out. The
      * new bounds can be retrieved with `view.getBounds()`.
      */
-    on(event: 'bounds-changed', listener: Function): this;
-    off(event: 'bounds-changed', listener: Function): this;
-    once(event: 'bounds-changed', listener: Function): this;
-    addListener(event: 'bounds-changed', listener: Function): this;
-    removeListener(event: 'bounds-changed', listener: Function): this;
+    on(event: 'bounds-changed', listener: () => void): this;
+    off(event: 'bounds-changed', listener: () => void): this;
+    once(event: 'bounds-changed', listener: () => void): this;
+    addListener(event: 'bounds-changed', listener: () => void): this;
+    removeListener(event: 'bounds-changed', listener: () => void): this;
     /**
      * View
      */
@@ -14301,11 +14317,11 @@ declare namespace Electron {
     /**
      * Emitted when the `WebContents` loses focus.
      */
-    on(event: 'blur', listener: Function): this;
-    off(event: 'blur', listener: Function): this;
-    once(event: 'blur', listener: Function): this;
-    addListener(event: 'blur', listener: Function): this;
-    removeListener(event: 'blur', listener: Function): this;
+    on(event: 'blur', listener: () => void): this;
+    off(event: 'blur', listener: () => void): this;
+    once(event: 'blur', listener: () => void): this;
+    addListener(event: 'blur', listener: () => void): this;
+    removeListener(event: 'blur', listener: () => void): this;
     /**
      * Emitted when failed to verify the `certificate` for `url`.
      *
@@ -14573,27 +14589,27 @@ declare namespace Electron {
     /**
      * Emitted when `webContents` is destroyed.
      */
-    on(event: 'destroyed', listener: Function): this;
-    off(event: 'destroyed', listener: Function): this;
-    once(event: 'destroyed', listener: Function): this;
-    addListener(event: 'destroyed', listener: Function): this;
-    removeListener(event: 'destroyed', listener: Function): this;
+    on(event: 'destroyed', listener: () => void): this;
+    off(event: 'destroyed', listener: () => void): this;
+    once(event: 'destroyed', listener: () => void): this;
+    addListener(event: 'destroyed', listener: () => void): this;
+    removeListener(event: 'destroyed', listener: () => void): this;
     /**
      * Emitted when DevTools is closed.
      */
-    on(event: 'devtools-closed', listener: Function): this;
-    off(event: 'devtools-closed', listener: Function): this;
-    once(event: 'devtools-closed', listener: Function): this;
-    addListener(event: 'devtools-closed', listener: Function): this;
-    removeListener(event: 'devtools-closed', listener: Function): this;
+    on(event: 'devtools-closed', listener: () => void): this;
+    off(event: 'devtools-closed', listener: () => void): this;
+    once(event: 'devtools-closed', listener: () => void): this;
+    addListener(event: 'devtools-closed', listener: () => void): this;
+    removeListener(event: 'devtools-closed', listener: () => void): this;
     /**
      * Emitted when DevTools is focused / opened.
      */
-    on(event: 'devtools-focused', listener: Function): this;
-    off(event: 'devtools-focused', listener: Function): this;
-    once(event: 'devtools-focused', listener: Function): this;
-    addListener(event: 'devtools-focused', listener: Function): this;
-    removeListener(event: 'devtools-focused', listener: Function): this;
+    on(event: 'devtools-focused', listener: () => void): this;
+    off(event: 'devtools-focused', listener: () => void): this;
+    once(event: 'devtools-focused', listener: () => void): this;
+    addListener(event: 'devtools-focused', listener: () => void): this;
+    removeListener(event: 'devtools-focused', listener: () => void): this;
     /**
      * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
      * a link in its context menu.
@@ -14626,19 +14642,19 @@ declare namespace Electron {
     /**
      * Emitted when DevTools is opened.
      */
-    on(event: 'devtools-opened', listener: Function): this;
-    off(event: 'devtools-opened', listener: Function): this;
-    once(event: 'devtools-opened', listener: Function): this;
-    addListener(event: 'devtools-opened', listener: Function): this;
-    removeListener(event: 'devtools-opened', listener: Function): this;
+    on(event: 'devtools-opened', listener: () => void): this;
+    off(event: 'devtools-opened', listener: () => void): this;
+    once(event: 'devtools-opened', listener: () => void): this;
+    addListener(event: 'devtools-opened', listener: () => void): this;
+    removeListener(event: 'devtools-opened', listener: () => void): this;
     /**
      * Emitted when the devtools window instructs the webContents to reload
      */
-    on(event: 'devtools-reload-page', listener: Function): this;
-    off(event: 'devtools-reload-page', listener: Function): this;
-    once(event: 'devtools-reload-page', listener: Function): this;
-    addListener(event: 'devtools-reload-page', listener: Function): this;
-    removeListener(event: 'devtools-reload-page', listener: Function): this;
+    on(event: 'devtools-reload-page', listener: () => void): this;
+    off(event: 'devtools-reload-page', listener: () => void): this;
+    once(event: 'devtools-reload-page', listener: () => void): this;
+    addListener(event: 'devtools-reload-page', listener: () => void): this;
+    removeListener(event: 'devtools-reload-page', listener: () => void): this;
     /**
      * Emitted when 'Search' is selected for text in its context menu.
      */
@@ -14824,11 +14840,11 @@ declare namespace Electron {
      * Emitted when the navigation is done, i.e. the spinner of the tab has stopped
      * spinning, and the `onload` event was dispatched.
      */
-    on(event: 'did-finish-load', listener: Function): this;
-    off(event: 'did-finish-load', listener: Function): this;
-    once(event: 'did-finish-load', listener: Function): this;
-    addListener(event: 'did-finish-load', listener: Function): this;
-    removeListener(event: 'did-finish-load', listener: Function): this;
+    on(event: 'did-finish-load', listener: () => void): this;
+    off(event: 'did-finish-load', listener: () => void): this;
+    once(event: 'did-finish-load', listener: () => void): this;
+    addListener(event: 'did-finish-load', listener: () => void): this;
+    removeListener(event: 'did-finish-load', listener: () => void): this;
     /**
      * Emitted when a frame has done navigation.
      */
@@ -15128,11 +15144,11 @@ declare namespace Electron {
     /**
      * Corresponds to the points in time when the spinner of the tab started spinning.
      */
-    on(event: 'did-start-loading', listener: Function): this;
-    off(event: 'did-start-loading', listener: Function): this;
-    once(event: 'did-start-loading', listener: Function): this;
-    addListener(event: 'did-start-loading', listener: Function): this;
-    removeListener(event: 'did-start-loading', listener: Function): this;
+    on(event: 'did-start-loading', listener: () => void): this;
+    off(event: 'did-start-loading', listener: () => void): this;
+    once(event: 'did-start-loading', listener: () => void): this;
+    addListener(event: 'did-start-loading', listener: () => void): this;
+    removeListener(event: 'did-start-loading', listener: () => void): this;
     /**
      * Emitted when any frame (including main) starts navigating.
      */
@@ -15244,27 +15260,27 @@ declare namespace Electron {
     /**
      * Corresponds to the points in time when the spinner of the tab stopped spinning.
      */
-    on(event: 'did-stop-loading', listener: Function): this;
-    off(event: 'did-stop-loading', listener: Function): this;
-    once(event: 'did-stop-loading', listener: Function): this;
-    addListener(event: 'did-stop-loading', listener: Function): this;
-    removeListener(event: 'did-stop-loading', listener: Function): this;
+    on(event: 'did-stop-loading', listener: () => void): this;
+    off(event: 'did-stop-loading', listener: () => void): this;
+    once(event: 'did-stop-loading', listener: () => void): this;
+    addListener(event: 'did-stop-loading', listener: () => void): this;
+    removeListener(event: 'did-stop-loading', listener: () => void): this;
     /**
      * Emitted when the document in the top-level frame is loaded.
      */
-    on(event: 'dom-ready', listener: Function): this;
-    off(event: 'dom-ready', listener: Function): this;
-    once(event: 'dom-ready', listener: Function): this;
-    addListener(event: 'dom-ready', listener: Function): this;
-    removeListener(event: 'dom-ready', listener: Function): this;
+    on(event: 'dom-ready', listener: () => void): this;
+    off(event: 'dom-ready', listener: () => void): this;
+    once(event: 'dom-ready', listener: () => void): this;
+    addListener(event: 'dom-ready', listener: () => void): this;
+    removeListener(event: 'dom-ready', listener: () => void): this;
     /**
      * Emitted when the window enters a full-screen state triggered by HTML API.
      */
-    on(event: 'enter-html-full-screen', listener: Function): this;
-    off(event: 'enter-html-full-screen', listener: Function): this;
-    once(event: 'enter-html-full-screen', listener: Function): this;
-    addListener(event: 'enter-html-full-screen', listener: Function): this;
-    removeListener(event: 'enter-html-full-screen', listener: Function): this;
+    on(event: 'enter-html-full-screen', listener: () => void): this;
+    off(event: 'enter-html-full-screen', listener: () => void): this;
+    once(event: 'enter-html-full-screen', listener: () => void): this;
+    addListener(event: 'enter-html-full-screen', listener: () => void): this;
+    removeListener(event: 'enter-html-full-screen', listener: () => void): this;
     /**
      * Emitted when the `WebContents` gains focus.
      *
@@ -15277,11 +15293,11 @@ declare namespace Electron {
      * focus change between different `WebContents` and `BrowserView` in the same
      * window.
      */
-    on(event: 'focus', listener: Function): this;
-    off(event: 'focus', listener: Function): this;
-    once(event: 'focus', listener: Function): this;
-    addListener(event: 'focus', listener: Function): this;
-    removeListener(event: 'focus', listener: Function): this;
+    on(event: 'focus', listener: () => void): this;
+    off(event: 'focus', listener: () => void): this;
+    once(event: 'focus', listener: () => void): this;
+    addListener(event: 'focus', listener: () => void): this;
+    removeListener(event: 'focus', listener: () => void): this;
     /**
      * Emitted when a result is available for `webContents.findInPage` request.
      */
@@ -15370,11 +15386,11 @@ declare namespace Electron {
     /**
      * Emitted when the window leaves a full-screen state triggered by HTML API.
      */
-    on(event: 'leave-html-full-screen', listener: Function): this;
-    off(event: 'leave-html-full-screen', listener: Function): this;
-    once(event: 'leave-html-full-screen', listener: Function): this;
-    addListener(event: 'leave-html-full-screen', listener: Function): this;
-    removeListener(event: 'leave-html-full-screen', listener: Function): this;
+    on(event: 'leave-html-full-screen', listener: () => void): this;
+    off(event: 'leave-html-full-screen', listener: () => void): this;
+    once(event: 'leave-html-full-screen', listener: () => void): this;
+    addListener(event: 'leave-html-full-screen', listener: () => void): this;
+    removeListener(event: 'leave-html-full-screen', listener: () => void): this;
     /**
      * Emitted when `webContents` wants to do basic auth.
      *
@@ -15403,19 +15419,19 @@ declare namespace Electron {
     /**
      * Emitted when media is paused or done playing.
      */
-    on(event: 'media-paused', listener: Function): this;
-    off(event: 'media-paused', listener: Function): this;
-    once(event: 'media-paused', listener: Function): this;
-    addListener(event: 'media-paused', listener: Function): this;
-    removeListener(event: 'media-paused', listener: Function): this;
+    on(event: 'media-paused', listener: () => void): this;
+    off(event: 'media-paused', listener: () => void): this;
+    once(event: 'media-paused', listener: () => void): this;
+    addListener(event: 'media-paused', listener: () => void): this;
+    removeListener(event: 'media-paused', listener: () => void): this;
     /**
      * Emitted when media starts playing.
      */
-    on(event: 'media-started-playing', listener: Function): this;
-    off(event: 'media-started-playing', listener: Function): this;
-    once(event: 'media-started-playing', listener: Function): this;
-    addListener(event: 'media-started-playing', listener: Function): this;
-    removeListener(event: 'media-started-playing', listener: Function): this;
+    on(event: 'media-started-playing', listener: () => void): this;
+    off(event: 'media-started-playing', listener: () => void): this;
+    once(event: 'media-started-playing', listener: () => void): this;
+    addListener(event: 'media-started-playing', listener: () => void): this;
+    removeListener(event: 'media-started-playing', listener: () => void): this;
     /**
      * Emitted when page receives favicon urls.
      */
@@ -15587,11 +15603,11 @@ declare namespace Electron {
     /**
      * Emitted when the unresponsive web page becomes responsive again.
      */
-    on(event: 'responsive', listener: Function): this;
-    off(event: 'responsive', listener: Function): this;
-    once(event: 'responsive', listener: Function): this;
-    addListener(event: 'responsive', listener: Function): this;
-    removeListener(event: 'responsive', listener: Function): this;
+    on(event: 'responsive', listener: () => void): this;
+    off(event: 'responsive', listener: () => void): this;
+    once(event: 'responsive', listener: () => void): this;
+    addListener(event: 'responsive', listener: () => void): this;
+    removeListener(event: 'responsive', listener: () => void): this;
     /**
      * Emitted when a bluetooth device needs to be selected when a call to
      * `navigator.bluetooth.requestDevice` is made. `callback` should be called with
@@ -15650,11 +15666,11 @@ declare namespace Electron {
     /**
      * Emitted when the web page becomes unresponsive.
      */
-    on(event: 'unresponsive', listener: Function): this;
-    off(event: 'unresponsive', listener: Function): this;
-    once(event: 'unresponsive', listener: Function): this;
-    addListener(event: 'unresponsive', listener: Function): this;
-    removeListener(event: 'unresponsive', listener: Function): this;
+    on(event: 'unresponsive', listener: () => void): this;
+    off(event: 'unresponsive', listener: () => void): this;
+    once(event: 'unresponsive', listener: () => void): this;
+    addListener(event: 'unresponsive', listener: () => void): this;
+    removeListener(event: 'unresponsive', listener: () => void): this;
     /**
      * Emitted when mouse moves over a link or the keyboard moves the focus to a link.
      */
@@ -16849,11 +16865,11 @@ declare namespace Electron {
      * Emitted when the view's bounds have changed in response to being laid out. The
      * new bounds can be retrieved with `view.getBounds()`.
      */
-    on(event: 'bounds-changed', listener: Function): this;
-    off(event: 'bounds-changed', listener: Function): this;
-    once(event: 'bounds-changed', listener: Function): this;
-    addListener(event: 'bounds-changed', listener: Function): this;
-    removeListener(event: 'bounds-changed', listener: Function): this;
+    on(event: 'bounds-changed', listener: () => void): this;
+    off(event: 'bounds-changed', listener: () => void): this;
+    once(event: 'bounds-changed', listener: () => void): this;
+    addListener(event: 'bounds-changed', listener: () => void): this;
+    removeListener(event: 'bounds-changed', listener: () => void): this;
     /**
      * WebContentsView
      */
@@ -17072,11 +17088,11 @@ declare namespace Electron {
     /**
      * Emitted when the document is loaded.
      */
-    on(event: 'dom-ready', listener: Function): this;
-    off(event: 'dom-ready', listener: Function): this;
-    once(event: 'dom-ready', listener: Function): this;
-    addListener(event: 'dom-ready', listener: Function): this;
-    removeListener(event: 'dom-ready', listener: Function): this;
+    on(event: 'dom-ready', listener: () => void): this;
+    off(event: 'dom-ready', listener: () => void): this;
+    once(event: 'dom-ready', listener: () => void): this;
+    addListener(event: 'dom-ready', listener: () => void): this;
+    removeListener(event: 'dom-ready', listener: () => void): this;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
      * execution throws or results in a rejected promise.
@@ -18674,12 +18690,12 @@ declare namespace Electron {
      */
     origin?: string;
     /**
-     * can be `""`, `no-referrer`, `no-referrer-when-downgrade`, `origin`,
+     * can be "", `no-referrer`, `no-referrer-when-downgrade`, `origin`,
      * `origin-when-cross-origin`, `unsafe-url`, `same-origin`, `strict-origin`, or
      * `strict-origin-when-cross-origin`. Defaults to
      * `strict-origin-when-cross-origin`.
      */
-    referrerPolicy?: string;
+    referrerPolicy?: ('' | 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'unsafe-url' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin');
     /**
      * can be `default`, `no-store`, `reload`, `no-cache`, `force-cache` or
      * `only-if-cached`.
@@ -23782,11 +23798,11 @@ declare namespace NodeJS {
      * Emitted when Electron has loaded its internal initialization script and is
      * beginning to load the web page or the main script.
      */
-    on(event: 'loaded', listener: Function): this;
-    off(event: 'loaded', listener: Function): this;
-    once(event: 'loaded', listener: Function): this;
-    addListener(event: 'loaded', listener: Function): this;
-    removeListener(event: 'loaded', listener: Function): this;
+    on(event: 'loaded', listener: () => void): this;
+    off(event: 'loaded', listener: () => void): this;
+    once(event: 'loaded', listener: () => void): this;
+    addListener(event: 'loaded', listener: () => void): this;
+    removeListener(event: 'loaded', listener: () => void): this;
     on(eventName: string | symbol, listener: (...args: any[]) => void): this;
     off(eventName: string | symbol, listener: (...args: any[]) => void): this;
     once(eventName: string | symbol, listener: (...args: any[]) => void): this;
