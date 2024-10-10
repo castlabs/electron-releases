@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.0-beta.8+wcus
+// Type definitions for Electron 33.0.0-beta.9+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -18930,7 +18930,7 @@ declare namespace Electron {
      */
     name?: string;
     /**
-     * Retrieves cookies whose domains match or are subdomains of `domain`.
+     * Retrieves cookies whose domains match or are subdomains of `domains`.
      */
     domain?: string;
     /**
