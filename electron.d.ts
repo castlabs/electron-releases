@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.0-beta.10+wcus
+// Type definitions for Electron 33.0.0-beta.11+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14004,6 +14004,9 @@ declare namespace Electron {
     /**
      * Emitted when the child process needs to terminate due to non continuable error
      * from V8.
+     *
+     * No matter if you listen to the `error` event, the `exit` event will be emitted
+     * after the child process terminates.
      *
      * @experimental
      */
