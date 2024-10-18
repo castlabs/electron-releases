@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.0+wcus
+// Type definitions for Electron 34.0.0-alpha.1+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8372,10 +8372,11 @@ declare namespace Electron {
      */
     sender: WebContents;
     /**
-     * The frame that sent this message
+     * The frame that sent this message. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
      *
      */
-    readonly senderFrame: WebFrameMain;
+    readonly senderFrame: (WebFrameMain) | (null);
   }
 
   interface IpcMainInvokeEvent extends Event {
@@ -8395,10 +8396,11 @@ declare namespace Electron {
      */
     sender: WebContents;
     /**
-     * The frame that sent this message
+     * The frame that sent this message. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
      *
      */
-    readonly senderFrame: WebFrameMain;
+    readonly senderFrame: (WebFrameMain) | (null);
   }
 
   interface IpcRenderer extends NodeJS.EventEmitter {
@@ -9747,6 +9749,24 @@ declare namespace Electron {
      * The text entered or chosen by the user.
      */
     userText?: string;
+  }
+
+  interface OffscreenSharedTexture {
+
+    // Docs: https://electronjs.org/docs/api/structures/offscreen-shared-texture
+
+    /**
+     * Release the resources. The `texture` cannot be directly passed to another
+     * process, users need to maintain texture lifecycles in main process, but it is
+     * safe to pass the `textureInfo` to another process. Only a limited number of
+     * textures can exist at the same time, so it's important that you call
+     * `texture.release()` as soon as you're done with the texture.
+     */
+    release: () => void;
+    /**
+     * The shared texture info.
+     */
+    textureInfo: TextureInfo;
   }
 
   interface OpenExternalPermissionRequest extends PermissionRequest {
@@ -15485,32 +15505,43 @@ declare namespace Electron {
     /**
      * Emitted when a new frame is generated. Only the dirty area is passed in the
      * buffer.
+     *
+     * When using shared texture (set `webPreferences.offscreen.useSharedTexture` to
+     * `true`) feature, you can pass the texture handle to external rendering pipeline
+     * without the overhead of copying data between CPU and GPU memory, with Chromium's
+     * hardware acceleration support. This feature is helpful for high-performance
+     * rendering scenarios.
+     *
+     * Only a limited number of textures can exist at the same time, so it's important
+     * that you call `texture.release()` as soon as you're done with the texture. By
+     * managing the texture lifecycle by yourself, you can safely pass the
+     * `texture.textureInfo` to other processes through IPC.
      */
-    on(event: 'paint', listener: (event: Event,
+    on(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
                                   /**
                                    * The image data of the whole frame.
                                    */
                                   image: NativeImage) => void): this;
-    off(event: 'paint', listener: (event: Event,
+    off(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
                                   /**
                                    * The image data of the whole frame.
                                    */
                                   image: NativeImage) => void): this;
-    once(event: 'paint', listener: (event: Event,
+    once(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
                                   /**
                                    * The image data of the whole frame.
                                    */
                                   image: NativeImage) => void): this;
-    addListener(event: 'paint', listener: (event: Event,
+    addListener(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
                                   /**
                                    * The image data of the whole frame.
                                    */
                                   image: NativeImage) => void): this;
-    removeListener(event: 'paint', listener: (event: Event,
+    removeListener(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
                                   /**
                                    * The image data of the whole frame.
@@ -17108,6 +17139,10 @@ declare namespace Electron {
      */
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
     /**
+     * Whether the frame is destroyed.
+     */
+    isDestroyed(): boolean;
+    /**
      * Send a message to the renderer process, optionally transferring ownership of
      * zero or more `MessagePortMain` objects.
      *
@@ -17133,6 +17168,14 @@ declare namespace Electron {
      * `ipcRenderer` module.
      */
     send(channel: string, ...args: any[]): void;
+    /**
+     * A `Boolean` representing whether the frame is detached from the frame tree. If a
+     * frame is accessed while the corresponding page is running any unload listeners,
+     * it may become detached as the newly navigated page replaced it in the frame
+     * tree.
+     *
+     */
+    readonly detached: boolean;
     /**
      * A `WebFrameMain[]` collection containing the direct descendents of `frame`.
      *
@@ -17387,7 +17430,7 @@ declare namespace Electron {
      * Whether to enable offscreen rendering for the browser window. Defaults to
      * `false`. See the offscreen rendering tutorial for more details.
      */
-    offscreen?: boolean;
+    offscreen?: (Offscreen) | (boolean);
     /**
      * Sets the session used by the page according to the session's partition string.
      * If `partition` starts with `persist:`, the page will use a persistent session
@@ -18519,7 +18562,11 @@ declare namespace Electron {
      * The type of pairing prompt being requested. One of the following values:
      */
     pairingKind: ('confirm' | 'confirmPin' | 'providePin');
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this handler. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
     /**
      * The pin value to verify if `pairingKind` is `confirmPin`.
      */
@@ -18802,9 +18849,10 @@ declare namespace Electron {
      */
     y: number;
     /**
-     * Frame from which the context menu was invoked.
+     * Frame from which the context menu was invoked. May be `null` if accessed after
+     * the frame has either navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * URL of the link that encloses the node the context menu was invoked on.
      */
@@ -19328,9 +19376,10 @@ declare namespace Electron {
 
   interface DisplayMediaRequestHandlerHandlerRequest {
     /**
-     * Frame that is requesting access to media.
+     * Frame that is requesting access to media. May be `null` if accessed after the
+     * frame has either navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * Origin of the page making the request.
      */
@@ -19496,7 +19545,11 @@ declare namespace Electron {
   }
 
   interface FrameCreatedDetails {
-    frame: WebFrameMain;
+    /**
+     * The created frame. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface FromPartitionOptions {
@@ -19573,12 +19626,20 @@ declare namespace Electron {
 
   interface HidDeviceAddedDetails {
     device: HIDDevice;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface HidDeviceRemovedDetails {
     device: HIDDevice;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface HidDeviceRevokedDetails {
@@ -20234,13 +20295,27 @@ declare namespace Electron {
     toastXml?: string;
   }
 
+  interface Offscreen {
+    /**
+     * Whether to use GPU shared texture for accelerated paint event. Defaults to
+     * `false`. See the offscreen rendering tutorial for more details.
+     *
+     * @experimental
+     */
+    useSharedTexture?: boolean;
+  }
+
   interface OnBeforeRedirectListenerDetails {
     id: number;
     url: string;
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20265,7 +20340,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20282,7 +20361,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20300,7 +20383,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20321,7 +20408,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20342,7 +20433,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20361,7 +20456,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20384,7 +20483,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -21029,17 +21132,29 @@ declare namespace Electron {
 
   interface SelectHidDeviceDetails {
     deviceList: HIDDevice[];
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface SelectUsbDeviceDetails {
     deviceList: USBDevice[];
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface SerialPortRevokedDetails {
     port: SerialPort;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
     /**
      * The origin that the device has been revoked from.
      */
@@ -21179,6 +21294,58 @@ declare namespace Electron {
      * @platform win32,linux
      */
     swapFree: number;
+  }
+
+  interface TextureInfo {
+    /**
+     * The widget type of the texture. Can be `popup` or `frame`.
+     */
+    widgetType: ('popup' | 'frame');
+    /**
+     * The pixel format of the texture. Can be `rgba` or `bgra`.
+     */
+    pixelFormat: ('rgba' | 'bgra');
+    /**
+     * The full dimensions of the video frame.
+     */
+    codedSize: Size;
+    /**
+     * A subsection of [0, 0, codedSize.width(), codedSize.height()]. In OSR case, it
+     * is expected to have the full section area.
+     */
+    visibleRect: Rectangle;
+    /**
+     * The region of the video frame that capturer would like to populate. In OSR case,
+     * it is the same with `dirtyRect` that needs to be painted.
+     */
+    contentRect: Rectangle;
+    /**
+     * The time in microseconds since the capture start.
+     */
+    timestamp: number;
+    /**
+     * Extra metadata. See comments in src\media\base\video_frame_metadata.h for
+     * accurate details.
+     */
+    metadata: Metadata;
+    /**
+     * The handle to the shared texture.
+     *
+     * @platform win32,darwin
+     */
+    sharedTextureHandle: Buffer;
+    /**
+     * Each plane's info of the shared texture.
+     *
+     * @platform linux
+     */
+    planes: Planes[];
+    /**
+     * The modifier is retrieved from GBM library and passed to EGL driver.
+     *
+     * @platform linux
+     */
+    modifier: string;
   }
 
   interface TitleBarOverlay {
@@ -21531,16 +21698,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsDidStartNavigationEventParams {
@@ -21559,16 +21727,27 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
+  }
+
+  interface WebContentsPaintEventParams {
+    /**
+     * The GPU shared texture of the frame, when
+     * `webPreferences.offscreen.useSharedTexture` is `true`.
+     *
+     * @experimental
+     */
+    texture?: OffscreenSharedTexture;
   }
 
   interface WebContentsPrintOptions {
@@ -21665,16 +21844,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsWillNavigateEventParams {
@@ -21693,16 +21873,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsWillRedirectEventParams {
@@ -21721,16 +21902,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebRTCUDPPortRange {
@@ -21997,6 +22179,26 @@ declare namespace Electron {
     canLoop: boolean;
   }
 
+  interface Metadata {
+    /**
+     * Updated area of frame, can be considered as the `dirty` area.
+     */
+    captureUpdateRect?: Rectangle;
+    /**
+     * May reflect the frame's contents origin if region capture is used internally.
+     */
+    regionCaptureRect?: Rectangle;
+    /**
+     * Full size of the source frame.
+     */
+    sourceSize?: Rectangle;
+    /**
+     * The increasing count of captured frame. May contain gaps if frames are dropped
+     * between two consecutively received frames.
+     */
+    frameCount?: number;
+  }
+
   interface PageRanges {
     /**
      * Index of the first page to print (0-based).
@@ -22126,6 +22328,27 @@ declare namespace Electron {
     editFlags: EditFlags;
   }
 
+  interface Planes {
+    /**
+     * The strides and offsets in bytes to be used when accessing the buffers via a
+     * memory mapping. One per plane per entry.
+     */
+    stride: number;
+    /**
+     * The strides and offsets in bytes to be used when accessing the buffers via a
+     * memory mapping. One per plane per entry.
+     */
+    offset: number;
+    /**
+     * Size in bytes of the plane. This is necessary to map the buffers.
+     */
+    size: number;
+    /**
+     * File descriptor for the underlying memory object (usually dmabuf).
+     */
+    fd: number;
+  }
+
   interface Video {
     /**
      * The id of the stream being granted. This will usually come from a
@@ -22244,6 +22467,7 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
     type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
@@ -22293,6 +22517,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TextureInfo = Electron.TextureInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
@@ -22319,6 +22544,7 @@ declare namespace Electron {
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
+    type WebContentsPaintEventParams = Electron.WebContentsPaintEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
@@ -22335,8 +22561,10 @@ declare namespace Electron {
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type Metadata = Electron.Metadata;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
+    type Planes = Electron.Planes;
     type Video = Electron.Video;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
@@ -22377,6 +22605,7 @@ declare namespace Electron {
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OffscreenSharedTexture = Electron.OffscreenSharedTexture;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
     type PermissionRequest = Electron.PermissionRequest;
@@ -22595,6 +22824,7 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
     type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
@@ -22644,6 +22874,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TextureInfo = Electron.TextureInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
@@ -22670,6 +22901,7 @@ declare namespace Electron {
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
+    type WebContentsPaintEventParams = Electron.WebContentsPaintEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
@@ -22686,8 +22918,10 @@ declare namespace Electron {
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type Metadata = Electron.Metadata;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
+    type Planes = Electron.Planes;
     type Video = Electron.Video;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
@@ -22728,6 +22962,7 @@ declare namespace Electron {
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OffscreenSharedTexture = Electron.OffscreenSharedTexture;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
     type PermissionRequest = Electron.PermissionRequest;
@@ -22876,6 +23111,7 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
     type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
@@ -22925,6 +23161,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TextureInfo = Electron.TextureInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
@@ -22951,6 +23188,7 @@ declare namespace Electron {
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
+    type WebContentsPaintEventParams = Electron.WebContentsPaintEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
@@ -22967,8 +23205,10 @@ declare namespace Electron {
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type Metadata = Electron.Metadata;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
+    type Planes = Electron.Planes;
     type Video = Electron.Video;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
@@ -23009,6 +23249,7 @@ declare namespace Electron {
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OffscreenSharedTexture = Electron.OffscreenSharedTexture;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
     type PermissionRequest = Electron.PermissionRequest;
@@ -23154,6 +23395,7 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
     type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
@@ -23203,6 +23445,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TextureInfo = Electron.TextureInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
@@ -23229,6 +23472,7 @@ declare namespace Electron {
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
+    type WebContentsPaintEventParams = Electron.WebContentsPaintEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
@@ -23245,8 +23489,10 @@ declare namespace Electron {
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type Metadata = Electron.Metadata;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
+    type Planes = Electron.Planes;
     type Video = Electron.Video;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
@@ -23287,6 +23533,7 @@ declare namespace Electron {
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OffscreenSharedTexture = Electron.OffscreenSharedTexture;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
     type PermissionRequest = Electron.PermissionRequest;
@@ -23522,6 +23769,7 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
     type OnBeforeSendHeadersListenerDetails = Electron.OnBeforeSendHeadersListenerDetails;
@@ -23571,6 +23819,7 @@ declare namespace Electron {
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
+    type TextureInfo = Electron.TextureInfo;
     type TitleBarOverlay = Electron.TitleBarOverlay;
     type TitleBarOverlayOptions = Electron.TitleBarOverlayOptions;
     type TitleOptions = Electron.TitleOptions;
@@ -23597,6 +23846,7 @@ declare namespace Electron {
     type WebContentsAudioStateChangedEventParams = Electron.WebContentsAudioStateChangedEventParams;
     type WebContentsDidRedirectNavigationEventParams = Electron.WebContentsDidRedirectNavigationEventParams;
     type WebContentsDidStartNavigationEventParams = Electron.WebContentsDidStartNavigationEventParams;
+    type WebContentsPaintEventParams = Electron.WebContentsPaintEventParams;
     type WebContentsPrintOptions = Electron.WebContentsPrintOptions;
     type WebContentsViewConstructorOptions = Electron.WebContentsViewConstructorOptions;
     type WebContentsWillFrameNavigateEventParams = Electron.WebContentsWillFrameNavigateEventParams;
@@ -23613,8 +23863,10 @@ declare namespace Electron {
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
+    type Metadata = Electron.Metadata;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
+    type Planes = Electron.Planes;
     type Video = Electron.Video;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
@@ -23655,6 +23907,7 @@ declare namespace Electron {
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
+    type OffscreenSharedTexture = Electron.OffscreenSharedTexture;
     type OpenExternalPermissionRequest = Electron.OpenExternalPermissionRequest;
     type PaymentDiscount = Electron.PaymentDiscount;
     type PermissionRequest = Electron.PermissionRequest;
