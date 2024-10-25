@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.0-alpha.2+wcus
+// Type definitions for Electron 34.0.0-alpha.3+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14172,7 +14172,7 @@ declare namespace Electron {
     postMessage(message: any, transfer?: MessagePortMain[]): void;
     /**
      * A `Integer | undefined` representing the process identifier (PID) of the child
-     * process. If the child process fails to spawn due to errors, then the value is
+     * process. Until the child process has spawned successfully, the value is
      * `undefined`. When the child process exits, then the value is `undefined` after
      * the `exit` event is emitted.
      */
