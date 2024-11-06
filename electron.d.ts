@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.0.2+wcus
+// Type definitions for Electron 33.1.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2565,9 +2565,9 @@ declare namespace Electron {
      */
     getContentSize(): number[];
     /**
-     * Returns View - The content view of the window.
+     * The content view of the window.
      */
-    getContentView(): void;
+    getContentView(): View;
     /**
      * Contains the window's maximum width and height.
      */
@@ -8372,10 +8372,11 @@ declare namespace Electron {
      */
     sender: WebContents;
     /**
-     * The frame that sent this message
+     * The frame that sent this message. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
      *
      */
-    readonly senderFrame: WebFrameMain;
+    readonly senderFrame: (WebFrameMain) | (null);
   }
 
   interface IpcMainInvokeEvent extends Event {
@@ -8395,10 +8396,11 @@ declare namespace Electron {
      */
     sender: WebContents;
     /**
-     * The frame that sent this message
+     * The frame that sent this message. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
      *
      */
-    readonly senderFrame: WebFrameMain;
+    readonly senderFrame: (WebFrameMain) | (null);
   }
 
   interface IpcRenderer extends NodeJS.EventEmitter {
@@ -14092,32 +14094,32 @@ declare namespace Electron {
      */
     on(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     off(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     once(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     addListener(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     removeListener(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     /**
@@ -14152,7 +14154,7 @@ declare namespace Electron {
     postMessage(message: any, transfer?: MessagePortMain[]): void;
     /**
      * A `Integer | undefined` representing the process identifier (PID) of the child
-     * process. If the child process fails to spawn due to errors, then the value is
+     * process. Until the child process has spawned successfully, the value is
      * `undefined`. When the child process exits, then the value is `undefined` after
      * the `exit` event is emitted.
      */
@@ -17108,6 +17110,10 @@ declare namespace Electron {
      */
     executeJavaScript(code: string, userGesture?: boolean): Promise<unknown>;
     /**
+     * Whether the frame is destroyed.
+     */
+    isDestroyed(): boolean;
+    /**
      * Send a message to the renderer process, optionally transferring ownership of
      * zero or more `MessagePortMain` objects.
      *
@@ -17133,6 +17139,14 @@ declare namespace Electron {
      * `ipcRenderer` module.
      */
     send(channel: string, ...args: any[]): void;
+    /**
+     * A `Boolean` representing whether the frame is detached from the frame tree. If a
+     * frame is accessed while the corresponding page is running any unload listeners,
+     * it may become detached as the newly navigated page replaced it in the frame
+     * tree.
+     *
+     */
+    readonly detached: boolean;
     /**
      * A `WebFrameMain[]` collection containing the direct descendents of `frame`.
      *
@@ -18519,7 +18533,11 @@ declare namespace Electron {
      * The type of pairing prompt being requested. One of the following values:
      */
     pairingKind: ('confirm' | 'confirmPin' | 'providePin');
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this handler. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
     /**
      * The pin value to verify if `pairingKind` is `confirmPin`.
      */
@@ -18802,9 +18820,10 @@ declare namespace Electron {
      */
     y: number;
     /**
-     * Frame from which the context menu was invoked.
+     * Frame from which the context menu was invoked. May be `null` if accessed after
+     * the frame has either navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * URL of the link that encloses the node the context menu was invoked on.
      */
@@ -19164,7 +19183,7 @@ declare namespace Electron {
      */
     reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
     /**
-     * The exit code for the process (e.g. status from waitpid if on posix, from
+     * The exit code for the process (e.g. status from waitpid if on POSIX, from
      * GetExitCodeProcess on Windows).
      */
     exitCode: number;
@@ -19328,9 +19347,10 @@ declare namespace Electron {
 
   interface DisplayMediaRequestHandlerHandlerRequest {
     /**
-     * Frame that is requesting access to media.
+     * Frame that is requesting access to media. May be `null` if accessed after the
+     * frame has either navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * Origin of the page making the request.
      */
@@ -19496,7 +19516,11 @@ declare namespace Electron {
   }
 
   interface FrameCreatedDetails {
-    frame: WebFrameMain;
+    /**
+     * The created frame. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface FromPartitionOptions {
@@ -19573,12 +19597,20 @@ declare namespace Electron {
 
   interface HidDeviceAddedDetails {
     device: HIDDevice;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface HidDeviceRemovedDetails {
     device: HIDDevice;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface HidDeviceRevokedDetails {
@@ -20240,7 +20272,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20265,7 +20301,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20282,7 +20322,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20300,7 +20344,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20321,7 +20369,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20342,7 +20394,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20361,7 +20417,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -20384,7 +20444,11 @@ declare namespace Electron {
     method: string;
     webContentsId?: number;
     webContents?: WebContents;
-    frame?: WebFrameMain;
+    /**
+     * Requesting frame. May be `null` if accessed after the frame has either navigated
+     * or been destroyed.
+     */
+    frame?: (WebFrameMain) | (null);
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -21029,17 +21093,29 @@ declare namespace Electron {
 
   interface SelectHidDeviceDetails {
     deviceList: HIDDevice[];
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface SelectUsbDeviceDetails {
     deviceList: USBDevice[];
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface SerialPortRevokedDetails {
     port: SerialPort;
-    frame: WebFrameMain;
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
     /**
      * The origin that the device has been revoked from.
      */
@@ -21531,16 +21607,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsDidStartNavigationEventParams {
@@ -21559,16 +21636,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsPrintOptions {
@@ -21665,16 +21743,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsWillNavigateEventParams {
@@ -21693,16 +21772,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebContentsWillRedirectEventParams {
@@ -21721,16 +21801,17 @@ declare namespace Electron {
      */
     isMainFrame: boolean;
     /**
-     * The frame to be navigated.
+     * The frame to be navigated. May be `null` if accessed after the frame has either
+     * navigated or been destroyed.
      */
-    frame: WebFrameMain;
+    frame: (WebFrameMain) | (null);
     /**
      * The frame which initiated the navigation, which can be a parent frame (e.g. via
      * `window.open` with a frame's name), or null if the navigation was not initiated
      * by a frame. This can also be null if the initiating frame was deleted before the
      * event was emitted.
      */
-    initiator?: WebFrameMain;
+    initiator?: (WebFrameMain) | (null);
   }
 
   interface WebRTCUDPPortRange {
