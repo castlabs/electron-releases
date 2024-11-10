@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.2.2+wcus
+// Type definitions for Electron 32.2.3+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2560,9 +2560,9 @@ declare namespace Electron {
      */
     getContentSize(): number[];
     /**
-     * Returns View - The content view of the window.
+     * The content view of the window.
      */
-    getContentView(): void;
+    getContentView(): View;
     /**
      * Contains the window's maximum width and height.
      */
@@ -13983,32 +13983,32 @@ declare namespace Electron {
      */
     on(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     off(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     once(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     addListener(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     removeListener(event: 'exit', listener: (
                                  /**
-                                  * Contains the exit code for the process obtained from waitpid on posix, or
-                                  * GetExitCodeProcess on windows.
+                                  * Contains the exit code for the process obtained from waitpid on POSIX, or
+                                  * GetExitCodeProcess on Windows.
                                   */
                                  code: number) => void): this;
     /**
@@ -19036,7 +19036,7 @@ declare namespace Electron {
      */
     reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
     /**
-     * The exit code for the process (e.g. status from waitpid if on posix, from
+     * The exit code for the process (e.g. status from waitpid if on POSIX, from
      * GetExitCodeProcess on Windows).
      */
     exitCode: number;
