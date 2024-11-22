@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.0-beta.3+wcus
+// Type definitions for Electron 34.0.0-beta.4+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7373,6 +7373,10 @@ declare namespace Electron {
      * **Note:** On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
+     *
+     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * dialogs unless the portal backend is version 4 or higher. You can use
+     * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
     showOpenDialog(window: BaseWindow, options: OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
     /**
@@ -7399,6 +7403,10 @@ declare namespace Electron {
      * **Note:** On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
+     *
+     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * dialogs unless the portal backend is version 4 or higher. You can use
+     * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
     showOpenDialog(options: OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
     /**
@@ -7418,6 +7426,10 @@ declare namespace Electron {
      * **Note:** On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
+     *
+     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * dialogs unless the portal backend is version 4 or higher. You can use
+     * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
     showOpenDialogSync(window: BaseWindow, options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
@@ -7437,6 +7449,10 @@ declare namespace Electron {
      * **Note:** On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
+     *
+     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * dialogs unless the portal backend is version 4 or higher. You can use
+     * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
     showOpenDialogSync(options: OpenDialogSyncOptions): (string[]) | (undefined);
     /**
