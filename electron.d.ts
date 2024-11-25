@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.0-beta.4+wcus
+// Type definitions for Electron 34.0.0-beta.5+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8310,6 +8310,10 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/ipc-main
 
     /**
+     * Alias for `ipcMain.on`.
+     */
+    addListener(channel: string, listener: (event: IpcMainEvent, ...args: any[]) => void): this;
+    /**
      * Adds a handler for an `invoke`able IPC. This handler will be called whenever a
      * renderer calls `ipcRenderer.invoke(channel, ...args)`.
      *
@@ -8332,6 +8336,11 @@ declare namespace Electron {
      */
     handleOnce(channel: string, listener: (event: IpcMainInvokeEvent, ...args: any[]) => (Promise<any>) | (any)): void;
     /**
+     * Removes the specified `listener` from the listener array for the specified
+     * `channel`.
+     */
+    off(channel: string, listener: (event: IpcMainEvent, ...args: any[]) => void): this;
+    /**
      * Listens to `channel`, when a new message arrives `listener` would be called with
      * `listener(event, args...)`.
      */
@@ -8342,7 +8351,8 @@ declare namespace Electron {
      */
     once(channel: string, listener: (event: IpcMainEvent, ...args: any[]) => void): this;
     /**
-     * Removes listeners of the specified `channel`.
+     * Removes all listeners from the specified `channel`. Removes all listeners from
+     * all channels if no channel is specified.
      */
     removeAllListeners(channel?: string): this;
     /**
@@ -8350,8 +8360,7 @@ declare namespace Electron {
      */
     removeHandler(channel: string): void;
     /**
-     * Removes the specified `listener` from the listener array for the specified
-     * `channel`.
+     * Alias for `ipcMain.off`.
      */
     removeListener(channel: string, listener: (...args: any[]) => void): this;
   }
@@ -8459,7 +8468,8 @@ declare namespace Electron {
      */
     invoke(channel: string, ...args: any[]): Promise<any>;
     /**
-     * Alias for `ipcRenderer.removeListener`.
+     * Removes the specified `listener` from the listener array for the specified
+     * `channel`.
      */
     off(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
     /**
@@ -8487,12 +8497,12 @@ declare namespace Electron {
      */
     postMessage(channel: string, message: any, transfer?: MessagePort[]): void;
     /**
-     * Removes all listeners, or those of the specified `channel`.
+     * Removes all listeners from the specified `channel`. Removes all listeners from
+     * all channels if no channel is specified.
      */
-    removeAllListeners(channel: string): this;
+    removeAllListeners(channel?: string): this;
     /**
-     * Removes the specified `listener` from the listener array for the specified
-     * `channel`.
+     * Alias for `ipcRenderer.off`.
      */
     removeListener(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
     /**
@@ -14191,6 +14201,9 @@ declare namespace Electron {
      * process. Until the child process has spawned successfully, the value is
      * `undefined`. When the child process exits, then the value is `undefined` after
      * the `exit` event is emitted.
+     *
+     * **Note:** You can use the `pid` to determine if the process is currently
+     * running.
      */
     pid: (number) | (undefined);
     /**
