@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.2.5+wcus
+// Type definitions for Electron 32.2.6+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14046,6 +14046,9 @@ declare namespace Electron {
      * process. Until the child process has spawned successfully, the value is
      * `undefined`. When the child process exits, then the value is `undefined` after
      * the `exit` event is emitted.
+     *
+     * **Note:** You can use the `pid` to determine if the process is currently
+     * running.
      */
     pid: (number) | (undefined);
     /**
