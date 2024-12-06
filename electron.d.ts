@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.0-beta.7+wcus
+// Type definitions for Electron 34.0.0-beta.8+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -19564,7 +19564,8 @@ declare namespace Electron {
     /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
      * will allow responding to them via the `app#login` event in the main process
-     * instead of the default `login` event on the `ClientRequest` object.
+     * instead of the default `login` event on the `ClientRequest` object. Default is
+     * `false`.
      */
     respondToAuthRequestsFromMainProcess?: boolean;
   }
