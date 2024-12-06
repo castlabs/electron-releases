@@ -1,4 +1,4 @@
-// Type definitions for Electron 33.2.1+wcus
+// Type definitions for Electron 33.3.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8792,9 +8792,9 @@ declare namespace Electron {
      */
     append(menuItem: MenuItem): void;
     /**
-     * Closes the context menu in the `browserWindow`.
+     * Closes the context menu in the `window`.
      */
-    closePopup(browserWindow?: BrowserWindow): void;
+    closePopup(window?: BaseWindow): void;
     /**
      * the item with the specified `id`
      */
@@ -8804,7 +8804,7 @@ declare namespace Electron {
      */
     insert(pos: number, menuItem: MenuItem): void;
     /**
-     * Pops up this menu as a context menu in the `BrowserWindow`.
+     * Pops up this menu as a context menu in the `BaseWindow`.
      */
     popup(options?: PopupOptions): void;
     /**
@@ -11742,6 +11742,11 @@ declare namespace Electron {
      * `https://my.website.example.co.uk/` will end up clearing all cookies for
      * `example.co.uk`.
      *
+     * **Note:** Clearing cache data will also clear the shared dictionary cache. This
+     * means that any dictionaries used for compression may be reloaded after clearing
+     * the cache. If you wish to clear the shared dictionary cache but leave other
+     * cached data intact, you may want to use the `clearSharedDictionaryCache` method.
+     *
      * For more information, refer to Chromium's `BrowsingDataRemover` interface.
      */
     clearData(options?: ClearDataOptions): Promise<void>;
@@ -11751,6 +11756,15 @@ declare namespace Electron {
      * Clears the host resolver cache.
      */
     clearHostResolverCache(): Promise<void>;
+    /**
+     * resolves when the dictionary cache has been cleared, both in memory and on disk.
+     */
+    clearSharedDictionaryCache(): Promise<void>;
+    /**
+     * resolves when the dictionary cache has been cleared for the specified isolation
+     * key, both in memory and on disk.
+     */
+    clearSharedDictionaryCacheForIsolationKey(options: ClearSharedDictionaryCacheForIsolationKeyOptions): Promise<void>;
     /**
      * resolves when the storage data has been cleared.
      */
@@ -11850,6 +11864,28 @@ declare namespace Electron {
      * an array of paths to preload scripts that have been registered.
      */
     getPreloads(): string[];
+    /**
+     * an array of shared dictionary information entries in Chromium's networking
+     * service's storage.
+     *
+     * To get information about all present shared dictionaries, call
+     * `getSharedDictionaryUsageInfo()`.
+     */
+    getSharedDictionaryInfo(options: SharedDictionaryInfoOptions): Promise<Electron.SharedDictionaryInfo[]>;
+    /**
+     * an array of shared dictionary information entries in Chromium's networking
+     * service's storage.
+     *
+     * Shared dictionaries are used to power advanced compression of data sent over the
+     * wire, specifically with Brotli and ZStandard. You don't need to call any of the
+     * shared dictionary APIs in Electron to make use of this advanced web feature, but
+     * if you do, they allow deeper control and inspection of the shared dictionaries
+     * used during decompression.
+     *
+     * To get detailed information about a specific shared dictionary entry, call
+     * `getSharedDictionaryInfo(options)`.
+     */
+    getSharedDictionaryUsageInfo(): Promise<Electron.SharedDictionaryUsageInfo[]>;
     /**
      * An array of language codes the spellchecker is enabled for.  If this list is
      * empty the spellchecker will fallback to using `en-US`.  By default on launch if
@@ -12159,6 +12195,81 @@ declare namespace Electron {
      *
      */
     readonly webRequest: WebRequest;
+  }
+
+  interface SharedDictionaryInfo {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-dictionary-info
+
+    /**
+     * URL of the dictionary.
+     */
+    dictionaryUrl: string;
+    /**
+     * The expiration time for the dictionary which was declared in 'use-as-dictionary'
+     * response header's `expires` option in seconds.
+     */
+    expirationDuration: number;
+    /**
+     * The sha256 hash of the dictionary binary.
+     */
+    hash: string;
+    /**
+     * The Id for the dictionary which was declared in 'use-as-dictionary' response
+     * header's `id` option.
+     */
+    id: string;
+    /**
+     * The time of when the dictionary was received from the network layer.
+     */
+    lastFetchTime: Date;
+    /**
+     * The time when the dictionary was last used.
+     */
+    lastUsedTime: Date;
+    /**
+     * The matching path pattern for the dictionary which was declared in
+     * 'use-as-dictionary' response header's `match` option.
+     */
+    match: string;
+    /**
+     * An array of matching destinations for the dictionary which was declared in
+     * 'use-as-dictionary' response header's `match-dest` option.
+     */
+    matchDestinations: string[];
+    /**
+     * The time of when the dictionary was received from the server. For cached
+     * responses, this time could be "far" in the past.
+     */
+    responseTime: Date;
+    /**
+     * The amount of bytes stored for this shared dictionary information object in
+     * Chromium's internal storage (usually Sqlite).
+     */
+    size: number;
+  }
+
+  interface SharedDictionaryUsageInfo {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-dictionary-usage-info
+
+    /**
+     * The origin of the frame where the request originates. It’s specific to the
+     * individual frame making the request and is defined by its scheme, host, and
+     * port. In practice, will look like a URL.
+     */
+    frameOrigin: string;
+    /**
+     * The site of the top-level browsing context (the main frame or tab that contains
+     * the request). It’s less granular than `frameOrigin` and focuses on the broader
+     * "site" scope. In practice, will look like a URL.
+     */
+    topFrameSite: string;
+    /**
+     * The amount of bytes stored for this shared dictionary information object in
+     * Chromium's internal storage (usually Sqlite).
+     */
+    totalSizeBytes: number;
   }
 
   interface SharedWorkerInfo {
@@ -17141,6 +17252,18 @@ declare namespace Electron {
     addListener(event: 'dom-ready', listener: () => void): this;
     removeListener(event: 'dom-ready', listener: () => void): this;
     /**
+     * A promise that resolves with the currently running JavaScript call stack. If no
+     * JavaScript runs in the frame, the promise will never resolve. In cases where the
+     * call stack is otherwise unable to be collected, it will return `undefined`.
+     *
+     * This can be useful to determine why the frame is unresponsive in cases where
+     * there's long-running JavaScript. For more information, see the proposed Crash
+     * Reporting API.
+     *
+     * @experimental
+     */
+    collectJavaScriptCallStack(): (Promise<string>) | (Promise<void>);
+    /**
      * A promise that resolves with the result of the executed code or is rejected if
      * execution throws or results in a rejected promise.
      *
@@ -18624,7 +18747,9 @@ declare namespace Electron {
 
   interface ClearDataOptions {
     /**
-     * The types of data to clear. By default, this will clear all types of data.
+     * The types of data to clear. By default, this will clear all types of data. This
+     * can potentially include data types not explicitly listed here. (See Chromium's
+     * `BrowsingDataRemover` for the full list.)
      */
     dataTypes?: Array<'backgroundFetch' | 'cache' | 'cookies' | 'downloads' | 'fileSystems' | 'indexedDB' | 'localStorage' | 'serviceWorkers' | 'webSQL'>;
     /**
@@ -18644,6 +18769,21 @@ declare namespace Electron {
      * The behavior for matching data to origins.
      */
     originMatchingMode?: ('third-parties-included' | 'origin-in-all-contexts');
+  }
+
+  interface ClearSharedDictionaryCacheForIsolationKeyOptions {
+    /**
+     * The origin of the frame where the request originates. It’s specific to the
+     * individual frame making the request and is defined by its scheme, host, and
+     * port. In practice, will look like a URL.
+     */
+    frameOrigin: string;
+    /**
+     * The site of the top-level browsing context (the main frame or tab that contains
+     * the request). It’s less granular than `frameOrigin` and focuses on the broader
+     * "site" scope. In practice, will look like a URL.
+     */
+    topFrameSite: string;
   }
 
   interface ClearStorageDataOptions {
@@ -19548,7 +19688,8 @@ declare namespace Electron {
     /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
      * will allow responding to them via the `app#login` event in the main process
-     * instead of the default `login` event on the `ClientRequest` object.
+     * instead of the default `login` event on the `ClientRequest` object. Default is
+     * `false`.
      */
     respondToAuthRequestsFromMainProcess?: boolean;
   }
@@ -19567,14 +19708,16 @@ declare namespace Electron {
 
   interface FromPartitionOptions {
     /**
-     * Whether to enable cache.
+     * Whether to enable cache. Default is `true` unless the `--disable-http-cache`
+     * switch is used.
      */
     cache: boolean;
   }
 
   interface FromPathOptions {
     /**
-     * Whether to enable cache.
+     * Whether to enable cache. Default is `true` unless the `--disable-http-cache`
+     * switch is used.
      */
     cache: boolean;
   }
@@ -20736,7 +20879,7 @@ declare namespace Electron {
     /**
      * Default is the focused window.
      */
-    window?: BrowserWindow;
+    window?: BaseWindow;
     /**
      * Default is the current mouse cursor position. Must be declared if `y` is
      * declared.
@@ -21231,6 +21374,21 @@ declare namespace Electron {
      * @platform win32
      */
     name?: string;
+  }
+
+  interface SharedDictionaryInfoOptions {
+    /**
+     * The origin of the frame where the request originates. It’s specific to the
+     * individual frame making the request and is defined by its scheme, host, and
+     * port. In practice, will look like a URL.
+     */
+    frameOrigin: string;
+    /**
+     * The site of the top-level browsing context (the main frame or tab that contains
+     * the request). It’s less granular than `frameOrigin` and focuses on the broader
+     * "site" scope. In practice, will look like a URL.
+     */
+    topFrameSite: string;
   }
 
   interface SourcesOptions {
@@ -22405,6 +22563,7 @@ declare namespace Electron {
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
+    type ClearSharedDictionaryCacheForIsolationKeyOptions = Electron.ClearSharedDictionaryCacheForIsolationKeyOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
@@ -22526,6 +22685,7 @@ declare namespace Electron {
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
+    type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
@@ -22643,6 +22803,8 @@ declare namespace Electron {
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
+    type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -22762,6 +22924,7 @@ declare namespace Electron {
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
+    type ClearSharedDictionaryCacheForIsolationKeyOptions = Electron.ClearSharedDictionaryCacheForIsolationKeyOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
@@ -22883,6 +23046,7 @@ declare namespace Electron {
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
+    type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
@@ -23000,6 +23164,8 @@ declare namespace Electron {
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
+    type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -23049,6 +23215,7 @@ declare namespace Electron {
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
+    type ClearSharedDictionaryCacheForIsolationKeyOptions = Electron.ClearSharedDictionaryCacheForIsolationKeyOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
@@ -23170,6 +23337,7 @@ declare namespace Electron {
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
+    type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
@@ -23287,6 +23455,8 @@ declare namespace Electron {
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
+    type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -23333,6 +23503,7 @@ declare namespace Electron {
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
+    type ClearSharedDictionaryCacheForIsolationKeyOptions = Electron.ClearSharedDictionaryCacheForIsolationKeyOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
@@ -23454,6 +23625,7 @@ declare namespace Electron {
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
+    type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
@@ -23571,6 +23743,8 @@ declare namespace Electron {
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
+    type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -23707,6 +23881,7 @@ declare namespace Electron {
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
     type ClearCodeCachesOptions = Electron.ClearCodeCachesOptions;
     type ClearDataOptions = Electron.ClearDataOptions;
+    type ClearSharedDictionaryCacheForIsolationKeyOptions = Electron.ClearSharedDictionaryCacheForIsolationKeyOptions;
     type ClearStorageDataOptions = Electron.ClearStorageDataOptions;
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
@@ -23828,6 +24003,7 @@ declare namespace Electron {
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type Settings = Electron.Settings;
+    type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type Streams = Electron.Streams;
@@ -23945,6 +24121,8 @@ declare namespace Electron {
     type SegmentedControlSegment = Electron.SegmentedControlSegment;
     type SerialPort = Electron.SerialPort;
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
+    type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
+    type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
