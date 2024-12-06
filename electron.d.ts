@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.2.6+wcus
+// Type definitions for Electron 32.2.7+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8775,9 +8775,9 @@ declare namespace Electron {
      */
     append(menuItem: MenuItem): void;
     /**
-     * Closes the context menu in the `browserWindow`.
+     * Closes the context menu in the `window`.
      */
-    closePopup(browserWindow?: BrowserWindow): void;
+    closePopup(window?: BaseWindow): void;
     /**
      * the item with the specified `id`
      */
@@ -8787,7 +8787,7 @@ declare namespace Electron {
      */
     insert(pos: number, menuItem: MenuItem): void;
     /**
-     * Pops up this menu as a context menu in the `BrowserWindow`.
+     * Pops up this menu as a context menu in the `BaseWindow`.
      */
     popup(options?: PopupOptions): void;
     /**
@@ -20506,7 +20506,7 @@ declare namespace Electron {
     /**
      * Default is the focused window.
      */
-    window?: BrowserWindow;
+    window?: BaseWindow;
     /**
      * Default is the current mouse cursor position. Must be declared if `y` is
      * declared.
