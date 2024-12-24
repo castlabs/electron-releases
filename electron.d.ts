@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.0-beta.12+wcus
+// Type definitions for Electron 34.0.0-beta.13+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
