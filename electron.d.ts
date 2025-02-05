@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-alpha.5+wvcus
+// Type definitions for Electron 35.0.0-beta.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6862,6 +6862,13 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/context-bridge
 
+    /**
+     * A copy of the resulting value from executing the function in the main world.
+     * Refer to the table on how values are copied between worlds.
+     *
+     * @experimental
+     */
+    executeInMainWorld(executionScript: ExecutionScript): any;
     exposeInIsolatedWorld(worldId: number, apiKey: string, api: any): void;
     exposeInMainWorld(apiKey: string, api: any): void;
   }
@@ -8560,6 +8567,13 @@ declare namespace Electron {
     /**
      * Listens to `channel`, when a new message arrives `listener` would be called with
      * `listener(event, args...)`.
+     *
+     * :::warning Do not expose the `event` argument to the renderer for security
+     * reasons! Wrap any callback that you receive from the renderer in another
+     * function like this: `ipcRenderer.on('my-channel', (event, ...args) =>
+     * callback(...args))`. Not wrapping the callback in such a function would expose
+     * dangerous Electron APIs to the renderer process. See the security guide for more
+     * info. :::
      */
     on(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
     /**
@@ -10304,6 +10318,44 @@ declare namespace Electron {
     stop(id: number): boolean;
   }
 
+  interface PreloadScript {
+
+    // Docs: https://electronjs.org/docs/api/structures/preload-script
+
+    /**
+     * Path of the script file. Must be an absolute path.
+     */
+    filePath: string;
+    /**
+     * Unique ID of preload script.
+     */
+    id: string;
+    /**
+     * Context type where the preload script will be executed. Possible values include
+     * `frame`.
+     */
+    type: ('frame');
+  }
+
+  interface PreloadScriptRegistration {
+
+    // Docs: https://electronjs.org/docs/api/structures/preload-script-registration
+
+    /**
+     * Path of the script file. Must be an absolute path.
+     */
+    filePath: string;
+    /**
+     * Unique ID of preload script. Defaults to a random UUID.
+     */
+    id?: string;
+    /**
+     * Context type where the preload script will be executed. Possible values include
+     * `frame`.
+     */
+    type: ('frame');
+  }
+
   interface PrinterInfo {
 
     // Docs: https://electronjs.org/docs/api/structures/printer-info
@@ -11216,6 +11268,44 @@ declare namespace Electron {
      * The full URL to the script that this service worker runs
      */
     scriptUrl: string;
+    /**
+     * ID of the service worker version
+     */
+    versionId: number;
+  }
+
+  class ServiceWorkerMain {
+
+    // Docs: https://electronjs.org/docs/api/service-worker-main
+
+    /**
+     * Whether the service worker has been destroyed.
+     *
+     * @experimental
+     */
+    isDestroyed(): boolean;
+    /**
+     * * `end` Function - Method to call when the task has ended. If never called, the
+     * service won't terminate while otherwise idle.
+     *
+     * Initiate a task to keep the service worker alive until ended.
+     *
+     * @experimental
+     */
+    startTask(): StartTask;
+    /**
+     * A `string` representing the scope URL of the service worker.
+     *
+     * @experimental
+     */
+    readonly scope: string;
+    /**
+     * A `number` representing the ID of the specific version of the service worker
+     * script in its scope.
+     *
+     * @experimental
+     */
+    readonly versionId: number;
   }
 
   class ServiceWorkers extends NodeEventEmitter {
@@ -11281,6 +11371,28 @@ declare namespace Electron {
                                                     */
                                                    details: RegistrationCompletedDetails) => void): this;
     /**
+     * Emitted when a service worker's running status has changed.
+     *
+     * @experimental
+     */
+    on(event: 'running-status-changed', listener: (details: Event<ServiceWorkersRunningStatusChangedEventParams>) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'running-status-changed', listener: (details: Event<ServiceWorkersRunningStatusChangedEventParams>) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'running-status-changed', listener: (details: Event<ServiceWorkersRunningStatusChangedEventParams>) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'running-status-changed', listener: (details: Event<ServiceWorkersRunningStatusChangedEventParams>) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'running-status-changed', listener: (details: Event<ServiceWorkersRunningStatusChangedEventParams>) => void): this;
+    /**
      * A ServiceWorkerInfo object where the keys are the service worker version ID and
      * the values are the information about that service worker.
      */
@@ -11290,8 +11402,35 @@ declare namespace Electron {
      *
      * If the service worker does not exist or is not running this method will throw an
      * exception.
+     *
+     * **Deprecated:** Use the new `serviceWorkers.getInfoFromVersionID` API.
+     *
+     * @deprecated
      */
     getFromVersionID(versionId: number): ServiceWorkerInfo;
+    /**
+     * Information about this service worker
+     *
+     * If the service worker does not exist or is not running this method will throw an
+     * exception.
+     */
+    getInfoFromVersionID(versionId: number): ServiceWorkerInfo;
+    /**
+     * Instance of the service worker associated with the given version ID. If there's
+     * no associated version, or its running status has changed to 'stopped', this will
+     * return `undefined`.
+     *
+     * @experimental
+     */
+    getWorkerFromVersionID(versionId: number): (ServiceWorkerMain) | (undefined);
+    /**
+     * Resolves with the service worker when it's started.
+     *
+     * Starts the service worker or does nothing if already running.
+     *
+     * @experimental
+     */
+    startWorkerForScope(scope: string): Promise<Electron.ServiceWorkerMain>;
   }
 
   class Session extends NodeEventEmitter {
@@ -11983,8 +12122,17 @@ declare namespace Electron {
     getExtension(extensionId: string): (Extension) | (null);
     /**
      * an array of paths to preload scripts that have been registered.
+     *
+     * **Deprecated:** Use the new `ses.getPreloadScripts` API. This will only return
+     * preload script paths for `frame` context types.
+     *
+     * @deprecated
      */
     getPreloads(): string[];
+    /**
+     * An array of paths to preload scripts that have been registered.
+     */
+    getPreloadScripts(): PreloadScript[];
     /**
      * an array of shared dictionary information entries in Chromium's networking
      * service's storage.
@@ -12071,6 +12219,14 @@ declare namespace Electron {
      * Preconnects the given number of sockets to an origin.
      */
     preconnect(options: PreconnectOptions): void;
+    /**
+     * Registers preload script that will be executed in its associated context type in
+     * this session. For `frame` contexts, this will run prior to any preload defined
+     * in the web preferences of a WebContents.
+     *
+     * The ID of the registered preload script.
+     */
+    registerPreloadScript(script: PreloadScriptRegistration): string;
     /**
      * Unloads an extension.
      *
@@ -12189,6 +12345,10 @@ declare namespace Electron {
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
+     *
+     * **Deprecated:** Use the new `ses.registerPreloadScript` API.
+     *
+     * @deprecated
      */
     setPreloads(preloads: string[]): void;
     /**
@@ -12274,6 +12434,10 @@ declare namespace Electron {
      * `webContents.setUserAgent` to override the session-wide user agent.
      */
     setUserAgent(userAgent: string, acceptLanguages?: string): void;
+    /**
+     * Unregisters script.
+     */
+    unregisterPreloadScript(id: string): void;
     /**
      * A `string[]` array which consists of all the known available spell checker
      * languages.  Providing a language code to the `setSpellCheckerLanguages` API that
@@ -19762,6 +19926,19 @@ declare namespace Electron {
     uploadThroughput?: number;
   }
 
+  interface ExecutionScript {
+    /**
+     * A JavaScript function to execute. This function will be serialized which means
+     * that any bound parameters and execution context will be lost.
+     */
+    func: (...args: any[]) => any;
+    /**
+     * An array of arguments to pass to the provided function. These arguments will be
+     * copied between worlds in accordance with the table of supported types.
+     */
+    args?: any[];
+  }
+
   interface FeedURLOptions {
     url: string;
     /**
@@ -21494,6 +21671,18 @@ declare namespace Electron {
     origin: string;
   }
 
+  interface ServiceWorkersRunningStatusChangedEventParams {
+    /**
+     * ID of the updated service worker version
+     */
+    versionId: number;
+    /**
+     * Running status. Possible values include `starting`, `running`, `stopping`, or
+     * `stopped`.
+     */
+    runningStatus: ('starting' | 'running' | 'stopping' | 'stopped');
+  }
+
   interface Settings {
     /**
      * `true` to open the app at login, `false` to remove the app as a login item.
@@ -21602,6 +21791,14 @@ declare namespace Electron {
      * to unlimited.
      */
     maxFileSize?: number;
+  }
+
+  interface StartTask {
+    /**
+     * Method to call when the task has ended. If never called, the service won't
+     * terminate while otherwise idle.
+     */
+    end: () => void;
   }
 
   interface Streams {
@@ -22809,6 +23006,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type ExecutionScript = Electron.ExecutionScript;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -22893,10 +23091,12 @@ declare namespace Electron {
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
+    type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
+    type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TextureInfo = Electron.TextureInfo;
@@ -22995,6 +23195,8 @@ declare namespace Electron {
     type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
+    type PreloadScript = Electron.PreloadScript;
+    type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -23091,6 +23293,7 @@ declare namespace Electron {
     type SafeStorage = Electron.SafeStorage;
     const screen: Screen;
     type Screen = Electron.Screen;
+    type ServiceWorkerMain = Electron.ServiceWorkerMain;
     type ServiceWorkers = Electron.ServiceWorkers;
     const session: typeof Session;
     type Session = Electron.Session;
@@ -23173,6 +23376,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type ExecutionScript = Electron.ExecutionScript;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -23257,10 +23461,12 @@ declare namespace Electron {
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
+    type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
+    type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TextureInfo = Electron.TextureInfo;
@@ -23359,6 +23565,8 @@ declare namespace Electron {
     type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
+    type PreloadScript = Electron.PreloadScript;
+    type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -23467,6 +23675,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type ExecutionScript = Electron.ExecutionScript;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -23551,10 +23760,12 @@ declare namespace Electron {
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
+    type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
+    type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TextureInfo = Electron.TextureInfo;
@@ -23653,6 +23864,8 @@ declare namespace Electron {
     type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
+    type PreloadScript = Electron.PreloadScript;
+    type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -23758,6 +23971,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type ExecutionScript = Electron.ExecutionScript;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -23842,10 +24056,12 @@ declare namespace Electron {
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
+    type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
+    type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TextureInfo = Electron.TextureInfo;
@@ -23944,6 +24160,8 @@ declare namespace Electron {
     type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
+    type PreloadScript = Electron.PreloadScript;
+    type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
@@ -24050,6 +24268,7 @@ declare namespace Electron {
     type SafeStorage = Electron.SafeStorage;
     const screen: Screen;
     type Screen = Electron.Screen;
+    type ServiceWorkerMain = Electron.ServiceWorkerMain;
     type ServiceWorkers = Electron.ServiceWorkers;
     const session: typeof Session;
     type Session = Electron.Session;
@@ -24139,6 +24358,7 @@ declare namespace Electron {
     type DisplayMediaRequestHandlerOpts = Electron.DisplayMediaRequestHandlerOpts;
     type DownloadURLOptions = Electron.DownloadURLOptions;
     type EnableNetworkEmulationOptions = Electron.EnableNetworkEmulationOptions;
+    type ExecutionScript = Electron.ExecutionScript;
     type FeedURLOptions = Electron.FeedURLOptions;
     type FileIconOptions = Electron.FileIconOptions;
     type FileSystemAccessRestrictedDetails = Electron.FileSystemAccessRestrictedDetails;
@@ -24223,10 +24443,12 @@ declare namespace Electron {
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
+    type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
+    type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
     type SystemMemoryInfo = Electron.SystemMemoryInfo;
     type TextureInfo = Electron.TextureInfo;
@@ -24325,6 +24547,8 @@ declare namespace Electron {
     type PermissionRequest = Electron.PermissionRequest;
     type Point = Electron.Point;
     type PostBody = Electron.PostBody;
+    type PreloadScript = Electron.PreloadScript;
+    type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
