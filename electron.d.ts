@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.0.2+wcus
+// Type definitions for Electron 34.1.0+wcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8476,6 +8476,13 @@ declare namespace Electron {
     /**
      * Listens to `channel`, when a new message arrives `listener` would be called with
      * `listener(event, args...)`.
+     *
+     * :::warning Do not expose the `event` argument to the renderer for security
+     * reasons! Wrap any callback that you receive from the renderer in another
+     * function like this: `ipcRenderer.on('my-channel', (event, ...args) =>
+     * callback(...args))`. Not wrapping the callback in such a function would expose
+     * dangerous Electron APIs to the renderer process. See the security guide for more
+     * info. :::
      */
     on(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
     /**
@@ -12072,7 +12079,7 @@ declare namespace Electron {
      * make a permission request if the check is denied. To clear the handler, call
      * `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -14360,6 +14367,11 @@ declare namespace Electron {
      * The bounds of this View, relative to its parent.
      */
     getBounds(): Rectangle;
+    /**
+     * Whether the view should be drawn. Note that this is different from whether the
+     * view is visible on screen—it may still be obscured or out of view.
+     */
+    getVisible(): boolean;
     /**
      * If the view passed as a parameter is not a child of this view, this method is a
      * no-op.
@@ -17527,6 +17539,12 @@ declare namespace Electron {
      * RuntimeEnabledFeatures.json5 file.
      */
     enableBlinkFeatures?: string;
+    /**
+     * Whether to enable the `paste` execCommand. Default is `false`.
+     *
+     * @deprecated
+     */
+    enableDeprecatedPaste?: boolean;
     /**
      * Whether to enable preferred size mode. The preferred size is the minimum size
      * needed to contain the layout of the document—without requiring scrolling.
