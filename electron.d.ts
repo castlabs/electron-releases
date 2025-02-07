@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-beta.2+wvcus
+// Type definitions for Electron 35.0.0-beta.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -7637,7 +7637,7 @@ declare namespace Electron {
      */
     depthPerComponent: number;
     /**
-     * `true`` if the display is detected by the system.
+     * `true` if the display is detected by the system.
      */
     detected: boolean;
     /**
@@ -8494,6 +8494,10 @@ declare namespace Electron {
      *
      */
     readonly senderFrame: (WebFrameMain) | (null);
+    /**
+     * Possible values include `frame`
+     */
+    type: ('frame');
   }
 
   interface IpcMainInvokeEvent extends Event {
@@ -8518,6 +8522,106 @@ declare namespace Electron {
      *
      */
     readonly senderFrame: (WebFrameMain) | (null);
+    /**
+     * Possible values include `frame`
+     */
+    type: ('frame');
+  }
+
+  class IpcMainServiceWorker extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/ipc-main-service-worker
+
+    handle(channel: string, listener: (event: IpcMainServiceWorkerInvokeEvent, ...args: any[]) => (Promise<any>) | (any)): void;
+    /**
+     * Handles a single `invoke`able IPC message, then removes the listener. See
+     * `ipcMainServiceWorker.handle(channel, listener)`.
+     */
+    handleOnce(channel: string, listener: (event: IpcMainServiceWorkerInvokeEvent, ...args: any[]) => (Promise<any>) | (any)): void;
+    /**
+     * Listens to `channel`, when a new message arrives `listener` would be called with
+     * `listener(event, args...)`.
+     */
+    on(channel: string, listener: (event: IpcMainServiceWorkerEvent, ...args: any[]) => void): this;
+    /**
+     * Adds a one time `listener` function for the event. This `listener` is invoked
+     * only the next time a message is sent to `channel`, after which it is removed.
+     */
+    once(channel: string, listener: (event: IpcMainServiceWorkerEvent, ...args: any[]) => void): this;
+    /**
+     * Removes listeners of the specified `channel`.
+     */
+    removeAllListeners(channel?: string): this;
+    /**
+     * Removes any handler for `channel`, if present.
+     */
+    removeHandler(channel: string): void;
+    /**
+     * Removes the specified `listener` from the listener array for the specified
+     * `channel`.
+     */
+    removeListener(channel: string, listener: (...args: any[]) => void): this;
+  }
+
+  interface IpcMainServiceWorkerEvent extends Event {
+
+    // Docs: https://electronjs.org/docs/api/structures/ipc-main-service-worker-event
+
+    /**
+     * A list of MessagePorts that were transferred with this message
+     */
+    ports: MessagePortMain[];
+    /**
+     * A function that will send an IPC message to the renderer frame that sent the
+     * original message that you are currently handling.  You should use this method to
+     * "reply" to the sent message in order to guarantee the reply will go to the
+     * correct process and frame.
+     */
+    reply: (channel: string, ...args: any[]) => void;
+    /**
+     * Set this to the value to be returned in a synchronous message
+     */
+    returnValue: any;
+    /**
+     * The service worker that sent this message
+     *
+     */
+    readonly serviceWorker: ServiceWorkerMain;
+    /**
+     * The `Session` instance with which the event is associated.
+     */
+    session: Session;
+    /**
+     * Possible values include `service-worker`.
+     */
+    type: ('service-worker');
+    /**
+     * The service worker version ID.
+     */
+    versionId: number;
+  }
+
+  interface IpcMainServiceWorkerInvokeEvent extends Event {
+
+    // Docs: https://electronjs.org/docs/api/structures/ipc-main-service-worker-invoke-event
+
+    /**
+     * The service worker that sent this message
+     *
+     */
+    readonly serviceWorker: ServiceWorkerMain;
+    /**
+     * The `Session` instance with which the event is associated.
+     */
+    session: Session;
+    /**
+     * Possible values include `service-worker`.
+     */
+    type: ('service-worker');
+    /**
+     * The service worker version ID.
+     */
+    versionId: number;
   }
 
   interface IpcRenderer extends NodeJS.EventEmitter {
@@ -10332,9 +10436,9 @@ declare namespace Electron {
     id: string;
     /**
      * Context type where the preload script will be executed. Possible values include
-     * `frame`.
+     * `frame` or `service-worker`.
      */
-    type: ('frame');
+    type: ('frame' | 'service-worker');
   }
 
   interface PreloadScriptRegistration {
@@ -10351,9 +10455,9 @@ declare namespace Electron {
     id?: string;
     /**
      * Context type where the preload script will be executed. Possible values include
-     * `frame`.
+     * `frame` or `service-worker`.
      */
-    type: ('frame');
+    type: ('frame' | 'service-worker');
   }
 
   interface PrinterInfo {
@@ -11285,6 +11389,19 @@ declare namespace Electron {
      */
     isDestroyed(): boolean;
     /**
+     * Send an asynchronous message to the service worker process via `channel`, along
+     * with arguments. Arguments will be serialized with the Structured Clone
+     * Algorithm, just like `postMessage`, so prototype chains will not be included.
+     * Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an
+     * exception.
+     *
+     * The service worker process can handle the message by listening to `channel` with
+     * the `ipcRenderer` module.
+     *
+     * @experimental
+     */
+    send(channel: string, ...args: any[]): void;
+    /**
      * * `end` Function - Method to call when the task has ended. If never called, the
      * service won't terminate while otherwise idle.
      *
@@ -11293,6 +11410,12 @@ declare namespace Electron {
      * @experimental
      */
     startTask(): StartTask;
+    /**
+     * An `IpcMainServiceWorker` instance scoped to the service worker.
+     *
+     * @experimental
+     */
+    readonly ipc: IpcMainServiceWorker;
     /**
      * A `string` representing the scope URL of the service worker.
      *
@@ -12332,7 +12455,7 @@ declare namespace Electron {
      * make a permission request if the check is denied. To clear the handler, call
      * `setPermissionCheckHandler(null)`.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -14628,6 +14751,11 @@ declare namespace Electron {
      * The bounds of this View, relative to its parent.
      */
     getBounds(): Rectangle;
+    /**
+     * Whether the view should be drawn. Note that this is different from whether the
+     * view is visible on screen—it may still be obscured or out of view.
+     */
+    getVisible(): boolean;
     /**
      * If the view passed as a parameter is not a child of this view, this method is a
      * no-op.
@@ -17840,6 +17968,12 @@ declare namespace Electron {
      * RuntimeEnabledFeatures.json5 file.
      */
     enableBlinkFeatures?: string;
+    /**
+     * Whether to enable the `paste` execCommand. Default is `false`.
+     *
+     * @deprecated
+     */
+    enableDeprecatedPaste?: boolean;
     /**
      * Whether to enable preferred size mode. The preferred size is the minimum size
      * needed to contain the layout of the document—without requiring scrolling.
@@ -23175,6 +23309,8 @@ declare namespace Electron {
     type InputEvent = Electron.InputEvent;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcMainServiceWorkerEvent = Electron.IpcMainServiceWorkerEvent;
+    type IpcMainServiceWorkerInvokeEvent = Electron.IpcMainServiceWorkerInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
     type JumpListCategory = Electron.JumpListCategory;
     type JumpListItem = Electron.JumpListItem;
@@ -23269,6 +23405,7 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const ipcMain: IpcMain;
     type IpcMain = Electron.IpcMain;
+    class IpcMainServiceWorker extends Electron.IpcMainServiceWorker {}
     class Menu extends Electron.Menu {}
     class MenuItem extends Electron.MenuItem {}
     class MessageChannelMain extends Electron.MessageChannelMain {}
@@ -23545,6 +23682,8 @@ declare namespace Electron {
     type InputEvent = Electron.InputEvent;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcMainServiceWorkerEvent = Electron.IpcMainServiceWorkerEvent;
+    type IpcMainServiceWorkerInvokeEvent = Electron.IpcMainServiceWorkerInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
     type JumpListCategory = Electron.JumpListCategory;
     type JumpListItem = Electron.JumpListItem;
@@ -23844,6 +23983,8 @@ declare namespace Electron {
     type InputEvent = Electron.InputEvent;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcMainServiceWorkerEvent = Electron.IpcMainServiceWorkerEvent;
+    type IpcMainServiceWorkerInvokeEvent = Electron.IpcMainServiceWorkerInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
     type JumpListCategory = Electron.JumpListCategory;
     type JumpListItem = Electron.JumpListItem;
@@ -24140,6 +24281,8 @@ declare namespace Electron {
     type InputEvent = Electron.InputEvent;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcMainServiceWorkerEvent = Electron.IpcMainServiceWorkerEvent;
+    type IpcMainServiceWorkerInvokeEvent = Electron.IpcMainServiceWorkerInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
     type JumpListCategory = Electron.JumpListCategory;
     type JumpListItem = Electron.JumpListItem;
@@ -24240,6 +24383,7 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const ipcMain: IpcMain;
     type IpcMain = Electron.IpcMain;
+    class IpcMainServiceWorker extends Electron.IpcMainServiceWorker {}
     const ipcRenderer: IpcRenderer;
     type IpcRenderer = Electron.IpcRenderer;
     class Menu extends Electron.Menu {}
@@ -24527,6 +24671,8 @@ declare namespace Electron {
     type InputEvent = Electron.InputEvent;
     type IpcMainEvent = Electron.IpcMainEvent;
     type IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
+    type IpcMainServiceWorkerEvent = Electron.IpcMainServiceWorkerEvent;
+    type IpcMainServiceWorkerInvokeEvent = Electron.IpcMainServiceWorkerInvokeEvent;
     type IpcRendererEvent = Electron.IpcRendererEvent;
     type JumpListCategory = Electron.JumpListCategory;
     type JumpListItem = Electron.JumpListItem;
@@ -24893,11 +25039,12 @@ declare namespace NodeJS {
      * 
      * * `browser` - The main process
      * * `renderer` - A renderer process
+     * * `service-worker` - In a service worker
      * * `worker` - In a web worker
      * * `utility` - In a node process launched as a service
      *
      */
-    readonly type: ('browser' | 'renderer' | 'worker' | 'utility');
+    readonly type: ('browser' | 'renderer' | 'service-worker' | 'worker' | 'utility');
     /**
      * A `boolean`. If the app is running as a Windows Store app (appx), this property
      * is `true`, for otherwise it is `undefined`.
