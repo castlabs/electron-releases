@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-beta.5+wvcus
+// Type definitions for Electron 35.0.0-beta.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8199,11 +8199,34 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/in-app-purchase
 
-    on(event: 'transactions-updated', listener: () => void): this;
-    off(event: 'transactions-updated', listener: () => void): this;
-    once(event: 'transactions-updated', listener: () => void): this;
-    addListener(event: 'transactions-updated', listener: () => void): this;
-    removeListener(event: 'transactions-updated', listener: () => void): this;
+    /**
+     * Emitted when one or more transactions have been updated.
+     */
+    on(event: 'transactions-updated', listener: (event: Event,
+                                                 /**
+                                                  * Array of `Transaction` objects.
+                                                  */
+                                                 transactions: Transaction[]) => void): this;
+    off(event: 'transactions-updated', listener: (event: Event,
+                                                 /**
+                                                  * Array of `Transaction` objects.
+                                                  */
+                                                 transactions: Transaction[]) => void): this;
+    once(event: 'transactions-updated', listener: (event: Event,
+                                                 /**
+                                                  * Array of `Transaction` objects.
+                                                  */
+                                                 transactions: Transaction[]) => void): this;
+    addListener(event: 'transactions-updated', listener: (event: Event,
+                                                 /**
+                                                  * Array of `Transaction` objects.
+                                                  */
+                                                 transactions: Transaction[]) => void): this;
+    removeListener(event: 'transactions-updated', listener: (event: Event,
+                                                 /**
+                                                  * Array of `Transaction` objects.
+                                                  */
+                                                 transactions: Transaction[]) => void): this;
     /**
      * whether a user can make a payment.
      */
@@ -10208,43 +10231,23 @@ declare namespace Electron {
      *
      * @platform darwin,win32
      */
-    on(event: 'speed-limit-change', listener: (
-                                               /**
-                                                * The operating system's advertised speed limit for CPUs, in percent.
-                                                */
-                                               limit: number) => void): this;
+    on(event: 'speed-limit-change', listener: (details: Event<PowerMonitorSpeedLimitChangeEventParams>) => void): this;
     /**
      * @platform darwin,win32
      */
-    off(event: 'speed-limit-change', listener: (
-                                               /**
-                                                * The operating system's advertised speed limit for CPUs, in percent.
-                                                */
-                                               limit: number) => void): this;
+    off(event: 'speed-limit-change', listener: (details: Event<PowerMonitorSpeedLimitChangeEventParams>) => void): this;
     /**
      * @platform darwin,win32
      */
-    once(event: 'speed-limit-change', listener: (
-                                               /**
-                                                * The operating system's advertised speed limit for CPUs, in percent.
-                                                */
-                                               limit: number) => void): this;
+    once(event: 'speed-limit-change', listener: (details: Event<PowerMonitorSpeedLimitChangeEventParams>) => void): this;
     /**
      * @platform darwin,win32
      */
-    addListener(event: 'speed-limit-change', listener: (
-                                               /**
-                                                * The operating system's advertised speed limit for CPUs, in percent.
-                                                */
-                                               limit: number) => void): this;
+    addListener(event: 'speed-limit-change', listener: (details: Event<PowerMonitorSpeedLimitChangeEventParams>) => void): this;
     /**
      * @platform darwin,win32
      */
-    removeListener(event: 'speed-limit-change', listener: (
-                                               /**
-                                                * The operating system's advertised speed limit for CPUs, in percent.
-                                                */
-                                               limit: number) => void): this;
+    removeListener(event: 'speed-limit-change', listener: (details: Event<PowerMonitorSpeedLimitChangeEventParams>) => void): this;
     /**
      * Emitted when the system is suspending.
      */
@@ -10269,23 +10272,23 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'thermal-state-change', listener: () => void): this;
+    on(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'thermal-state-change', listener: () => void): this;
+    off(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'thermal-state-change', listener: () => void): this;
+    once(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'thermal-state-change', listener: () => void): this;
+    addListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'thermal-state-change', listener: () => void): this;
+    removeListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
@@ -21401,6 +21404,21 @@ declare namespace Electron {
     callback?: () => void;
   }
 
+  interface PowerMonitorSpeedLimitChangeEventParams {
+    /**
+     * The operating system's advertised speed limit for CPUs, in percent.
+     */
+    limit: number;
+  }
+
+  interface PowerMonitorThermalStateChangeEventParams {
+    /**
+     * The system's new thermal state. Can be `unknown`, `nominal`, `fair`, `serious`,
+     * `critical`.
+     */
+    state: ('unknown' | 'nominal' | 'fair' | 'serious' | 'critical');
+  }
+
   interface PreconnectOptions {
     /**
      * URL for preconnect. Only the origin is relevant for opening the socket.
@@ -23203,6 +23221,8 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23576,6 +23596,8 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23877,6 +23899,8 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -24175,6 +24199,8 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -24565,6 +24591,8 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
