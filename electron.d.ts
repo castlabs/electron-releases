@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-beta.6+wvcus
+// Type definitions for Electron 35.0.0-beta.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9545,6 +9545,12 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/navigation-entry
 
+    /**
+     * A base64 encoded data string containing Chromium page state including
+     * information like the current scroll position or form values. It is committed by
+     * Chromium before a navigation event and on a regular interval.
+     */
+    pageState?: string;
     title: string;
     url: string;
   }
@@ -9611,6 +9617,13 @@ declare namespace Electron {
      * Whether the navigation entry was removed from the webContents history.
      */
     removeEntryAtIndex(index: number): boolean;
+    /**
+     * the promise will resolve when the page has finished loading the selected
+     * navigation entry (see `did-finish-load`), and rejects if the page fails to load
+     * (see `did-fail-load`). A noop rejection handler is already attached, which
+     * avoids unhandled rejection errors.
+     */
+    restore(options: RestoreOptions): Promise<void>;
   }
 
   interface Net {
@@ -21668,6 +21681,19 @@ declare namespace Electron {
     pin?: (string) | (null);
   }
 
+  interface RestoreOptions {
+    /**
+     * Result of a prior `getAllEntries()` call
+     */
+    entries: NavigationEntry[];
+    /**
+     * Index of the stack that should be loaded. If you set it to `0`, the webContents
+     * will load the first (oldest) entry. If you leave it undefined, Electron will
+     * automatically load the last (newest) entry.
+     */
+    index?: number;
+  }
+
   interface Result {
     requestId: number;
     /**
@@ -23238,6 +23264,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
@@ -23613,6 +23640,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
@@ -23916,6 +23944,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
@@ -24216,6 +24245,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
@@ -24608,6 +24638,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
     type SaveDialogReturnValue = Electron.SaveDialogReturnValue;
