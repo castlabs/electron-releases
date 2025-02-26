@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-beta.7+wvcus
+// Type definitions for Electron 35.0.0-beta.8+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -13030,9 +13030,10 @@ declare namespace Electron {
     /**
      * `true` if DWM composition (Aero Glass) is enabled, and `false` otherwise.
      *
-     * An example of using it to determine if you should create a transparent window or
-     * not (transparent windows won't work correctly when DWM composition is disabled):
+     * **Deprecated:** This function has been always returning `true` since Electron
+     * 23, which only supports Windows 10+.
      *
+     * @deprecated
      * @platform win32
      */
     isAeroGlassEnabled(): boolean;
