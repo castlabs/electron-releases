@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0-beta.8+wvcus
+// Type definitions for Electron 35.0.0-beta.9+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3685,11 +3685,12 @@ declare namespace Electron {
      */
     resizable?: boolean;
     /**
-     * Whether frameless window should have rounded corners on macOS. Default is
-     * `true`. Setting this property to `false` will prevent the window from being
-     * fullscreenable.
+     * Whether frameless window should have rounded corners. Default is `true`. Setting
+     * this property to `false` will prevent the window from being fullscreenable on
+     * macOS. On Windows versions older than Windows 11 Build 22000 this property has
+     * no effect, and frameless windows will not have rounded corners.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     roundedCorners?: boolean;
     /**
@@ -9568,7 +9569,8 @@ declare namespace Electron {
      */
     canGoForward(): boolean;
     /**
-     * Whether the web page can go to the specified `offset` from the current entry.
+     * Whether the web page can go to the specified relative `offset` from the current
+     * entry.
      */
     canGoToOffset(offset: number): boolean;
     /**
@@ -9603,7 +9605,7 @@ declare namespace Electron {
      */
     goToIndex(index: number): void;
     /**
-     * Navigates to the specified offset from the current entry.
+     * Navigates to the specified relative offset from the current entry.
      */
     goToOffset(offset: number): void;
     /**
@@ -18259,6 +18261,10 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/web-request-filter
 
     /**
+     * Array of URL patterns used to exclude requests that match these patterns.
+     */
+    excludeUrls?: string[];
+    /**
      * Array of types that will be used to filter out the requests that do not match
      * the types. When not specified, all types will be matched. Can be `mainFrame`,
      * `subFrame`, `stylesheet`, `script`, `image`, `font`, `object`, `xhr`, `ping`,
@@ -18266,8 +18272,8 @@ declare namespace Electron {
      */
     types?: Array<'mainFrame' | 'subFrame' | 'stylesheet' | 'script' | 'image' | 'font' | 'object' | 'xhr' | 'ping' | 'cspReport' | 'media' | 'webSocket'>;
     /**
-     * Array of URL patterns that will be used to filter out the requests that do not
-     * match the URL patterns.
+     * Array of URL patterns used to include requests that match these patterns. Use
+     * the pattern `<all_urls>` to match all URLs.
      */
     urls: string[];
   }
