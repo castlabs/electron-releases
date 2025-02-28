@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.2.0+wvcus
+// Type definitions for Electron 34.3.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3657,11 +3657,12 @@ declare namespace Electron {
      */
     resizable?: boolean;
     /**
-     * Whether frameless window should have rounded corners on macOS. Default is
-     * `true`. Setting this property to `false` will prevent the window from being
-     * fullscreenable.
+     * Whether frameless window should have rounded corners. Default is `true`. Setting
+     * this property to `false` will prevent the window from being fullscreenable on
+     * macOS. On Windows versions older than Windows 11 Build 22000 this property has
+     * no effect, and frameless windows will not have rounded corners.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     roundedCorners?: boolean;
     /**
@@ -9350,7 +9351,8 @@ declare namespace Electron {
      */
     canGoForward(): boolean;
     /**
-     * Whether the web page can go to the specified `offset` from the current entry.
+     * Whether the web page can go to the specified relative `offset` from the current
+     * entry.
      */
     canGoToOffset(offset: number): boolean;
     /**
@@ -9385,7 +9387,7 @@ declare namespace Electron {
      */
     goToIndex(index: number): void;
     /**
-     * Navigates to the specified offset from the current entry.
+     * Navigates to the specified relative offset from the current entry.
      */
     goToOffset(offset: number): void;
     /**
@@ -10067,23 +10069,23 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'thermal-state-change', listener: () => void): this;
+    on(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'thermal-state-change', listener: () => void): this;
+    off(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'thermal-state-change', listener: () => void): this;
+    once(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'thermal-state-change', listener: () => void): this;
+    addListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'thermal-state-change', listener: () => void): this;
+    removeListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
@@ -20961,6 +20963,14 @@ declare namespace Electron {
     callback?: () => void;
   }
 
+  interface PowerMonitorThermalStateChangeEventParams {
+    /**
+     * The system's new thermal state. Can be `unknown`, `nominal`, `fair`, `serious`,
+     * `critical`.
+     */
+    state: ('unknown' | 'nominal' | 'fair' | 'serious' | 'critical');
+  }
+
   interface PreconnectOptions {
     /**
      * URL for preconnect. Only the origin is relevant for opening the socket.
@@ -22723,6 +22733,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23085,6 +23096,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23377,6 +23389,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23666,6 +23679,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -24045,6 +24059,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
