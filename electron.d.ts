@@ -1,4 +1,4 @@
-// Type definitions for Electron 32.3.1+wvcus
+// Type definitions for Electron 32.3.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9993,23 +9993,23 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    on(event: 'thermal-state-change', listener: () => void): this;
+    on(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    off(event: 'thermal-state-change', listener: () => void): this;
+    off(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    once(event: 'thermal-state-change', listener: () => void): this;
+    once(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    addListener(event: 'thermal-state-change', listener: () => void): this;
+    addListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * @platform darwin
      */
-    removeListener(event: 'thermal-state-change', listener: () => void): this;
+    removeListener(event: 'thermal-state-change', listener: (details: Event<PowerMonitorThermalStateChangeEventParams>) => void): this;
     /**
      * Emitted as soon as the systems screen is unlocked.
      *
@@ -20556,6 +20556,14 @@ declare namespace Electron {
     callback?: () => void;
   }
 
+  interface PowerMonitorThermalStateChangeEventParams {
+    /**
+     * The system's new thermal state. Can be `unknown`, `nominal`, `fair`, `serious`,
+     * `critical`.
+     */
+    state: ('unknown' | 'nominal' | 'fair' | 'serious' | 'critical');
+  }
+
   interface PreconnectOptions {
     /**
      * URL for preconnect. Only the origin is relevant for opening the socket.
@@ -22168,6 +22176,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -22518,6 +22527,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -22798,6 +22808,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23075,6 +23086,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
@@ -23442,6 +23454,7 @@ declare namespace Electron {
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
     type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
+    type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
     type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
