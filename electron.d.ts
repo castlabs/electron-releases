@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.0+wvcus
+// Type definitions for Electron 36.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8008,6 +8008,104 @@ declare namespace Electron {
     version: string;
   }
 
+  class Extensions extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/extensions-api
+
+    /**
+     * Emitted after an extension is loaded. This occurs whenever an extension is added
+     * to the "enabled" set of extensions. This includes:
+     *
+     * * Extensions being loaded from `Extensions.loadExtension`.
+     * * Extensions being reloaded:
+     *   * from a crash.
+     *   * if the extension requested it (`chrome.runtime.reload()`).
+     */
+    on(event: 'extension-loaded', listener: (event: Event,
+                                             extension: Extension) => void): this;
+    off(event: 'extension-loaded', listener: (event: Event,
+                                             extension: Extension) => void): this;
+    once(event: 'extension-loaded', listener: (event: Event,
+                                             extension: Extension) => void): this;
+    addListener(event: 'extension-loaded', listener: (event: Event,
+                                             extension: Extension) => void): this;
+    removeListener(event: 'extension-loaded', listener: (event: Event,
+                                             extension: Extension) => void): this;
+    /**
+     * Emitted after an extension is loaded and all necessary browser state is
+     * initialized to support the start of the extension's background page.
+     */
+    on(event: 'extension-ready', listener: (event: Event,
+                                            extension: Extension) => void): this;
+    off(event: 'extension-ready', listener: (event: Event,
+                                            extension: Extension) => void): this;
+    once(event: 'extension-ready', listener: (event: Event,
+                                            extension: Extension) => void): this;
+    addListener(event: 'extension-ready', listener: (event: Event,
+                                            extension: Extension) => void): this;
+    removeListener(event: 'extension-ready', listener: (event: Event,
+                                            extension: Extension) => void): this;
+    /**
+     * Emitted after an extension is unloaded. This occurs when
+     * `Session.removeExtension` is called.
+     */
+    on(event: 'extension-unloaded', listener: (event: Event,
+                                               extension: Extension) => void): this;
+    off(event: 'extension-unloaded', listener: (event: Event,
+                                               extension: Extension) => void): this;
+    once(event: 'extension-unloaded', listener: (event: Event,
+                                               extension: Extension) => void): this;
+    addListener(event: 'extension-unloaded', listener: (event: Event,
+                                               extension: Extension) => void): this;
+    removeListener(event: 'extension-unloaded', listener: (event: Event,
+                                               extension: Extension) => void): this;
+    /**
+     * A list of all loaded extensions.
+     *
+     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * is emitted.
+     */
+    getAllExtensions(): Extension[];
+    /**
+     * The loaded extension with the given ID.
+     *
+     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * is emitted.
+     */
+    getExtension(extensionId: string): (Extension) | (null);
+    /**
+     * resolves when the extension is loaded.
+     *
+     * This method will raise an exception if the extension could not be loaded. If
+     * there are warnings when installing the extension (e.g. if the extension requests
+     * an API that Electron does not support) then they will be logged to the console.
+     *
+     * Note that Electron does not support the full range of Chrome extensions APIs.
+     * See Supported Extensions APIs for more details on what is supported.
+     *
+     * Note that in previous versions of Electron, extensions that were loaded would be
+     * remembered for future runs of the application. This is no longer the case:
+     * `loadExtension` must be called on every boot of your app if you want the
+     * extension to be loaded.
+     *
+     * This API does not support loading packed (.crx) extensions.
+     *
+     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * is emitted.
+     *
+     * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
+     * supported and will throw an error.
+     */
+    loadExtension(path: string, options?: LoadExtensionOptions): Promise<Electron.Extension>;
+    /**
+     * Unloads an extension.
+     *
+     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * is emitted.
+     */
+    removeExtension(extensionId: string): void;
+  }
+
   interface FileFilter {
 
     // Docs: https://electronjs.org/docs/api/structures/file-filter
@@ -10491,10 +10589,6 @@ declare namespace Electron {
      */
     displayName: string;
     /**
-     * whether or not a given printer is set as the default printer on the OS.
-     */
-    isDefault: boolean;
-    /**
      * the name of the printer as understood by the OS.
      */
     name: string;
@@ -10502,10 +10596,6 @@ declare namespace Electron {
      * an object containing a variable number of platform-specific printer information.
      */
     options: Options;
-    /**
-     * the current status of the printer.
-     */
-    status: number;
   }
 
   interface ProcessMemoryInfo {
@@ -12244,6 +12334,10 @@ declare namespace Electron {
      *
      * **Note:** This API cannot be called before the `ready` event of the `app` module
      * is emitted.
+     *
+     * **Deprecated:** Use the new `ses.extensions.getAllExtensions` API.
+     *
+     * @deprecated
      */
     getAllExtensions(): Extension[];
     /**
@@ -12259,6 +12353,10 @@ declare namespace Electron {
      *
      * **Note:** This API cannot be called before the `ready` event of the `app` module
      * is emitted.
+     *
+     * **Deprecated:** Use the new `ses.extensions.getExtension` API.
+     *
+     * @deprecated
      */
     getExtension(extensionId: string): (Extension) | (null);
     /**
@@ -12354,6 +12452,10 @@ declare namespace Electron {
      *
      * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
      * supported and will throw an error.
+     *
+     * **Deprecated:** Use the new `ses.extensions.loadExtension` API.
+     *
+     * @deprecated
      */
     loadExtension(path: string, options?: LoadExtensionOptions): Promise<Electron.Extension>;
     /**
@@ -12373,6 +12475,10 @@ declare namespace Electron {
      *
      * **Note:** This API cannot be called before the `ready` event of the `app` module
      * is emitted.
+     *
+     * **Deprecated:** Use the new `ses.extensions.removeExtension` API.
+     *
+     * @deprecated
      */
     removeExtension(extensionId: string): void;
     /**
@@ -12591,6 +12697,11 @@ declare namespace Electron {
      *
      */
     readonly cookies: Cookies;
+    /**
+     * A `Extensions` object for this session.
+     *
+     */
+    readonly extensions: Extensions;
     /**
      * A `NetLog` object for this session.
      *
@@ -13029,16 +13140,6 @@ declare namespace Electron {
      * @platform darwin
      */
     getUserDefault<Type extends keyof UserDefaultTypes>(key: string, type: Type): UserDefaultTypes[Type];
-    /**
-     * `true` if DWM composition (Aero Glass) is enabled, and `false` otherwise.
-     *
-     * **Deprecated:** This function has been always returning `true` since Electron
-     * 23, which only supports Windows 10+.
-     *
-     * @deprecated
-     * @platform win32
-     */
-    isAeroGlassEnabled(): boolean;
     /**
      * Whether the Swipe between pages setting is on.
      *
@@ -16117,6 +16218,10 @@ declare namespace Electron {
      * that you call `texture.release()` as soon as you're done with the texture. By
      * managing the texture lifecycle by yourself, you can safely pass the
      * `texture.textureInfo` to other processes through IPC.
+     *
+     * More details can be found in the offscreen rendering tutorial. To learn about
+     * how to handle the texture in native code, refer to offscreen rendering's code
+     * documentation..
      */
     on(event: 'paint', listener: (details: Event<WebContentsPaintEventParams>,
                                   dirtyRect: Rectangle,
@@ -17403,6 +17508,13 @@ declare namespace Electron {
      */
     readonly devToolsWebContents: (WebContents) | (null);
     /**
+     * A `WebFrameMain | null` property that represents the currently focused frame in
+     * this WebContents. Can be the top frame, an inner `<iframe>`, or `null` if
+     * nothing is focused.
+     *
+     */
+    readonly focusedFrame: (WebFrameMain) | (null);
+    /**
      * An `Integer` property that sets the frame rate of the web contents to the
      * specified number. Only values between 1 and 240 are accepted.
      *
@@ -17461,12 +17573,12 @@ declare namespace Electron {
      */
     readonly navigationHistory: NavigationHistory;
     /**
-     * A `WebFrameMain` property that represents the frame that opened this
+     * A `WebFrameMain | null` property that represents the frame that opened this
      * WebContents, either with open(), or by navigating a link with a target
      * attribute.
      *
      */
-    readonly opener: WebFrameMain;
+    readonly opener: (WebFrameMain) | (null);
     /**
      * A `Session` used by this webContents.
      *
@@ -23452,6 +23564,7 @@ declare namespace Electron {
     type Dialog = Electron.Dialog;
     type Dock = Electron.Dock;
     type DownloadItem = Electron.DownloadItem;
+    type Extensions = Electron.Extensions;
     const globalShortcut: GlobalShortcut;
     type GlobalShortcut = Electron.GlobalShortcut;
     const inAppPurchase: InAppPurchase;
@@ -24439,6 +24552,7 @@ declare namespace Electron {
     type Dialog = Electron.Dialog;
     type Dock = Electron.Dock;
     type DownloadItem = Electron.DownloadItem;
+    type Extensions = Electron.Extensions;
     const globalShortcut: GlobalShortcut;
     type GlobalShortcut = Electron.GlobalShortcut;
     const inAppPurchase: InAppPurchase;
