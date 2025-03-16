@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-alpha.1+wvcus
+// Type definitions for Electron 36.0.0-alpha.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -19408,10 +19408,10 @@ declare namespace Electron {
      */
     storages?: Array<'cookies' | 'filesystem' | 'indexdb' | 'localstorage' | 'shadercache' | 'websql' | 'serviceworkers' | 'cachestorage'>;
     /**
-     * The types of quotas to clear, can be `temporary`, `syncable`. If not specified,
-     * clear all quotas.
+     * The types of quotas to clear, can be `temporary`. If not specified, clear all
+     * quotas.
      */
-    quotas?: Array<'temporary' | 'syncable'>;
+    quotas?: Array<'temporary'>;
   }
 
   interface ClientCertRequestParams {
