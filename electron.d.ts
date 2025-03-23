@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.0.2+wvcus
+// Type definitions for Electron 35.0.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1780,12 +1780,13 @@ declare namespace Electron {
      */
     readonly commandLine: CommandLine;
     /**
-     * A `Dock` `| undefined` object that allows you to perform actions on your app
-     * icon in the user's dock on macOS.
+     * A `Dock | undefined` property (`Dock` on macOS, `undefined` on all other
+     * platforms) that allows you to perform actions on your app icon in the user's
+     * dock.
      *
      * @platform darwin
      */
-    readonly dock: Dock;
+    readonly dock: (Dock) | (undefined);
     /**
      * A `boolean` property that returns  `true` if the app is packaged, `false`
      * otherwise. For many apps, this property can be used to distinguish development
