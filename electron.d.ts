@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.3.4+wvcus
+// Type definitions for Electron 34.4.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -10801,7 +10801,11 @@ declare namespace Electron {
      */
     registerForAPNSNotifications(): Promise<string>;
     /**
-     * Unregisters the app from notifications received from APNS. See:
+     * Unregisters the app from notifications received from APNS.
+     *
+     * Apps unregistered through this method can always reregister.
+     *
+     * See:
      * https://developer.apple.com/documentation/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc
      *
      * @platform darwin
