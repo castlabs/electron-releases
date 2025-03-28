@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-alpha.4+wvcus
+// Type definitions for Electron 36.0.0-alpha.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2814,6 +2814,15 @@ declare namespace Electron {
      */
     isSimpleFullScreen(): boolean;
     /**
+     * whether the window is arranged via Snap.
+     *
+     * The window is snapped via buttons shown when the mouse is hovered over window
+     * maximize button, or by dragging it to the edges of the screen.
+     *
+     * @platform win32
+     */
+    isSnapped(): boolean;
+    /**
      * Whether the window is in Windows 10 tablet mode.
      *
      * Since Windows 10 users can use their PC as tablet, under this mode apps can
@@ -3497,6 +3506,12 @@ declare namespace Electron {
      * fullscreen mode.
      */
     simpleFullScreen: boolean;
+    /**
+     * A `boolean` property that indicates whether the window is arranged via Snap.
+     *
+     * @platform win32
+     */
+    readonly snapped: boolean;
     /**
      * A `string` (optional) property that is equal to the `tabbingIdentifier` passed
      * to the `BrowserWindow` constructor or `undefined` if none was set.
@@ -5441,6 +5456,15 @@ declare namespace Electron {
      */
     isSimpleFullScreen(): boolean;
     /**
+     * whether the window is arranged via Snap.
+     *
+     * The window is snapped via buttons shown when the mouse is hovered over window
+     * maximize button, or by dragging it to the edges of the screen.
+     *
+     * @platform win32
+     */
+    isSnapped(): boolean;
+    /**
      * Whether the window is in Windows 10 tablet mode.
      *
      * Since Windows 10 users can use their PC as tablet, under this mode apps can
@@ -6180,6 +6204,12 @@ declare namespace Electron {
      * fullscreen mode.
      */
     simpleFullScreen: boolean;
+    /**
+     * A `boolean` property that indicates whether the window is arranged via Snap.
+     *
+     * @platform win32
+     */
+    readonly snapped: boolean;
     /**
      * A `string` (optional) property that is equal to the `tabbingIdentifier` passed
      * to the `BrowserWindow` constructor or `undefined` if none was set.
@@ -8501,10 +8531,10 @@ declare namespace Electron {
 
     /**
      * An array of modifiers of the event, can be `shift`, `control`, `ctrl`, `alt`,
-     * `meta`, `command`, `cmd`, `isKeypad`, `isAutoRepeat`, `leftButtonDown`,
-     * `middleButtonDown`, `rightButtonDown`, `capsLock`, `numLock`, `left`, `right`.
+     * `meta`, `command`, `cmd`, `iskeypad`, `isautorepeat`, `leftbuttondown`,
+     * `middlebuttondown`, `rightbuttondown`, `capslock`, `numlock`, `left`, `right`.
      */
-    modifiers?: Array<'shift' | 'control' | 'ctrl' | 'alt' | 'meta' | 'command' | 'cmd' | 'isKeypad' | 'isAutoRepeat' | 'leftButtonDown' | 'middleButtonDown' | 'rightButtonDown' | 'capsLock' | 'numLock' | 'left' | 'right'>;
+    modifiers?: Array<'shift' | 'control' | 'ctrl' | 'alt' | 'meta' | 'command' | 'cmd' | 'iskeypad' | 'isautorepeat' | 'leftbuttondown' | 'middlebuttondown' | 'rightbuttondown' | 'capslock' | 'numlock' | 'left' | 'right'>;
     /**
      * Can be `undefined`, `mouseDown`, `mouseUp`, `mouseMove`, `mouseEnter`,
      * `mouseLeave`, `contextMenu`, `mouseWheel`, `rawKeyDown`, `keyDown`, `keyUp`,
@@ -11148,7 +11178,11 @@ declare namespace Electron {
      */
     registerForAPNSNotifications(): Promise<string>;
     /**
-     * Unregisters the app from notifications received from APNS. See:
+     * Unregisters the app from notifications received from APNS.
+     *
+     * Apps unregistered through this method can always reregister.
+     *
+     * See:
      * https://developer.apple.com/documentation/appkit/nsapplication/1428747-unregisterforremotenotifications?language=objc
      *
      * @platform darwin
@@ -24987,13 +25021,6 @@ interface NodeRequire {
   (moduleName: 'electron/common'): typeof Electron.Common;
   (moduleName: 'electron/renderer'): typeof Electron.Renderer;
   (moduleName: 'electron/utility'): typeof Electron.Utility;
-}
-
-interface File {
-  /**
-   * The real path to the file on the users filesystem
-   */
-  path: string;
 }
 
 declare module 'original-fs' {
