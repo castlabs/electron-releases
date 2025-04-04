@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.1.2+wvcus
+// Type definitions for Electron 35.1.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14573,6 +14573,10 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/utility-process
 
+    /**
+     * **Note:** `utilityProcess.fork` can only be called after the `ready` event has
+     * been emitted on `App`.
+     */
     static fork(modulePath: string, args?: string[], options?: ForkOptions): UtilityProcess;
     /**
      * Emitted when the child process needs to terminate due to non continuable error
