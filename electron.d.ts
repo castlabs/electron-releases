@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.2+wvcus
+// Type definitions for Electron 36.0.0-beta.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6708,6 +6708,10 @@ declare namespace Electron {
     appendSwitch(the_switch: string, value?: string): void;
     /**
      * The command-line switch value.
+     *
+     * This function is meant to obtain Chromium command line switches. It is not meant
+     * to be used for application-specific command line arguments. For the latter,
+     * please use `process.argv`.
      *
      * **Note:** When the switch is not present or has no value, it returns empty
      * string.
@@ -22259,7 +22263,7 @@ declare namespace Electron {
      * The CSS color of the symbols on the Window Controls Overlay when enabled.
      * Default is the system color.
      *
-     * @platform win32
+     * @platform win32,linux
      */
     symbolColor?: string;
     /**
