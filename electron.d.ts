@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.1.4+wvcus
+// Type definitions for Electron 35.1.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -22099,7 +22099,7 @@ declare namespace Electron {
      * The CSS color of the symbols on the Window Controls Overlay when enabled.
      * Default is the system color.
      *
-     * @platform win32
+     * @platform win32,linux
      */
     symbolColor?: string;
     /**
