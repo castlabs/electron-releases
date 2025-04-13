@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.4+wvcus
+// Type definitions for Electron 36.0.0-beta.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14566,7 +14566,8 @@ declare namespace Electron {
      */
     setTitle(title: string, options?: TitleOptions): void;
     /**
-     * Sets the hover text for this tray icon.
+     * Sets the hover text for this tray icon. Setting the text to an empty string will
+     * remove the tooltip.
      */
     setToolTip(toolTip: string): void;
   }
@@ -19611,6 +19612,13 @@ declare namespace Electron {
      * Windows and Linux.
      */
     enableBuiltInResolver?: boolean;
+    /**
+     * Whether the Happy Eyeballs V3 algorithm should be used in creating network
+     * connections. When enabled, hostnames resolving to multiple IP addresses will be
+     * attempted in parallel to have a chance at establishing a connection more
+     * quickly.
+     */
+    enableHappyEyeballs?: boolean;
     /**
      * Can be 'off', 'automatic' or 'secure'. Configures the DNS-over-HTTP mode. When
      * 'off', no DoH lookups will be performed. When 'automatic', DoH lookups will be
