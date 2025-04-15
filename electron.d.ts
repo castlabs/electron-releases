@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.5+wvcus
+// Type definitions for Electron 36.0.0-beta.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -21569,7 +21569,8 @@ declare namespace Electron {
     /**
      * Provide the relevant frame if you want certain OS-level features such as Writing
      * Tools on macOS to function correctly. Typically, this should be `params.frame`
-     * from the `context-menu` event on a WebContents.
+     * from the `context-menu` event on a WebContents, or the `focusedFrame` property
+     * of a WebContents.
      */
     frame?: WebFrameMain;
     /**
