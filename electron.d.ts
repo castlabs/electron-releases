@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.1.5+wvcus
+// Type definitions for Electron 35.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6673,6 +6673,10 @@ declare namespace Electron {
     /**
      * The command-line switch value.
      *
+     * This function is meant to obtain Chromium command line switches. It is not meant
+     * to be used for application-specific command line arguments. For the latter,
+     * please use `process.argv`.
+     *
      * **Note:** When the switch is not present or has no value, it returns empty
      * string.
      */
@@ -9489,6 +9493,17 @@ declare namespace Electron {
      *
      */
     readonly shouldUseDarkColors: boolean;
+    /**
+     * A `boolean` property indicating whether or not the system theme has been set to
+     * dark or light.
+     *
+     * On Windows this property distinguishes between system and app light/dark theme,
+     * returning `true` if the system theme is set to dark theme and `false` otherwise.
+     * On macOS the return value will be the same as `nativeTheme.shouldUseDarkColors`.
+     *
+     * @platform darwin,win32
+     */
+    readonly shouldUseDarkColorsForSystemIntegratedUI: boolean;
     /**
      * A `boolean` for if the OS / Chromium currently has high-contrast mode enabled or
      * is being instructed to show a high-contrast UI.
@@ -17470,12 +17485,12 @@ declare namespace Electron {
      */
     readonly navigationHistory: NavigationHistory;
     /**
-     * A `WebFrameMain` property that represents the frame that opened this
+     * A `WebFrameMain | null` property that represents the frame that opened this
      * WebContents, either with open(), or by navigating a link with a target
      * attribute.
      *
      */
-    readonly opener: WebFrameMain;
+    readonly opener: (WebFrameMain) | (null);
     /**
      * A `Session` used by this webContents.
      *
