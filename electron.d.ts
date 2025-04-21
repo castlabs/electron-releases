@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.6+wvcus
+// Type definitions for Electron 36.0.0-beta.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9627,6 +9627,17 @@ declare namespace Electron {
      *
      */
     readonly shouldUseDarkColors: boolean;
+    /**
+     * A `boolean` property indicating whether or not the system theme has been set to
+     * dark or light.
+     *
+     * On Windows this property distinguishes between system and app light/dark theme,
+     * returning `true` if the system theme is set to dark theme and `false` otherwise.
+     * On macOS the return value will be the same as `nativeTheme.shouldUseDarkColors`.
+     *
+     * @platform darwin,win32
+     */
+    readonly shouldUseDarkColorsForSystemIntegratedUI: boolean;
     /**
      * A `boolean` for if the OS / Chromium currently has high-contrast mode enabled or
      * is being instructed to show a high-contrast UI.
