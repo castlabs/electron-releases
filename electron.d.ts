@@ -1,4 +1,4 @@
-// Type definitions for Electron 34.5.1+wvcus
+// Type definitions for Electron 34.5.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -17036,12 +17036,12 @@ declare namespace Electron {
      */
     readonly navigationHistory: NavigationHistory;
     /**
-     * A `WebFrameMain` property that represents the frame that opened this
+     * A `WebFrameMain | null` property that represents the frame that opened this
      * WebContents, either with open(), or by navigating a link with a target
      * attribute.
      *
      */
-    readonly opener: WebFrameMain;
+    readonly opener: (WebFrameMain) | (null);
     /**
      * A `Session` used by this webContents.
      *
