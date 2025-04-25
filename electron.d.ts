@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.8+wvcus
+// Type definitions for Electron 36.0.0-beta.9+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9517,13 +9517,11 @@ declare namespace Electron {
      */
     getAspectRatio(scaleFactor?: number): number;
     /**
-     * A Buffer that contains the image's raw bitmap pixel data.
+     * Legacy alias for `image.toBitmap()`.
      *
-     * The difference between `getBitmap()` and `toBitmap()` is that `getBitmap()` does
-     * not copy the bitmap data, so you have to use the returned Buffer immediately in
-     * current event loop tick; otherwise the data might be changed or destroyed.
+     * @deprecated
      */
-    getBitmap(options?: BitmapOptions): Buffer;
+    getBitmap(options?: BitmapOptions): void;
     /**
      * A Buffer that stores C pointer to underlying native handle of the image. On
      * macOS, a pointer to `NSImage` instance is returned.
