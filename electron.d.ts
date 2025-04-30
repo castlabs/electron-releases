@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0-beta.9+wvcus
+// Type definitions for Electron 36.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3396,6 +3396,8 @@ declare namespace Electron {
      *
      * If the menu bar is already visible, setting this property to `true` won't hide
      * it immediately.
+     *
+     * @platform linux,win32
      */
     autoHideMenuBar: boolean;
     /**
@@ -3557,6 +3559,8 @@ declare namespace Electron {
     alwaysOnTop?: boolean;
     /**
      * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
+     *
+     * @platform linux,win32
      */
     autoHideMenuBar?: boolean;
     /**
@@ -6102,6 +6106,8 @@ declare namespace Electron {
      *
      * If the menu bar is already visible, setting this property to `true` won't hide
      * it immediately.
+     *
+     * @platform linux,win32
      */
     autoHideMenuBar: boolean;
     /**
