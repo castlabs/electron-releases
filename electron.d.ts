@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.0.0+wvcus
+// Type definitions for Electron 37.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11101,9 +11101,8 @@ declare namespace Electron {
      */
     referrer?: string;
     /**
-     * The session used for requesting URL, by default the HTTP request will reuse the
-     * current session. Setting `session` to `null` would use a random independent
-     * session. This is only used for URL responses.
+     * The session used for requesting URL. The HTTP request will reuse the current
+     * session by default.
      */
     session?: Session;
     /**
@@ -11590,6 +11589,12 @@ declare namespace Electron {
      * @experimental
      */
     readonly scope: string;
+    /**
+     * A `string` representing the script URL of the service worker.
+     *
+     * @experimental
+     */
+    readonly scriptURL: string;
     /**
      * A `number` representing the ID of the specific version of the service worker
      * script in its scope.
