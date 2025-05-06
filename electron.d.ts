@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-alpha.2+wvcus
+// Type definitions for Electron 37.0.0-alpha.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9491,9 +9491,9 @@ declare namespace Electron {
      */
     static createFromNamedImage(imageName: string, hslShift?: number[]): NativeImage;
     /**
-     * Creates a new `NativeImage` instance from a file located at `path`. This method
-     * returns an empty image if the `path` does not exist, cannot be read, or is not a
-     * valid image.
+     * Creates a new `NativeImage` instance from an image file (e.g., PNG or JPEG)
+     * located at `path`. This method returns an empty image if the `path` does not
+     * exist, cannot be read, or is not a valid image.
      */
     static createFromPath(path: string): NativeImage;
     /**
@@ -11397,7 +11397,9 @@ declare namespace Electron {
      * Converts a screen DIP point to a screen physical point. The DPI scale is
      * performed relative to the display containing the DIP point.
      *
-     * @platform win32
+     * Not currently supported on Wayland.
+     *
+     * @platform win32,linux
      */
     dipToScreenPoint(point: Point): Point;
     /**
@@ -11434,7 +11436,10 @@ declare namespace Electron {
      * Converts a screen physical point to a screen DIP point. The DPI scale is
      * performed relative to the display containing the physical point.
      *
-     * @platform win32
+     * Not currently supported on Wayland - if used there it will return the point
+     * passed in with no changes.
+     *
+     * @platform win32,linux
      */
     screenToDipPoint(point: Point): Point;
     /**
