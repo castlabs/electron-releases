@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.1.0+wvcus
+// Type definitions for Electron 36.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1655,7 +1655,16 @@ declare namespace Electron {
      * `sessionData` path before the `ready` event of the `app` module is emitted.
      */
     setPath(name: string, path: string): void;
-    setProxy(config: ProxyConfig): void;
+    /**
+     * Resolves when the proxy setting process is complete.
+     *
+     * Sets the proxy settings for networks requests made without an associated
+     * Session. Currently this will affect requests made with Net in the utility
+     * process and internal requests made by the runtime (ex: geolocation queries).
+     *
+     * This method can only be called after app is ready.
+     */
+    setProxy(config: ProxyConfig): Promise<void>;
     /**
      * Set the `Secure Keyboard Entry` is enabled in your application.
      *
@@ -9491,9 +9500,9 @@ declare namespace Electron {
      */
     static createFromNamedImage(imageName: string, hslShift?: number[]): NativeImage;
     /**
-     * Creates a new `NativeImage` instance from a file located at `path`. This method
-     * returns an empty image if the `path` does not exist, cannot be read, or is not a
-     * valid image.
+     * Creates a new `NativeImage` instance from an image file (e.g., PNG or JPEG)
+     * located at `path`. This method returns an empty image if the `path` does not
+     * exist, cannot be read, or is not a valid image.
      */
     static createFromPath(path: string): NativeImage;
     /**
