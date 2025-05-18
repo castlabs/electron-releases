@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.2.0+wvcus
+// Type definitions for Electron 36.2.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -165,11 +165,11 @@ declare namespace Electron {
      * `event.preventDefault()` will prevent the default behavior, which is terminating
      * the application.
      *
-     * **Note:** If application quit was initiated by `autoUpdater.quitAndInstall()`,
+     * > [!NOTE] If application quit was initiated by `autoUpdater.quitAndInstall()`,
      * then `before-quit` is emitted _after_ emitting `close` event on all windows and
      * closing them.
      *
-     * **Note:** On Windows, this event will not be emitted if the app is closed due to
+     * > [!NOTE] On Windows, this event will not be emitted if the app is closed due to
      * a shutdown/restart of the system or a user logout.
      */
     on(event: 'before-quit', listener: (event: Event) => void): this;
@@ -612,7 +612,7 @@ declare namespace Electron {
     /**
      * Emitted when the application is quitting.
      *
-     * **Note:** On Windows, this event will not be emitted if the app is closed due to
+     * > [!NOTE] On Windows, this event will not be emitted if the app is closed due to
      * a shutdown/restart of the system or a user logout.
      */
     on(event: 'quit', listener: (event: Event,
@@ -633,7 +633,7 @@ declare namespace Electron {
      * this event has already fired and `app.whenReady()` to get a Promise that is
      * fulfilled when Electron is initialized.
      *
-     * **Note**: The `ready` event is only fired after the main process has finished
+     * > [!NOTE] The `ready` event is only fired after the main process has finished
      * running the first tick of the event loop. If an Electron API needs to be called
      * before the `ready` event, ensure that it is called synchronously in the
      * top-level context of the main process.
@@ -690,18 +690,18 @@ declare namespace Electron {
      * `workingDirectory` is its current working directory. Usually applications
      * respond to this by making their primary window focused and non-minimized.
      *
-     * **Note:** `argv` will not be exactly the same list of arguments as those passed
+     * > [!NOTE] `argv` will not be exactly the same list of arguments as those passed
      * to the second instance. The order might change and additional arguments might be
      * appended. If you need to maintain the exact same arguments, it's advised to use
      * `additionalData` instead.
      *
-     * **Note:** If the second instance is started by a different user than the first,
+     * > [!NOTE] If the second instance is started by a different user than the first,
      * the `argv` array will not include the arguments.
      *
      * This event is guaranteed to be emitted after the `ready` event of `app` gets
      * emitted.
      *
-     * **Note:** Extra command line arguments might be added by Chromium, such as
+     * > [!NOTE] Extra command line arguments might be added by Chromium, such as
      * `--original-process-start-time`.
      */
     on(event: 'second-instance', listener: (event: Event,
@@ -954,7 +954,7 @@ declare namespace Electron {
      * See the description of the `window-all-closed` event for the differences between
      * the `will-quit` and `window-all-closed` events.
      *
-     * **Note:** On Windows, this event will not be emitted if the app is closed due to
+     * > [!NOTE] On Windows, this event will not be emitted if the app is closed due to
      * a shutdown/restart of the system or a user logout.
      */
     on(event: 'will-quit', listener: (event: Event) => void): this;
@@ -1110,7 +1110,7 @@ declare namespace Electron {
     /**
      * The Graphics Feature Status from `chrome://gpu/`.
      *
-     * **Note:** This information is only usable after the `gpu-info-update` event is
+     * > [!NOTE] This information is only usable after the `gpu-info-update` event is
      * emitted.
      */
     getGPUFeatureStatus(): GPUFeatureStatus;
@@ -1146,12 +1146,12 @@ declare namespace Electron {
      * To set the locale, you'll want to use a command line switch at app startup,
      * which may be found here.
      *
-     * **Note:** When distributing your packaged app, you have to also ship the
+     * > [!NOTE] When distributing your packaged app, you have to also ship the
      * `locales` folder.
      *
-     * **Note:** This API must be called after the `ready` event is emitted.
+     * > [!NOTE] This API must be called after the `ready` event is emitted.
      *
-     * **Note:** To see example return values of this API compared to other locale and
+     * > [!NOTE] To see example return values of this API compared to other locale and
      * language APIs, see `app.getPreferredSystemLanguages()`.
      */
     getLocale(): string;
@@ -1159,7 +1159,7 @@ declare namespace Electron {
      * User operating system's locale two-letter ISO 3166 country code. The value is
      * taken from native OS APIs.
      *
-     * **Note:** When unable to detect locale country code, it returns empty string.
+     * > [!NOTE] When unable to detect locale country code, it returns empty string.
      */
     getLocaleCountryCode(): string;
     /**
@@ -1272,9 +1272,9 @@ declare namespace Electron {
      * rendering dates and times in a calendar app, especially when the developer wants
      * the format to be consistent with the OS.
      *
-     * **Note:** This API must be called after the `ready` event is emitted.
+     * > [!NOTE] This API must be called after the `ready` event is emitted.
      *
-     * **Note:** To see example return values of this API compared to other locale and
+     * > [!NOTE] To see example return values of this API compared to other locale and
      * language APIs, see `app.getPreferredSystemLanguages()`.
      */
     getSystemLocale(): string;
@@ -1326,7 +1326,7 @@ declare namespace Electron {
      * Whether the current executable is the default handler for a protocol (aka URI
      * scheme).
      *
-     * **Note:** On macOS, you can use this method to check if the app has been
+     * > [!NOTE] On macOS, you can use this method to check if the app has been
      * registered as the default protocol handler for a protocol. You can also verify
      * this by checking `~/Library/Preferences/com.apple.LaunchServices.plist` on the
      * macOS machine. Please refer to Apple's documentation for details.
@@ -1499,7 +1499,7 @@ declare namespace Electron {
      *
      * This API must be called after the `ready` event is emitted.
      *
-     * **Note:** Rendering accessibility tree can significantly affect the performance
+     * > [!NOTE] Rendering accessibility tree can significantly affect the performance
      * of your app. It should not be enabled by default.
      *
      * @platform darwin,win32
@@ -1545,13 +1545,13 @@ declare namespace Electron {
      * current executable. The whole link, including protocol, will be passed to your
      * application as a parameter.
      *
-     * **Note:** On macOS, you can only register protocols that have been added to your
+     * > [!NOTE] On macOS, you can only register protocols that have been added to your
      * app's `info.plist`, which cannot be modified at runtime. However, you can change
      * the file during build time via Electron Forge, Electron Packager, or by editing
      * `info.plist` with a text editor. Please refer to Apple's documentation for
      * details.
      *
-     * **Note:** In a Windows Store environment (when packaged as an `appx`) this API
+     * > [!NOTE] In a Windows Store environment (when packaged as an `appx`) this API
      * will return `true` for all calls but the registry key it sets won't be
      * accessible by other applications.  In order to register your Windows Store
      * application as a default protocol handler you must declare the protocol in your
@@ -1569,10 +1569,10 @@ declare namespace Electron {
      *
      * On macOS, it shows on the dock icon. On Linux, it only works for Unity launcher.
      *
-     * **Note:** Unity launcher requires a `.desktop` file to work. For more
+     * > [!NOTE] Unity launcher requires a `.desktop` file to work. For more
      * information, please read the Unity integration documentation.
      *
-     * **Note:** On macOS, you need to ensure that your application has the permission
+     * > [!NOTE] On macOS, you need to ensure that your application has the permission
      * to display notifications for this method to work.
      *
      * @platform linux,darwin
@@ -1601,19 +1601,19 @@ declare namespace Electron {
      * If `categories` is `null` the previously set custom Jump List (if any) will be
      * replaced by the standard Jump List for the app (managed by Windows).
      *
-     * **Note:** If a `JumpListCategory` object has neither the `type` nor the `name`
+     * > [!NOTE] If a `JumpListCategory` object has neither the `type` nor the `name`
      * property set then its `type` is assumed to be `tasks`. If the `name` property is
      * set but the `type` property is omitted then the `type` is assumed to be
      * `custom`.
      *
-     * **Note:** Users can remove items from custom categories, and Windows will not
+     * > [!NOTE] Users can remove items from custom categories, and Windows will not
      * allow a removed item to be added back into a custom category until **after** the
      * next successful call to `app.setJumpList(categories)`. Any attempt to re-add a
      * removed item to a custom category earlier than that will result in the entire
      * custom category being omitted from the Jump List. The list of removed items can
      * be obtained using `app.getJumpListSettings()`.
      *
-     * **Note:** The maximum length of a Jump List item's `description` property is 260
+     * > [!NOTE] The maximum length of a Jump List item's `description` property is 260
      * characters. Beyond this limit, the item will not be added to the Jump List, nor
      * will it be displayed.
      *
@@ -1639,7 +1639,7 @@ declare namespace Electron {
     /**
      * Overrides the current application's name.
      *
-     * **Note:** This function overrides the name used internally by Electron; it does
+     * > [!NOTE] This function overrides the name used internally by Electron; it does
      * not affect the name that the OS uses.
      */
     setName(name: string): void;
@@ -1673,7 +1673,7 @@ declare namespace Electron {
      *
      * See Apple's documentation for more details.
      *
-     * **Note:** Enable `Secure Keyboard Entry` only when it is needed and disable it
+     * > [!NOTE] Enable `Secure Keyboard Entry` only when it is needed and disable it
      * when it is no longer needed.
      *
      * @platform darwin
@@ -1693,7 +1693,7 @@ declare namespace Electron {
      *
      * Whether the call succeeded.
      *
-     * **Note:** If you'd like to customize the Jump List even more use
+     * > [!NOTE] If you'd like to customize the Jump List even more use
      * `app.setJumpList(categories)` instead.
      *
      * @platform win32
@@ -1755,7 +1755,7 @@ declare namespace Electron {
      *
      * This API must be called after the `ready` event is emitted.
      *
-     * **Note:** Rendering accessibility tree can significantly affect the performance
+     * > [!NOTE] Rendering accessibility tree can significantly affect the performance
      * of your app. It should not be enabled by default.
      *
      * @platform darwin,win32
@@ -1773,10 +1773,10 @@ declare namespace Electron {
      * On macOS, setting this with any nonzero integer shows on the dock icon. On
      * Linux, this property only works for Unity launcher.
      *
-     * **Note:** Unity launcher requires a `.desktop` file to work. For more
+     * > [!NOTE] Unity launcher requires a `.desktop` file to work. For more
      * information, please read the Unity integration documentation.
      *
-     * **Note:** On macOS, you need to ensure that your application has the permission
+     * > [!NOTE] On macOS, you need to ensure that your application has the permission
      * to display notifications for this property to take effect.
      *
      * @platform linux,darwin
@@ -1884,7 +1884,7 @@ declare namespace Electron {
      *
      * On Windows only `releaseName` is available.
      *
-     * **Note:** It is not strictly necessary to handle this event. A successfully
+     * > [!NOTE] It is not strictly necessary to handle this event. A successfully
      * downloaded update will still be applied the next time the application starts.
      */
     on(event: 'update-downloaded', listener: (event: Event,
@@ -1924,7 +1924,7 @@ declare namespace Electron {
      * Asks the server whether there is an update. You must call `setFeedURL` before
      * using this API.
      *
-     * **Note:** If an update is available it will be downloaded automatically. Calling
+     * > [!NOTE] If an update is available it will be downloaded automatically. Calling
      * `autoUpdater.checkForUpdates()` twice will download the update two times.
      */
     checkForUpdates(): void;
@@ -1940,7 +1940,7 @@ declare namespace Electron {
      * windows first, and automatically call `app.quit()` after all windows have been
      * closed.
      *
-     * **Note:** It is not strictly necessary to call this function to apply an update,
+     * > [!NOTE] It is not strictly necessary to call this function to apply an update,
      * as a successfully downloaded update will always be applied the next time the
      * application starts.
      */
@@ -2024,11 +2024,11 @@ declare namespace Electron {
      * In Electron, returning any value other than `undefined` would cancel the close.
      * For example:
      *
-     * _**Note**: There is a subtle difference between the behaviors of
+     * > [!NOTE] There is a subtle difference between the behaviors of
      * `window.onbeforeunload = handler` and `window.addEventListener('beforeunload',
      * handler)`. It is recommended to always set the `event.returnValue` explicitly,
      * instead of only returning a value, as the former works more consistently within
-     * Electron._
+     * Electron.
      */
     on(event: 'close', listener: (event: Event) => void): this;
     off(event: 'close', listener: (event: Event) => void): this;
@@ -2103,7 +2103,7 @@ declare namespace Electron {
     /**
      * Emitted once when the window is moved to a new position.
      *
-     * **Note**: On macOS this event is an alias of `move`.
+     * > [!NOTE] On macOS, this event is an alias of `move`.
      *
      * @platform darwin,win32
      */
@@ -2580,14 +2580,14 @@ declare namespace Electron {
      *
      * See Setting `backgroundColor`.
      *
-     * **Note:** The alpha value is _not_ returned alongside the red, green, and blue
+     * > [!NOTE] The alpha value is _not_ returned alongside the red, green, and blue
      * values.
      */
     getBackgroundColor(): string;
     /**
      * The `bounds` of the window as `Object`.
      *
-     * **Note:** On macOS, the y-coordinate value returned will be at minimum the Tray
+     * > [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
@@ -2637,7 +2637,7 @@ declare namespace Electron {
     /**
      * Contains the window bounds of the normal state
      *
-     * **Note:** whatever the current state of the window : maximized, minimized or in
+     * > [!NOTE] Whatever the current state of the window : maximized, minimized or in
      * fullscreen, this function always returns the position and size of the window in
      * normal state. In normal state, getBounds and getNormalBounds returns the same
      * `Rectangle`.
@@ -2669,7 +2669,7 @@ declare namespace Electron {
     /**
      * The title of the native window.
      *
-     * **Note:** The title of the web page can be different from the title of the
+     * > [!NOTE] The title of the web page can be different from the title of the
      * native window.
      */
     getTitle(): string;
@@ -2853,7 +2853,7 @@ declare namespace Electron {
     /**
      * Whether the window is visible on all workspaces.
      *
-     * **Note:** This API always returns false on Windows.
+     * > [!NOTE] This API always returns false on Windows.
      *
      * @platform darwin,linux
      */
@@ -2937,7 +2937,7 @@ declare namespace Electron {
     /**
      * Sets the properties for the window's taskbar button.
      *
-     * **Note:** `relaunchCommand` and `relaunchDisplayName` must always be set
+     * > [!NOTE] `relaunchCommand` and `relaunchDisplayName` must always be set
      * together. If one of those properties is not set, then neither will be used.
      *
      * @platform win32
@@ -3015,7 +3015,7 @@ declare namespace Electron {
      *
      * See the Windows documentation for more details.
      *
-     * **Note:** This method is only supported on Windows 11 22H2 and up.
+     * > [!NOTE] This method is only supported on Windows 11 22H2 and up.
      *
      * @platform win32
      */
@@ -3024,7 +3024,7 @@ declare namespace Electron {
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
      *
-     * **Note:** On macOS, the y-coordinate value cannot be smaller than the Tray
+     * > [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray
      * height. The tray height has changed over time and depends on the operating
      * system, but is between 20-40px. Passing a value lower than the tray height will
      * result in a window that is flush to the tray.
@@ -3082,8 +3082,8 @@ declare namespace Electron {
     /**
      * Sets whether the window should be in fullscreen mode.
      *
-     * **Note:** On macOS, fullscreen transitions take place asynchronously. If further
-     * actions depend on the fullscreen state, use the 'enter-full-screen' or
+     * > [!NOTE] On macOS, fullscreen transitions take place asynchronously. If further
+     * actions depend on the fullscreen state, use the 'enter-full-screen' or >
      * 'leave-full-screen' events.
      */
     setFullScreen(flag: boolean): void;
@@ -3321,7 +3321,7 @@ declare namespace Electron {
      * `undefined` clears the touch bar. This method only has an effect if the machine
      * has a touch bar.
      *
-     * **Note:** The TouchBar API is currently experimental and may change or be
+     * > [!NOTE] The TouchBar API is currently experimental and may change or be
      * removed in future Electron releases.
      *
      * @platform darwin
@@ -3337,7 +3337,7 @@ declare namespace Electron {
     /**
      * Sets whether the window should be visible on all workspaces.
      *
-     * **Note:** This API does nothing on Windows.
+     * > [!NOTE] This API does nothing on Windows.
      *
      * @platform darwin,linux
      */
@@ -3475,7 +3475,7 @@ declare namespace Electron {
     /**
      * A `boolean` property that determines whether the menu bar should be visible.
      *
-     * **Note:** If the menu bar is auto-hide, users can still bring up the menu bar by
+     * > [!NOTE] If the menu bar is auto-hide, users can still bring up the menu bar by
      * pressing the single `Alt` key.
      *
      * @platform win32,linux
@@ -3535,7 +3535,7 @@ declare namespace Electron {
     /**
      * A `string` property that determines the title of the native window.
      *
-     * **Note:** The title of the web page can be different from the title of the
+     * > [!NOTE] The title of the web page can be different from the title of the
      * native window.
      */
     title: string;
@@ -3543,7 +3543,7 @@ declare namespace Electron {
      * A `boolean` property that determines whether the window is visible on all
      * workspaces.
      *
-     * **Note:** Always returns false on Windows.
+     * > [!NOTE] Always returns false on Windows.
      *
      * @platform darwin,linux
      */
@@ -3889,7 +3889,7 @@ declare namespace Electron {
      *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
      *     * e.g. `blueviolet` or `red`
      *
-     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
+     * > [!NOTE] Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
      * `RGB`.
      *
      * @experimental
@@ -4044,11 +4044,11 @@ declare namespace Electron {
      * In Electron, returning any value other than `undefined` would cancel the close.
      * For example:
      *
-     * _**Note**: There is a subtle difference between the behaviors of
+     * > [!NOTE] There is a subtle difference between the behaviors of
      * `window.onbeforeunload = handler` and `window.addEventListener('beforeunload',
      * handler)`. It is recommended to always set the `event.returnValue` explicitly,
      * instead of only returning a value, as the former works more consistently within
-     * Electron._
+     * Electron.
      */
     on(event: 'close', listener: (event: Event) => void): this;
     off(event: 'close', listener: (event: Event) => void): this;
@@ -4065,11 +4065,11 @@ declare namespace Electron {
      * In Electron, returning any value other than `undefined` would cancel the close.
      * For example:
      *
-     * _**Note**: There is a subtle difference between the behaviors of
+     * > [!NOTE] There is a subtle difference between the behaviors of
      * `window.onbeforeunload = handler` and `window.addEventListener('beforeunload',
      * handler)`. It is recommended to always set the `event.returnValue` explicitly,
      * instead of only returning a value, as the former works more consistently within
-     * Electron._
+     * Electron.
      */
     on(event: 'close', listener: (event: Event) => void): this;
     off(event: 'close', listener: (event: Event) => void): this;
@@ -4225,7 +4225,7 @@ declare namespace Electron {
     /**
      * Emitted once when the window is moved to a new position.
      *
-     * **Note**: On macOS this event is an alias of `move`.
+     * > [!NOTE] On macOS, this event is an alias of `move`.
      *
      * @platform darwin,win32
      */
@@ -4249,7 +4249,7 @@ declare namespace Electron {
     /**
      * Emitted once when the window is moved to a new position.
      *
-     * **Note**: On macOS this event is an alias of `move`.
+     * > [!NOTE] On macOS, this event is an alias of `move`.
      *
      * @platform darwin,win32
      */
@@ -5114,7 +5114,7 @@ declare namespace Electron {
      */
     constructor(options?: BrowserWindowConstructorOptions);
     /**
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!NOTE] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * The window that owns the given `browserView`. If the given view is not attached
@@ -5143,7 +5143,7 @@ declare namespace Electron {
     /**
      * Replacement API for setBrowserView supporting work with multi browser views.
      *
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -5207,14 +5207,14 @@ declare namespace Electron {
      *
      * See Setting `backgroundColor`.
      *
-     * **Note:** The alpha value is _not_ returned alongside the red, green, and blue
+     * > [!NOTE] The alpha value is _not_ returned alongside the red, green, and blue
      * values.
      */
     getBackgroundColor(): string;
     /**
      * The `bounds` of the window as `Object`.
      *
-     * **Note:** On macOS, the y-coordinate value returned will be at minimum the Tray
+     * > [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
@@ -5224,7 +5224,7 @@ declare namespace Electron {
      * The `BrowserView` attached to `win`. Returns `null` if one is not attached.
      * Throws an error if multiple `BrowserView`s are attached.
      *
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -5236,7 +5236,7 @@ declare namespace Electron {
      * `addBrowserView` or `setBrowserView`. The top-most BrowserView is the last
      * element of the array.
      *
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -5283,9 +5283,9 @@ declare namespace Electron {
     /**
      * Contains the window bounds of the normal state
      *
-     * **Note:** whatever the current state of the window : maximized, minimized or in
-     * fullscreen, this function always returns the position and size of the window in
-     * normal state. In normal state, getBounds and getNormalBounds returns the same
+     * > [!NOTE] Whatever the current state of the window (maximized, minimized or in
+     * fullscreen), this function always returns the position and size of the window in
+     * normal state. In normal state, `getBounds` and `getNormalBounds` return the same
      * `Rectangle`.
      */
     getNormalBounds(): Rectangle;
@@ -5315,7 +5315,7 @@ declare namespace Electron {
     /**
      * The title of the native window.
      *
-     * **Note:** The title of the web page can be different from the title of the
+     * > [!NOTE] The title of the web page can be different from the title of the
      * native window.
      */
     getTitle(): string;
@@ -5391,7 +5391,7 @@ declare namespace Electron {
     /**
      * Whether the window is in fullscreen mode.
      *
-     * **Note:** On macOS, fullscreen transitions take place asynchronously. When
+     * > [!NOTE] On macOS, fullscreen transitions take place asynchronously. When
      * querying for a BrowserWindow's fullscreen status, you should ensure that either
      * the 'enter-full-screen' or 'leave-full-screen' events have been emitted.
      */
@@ -5503,7 +5503,7 @@ declare namespace Electron {
     /**
      * Whether the window is visible on all workspaces.
      *
-     * **Note:** This API always returns false on Windows.
+     * > [!NOTE] This API always returns false on Windows.
      *
      * @platform darwin,linux
      */
@@ -5584,7 +5584,7 @@ declare namespace Electron {
      */
     reload(): void;
     /**
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -5624,7 +5624,7 @@ declare namespace Electron {
     /**
      * Sets the properties for the window's taskbar button.
      *
-     * **Note:** `relaunchCommand` and `relaunchDisplayName` must always be set
+     * > [!NOTE] `relaunchCommand` and `relaunchDisplayName` must always be set
      * together. If one of those properties is not set, then neither will be used.
      *
      * @platform win32
@@ -5702,7 +5702,7 @@ declare namespace Electron {
      *
      * See the Windows documentation for more details.
      *
-     * **Note:** This method is only supported on Windows 11 22H2 and up.
+     * > [!NOTE] This method is only supported on Windows 11 22H2 and up.
      *
      * @platform win32
      */
@@ -5711,14 +5711,14 @@ declare namespace Electron {
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
      *
-     * **Note:** On macOS, the y-coordinate value cannot be smaller than the Tray
+     * > [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray
      * height. The tray height has changed over time and depends on the operating
      * system, but is between 20-40px. Passing a value lower than the tray height will
      * result in a window that is flush to the tray.
      */
     setBounds(bounds: Partial<Rectangle>, animate?: boolean): void;
     /**
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -5773,7 +5773,7 @@ declare namespace Electron {
     /**
      * Sets whether the window should be in fullscreen mode.
      *
-     * **Note:** On macOS, fullscreen transitions take place asynchronously. If further
+     * > [!NOTE] On macOS, fullscreen transitions take place asynchronously. If further
      * actions depend on the fullscreen state, use the 'enter-full-screen' or
      * 'leave-full-screen' events.
      */
@@ -6011,7 +6011,7 @@ declare namespace Electron {
      * Raises `browserView` above other `BrowserView`s attached to `win`. Throws an
      * error if `browserView` is not attached to `win`.
      *
-     * > **Note** The `BrowserView` class is deprecated, and replaced by the new
+     * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
      * @experimental
@@ -6023,7 +6023,7 @@ declare namespace Electron {
      * `undefined` clears the touch bar. This method only has an effect if the machine
      * has a touch bar.
      *
-     * **Note:** The TouchBar API is currently experimental and may change or be
+     * > [!NOTE] The TouchBar API is currently experimental and may change or be
      * removed in future Electron releases.
      *
      * @platform darwin
@@ -6041,7 +6041,7 @@ declare namespace Electron {
     /**
      * Sets whether the window should be visible on all workspaces.
      *
-     * **Note:** This API does nothing on Windows.
+     * > [!NOTE] This API does nothing on Windows.
      *
      * @platform darwin,linux
      */
@@ -6181,7 +6181,7 @@ declare namespace Electron {
     /**
      * A `boolean` property that determines whether the menu bar should be visible.
      *
-     * **Note:** If the menu bar is auto-hide, users can still bring up the menu bar by
+     * > [!NOTE] If the menu bar is auto-hide, users can still bring up the menu bar by
      * pressing the single `Alt` key.
      *
      * @platform win32,linux
@@ -6241,7 +6241,7 @@ declare namespace Electron {
     /**
      * A `string` property that determines the title of the native window.
      *
-     * **Note:** The title of the web page can be different from the title of the
+     * > [!NOTE] The title of the web page can be different from the title of the
      * native window.
      */
     title: string;
@@ -6249,7 +6249,7 @@ declare namespace Electron {
      * A `boolean` property that determines whether the window is visible on all
      * workspaces.
      *
-     * **Note:** Always returns false on Windows.
+     * > [!NOTE] Always returns false on Windows.
      *
      * @platform darwin,linux
      */
@@ -6659,7 +6659,7 @@ declare namespace Electron {
     /**
      * Writes the `title` (macOS only) and `url` into the clipboard as a bookmark.
      *
-     * **Note:** Most apps on Windows don't support pasting bookmarks into them so you
+     * > [!NOTE] Most apps on Windows don't support pasting bookmarks into them so you
      * can use `clipboard.write` to write both a bookmark and fallback text to the
      * clipboard.
      *
@@ -6710,14 +6710,14 @@ declare namespace Electron {
      * If you're appending an argument like `--switch=value`, consider using
      * `appendSwitch('switch', 'value')` instead.
      *
-     * **Note:** This will not affect `process.argv`. The intended usage of this
+     * > [!NOTE] This will not affect `process.argv`. The intended usage of this
      * function is to control Chromium's behavior.
      */
     appendArgument(value: string): void;
     /**
      * Append a switch (with optional `value`) to Chromium's command line.
      *
-     * **Note:** This will not affect `process.argv`. The intended usage of this
+     * > [!NOTE] This will not affect `process.argv`. The intended usage of this
      * function is to control Chromium's behavior.
      */
     appendSwitch(the_switch: string, value?: string): void;
@@ -6728,7 +6728,7 @@ declare namespace Electron {
      * to be used for application-specific command line arguments. For the latter,
      * please use `process.argv`.
      *
-     * **Note:** When the switch is not present or has no value, it returns empty
+     * > [!NOTE] When the switch is not present or has no value, it returns empty
      * string.
      */
     getSwitchValue(the_switch: string): string;
@@ -6739,7 +6739,7 @@ declare namespace Electron {
     /**
      * Removes the specified switch from Chromium's command line.
      *
-     * **Note:** This will not affect `process.argv`. The intended usage of this
+     * > [!NOTE] This will not affect `process.argv`. The intended usage of this
      * function is to control Chromium's behavior.
      */
     removeSwitch(the_switch: string): void;
@@ -7129,7 +7129,7 @@ declare namespace Electron {
      * parameters in a renderer process will not result in those parameters being sent
      * with crashes that occur in other renderer processes or in the main process.
      *
-     * **Note:** Parameters have limits on the length of the keys and values. Key names
+     * > [!NOTE] Parameters have limits on the length of the keys and values. Key names
      * must be no longer than 39 bytes, and values must be no longer than 20320 bytes.
      * Keys with names longer than the maximum will be silently ignored. Key values
      * longer than the maximum length will be truncated.
@@ -7141,7 +7141,7 @@ declare namespace Electron {
      * be returned until it is uploaded. In the case that there are no uploaded
      * reports, `null` is returned.
      *
-     * **Note:** This method is only available in the main process.
+     * > [!NOTE] This method is only available in the main process.
      */
     getLastCrashReport(): (CrashReport) | (null);
     /**
@@ -7152,14 +7152,14 @@ declare namespace Electron {
      * Returns all uploaded crash reports. Each report contains the date and uploaded
      * ID.
      *
-     * **Note:** This method is only available in the main process.
+     * > [!NOTE] This method is only available in the main process.
      */
     getUploadedReports(): CrashReport[];
     /**
      * Whether reports should be submitted to the server. Set through the `start`
      * method or `setUploadToServer`.
      *
-     * **Note:** This method is only available in the main process.
+     * > [!NOTE] This method is only available in the main process.
      */
     getUploadToServer(): boolean;
     /**
@@ -7171,7 +7171,7 @@ declare namespace Electron {
      * This would normally be controlled by user preferences. This has no effect if
      * called before `start` is called.
      *
-     * **Note:** This method is only available in the main process.
+     * > [!NOTE] This method is only available in the main process.
      */
     setUploadToServer(uploadToServer: boolean): void;
     /**
@@ -7185,19 +7185,19 @@ declare namespace Electron {
      * renderer process is created, then that renderer process will not be monitored by
      * the crash reporter.
      *
-     * **Note:** You can test out the crash reporter by generating a crash using
+     * > [!NOTE] You can test out the crash reporter by generating a crash using
      * `process.crash()`.
      *
-     * **Note:** If you need to send additional/updated `extra` parameters after your
+     * > [!NOTE] If you need to send additional/updated `extra` parameters after your
      * first call `start` you can call `addExtraParameter`.
      *
-     * **Note:** Parameters passed in `extra`, `globalExtra` or set with
+     * > [!NOTE] Parameters passed in `extra`, `globalExtra` or set with
      * `addExtraParameter` have limits on the length of the keys and values. Key names
      * must be at most 39 bytes long, and values must be no longer than 127 bytes. Keys
      * with names longer than the maximum will be silently ignored. Key values longer
      * than the maximum length will be truncated.
      *
-     * **Note:** This method is only available in the main process.
+     * > [!NOTE] This method is only available in the main process.
      */
     start(options: CrashReporterStartOptions): void;
   }
@@ -7355,7 +7355,7 @@ declare namespace Electron {
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
      *
-     * **Note** Capturing the screen contents requires user consent on macOS 10.15
+     * > [!NOTE] Capturing the screen contents requires user consent on macOS 10.15
      * Catalina or higher, which can detected by
      * `systemPreferences.getMediaAccessStatus`.
      */
@@ -7519,11 +7519,11 @@ declare namespace Electron {
      * `'png'` is good but `'.png'` and `'*.png'` are bad). To show all files, use the
      * `'*'` wildcard (no other wildcard is supported).
      *
-     * **Note:** On Windows and Linux an open dialog can not be both a file selector
+     * > [!NOTE] On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      *
-     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * > [!NOTE] On Linux `defaultPath` is not supported when using portal file chooser
      * dialogs unless the portal backend is version 4 or higher. You can use
      * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
@@ -7549,11 +7549,11 @@ declare namespace Electron {
      * `'png'` is good but `'.png'` and `'*.png'` are bad). To show all files, use the
      * `'*'` wildcard (no other wildcard is supported).
      *
-     * **Note:** On Windows and Linux an open dialog can not be both a file selector
+     * > [!NOTE] On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      *
-     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * > [!NOTE] On Linux `defaultPath` is not supported when using portal file chooser
      * dialogs unless the portal backend is version 4 or higher. You can use
      * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
@@ -7572,11 +7572,11 @@ declare namespace Electron {
      * `'png'` is good but `'.png'` and `'*.png'` are bad). To show all files, use the
      * `'*'` wildcard (no other wildcard is supported).
      *
-     * **Note:** On Windows and Linux an open dialog can not be both a file selector
+     * > [!NOTE] On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      *
-     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * > [!NOTE] On Linux `defaultPath` is not supported when using portal file chooser
      * dialogs unless the portal backend is version 4 or higher. You can use
      * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
@@ -7595,11 +7595,11 @@ declare namespace Electron {
      * `'png'` is good but `'.png'` and `'*.png'` are bad). To show all files, use the
      * `'*'` wildcard (no other wildcard is supported).
      *
-     * **Note:** On Windows and Linux an open dialog can not be both a file selector
+     * > [!NOTE] On Windows and Linux an open dialog can not be both a file selector
      * and a directory selector, so if you set `properties` to `['openFile',
      * 'openDirectory']` on these platforms, a directory selector will be shown.
      *
-     * **Note:** On Linux `defaultPath` is not supported when using portal file chooser
+     * > [!NOTE] On Linux `defaultPath` is not supported when using portal file chooser
      * dialogs unless the portal backend is version 4 or higher. You can use
      * `--xdg-portal-required-version` command-line switch to force gtk or kde dialogs.
      */
@@ -7620,7 +7620,7 @@ declare namespace Electron {
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
      *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * > [!NOTE] On macOS, using the asynchronous version is recommended to avoid
      * issues when expanding and collapsing the dialog.
      */
     showSaveDialog(window: BaseWindow, options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
@@ -7640,7 +7640,7 @@ declare namespace Electron {
      * The `filters` specifies an array of file types that can be displayed, see
      * `dialog.showOpenDialog` for an example.
      *
-     * **Note:** On macOS, using the asynchronous version is recommended to avoid
+     * > [!NOTE] On macOS, using the asynchronous version is recommended to avoid
      * issues when expanding and collapsing the dialog.
      */
     showSaveDialog(options: SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
@@ -7765,7 +7765,7 @@ declare namespace Electron {
      * However, the request remains active until either the application becomes active
      * or the request is canceled.
      *
-     * **Note:** This method can only be used while the app is not focused; when the
+     * > [!NOTE] This method can only be used while the app is not focused; when the
      * app is focused it will return -1.
      *
      * @platform darwin
@@ -7933,7 +7933,7 @@ declare namespace Electron {
     /**
      * The file name of the download item.
      *
-     * **Note:** The file name is not always the same as the actual one saved in local
+     * > [!NOTE] The file name is not always the same as the actual one saved in local
      * disk. If user changes the file name in a prompted download saving dialog, the
      * actual name of saved file will be different.
      */
@@ -7973,7 +7973,7 @@ declare namespace Electron {
      * The current state. Can be `progressing`, `completed`, `cancelled` or
      * `interrupted`.
      *
-     * **Note:** The following methods are useful specifically to resume a `cancelled`
+     * > [!NOTE] The following methods are useful specifically to resume a `cancelled`
      * item when session is restarted.
      */
     getState(): ('progressing' | 'completed' | 'cancelled' | 'interrupted');
@@ -8006,7 +8006,7 @@ declare namespace Electron {
     /**
      * Resumes the download that has been paused.
      *
-     * **Note:** To enable resumable downloads the server you are downloading from must
+     * > [!NOTE] To enable resumable downloads the server you are downloading from must
      * support range requests and provide both `Last-Modified` and `ETag` header
      * values. Otherwise `resume()` will dismiss previously received bytes and restart
      * the download from the beginning.
@@ -8118,14 +8118,14 @@ declare namespace Electron {
     /**
      * A list of all loaded extensions.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      */
     getAllExtensions(): Extension[];
     /**
      * The loaded extension with the given ID.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      */
     getExtension(extensionId: string): (Extension) | (null);
@@ -8146,17 +8146,17 @@ declare namespace Electron {
      *
      * This API does not support loading packed (.crx) extensions.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      *
-     * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
+     * > [!NOTE] Loading extensions into in-memory (non-persistent) sessions is not
      * supported and will throw an error.
      */
     loadExtension(path: string, options?: LoadExtensionOptions): Promise<Electron.Extension>;
     /**
      * Unloads an extension.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      */
     removeExtension(extensionId: string): void;
@@ -8828,7 +8828,7 @@ declare namespace Electron {
      *
      * If you do not need a response to the message, consider using `ipcRenderer.send`.
      *
-     * > **Note** Sending non-standard JavaScript types such as DOM objects or special
+     * > [!NOTE] Sending non-standard JavaScript types such as DOM objects or special
      * Electron objects will throw an exception.
      *
      * Since the main process does not have support for DOM objects such as
@@ -8836,7 +8836,7 @@ declare namespace Electron {
      * Electron's IPC to the main process, as the main process would have no way to
      * decode them. Attempting to send such objects over IPC will result in an error.
      *
-     * > **Note** If the handler in the main process throws an error, the promise
+     * > [!NOTE] If the handler in the main process throws an error, the promise
      * returned by `invoke` will reject. However, the `Error` object in the renderer
      * process will not be the same as the one thrown in the main process.
      */
@@ -8931,9 +8931,9 @@ declare namespace Electron {
      * The main process handles it by listening for `channel` with `ipcMain` module,
      * and replies by setting `event.returnValue`.
      *
-     * > :warning: **WARNING**: Sending a synchronous message will block the whole
-     * renderer process until the reply is received, so use this method only as a last
-     * resort. It's much better to use the asynchronous version, `invoke()`.
+     * > [!WARNING] Sending a synchronous message will block the whole renderer process
+     * until the reply is received, so use this method only as a last resort. It's much
+     * better to use the asynchronous version, `invoke()`.
      */
     sendSync(channel: string, ...args: any[]): any;
     /**
@@ -9148,7 +9148,7 @@ declare namespace Electron {
     /**
      * The application menu, if set, or `null`, if not set.
      *
-     * **Note:** The returned `Menu` instance doesn't support dynamic addition or
+     * > [!NOTE] The returned `Menu` instance doesn't support dynamic addition or
      * removal of menu items. Instance properties can still be dynamically modified.
      */
     static getApplicationMenu(): (Menu) | (null);
@@ -9179,7 +9179,7 @@ declare namespace Electron {
      * Passing `null` will suppress the default menu. On Windows and Linux, this has
      * the additional effect of removing the menu bar from the window.
      *
-     * **Note:** The default menu will be created automatically if the app does not set
+     * > [!NOTE] The default menu will be created automatically if the app does not set
      * one. It contains standard items such as `File`, `Edit`, `View`, `Window` and
      * `Help`.
      */
@@ -9323,7 +9323,7 @@ declare namespace Electron {
      * An `Accelerator | null` indicating the item's user-assigned accelerator for the
      * menu item.
      *
-     * **Note:** This property is only initialized after the `MenuItem` has been added
+     * > [!NOTE] This property is only initialized after the `MenuItem` has been added
      * to a `Menu`. Either via `Menu.buildFromTemplate` or via
      * `Menu.append()/insert()`.  Accessing before initialization will just return
      * `null`.
@@ -9508,7 +9508,7 @@ declare namespace Electron {
     /**
      * fulfilled with the file's thumbnail preview image, which is a NativeImage.
      *
-     * Note: The Windows implementation will ignore `size.height` and scale the height
+     * > [!NOTE] Windows implementation will ignore `size.height` and scale the height
      * according to `size.width`.
      *
      * @platform darwin,win32
@@ -9822,7 +9822,7 @@ declare namespace Electron {
      * intercepted request to the built-in handler. webRequest handlers will still be
      * triggered when bypassing custom protocols.
      *
-     * Note: in the utility process custom protocols are not supported.
+     * > [!NOTE] In the utility process, custom protocols are not supported.
      */
     fetch(input: (string) | (GlobalRequest), init?: RequestInit & { bypassCustomProtocolHandlers?: boolean }): Promise<GlobalResponse>;
     /**
@@ -10585,7 +10585,7 @@ declare namespace Electron {
      * Starts preventing the system from entering lower-power mode. Returns an integer
      * identifying the power save blocker.
      *
-     * **Note:** `prevent-display-sleep` has higher precedence over
+     * > [!NOTE] `prevent-display-sleep` has higher precedence over
      * `prevent-app-suspension`. Only the highest precedence type takes effect. In
      * other words, `prevent-display-sleep` always takes precedence over
      * `prevent-app-suspension`.
@@ -10966,7 +10966,7 @@ declare namespace Electron {
      */
     registerHttpProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: ProtocolResponse) => void) => void): boolean;
     /**
-     * **Note:** This method can only be used before the `ready` event of the `app`
+     * > [!NOTE] This method can only be used before the `ready` event of the `app`
      * module gets emitted and can be called only once.
      *
      * Registers the `scheme` as standard, secure, bypasses content security policy for
@@ -11425,7 +11425,7 @@ declare namespace Electron {
     /**
      * The current absolute position of the mouse pointer.
      *
-     * **Note:** The return value is a DIP point, not a screen physical point.
+     * > [!NOTE] The return value is a DIP point, not a screen physical point.
      */
     getCursorScreenPoint(): Point;
     /**
@@ -12263,8 +12263,8 @@ declare namespace Electron {
      * Whether the word was successfully written to the custom dictionary. This API
      * will not work on non-persistent (in-memory) sessions.
      *
-     * **Note:** On macOS and Windows 10 this word will be written to the OS custom
-     * dictionary as well
+     * > [!NOTE] On macOS and Windows, this word will be written to the OS custom
+     * dictionary as well.
      */
     addWordToSpellCheckerDictionary(word: string): boolean;
     /**
@@ -12294,7 +12294,7 @@ declare namespace Electron {
      * This method clears more types of data and is more thorough than the
      * `clearStorageData` method.
      *
-     * **Note:** Cookies are stored at a broader scope than origins. When removing
+     * > [!NOTE] Cookies are stored at a broader scope than origins. When removing
      * cookies and filtering by `origins` (or `excludeOrigins`), the cookies will be
      * removed at the registrable domain level. For example, clearing cookies for the
      * origin `https://really.specific.origin.example.com/` will end up clearing all
@@ -12302,7 +12302,7 @@ declare namespace Electron {
      * `https://my.website.example.co.uk/` will end up clearing all cookies for
      * `example.co.uk`.
      *
-     * **Note:** Clearing cache data will also clear the shared dictionary cache. This
+     * > [!NOTE] Clearing cache data will also clear the shared dictionary cache. This
      * means that any dictionaries used for compression may be reloaded after clearing
      * the cache. If you wish to clear the shared dictionary cache but leave other
      * cached data intact, you may want to use the `clearSharedDictionaryCache` method.
@@ -12332,7 +12332,7 @@ declare namespace Electron {
     /**
      * Resolves when all connections are closed.
      *
-     * **Note:** It will terminate / fail all requests currently in flight.
+     * > [!NOTE] It will terminate / fail all requests currently in flight.
      */
     closeAllConnections(): Promise<void>;
     /**
@@ -12352,7 +12352,7 @@ declare namespace Electron {
      * Initiates a download of the resource at `url`. The API will generate a
      * DownloadItem that can be accessed with the will-download event.
      *
-     * **Note:** This does not perform any security checks that relate to a page's
+     * > [!NOTE] This does not perform any security checks that relate to a page's
      * origin, unlike `webContents.downloadURL`.
      */
     downloadURL(url: string, options?: DownloadURLOptions): void;
@@ -12401,7 +12401,7 @@ declare namespace Electron {
     /**
      * A list of all loaded extensions.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      *
      * **Deprecated:** Use the new `ses.extensions.getAllExtensions` API.
@@ -12420,7 +12420,7 @@ declare namespace Electron {
     /**
      * The loaded extension with the given ID.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      *
      * **Deprecated:** Use the new `ses.extensions.getExtension` API.
@@ -12469,7 +12469,7 @@ declare namespace Electron {
      * this setting is an empty list Electron will try to populate this setting with
      * the current OS locale.  This setting is persisted across restarts.
      *
-     * **Note:** On macOS the OS spellchecker is used and has its own list of
+     * > [!NOTE] On macOS, the OS spellchecker is used and has its own list of
      * languages. On macOS, this API will return whichever languages have been
      * configured by the OS.
      */
@@ -12516,10 +12516,10 @@ declare namespace Electron {
      *
      * This API does not support loading packed (.crx) extensions.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      *
-     * **Note:** Loading extensions into in-memory (non-persistent) sessions is not
+     * > [!NOTE] Loading extensions into in-memory (non-persistent) sessions is not
      * supported and will throw an error.
      *
      * **Deprecated:** Use the new `ses.extensions.loadExtension` API.
@@ -12542,7 +12542,7 @@ declare namespace Electron {
     /**
      * Unloads an extension.
      *
-     * **Note:** This API cannot be called before the `ready` event of the `app` module
+     * > [!NOTE] This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      *
      * **Deprecated:** Use the new `ses.extensions.removeExtension` API.
@@ -12554,8 +12554,8 @@ declare namespace Electron {
      * Whether the word was successfully removed from the custom dictionary. This API
      * will not work on non-persistent (in-memory) sessions.
      *
-     * **Note:** On macOS and Windows 10 this word will be removed from the OS custom
-     * dictionary as well
+     * > [!NOTE] On macOS and Windows, this word will be removed from the OS custom
+     * dictionary as well.
      */
     removeWordFromSpellCheckerDictionary(word: string): boolean;
     /**
@@ -12695,8 +12695,8 @@ declare namespace Electron {
      *  Please note the trailing slash.  The URL to the dictionaries is formed as
      * `${url}${filename}`.
      *
-     * **Note:** On macOS the OS spellchecker is used and therefore we do not download
-     * any dictionary files.  This API is a no-op on macOS.
+     * > [!NOTE] On macOS, the OS spellchecker is used and therefore we do not download
+     * any dictionary files. This API is a no-op on macOS.
      */
     setSpellCheckerDictionaryDownloadURL(url: string): void;
     /**
@@ -12709,8 +12709,8 @@ declare namespace Electron {
      * must call this API with an array of language codes.  You can get the list of
      * supported language codes with the `ses.availableSpellCheckerLanguages` property.
      *
-     * **Note:** On macOS the OS spellchecker is used and will detect your language
-     * automatically.  This API is a no-op on macOS.
+     * > [!NOTE] On macOS, the OS spellchecker is used and will detect your language
+     * automatically. This API is a no-op on macOS.
      */
     setSpellCheckerLanguages(languages: string[]): void;
     /**
@@ -14409,7 +14409,7 @@ declare namespace Electron {
     /**
      * Emitted when the mouse is released from clicking the tray icon.
      *
-     * Note: This will not be emitted if you have set a context menu for your Tray
+     * > [!NOTE] This will not be emitted if you have set a context menu for your Tray
      * using `tray.setContextMenu`, as a result of macOS-level constraints.
      *
      * @platform darwin
@@ -14740,7 +14740,7 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/utility-process
 
     /**
-     * **Note:** `utilityProcess.fork` can only be called after the `ready` event has
+     * > [!NOTE] `utilityProcess.fork` can only be called after the `ready` event has
      * been emitted on `App`.
      */
     static fork(modulePath: string, args?: string[], options?: ForkOptions): UtilityProcess;
@@ -14899,7 +14899,7 @@ declare namespace Electron {
      * `undefined`. When the child process exits, then the value is `undefined` after
      * the `exit` event is emitted.
      *
-     * **Note:** You can use the `pid` to determine if the process is currently
+     * > [!NOTE] You can use the `pid` to determine if the process is currently
      * running.
      */
     pid: (number) | (undefined);
@@ -14980,12 +14980,12 @@ declare namespace Electron {
      *   * Similar to CSS Color Module Level 3 keywords, but case-sensitive.
      *     * e.g. `blueviolet` or `red`
      *
-     * **Note:** Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
+     * > [!NOTE] Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
      * `RGB`.
      */
     setBackgroundColor(color: string): void;
     /**
-     * **Note:** The area cutout of the view's border still captures clicks.
+     * > [!NOTE] The area cutout of the view's border still captures clicks.
      */
     setBorderRadius(radius: number): void;
     setBounds(bounds: Rectangle): void;
@@ -16710,7 +16710,7 @@ declare namespace Electron {
      * Calling `event.preventDefault()` will ignore the `beforeunload` event handler
      * and allow the page to be unloaded.
      *
-     * **Note:** This will be emitted for `BrowserViews` but will _not_ be respected -
+     * > [!NOTE] This will be emitted for `BrowserViews` but will _not_ be respected -
      * this is because we have chosen not to tie the `BrowserView` lifecycle to its
      * owning BrowserWindow should one exist per the specification.
      */
@@ -17384,8 +17384,10 @@ declare namespace Electron {
      */
     send(channel: string, ...args: any[]): void;
     /**
-     * Sends an input `event` to the page. **Note:** The `BrowserWindow` containing the
-     * contents needs to be focused for `sendInputEvent()` to work.
+     * Sends an input `event` to the page.
+     *
+     * > [!NOTE] The `BrowserWindow` containing the contents needs to be focused for
+     * `sendInputEvent()` to work.
      */
     sendInputEvent(inputEvent: (MouseInputEvent) | (MouseWheelInputEvent) | (KeyboardInputEvent)): void;
     /**
@@ -17467,8 +17469,7 @@ declare namespace Electron {
     /**
      * Sets the maximum and minimum pinch-to-zoom level.
      *
-     * > **NOTE**: Visual zoom is disabled by default in Electron. To re-enable it,
-     * call:
+     * > [!NOTE] Visual zoom is disabled by default in Electron. To re-enable it, call:
      */
     setVisualZoomLevelLimits(minimumLevel: number, maximumLevel: number): Promise<void>;
     /**
@@ -17478,8 +17479,10 @@ declare namespace Electron {
     setWebRTCIPHandlingPolicy(policy: 'default' | 'default_public_interface_only' | 'default_public_and_private_interfaces' | 'disable_non_proxied_udp'): void;
     /**
      * Setting the WebRTC UDP Port Range allows you to restrict the udp port range used
-     * by WebRTC. By default the port range is unrestricted. **Note:** To reset to an
-     * unrestricted port range this value should be set to `{ min: 0, max: 0 }`.
+     * by WebRTC. By default the port range is unrestricted.
+     *
+     * > [!NOTE] To reset to an unrestricted port range this value should be set to `{
+     * min: 0, max: 0 }`.
      */
     setWebRTCUDPPortRange(udpPortRange: UdpPortRange): void;
     /**
@@ -17505,10 +17508,9 @@ declare namespace Electron {
      * limits of 300% and 50% of original size, respectively. The formula for this is
      * `scale := 1.2 ^ level`.
      *
-     * > **NOTE**: The zoom policy at the Chromium level is same-origin, meaning that
-     * the zoom level for a specific domain propagates across all instances of windows
-     * with the same domain. Differentiating the window URLs will make zoom work
-     * per-window.
+     * > [!NOTE] The zoom policy at the Chromium level is same-origin, meaning that the
+     * zoom level for a specific domain propagates across all instances of windows with
+     * the same domain. Differentiating the window URLs will make zoom work per-window.
      */
     setZoomLevel(level: number): void;
     /**
@@ -17576,7 +17578,7 @@ declare namespace Electron {
      * A `WebContents | null` property that represents the of DevTools `WebContents`
      * associated with a given `WebContents`.
      *
-     * **Note:** Users should never store this object because it may become `null` when
+     * > [!NOTE] Users should never store this object because it may become `null` when
      * the DevTools has been closed.
      *
      */
@@ -17806,7 +17808,8 @@ declare namespace Electron {
     removeInsertedCSS(key: string): void;
     /**
      * Set the security origin, content security policy and name of the isolated world.
-     * Note: If the `csp` is specified, then the `securityOrigin` also has to be
+     *
+     * > [!NOTE] If the `csp` is specified, then the `securityOrigin` also has to be
      * specified.
      */
     setIsolatedWorldInfo(worldId: number, info: Info): void;
@@ -17827,10 +17830,9 @@ declare namespace Electron {
     /**
      * Sets the maximum and minimum pinch-to-zoom level.
      *
-     * > **NOTE**: Visual zoom is disabled by default in Electron. To re-enable it,
-     * call:
+     * > [!NOTE] Visual zoom is disabled by default in Electron. To re-enable it, call:
      *
-     * > **NOTE**: Visual zoom only applies to pinch-to-zoom behavior. Cmd+/-/0 zoom
+     * > [!NOTE] Visual zoom only applies to pinch-to-zoom behavior. Cmd+/-/0 zoom
      * shortcuts are controlled by the 'zoomIn', 'zoomOut', and 'resetZoom' MenuItem
      * roles in the application Menu. To disable shortcuts, manually define the Menu
      * and omit zoom roles from the definition.
@@ -17848,10 +17850,9 @@ declare namespace Electron {
      * increment above or below represents zooming 20% larger or smaller to default
      * limits of 300% and 50% of original size, respectively.
      *
-     * > **NOTE**: The zoom policy at the Chromium level is same-origin, meaning that
-     * the zoom level for a specific domain propagates across all instances of windows
-     * with the same domain. Differentiating the window URLs will make zoom work
-     * per-window.
+     * > [!NOTE] The zoom policy at the Chromium level is same-origin, meaning that the
+     * zoom level for a specific domain propagates across all instances of windows with
+     * the same domain. Differentiating the window URLs will make zoom work per-window.
      */
     setZoomLevel(level: number): void;
     /**
@@ -19014,10 +19015,9 @@ declare namespace Electron {
      * limits of 300% and 50% of original size, respectively. The formula for this is
      * `scale := 1.2 ^ level`.
      *
-     * > **NOTE**: The zoom policy at the Chromium level is same-origin, meaning that
-     * the zoom level for a specific domain propagates across all instances of windows
-     * with the same domain. Differentiating the window URLs will make zoom work
-     * per-window.
+     * > [!NOTE] The zoom policy at the Chromium level is same-origin, meaning that the
+     * zoom level for a specific domain propagates across all instances of windows with
+     * the same domain. Differentiating the window URLs will make zoom work per-window.
      */
     setZoomLevel(level: number): void;
     /**
@@ -25187,7 +25187,7 @@ declare namespace NodeJS {
      * 
      * Example:
      * 
-     * **Note:** It returns the actual operating system version instead of kernel
+     * > [!NOTE] It returns the actual operating system version instead of kernel
      * version on macOS unlike `os.release()`.
      */
     getSystemVersion(): string;
