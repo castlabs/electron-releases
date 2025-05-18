@@ -1,4 +1,4 @@
-// Type definitions for Electron 35.3.0+wvcus
+// Type definitions for Electron 35.4.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -2355,43 +2355,45 @@ declare namespace Electron {
      *
      * Calling `event.preventDefault()` will prevent the menu from being displayed.
      *
-     * @platform win32
+     * To convert `point` to DIP, use `screen.screenToDipPoint(point)`.
+     *
+     * @platform win32,linux
      */
     on(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     off(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     once(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     addListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     removeListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
@@ -4757,43 +4759,45 @@ declare namespace Electron {
      *
      * Calling `event.preventDefault()` will prevent the menu from being displayed.
      *
-     * @platform win32
+     * To convert `point` to DIP, use `screen.screenToDipPoint(point)`.
+     *
+     * @platform win32,linux
      */
     on(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     off(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     once(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     addListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     removeListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
@@ -4804,43 +4808,45 @@ declare namespace Electron {
      *
      * Calling `event.preventDefault()` will prevent the menu from being displayed.
      *
-     * @platform win32
+     * To convert `point` to DIP, use `screen.screenToDipPoint(point)`.
+     *
+     * @platform win32,linux
      */
     on(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     off(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     once(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     addListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     removeListener(event: 'system-context-menu', listener: (event: Event,
                                                 /**
-                                                 * The screen coordinates the context menu was triggered at
+                                                 * The screen coordinates where the context menu was triggered.
                                                  */
                                                 point: Point) => void): this;
     /**
