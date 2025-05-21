@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-alpha.4+wvcus
+// Type definitions for Electron 37.0.0-alpha.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -20824,6 +20824,11 @@ declare namespace Electron {
      */
     type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
     label?: string;
+    /**
+     * Available in macOS >= 14.4
+     *
+     * @platform darwin
+     */
     sublabel?: string;
     /**
      * Hover text for this menu item.
