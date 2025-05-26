@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.2.1+wvcus
+// Type definitions for Electron 36.3.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11407,7 +11407,9 @@ declare namespace Electron {
      * Converts a screen DIP point to a screen physical point. The DPI scale is
      * performed relative to the display containing the DIP point.
      *
-     * @platform win32
+     * Not currently supported on Wayland.
+     *
+     * @platform win32,linux
      */
     dipToScreenPoint(point: Point): Point;
     /**
@@ -11444,7 +11446,10 @@ declare namespace Electron {
      * Converts a screen physical point to a screen DIP point. The DPI scale is
      * performed relative to the display containing the physical point.
      *
-     * @platform win32
+     * Not currently supported on Wayland - if used there it will return the point
+     * passed in with no changes.
+     *
+     * @platform win32,linux
      */
     screenToDipPoint(point: Point): Point;
     /**
@@ -20814,6 +20819,11 @@ declare namespace Electron {
      */
     type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
     label?: string;
+    /**
+     * Available in macOS >= 14.4
+     *
+     * @platform darwin
+     */
     sublabel?: string;
     /**
      * Hover text for this menu item.
