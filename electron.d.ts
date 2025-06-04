@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-beta.1+wvcus
+// Type definitions for Electron 37.0.0-beta.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -8348,6 +8348,32 @@ declare namespace Electron {
      * The USB vendor ID.
      */
     vendorId: number;
+  }
+
+  class ImageView extends View {
+
+    // Docs: https://electronjs.org/docs/api/image-view
+
+    /**
+     * Emitted when the view's bounds have changed in response to being laid out. The
+     * new bounds can be retrieved with `view.getBounds()`.
+     */
+    on(event: 'bounds-changed', listener: () => void): this;
+    off(event: 'bounds-changed', listener: () => void): this;
+    once(event: 'bounds-changed', listener: () => void): this;
+    addListener(event: 'bounds-changed', listener: () => void): this;
+    removeListener(event: 'bounds-changed', listener: () => void): this;
+    /**
+     * ImageView
+     */
+    constructor();
+    /**
+     * Sets the image for this `ImageView`. Note that only image formats supported by
+     * `NativeImage` can be used with an `ImageView`.
+     *
+     * @experimental
+     */
+    setImage(image: NativeImage): void;
   }
 
   interface InAppPurchase extends NodeJS.EventEmitter {
@@ -23676,6 +23702,7 @@ declare namespace Electron {
     type Extensions = Electron.Extensions;
     const globalShortcut: GlobalShortcut;
     type GlobalShortcut = Electron.GlobalShortcut;
+    class ImageView extends Electron.ImageView {}
     const inAppPurchase: InAppPurchase;
     type InAppPurchase = Electron.InAppPurchase;
     type IncomingMessage = Electron.IncomingMessage;
@@ -24664,6 +24691,7 @@ declare namespace Electron {
     type Extensions = Electron.Extensions;
     const globalShortcut: GlobalShortcut;
     type GlobalShortcut = Electron.GlobalShortcut;
+    class ImageView extends Electron.ImageView {}
     const inAppPurchase: InAppPurchase;
     type InAppPurchase = Electron.InAppPurchase;
     type IncomingMessage = Electron.IncomingMessage;
