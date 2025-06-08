@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-beta.2+wvcus
+// Type definitions for Electron 37.0.0-beta.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -16464,9 +16464,11 @@ declare namespace Electron {
      * the `deviceId` of the device to be selected.  Passing an empty string to
      * `callback` will cancel the request.
      *
-     * If an event listener is not added for this event, or if `event.preventDefault`
-     * is not called when handling this event, the first available device will be
-     * automatically selected.
+     * If no event listener is added for this event, all bluetooth requests will be
+     * cancelled.
+     *
+     * If `event.preventDefault` is not called when handling this event, the first
+     * available device will be automatically selected.
      *
      * Due to the nature of bluetooth, scanning for devices when
      * `navigator.bluetooth.requestDevice` is called may take time and will cause
