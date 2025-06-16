@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-beta.4+wvcus
+// Type definitions for Electron 37.0.0-beta.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11366,7 +11366,8 @@ declare namespace Electron {
      * line flag is provided `--password-store="kwallet"`.
      * * `kwallet5` - When the desktop session is `kde5` or if the following command
      * line flag is provided `--password-store="kwallet5"`.
-     * * `kwallet6` - When the desktop session is `kde6`.
+     * * `kwallet6` - When the desktop session is `kde6` or if the following command
+     * line flag is provided `--password-store="kwallet6"`.
      * * `unknown` - When the function is called before app has emitted the `ready`
      * event.
      *
@@ -19659,6 +19660,16 @@ declare namespace Electron {
      * `only-if-cached`.
      */
     cache?: ('default' | 'no-store' | 'reload' | 'no-cache' | 'force-cache' | 'only-if-cached');
+    /**
+     * can be `throttled`, `idle`, `lowest`, `low`, `medium`, or `highest`. Defaults to
+     * `idle`.
+     */
+    priority?: ('throttled' | 'idle' | 'lowest' | 'low' | 'medium' | 'highest');
+    /**
+     * the incremental loading flag as part of HTTP extensible priorities (RFC 9218).
+     * Default is `true`.
+     */
+    priorityIncremental?: boolean;
   }
 
   interface CloseOpts {
