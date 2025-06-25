@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0-beta.9+wvcus
+// Type definitions for Electron 37.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9358,9 +9358,11 @@ declare namespace Electron {
     toolTip: string;
     /**
      * A `string` indicating the type of the item. Can be `normal`, `separator`,
-     * `submenu`, `checkbox` or `radio`.
+     * `submenu`, `checkbox`, `radio`, `header` or `palette`.
+     *
+     * > [!NOTE] `header` and `palette` are only available on macOS 14 and up.
      */
-    type: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
+    type: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio' | 'header' | 'palette');
     /**
      * An `Accelerator | null` indicating the item's user-assigned accelerator for the
      * menu item.
@@ -20927,10 +20929,7 @@ declare namespace Electron {
      * be ignored. See roles.
      */
     role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'showSubstitutions' | 'toggleSmartQuotes' | 'toggleSmartDashes' | 'toggleTextReplacement' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'showAllTabs' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
-    /**
-     * Can be `normal`, `separator`, `submenu`, `checkbox` or `radio`.
-     */
-    type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio');
+    type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio' | 'header' | 'palette');
     label?: string;
     /**
      * Available in macOS >= 14.4
