@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0+wvcus
+// Type definitions for Electron 38.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3560,6 +3560,14 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/base-window-options
 
+    /**
+     * The accent color for the window. By default, follows user preference in System
+     * Settings. Set to `false` to explicitly disable, or set the color in Hex, RGB,
+     * RGBA, HSL, HSLA or named CSS color format. Alpha values will be ignored.
+     *
+     * @platform win32
+     */
+    accentColor?: (boolean) | (string);
     /**
      * Whether clicking an inactive window will also click through to the web contents.
      * Default is `false` on macOS. This option is not configurable on other platforms.
@@ -17374,6 +17382,12 @@ declare namespace Electron {
      * Prints window's web page. When `silent` is set to `true`, Electron will pick the
      * system's default printer if `deviceName` is empty and the default settings for
      * printing.
+     *
+     * Some possible `failureReason`s for print failure include:
+     *
+     * * "Invalid printer settings"
+     * * "Print job canceled"
+     * * "Print job failed"
      *
      * Use `page-break-before: always;` CSS style to force to print to a new page.
      *
