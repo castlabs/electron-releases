@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.5.0+wvcus
+// Type definitions for Electron 36.6.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3560,6 +3560,14 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/base-window-options
 
+    /**
+     * The accent color for the window. By default, follows user preference in System
+     * Settings. Set to `false` to explicitly disable, or set the color in Hex, RGB,
+     * RGBA, HSL, HSLA or named CSS color format. Alpha values will be ignored.
+     *
+     * @platform win32
+     */
+    accentColor?: (boolean) | (string);
     /**
      * Whether clicking an inactive window will also click through to the web contents.
      * Default is `false` on macOS. This option is not configurable on other platforms.
@@ -8335,6 +8343,10 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/hid-device
 
+    /**
+     * an array of report formats. See MDN documentation for more.
+     */
+    collections: Array<Collections>;
     /**
      * Unique identifier for the device.
      */
@@ -19676,6 +19688,44 @@ declare namespace Electron {
     waitForBeforeUnload: boolean;
   }
 
+  interface Collections {
+    /**
+     * An integer representing the usage ID component of the HID usage associated with
+     * this collection.
+     */
+    usage: number;
+    /**
+     * An integer representing the usage page component of the HID usage associated
+     * with this collection.
+     */
+    usagePage: number;
+    /**
+     * An 8-bit value representing the collection type, which describes a different
+     * relationship between the grouped items.
+     */
+    type: number;
+    /**
+     * An array of sub-collections which takes the same format as a top-level
+     * collection.
+     */
+    children: Children[];
+    /**
+     * An array of inputReport items which represent individual input reports described
+     * in this collection.
+     */
+    inputReports: InputReports[];
+    /**
+     * An array of outputReport items which represent individual output reports
+     * described in this collection.
+     */
+    outputReports: OutputReports[];
+    /**
+     * An array of featureReport items which represent individual feature reports
+     * described in this collection.
+     */
+    featureReports: FeatureReports[];
+  }
+
   interface Config {
     /**
      * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
@@ -23054,6 +23104,9 @@ declare namespace Electron {
     edge: ('bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right');
   }
 
+  interface Children {
+  }
+
   interface EditFlags {
     /**
      * Whether the renderer believes it can undo.
@@ -23092,6 +23145,9 @@ declare namespace Electron {
   interface Env {
   }
 
+  interface FeatureReports {
+  }
+
   interface FoundInPageResult {
     requestId: number;
     /**
@@ -23107,6 +23163,9 @@ declare namespace Electron {
      */
     selectionArea: Rectangle;
     finalUpdate: boolean;
+  }
+
+  interface InputReports {
   }
 
   interface LaunchItems {
@@ -23241,6 +23300,9 @@ declare namespace Electron {
      * between two consecutively received frames.
      */
     frameCount?: number;
+  }
+
+  interface OutputReports {
   }
 
   interface PageRanges {
@@ -23441,6 +23503,7 @@ declare namespace Electron {
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
+    type Collections = Electron.Collections;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -23609,13 +23672,17 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
+    type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
+    type InputReports = Electron.InputReports;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
+    type OutputReports = Electron.OutputReports;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
@@ -23819,6 +23886,7 @@ declare namespace Electron {
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
+    type Collections = Electron.Collections;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -23987,13 +24055,17 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
+    type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
+    type InputReports = Electron.InputReports;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
+    type OutputReports = Electron.OutputReports;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
@@ -24123,6 +24195,7 @@ declare namespace Electron {
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
+    type Collections = Electron.Collections;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -24291,13 +24364,17 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
+    type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
+    type InputReports = Electron.InputReports;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
+    type OutputReports = Electron.OutputReports;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
@@ -24424,6 +24501,7 @@ declare namespace Electron {
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
+    type Collections = Electron.Collections;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -24592,13 +24670,17 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
+    type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
+    type InputReports = Electron.InputReports;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
+    type OutputReports = Electron.OutputReports;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
@@ -24819,6 +24901,7 @@ declare namespace Electron {
     type ClientCertRequestParams = Electron.ClientCertRequestParams;
     type ClientRequestConstructorOptions = Electron.ClientRequestConstructorOptions;
     type CloseOpts = Electron.CloseOpts;
+    type Collections = Electron.Collections;
     type Config = Electron.Config;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
@@ -24987,13 +25070,17 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
+    type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
+    type InputReports = Electron.InputReports;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
+    type OutputReports = Electron.OutputReports;
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
