@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.0.0+wvcus
+// Type definitions for Electron 37.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3560,6 +3560,14 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/structures/base-window-options
 
+    /**
+     * The accent color for the window. By default, follows user preference in System
+     * Settings. Set to `false` to explicitly disable, or set the color in Hex, RGB,
+     * RGBA, HSL, HSLA or named CSS color format. Alpha values will be ignored.
+     *
+     * @platform win32
+     */
+    accentColor?: (boolean) | (string);
     /**
      * Whether clicking an inactive window will also click through to the web contents.
      * Default is `false` on macOS. This option is not configurable on other platforms.
