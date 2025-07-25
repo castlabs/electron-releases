@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.2.2+wvcus
+// Type definitions for Electron 37.2.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5759,10 +5759,11 @@ declare namespace Electron {
     /**
      * Prevents the window contents from being captured by other apps.
      *
-     * On macOS it sets the NSWindow's sharingType to NSWindowSharingNone. On Windows
-     * it calls SetWindowDisplayAffinity with `WDA_EXCLUDEFROMCAPTURE`. For Windows 10
-     * version 2004 and up the window will be removed from capture entirely, older
-     * Windows versions behave as if `WDA_MONITOR` is applied capturing a black window.
+     * On macOS it sets the NSWindow's `sharingType` to `NSWindowSharingNone`. On
+     * Windows it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`. For
+     * Windows 10 version 2004 and up the window will be removed from capture entirely,
+     * older Windows versions behave as if `WDA_MONITOR` is applied capturing a black
+     * window.
      *
      * @platform darwin,win32
      */
@@ -18255,12 +18256,6 @@ declare namespace Electron {
      */
     enableBlinkFeatures?: string;
     /**
-     * Whether the `-electron-corner-smoothing` CSS rule is enabled. Default is `true`.
-     *
-     * @experimental
-     */
-    enableCornerSmoothingCSS?: boolean;
-    /**
      * Whether to enable the `paste` execCommand. Default is `false`.
      *
      * @deprecated
@@ -20066,9 +20061,9 @@ declare namespace Electron {
     /**
      * Extra string key/value annotations that will be sent along with crash reports
      * that are generated in the main process. Only string values are supported.
-     * Crashes generated in child processes will not contain these extra parameters to
-     * crash reports generated from child processes, call `addExtraParameter` from the
-     * child process.
+     * Crashes generated in child processes will not include these extra parameters. To
+     * add extra parameters to crash reports generated from child processes, call
+     * `addExtraParameter` from the child process.
      */
     extra?: Record<string, string>;
     /**
