@@ -1,4 +1,4 @@
-// Type definitions for Electron 38.0.0-alpha.6+wvcus
+// Type definitions for Electron 38.0.0-alpha.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5759,10 +5759,11 @@ declare namespace Electron {
     /**
      * Prevents the window contents from being captured by other apps.
      *
-     * On macOS it sets the NSWindow's sharingType to NSWindowSharingNone. On Windows
-     * it calls SetWindowDisplayAffinity with `WDA_EXCLUDEFROMCAPTURE`. For Windows 10
-     * version 2004 and up the window will be removed from capture entirely, older
-     * Windows versions behave as if `WDA_MONITOR` is applied capturing a black window.
+     * On macOS it sets the NSWindow's `sharingType` to `NSWindowSharingNone`. On
+     * Windows it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`. For
+     * Windows 10 version 2004 and up the window will be removed from capture entirely,
+     * older Windows versions behave as if `WDA_MONITOR` is applied capturing a black
+     * window.
      *
      * @platform darwin,win32
      */
@@ -7830,6 +7831,9 @@ declare namespace Electron {
     /**
      * Sets the string to be displayed in the dock’s badging area.
      *
+     * > [!IMPORTANT] You need to ensure that your application has the permission to
+     * display notifications for this method to work.
+     *
      * @platform darwin
      */
     setBadge(text: string): void;
@@ -8233,7 +8237,7 @@ declare namespace Electron {
      * still return `false`. This behavior is intended by operating systems, since they
      * don't want applications to fight for global shortcuts.
      */
-    isRegistered(accelerator: Accelerator): boolean;
+    isRegistered(accelerator: string): boolean;
     /**
      * Whether or not the shortcut was registered successfully.
      *
@@ -8252,7 +8256,7 @@ declare namespace Electron {
      * * "Media Previous Track"
      * * "Media Stop"
      */
-    register(accelerator: Accelerator, callback: () => void): boolean;
+    register(accelerator: string, callback: () => void): boolean;
     /**
      * Registers a global shortcut of all `accelerator` items in `accelerators`. The
      * `callback` is called when any of the registered shortcuts are pressed by the
@@ -8270,11 +8274,11 @@ declare namespace Electron {
      * * "Media Previous Track"
      * * "Media Stop"
      */
-    registerAll(accelerators: Accelerator[], callback: () => void): void;
+    registerAll(accelerators: string[], callback: () => void): void;
     /**
      * Unregisters the global shortcut of `accelerator`.
      */
-    unregister(accelerator: Accelerator): void;
+    unregister(accelerator: string): void;
     /**
      * Unregisters all of the global shortcuts.
      */
@@ -9109,8 +9113,8 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/keyboard-input-event
 
     /**
-     * The character that will be sent as the keyboard event. Should only use the valid
-     * key codes in Accelerator.
+     * The character that will be sent as the keyboard event. Should only use valid
+     * Accelerator key codes.
      */
     keyCode: string;
     /**
@@ -9252,13 +9256,15 @@ declare namespace Electron {
     insert(pos: number, menuItem: MenuItem): void;
     /**
      * Pops up this menu as a context menu in the `BaseWindow`.
+     *
+     * > [!TIP] For more details, see the Context Menu guide.
      */
     popup(options?: PopupOptions): void;
     /**
      * A `MenuItem[]` array containing the menu's items.
      *
-     * Each `Menu` consists of multiple `MenuItem`s and each `MenuItem` can have a
-     * submenu.
+     * Each `Menu` consists of multiple `MenuItem` instances and each `MenuItem` can
+     * nest a `Menu` into its `submenu` property.
      */
     items: MenuItem[];
   }
@@ -9276,7 +9282,7 @@ declare namespace Electron {
      */
     accelerator?: Accelerator;
     /**
-     * A `boolean` indicating whether the item is checked, this property can be
+     * A `boolean` indicating whether the item is checked. This property can be
      * dynamically changed.
      *
      * A `checkbox` menu item will toggle the `checked` property on and off when
@@ -9302,7 +9308,7 @@ declare namespace Electron {
      */
     commandId: number;
     /**
-     * A `boolean` indicating whether the item is enabled, this property can be
+     * A `boolean` indicating whether the item is enabled. This property can be
      * dynamically changed.
      */
     enabled: boolean;
@@ -9311,7 +9317,7 @@ declare namespace Electron {
      */
     icon?: (NativeImage) | (string);
     /**
-     * A `string` indicating the item's unique id, this property can be dynamically
+     * A `string` indicating the item's unique id. This property can be dynamically
      * changed.
      */
     id: string;
@@ -9384,7 +9390,7 @@ declare namespace Electron {
      */
     readonly userAccelerator: (Accelerator) | (null);
     /**
-     * A `boolean` indicating whether the item is visible, this property can be
+     * A `boolean` indicating whether the item is visible. This property can be
      * dynamically changed.
      */
     visible: boolean;
@@ -16406,24 +16412,6 @@ declare namespace Electron {
                                    */
                                   image: NativeImage) => void): this;
     /**
-     * Emitted when a plugin process has crashed.
-     */
-    on(event: 'plugin-crashed', listener: (event: Event,
-                                           name: string,
-                                           version: string) => void): this;
-    off(event: 'plugin-crashed', listener: (event: Event,
-                                           name: string,
-                                           version: string) => void): this;
-    once(event: 'plugin-crashed', listener: (event: Event,
-                                           name: string,
-                                           version: string) => void): this;
-    addListener(event: 'plugin-crashed', listener: (event: Event,
-                                           name: string,
-                                           version: string) => void): this;
-    removeListener(event: 'plugin-crashed', listener: (event: Event,
-                                           name: string,
-                                           version: string) => void): this;
-    /**
      * Emitted when the `WebContents` preferred size has changed.
      *
      * This event will only be emitted when `enablePreferredSizeMode` is set to `true`
@@ -17835,8 +17823,14 @@ declare namespace Electron {
     findFrameByName(name: string): WebFrame;
     /**
      * that has the supplied `routingId`, `null` if not found.
+     *
+     * @deprecated
      */
     findFrameByRoutingId(routingId: number): WebFrame;
+    /**
+     * that has the supplied `frameToken`, `null` if not found.
+     */
+    findFrameByToken(frameToken: string): WebFrame;
     /**
      * The frame element in `webFrame's` document selected by `selector`, `null` would
      * be returned if `selector` does not select a frame or if the frame is not in the
@@ -17949,6 +17943,13 @@ declare namespace Electron {
      */
     readonly firstChild: (WebFrame) | (null);
     /**
+     * A `string` representing the unique frame token in the current renderer process.
+     * Distinct WebFrame instances that refer to the same underlying frame will have
+     * the same `frameToken`.
+     *
+     */
+    readonly frameToken: string;
+    /**
      * A `WebFrame | null` representing next sibling frame, the property would be
      * `null` if `webFrame` is the last frame in its parent or if the next sibling is
      * not in the current renderer process.
@@ -17973,6 +17974,7 @@ declare namespace Electron {
      * Distinct WebFrame instances that refer to the same underlying frame will have
      * the same `routingId`.
      *
+     * @deprecated
      */
     readonly routingId: number;
     /**
@@ -18073,6 +18075,12 @@ declare namespace Electron {
      *
      */
     readonly framesInSubtree: WebFrameMain[];
+    /**
+     * A `string` which uniquely identifies the frame within its associated renderer
+     * process. This is equivalent to `webFrame.frameToken`.
+     *
+     */
+    readonly frameToken: string;
     /**
      * An `Integer` representing the id of the frame's internal FrameTreeNode instance.
      * This id is browser-global and uniquely identifies a frame that hosts content.
@@ -18260,12 +18268,6 @@ declare namespace Electron {
      * RuntimeEnabledFeatures.json5 file.
      */
     enableBlinkFeatures?: string;
-    /**
-     * Whether the `-electron-corner-smoothing` CSS rule is enabled. Default is `true`.
-     *
-     * @experimental
-     */
-    enableCornerSmoothingCSS?: boolean;
     /**
      * Whether to enable the `paste` execCommand. Default is `false`.
      *
@@ -18755,11 +18757,6 @@ declare namespace Electron {
      */
     addEventListener(event: 'render-process-gone', listener: (event: RenderProcessGoneEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'render-process-gone', listener: (event: RenderProcessGoneEvent) => void): this;
-    /**
-     * Fired when a plugin process is crashed.
-     */
-    addEventListener(event: 'plugin-crashed', listener: (event: PluginCrashedEvent) => void, useCapture?: boolean): this;
-    removeEventListener(event: 'plugin-crashed', listener: (event: PluginCrashedEvent) => void): this;
     /**
      * Fired when the WebContents is destroyed.
      */
@@ -20072,9 +20069,9 @@ declare namespace Electron {
     /**
      * Extra string key/value annotations that will be sent along with crash reports
      * that are generated in the main process. Only string values are supported.
-     * Crashes generated in child processes will not contain these extra parameters to
-     * crash reports generated from child processes, call `addExtraParameter` from the
-     * child process.
+     * Crashes generated in child processes will not include these extra parameters. To
+     * add extra parameters to crash reports generated from child processes, call
+     * `addExtraParameter` from the child process.
      */
     extra?: Record<string, string>;
     /**
@@ -20957,7 +20954,10 @@ declare namespace Electron {
      * @platform darwin
      */
     toolTip?: string;
-    accelerator?: Accelerator;
+    /**
+     * An Accelerator string.
+     */
+    accelerator?: string;
     icon?: (NativeImage) | (string);
     /**
      * If false, the menu item will be greyed out and unclickable.
@@ -21714,11 +21714,6 @@ declare namespace Electron {
      * Whether the frame making the request is the main frame
      */
     isMainFrame: boolean;
-  }
-
-  interface PluginCrashedEvent extends DOMEvent {
-    name: string;
-    version: string;
   }
 
   interface PopupOptions {
@@ -23607,7 +23602,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
@@ -23990,7 +23984,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
@@ -24299,7 +24292,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
@@ -24605,7 +24597,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
@@ -25005,7 +24996,6 @@ declare namespace Electron {
     type Parameters = Electron.Parameters;
     type Payment = Electron.Payment;
     type PermissionCheckHandlerHandlerDetails = Electron.PermissionCheckHandlerHandlerDetails;
-    type PluginCrashedEvent = Electron.PluginCrashedEvent;
     type PopupOptions = Electron.PopupOptions;
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
