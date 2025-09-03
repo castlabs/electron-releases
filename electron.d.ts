@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.2.5+wvcus
+// Type definitions for Electron 37.4.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1219,7 +1219,7 @@ declare namespace Electron {
      * called first, a default log directory will be created equivalent to calling
      * `app.setAppLogsPath()` without a `path` parameter.
      */
-    getPath(name: 'home' | 'appData' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps'): string;
+    getPath(name: 'home' | 'appData' | 'assets' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps'): string;
     /**
      * The user's preferred system languages from most preferred to least preferred,
      * including the country codes if applicable. A user can modify and add to this
@@ -1256,6 +1256,12 @@ declare namespace Electron {
      * that do not have associated countries in the language name.
      */
     getPreferredSystemLanguages(): string[];
+    /**
+     * An array containing documents in the most recent documents list.
+     *
+     * @platform darwin,win32
+     */
+    getRecentDocuments(): string[];
     /**
      * The current system locale. On Windows and Linux, it is fetched using Chromium's
      * `i18n` library. On macOS, `[NSLocale currentLocale]` is used instead. To get the
@@ -2576,6 +2582,19 @@ declare namespace Electron {
      */
     focus(): void;
     /**
+     * the system accent color and highlighting of active window border in Hex RGB
+     * format.
+     *
+     * If a color has been set for the window that differs from the system accent
+     * color, the window accent color will be returned. Otherwise, a boolean will be
+     * returned, with `true` indicating that the window uses the global system accent
+     * color, and `false` indicating that accent color highlighting is disabled for
+     * this window.
+     *
+     * @platform win32
+     */
+    getAccentColor(): (string) | (boolean);
+    /**
      * Gets the background color of the window in Hex (`#RRGGBB`) format.
      *
      * See Setting `backgroundColor`.
@@ -2934,6 +2953,23 @@ declare namespace Electron {
      * @platform darwin
      */
     selectPreviousTab(): void;
+    /**
+     * Sets the system accent color and highlighting of active window border.
+     *
+     * The `accentColor` parameter accepts the following values:
+     *
+     * * **Color string** - Sets a custom accent color using standard CSS color formats
+     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
+     * are ignored and the color is treated as fully opaque.
+     * * **`true`** - Uses the system's default accent color from user preferences in
+     * System Settings.
+     * * **`false`** - Explicitly disables accent color highlighting for the window.
+     *
+     * Examples:
+     *
+     * @platform win32
+     */
+    setAccentColor(accentColor: (boolean) | (string)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -5217,6 +5253,19 @@ declare namespace Electron {
     focus(): void;
     focusOnWebView(): void;
     /**
+     * the system accent color and highlighting of active window border in Hex RGB
+     * format.
+     *
+     * If a color has been set for the window that differs from the system accent
+     * color, the window accent color will be returned. Otherwise, a boolean will be
+     * returned, with `true` indicating that the window uses the global system accent
+     * color, and `false` indicating that accent color highlighting is disabled for
+     * this window.
+     *
+     * @platform win32
+     */
+    getAccentColor(): (string) | (boolean);
+    /**
      * Gets the background color of the window in Hex (`#RRGGBB`) format.
      *
      * See Setting `backgroundColor`.
@@ -5635,6 +5684,23 @@ declare namespace Electron {
      * @platform darwin
      */
     selectPreviousTab(): void;
+    /**
+     * Sets the system accent color and highlighting of active window border.
+     *
+     * The `accentColor` parameter accepts the following values:
+     *
+     * * **Color string** - Sets a custom accent color using standard CSS color formats
+     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
+     * are ignored and the color is treated as fully opaque.
+     * * **`true`** - Uses the system's default accent color from user preferences in
+     * System Settings.
+     * * **`false`** - Explicitly disables accent color highlighting for the window.
+     *
+     * Examples:
+     *
+     * @platform win32
+     */
+    setAccentColor(accentColor: (boolean) | (string)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -14592,6 +14658,13 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     getBounds(): Rectangle;
+    /**
+     * The GUID used to uniquely identify the tray icon and allow it to retain its
+     * position between relaunches, or null if none is set.
+     *
+     * @platform darwin,win32
+     */
+    getGUID(): (string) | (null);
     /**
      * Whether double click events will be ignored.
      *
