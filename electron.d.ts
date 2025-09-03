@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.7.3+wvcus
+// Type definitions for Electron 36.8.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1256,6 +1256,12 @@ declare namespace Electron {
      * that do not have associated countries in the language name.
      */
     getPreferredSystemLanguages(): string[];
+    /**
+     * An array containing documents in the most recent documents list.
+     *
+     * @platform darwin,win32
+     */
+    getRecentDocuments(): string[];
     /**
      * The current system locale. On Windows and Linux, it is fetched using Chromium's
      * `i18n` library. On macOS, `[NSLocale currentLocale]` is used instead. To get the
@@ -2576,6 +2582,19 @@ declare namespace Electron {
      */
     focus(): void;
     /**
+     * the system accent color and highlighting of active window border in Hex RGB
+     * format.
+     *
+     * If a color has been set for the window that differs from the system accent
+     * color, the window accent color will be returned. Otherwise, a boolean will be
+     * returned, with `true` indicating that the window uses the global system accent
+     * color, and `false` indicating that accent color highlighting is disabled for
+     * this window.
+     *
+     * @platform win32
+     */
+    getAccentColor(): (string) | (boolean);
+    /**
      * Gets the background color of the window in Hex (`#RRGGBB`) format.
      *
      * See Setting `backgroundColor`.
@@ -2934,6 +2953,23 @@ declare namespace Electron {
      * @platform darwin
      */
     selectPreviousTab(): void;
+    /**
+     * Sets the system accent color and highlighting of active window border.
+     *
+     * The `accentColor` parameter accepts the following values:
+     *
+     * * **Color string** - Sets a custom accent color using standard CSS color formats
+     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
+     * are ignored and the color is treated as fully opaque.
+     * * **`true`** - Uses the system's default accent color from user preferences in
+     * System Settings.
+     * * **`false`** - Explicitly disables accent color highlighting for the window.
+     *
+     * Examples:
+     *
+     * @platform win32
+     */
+    setAccentColor(accentColor: (boolean) | (string)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -5217,6 +5253,19 @@ declare namespace Electron {
     focus(): void;
     focusOnWebView(): void;
     /**
+     * the system accent color and highlighting of active window border in Hex RGB
+     * format.
+     *
+     * If a color has been set for the window that differs from the system accent
+     * color, the window accent color will be returned. Otherwise, a boolean will be
+     * returned, with `true` indicating that the window uses the global system accent
+     * color, and `false` indicating that accent color highlighting is disabled for
+     * this window.
+     *
+     * @platform win32
+     */
+    getAccentColor(): (string) | (boolean);
+    /**
      * Gets the background color of the window in Hex (`#RRGGBB`) format.
      *
      * See Setting `backgroundColor`.
@@ -5635,6 +5684,23 @@ declare namespace Electron {
      * @platform darwin
      */
     selectPreviousTab(): void;
+    /**
+     * Sets the system accent color and highlighting of active window border.
+     *
+     * The `accentColor` parameter accepts the following values:
+     *
+     * * **Color string** - Sets a custom accent color using standard CSS color formats
+     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
+     * are ignored and the color is treated as fully opaque.
+     * * **`true`** - Uses the system's default accent color from user preferences in
+     * System Settings.
+     * * **`false`** - Explicitly disables accent color highlighting for the window.
+     *
+     * Examples:
+     *
+     * @platform win32
+     */
+    setAccentColor(accentColor: (boolean) | (string)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
