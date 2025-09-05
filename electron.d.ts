@@ -1,4 +1,4 @@
-// Type definitions for Electron 38.0.0+wvcus
+// Type definitions for Electron 39.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -6786,6 +6786,28 @@ declare namespace Electron {
     writeText(text: string, type?: 'selection' | 'clipboard'): void;
   }
 
+  interface ColorSpace {
+
+    // Docs: https://electronjs.org/docs/api/structures/color-space
+
+    /**
+     * The color matrix of the color space. Can be one of the following values:
+     */
+    matrix: ('rgb' | 'bt709' | 'fcc' | 'bt470bg' | 'smpte170m' | 'smpte240m' | 'ycocg' | 'bt2020-ncl' | 'ydzdx' | 'gbr' | 'invalid');
+    /**
+     * The color primaries of the color space. Can be one of the following values:
+     */
+    primaries: ('bt709' | 'bt470m' | 'bt470bg' | 'smpte170m' | 'smpte240m' | 'film' | 'bt2020' | 'smptest428-1' | 'smptest431-2' | 'p3' | 'xyz-d50' | 'adobe-rgb' | 'apple-generic-rgb' | 'wide-gamut-color-spin' | 'ebu-3213-e' | 'custom' | 'invalid');
+    /**
+     * The color range of the color space. Can be one of the following values:
+     */
+    range: ('limited' | 'full' | 'derived' | 'invalid');
+    /**
+     * The transfer function of the color space. Can be one of the following values:
+     */
+    transfer: ('bt709' | 'bt709-apple' | 'gamma18' | 'gamma22' | 'gamma24' | 'gamma28' | 'smpte170m' | 'smpte240m' | 'linear' | 'log' | 'log-sqrt' | 'iec61966-2-4' | 'bt1361-ecg' | 'srgb' | 'bt2020-10' | 'bt2020-12' | 'pq' | 'smptest428-1' | 'hlg' | 'srgb-hdr' | 'linear-hdr' | 'custom' | 'custom-hdr' | 'scrgb-linear-80-nits' | 'invalid');
+  }
+
   class CommandLine {
 
     // Docs: https://electronjs.org/docs/api/command-line
@@ -13013,6 +13035,32 @@ declare namespace Electron {
     totalSizeBytes: number;
   }
 
+  interface SharedTextureHandle {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-handle
+
+    /**
+     * IOSurfaceRef holds the shared texture. Note that this IOSurface is local to
+     * current process (not global).
+     *
+     * @platform darwin
+     */
+    ioSurface?: Buffer;
+    /**
+     * Structure contains planes of shared texture.
+     *
+     * @platform linux
+     */
+    nativePixmap?: NativePixmap;
+    /**
+     * NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current
+     * process.
+     *
+     * @platform win32
+     */
+    ntHandle?: Buffer;
+  }
+
   interface SharedWorkerInfo {
 
     // Docs: https://electronjs.org/docs/api/structures/shared-worker-info
@@ -14802,7 +14850,16 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/usb-device
 
     /**
-     * The device class for the communication interface supported by the device
+     * A USBConfiguration object containing information about the currently selected
+     * configuration of a USB device.
+     */
+    configuration?: Configuration;
+    /**
+     * An array of USBConfiguration interfaces for controlling a paired USB device.
+     */
+    configurations: Array<Configurations>;
+    /**
+     * The device class for the communication interface supported by the device.
      */
     deviceClass: number;
     /**
@@ -14810,11 +14867,11 @@ declare namespace Electron {
      */
     deviceId: string;
     /**
-     * The device protocol for the communication interface supported by the device
+     * The device protocol for the communication interface supported by the device.
      */
     deviceProtocol: number;
     /**
-     * The device subclass for the communication interface supported by the device
+     * The device subclass for the communication interface supported by the device.
      */
     deviceSubclass: number;
     /**
@@ -14846,15 +14903,15 @@ declare namespace Electron {
      */
     serialNumber?: string;
     /**
-     * The USB protocol major version supported by the device
+     * The USB protocol major version supported by the device.
      */
     usbVersionMajor: number;
     /**
-     * The USB protocol minor version supported by the device
+     * The USB protocol minor version supported by the device.
      */
     usbVersionMinor: number;
     /**
-     * The USB protocol subminor version supported by the device
+     * The USB protocol subminor version supported by the device.
      */
     usbVersionSubminor: number;
     /**
@@ -19841,6 +19898,25 @@ declare namespace Electron {
     disabledCipherSuites?: number[];
   }
 
+  interface Configuration {
+    /**
+     * the configuration value of this configuration.
+     */
+    configurationValue: number;
+    /**
+     * the name provided by the device to describe this configuration.
+     */
+    configurationName: string;
+    /**
+     * An array of USBInterface objects containing information about an interface
+     * provided by the USB device.
+     */
+    interfaces: Interfaces[];
+  }
+
+  interface Configurations {
+  }
+
   interface ConfigureHostResolverOptions {
     /**
      * Whether the built-in host resolver is used in preference to getaddrinfo. When
@@ -21299,6 +21375,27 @@ declare namespace Electron {
     conflictHandler?: (conflictType: 'exists' | 'existsAndRunning') => boolean;
   }
 
+  interface NativePixmap {
+    /**
+     * Each plane's info of the shared texture.
+     *
+     * @platform linux
+     */
+    planes: Planes[];
+    /**
+     * The modifier is retrieved from GBM library and passed to EGL driver.
+     *
+     * @platform linux
+     */
+    modifier: string;
+    /**
+     * Indicates whether supports zero copy import to WebGPU.
+     *
+     * @platform linux
+     */
+    supportsZeroCopyWebGpuImport: boolean;
+  }
+
   interface NotificationConstructorOptions {
     /**
      * A title for the notification, which will be displayed at the top of the
@@ -22473,8 +22570,12 @@ declare namespace Electron {
      */
     codedSize: Size;
     /**
-     * A subsection of [0, 0, codedSize.width(), codedSize.height()]. In OSR case, it
-     * is expected to have the full section area.
+     * The color space of the video frame.
+     */
+    colorSpace: ColorSpace;
+    /**
+     * A subsection of [0, 0, codedSize.width, codedSize.height]. In OSR case, it is
+     * expected to have the full section area.
      */
     visibleRect: Rectangle;
     /**
@@ -22492,23 +22593,9 @@ declare namespace Electron {
      */
     metadata: Metadata;
     /**
-     * The handle to the shared texture.
-     *
-     * @platform win32,darwin
+     * The shared texture handle data.
      */
-    sharedTextureHandle: Buffer;
-    /**
-     * Each plane's info of the shared texture.
-     *
-     * @platform linux
-     */
-    planes: Planes[];
-    /**
-     * The modifier is retrieved from GBM library and passed to EGL driver.
-     *
-     * @platform linux
-     */
-    modifier: string;
+    handle: SharedTextureHandle;
   }
 
   interface TitleBarOverlay {
@@ -23269,6 +23356,22 @@ declare namespace Electron {
   interface InputReports {
   }
 
+  interface Interfaces {
+    /**
+     * the interface number of this interface.
+     */
+    interfaceNumber: number;
+    /**
+     * the currently selected alternative configuration of this interface.
+     */
+    alternate: Alternate;
+    /**
+     * an array containing instances of the USBAlternateInterface interface describing
+     * each of the alternative configurations possible for this interface.
+     */
+    alternates: Alternates[];
+  }
+
   interface LaunchItems {
     /**
      * name value of a registry entry.
@@ -23569,6 +23672,58 @@ declare namespace Electron {
     name: string;
   }
 
+  interface Alternate {
+    /**
+     * the alternate setting number of this interface.
+     */
+    alternateSetting: number;
+    /**
+     * the class of this interface. See USB.org for class code descriptions.
+     */
+    interfaceClass: number;
+    /**
+     * the subclass of this interface.
+     */
+    interfaceSubclass: number;
+    /**
+     * the protocol supported by this interface.
+     */
+    interfaceProtocol: number;
+    /**
+     * the name of the interface, if one is provided by the device.
+     */
+    interfaceName?: string;
+    /**
+     * an array containing instances of the USBEndpoint interface describing each of
+     * the endpoints that are part of this interface.
+     */
+    endpoints: Endpoints[];
+  }
+
+  interface Alternates {
+  }
+
+  interface Endpoints {
+    /**
+     * this endpoint's "endpoint number" which is a value from 1 to 15.
+     */
+    endpointNumber: number;
+    /**
+     * the direction in which this endpoint transfers data - can be either 'in' or
+     * 'out'.
+     */
+    direction: string;
+    /**
+     * the type of this endpoint - can be either 'bulk', 'interrupt', or 'isochronous'.
+     */
+    type: string;
+    /**
+     * the size of the packets that data sent through this endpoint will be divided
+     * into.
+     */
+    packetSize: number;
+  }
+
 
 
   namespace Common {
@@ -23606,6 +23761,8 @@ declare namespace Electron {
     type CloseOpts = Electron.CloseOpts;
     type Collections = Electron.Collections;
     type Config = Electron.Config;
+    type Configuration = Electron.Configuration;
+    type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
@@ -23676,6 +23833,7 @@ declare namespace Electron {
     type MessageDetails = Electron.MessageDetails;
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NativePixmap = Electron.NativePixmap;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
@@ -23778,6 +23936,7 @@ declare namespace Electron {
     type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
     type InputReports = Electron.InputReports;
+    type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
@@ -23787,11 +23946,15 @@ declare namespace Electron {
     type Params = Electron.Params;
     type Planes = Electron.Planes;
     type Video = Electron.Video;
+    type Alternate = Electron.Alternate;
+    type Alternates = Electron.Alternates;
+    type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
@@ -23857,6 +24020,7 @@ declare namespace Electron {
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
+    type SharedTextureHandle = Electron.SharedTextureHandle;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -23988,6 +24152,8 @@ declare namespace Electron {
     type CloseOpts = Electron.CloseOpts;
     type Collections = Electron.Collections;
     type Config = Electron.Config;
+    type Configuration = Electron.Configuration;
+    type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
@@ -24058,6 +24224,7 @@ declare namespace Electron {
     type MessageDetails = Electron.MessageDetails;
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NativePixmap = Electron.NativePixmap;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
@@ -24160,6 +24327,7 @@ declare namespace Electron {
     type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
     type InputReports = Electron.InputReports;
+    type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
@@ -24169,11 +24337,15 @@ declare namespace Electron {
     type Params = Electron.Params;
     type Planes = Electron.Planes;
     type Video = Electron.Video;
+    type Alternate = Electron.Alternate;
+    type Alternates = Electron.Alternates;
+    type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
@@ -24239,6 +24411,7 @@ declare namespace Electron {
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
+    type SharedTextureHandle = Electron.SharedTextureHandle;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -24296,6 +24469,8 @@ declare namespace Electron {
     type CloseOpts = Electron.CloseOpts;
     type Collections = Electron.Collections;
     type Config = Electron.Config;
+    type Configuration = Electron.Configuration;
+    type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
@@ -24366,6 +24541,7 @@ declare namespace Electron {
     type MessageDetails = Electron.MessageDetails;
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NativePixmap = Electron.NativePixmap;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
@@ -24468,6 +24644,7 @@ declare namespace Electron {
     type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
     type InputReports = Electron.InputReports;
+    type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
@@ -24477,11 +24654,15 @@ declare namespace Electron {
     type Params = Electron.Params;
     type Planes = Electron.Planes;
     type Video = Electron.Video;
+    type Alternate = Electron.Alternate;
+    type Alternates = Electron.Alternates;
+    type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
@@ -24547,6 +24728,7 @@ declare namespace Electron {
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
+    type SharedTextureHandle = Electron.SharedTextureHandle;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -24601,6 +24783,8 @@ declare namespace Electron {
     type CloseOpts = Electron.CloseOpts;
     type Collections = Electron.Collections;
     type Config = Electron.Config;
+    type Configuration = Electron.Configuration;
+    type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
@@ -24671,6 +24855,7 @@ declare namespace Electron {
     type MessageDetails = Electron.MessageDetails;
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NativePixmap = Electron.NativePixmap;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
@@ -24773,6 +24958,7 @@ declare namespace Electron {
     type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
     type InputReports = Electron.InputReports;
+    type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
@@ -24782,11 +24968,15 @@ declare namespace Electron {
     type Params = Electron.Params;
     type Planes = Electron.Planes;
     type Video = Electron.Video;
+    type Alternate = Electron.Alternate;
+    type Alternates = Electron.Alternates;
+    type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
@@ -24852,6 +25042,7 @@ declare namespace Electron {
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
+    type SharedTextureHandle = Electron.SharedTextureHandle;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -25000,6 +25191,8 @@ declare namespace Electron {
     type CloseOpts = Electron.CloseOpts;
     type Collections = Electron.Collections;
     type Config = Electron.Config;
+    type Configuration = Electron.Configuration;
+    type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
@@ -25070,6 +25263,7 @@ declare namespace Electron {
     type MessageDetails = Electron.MessageDetails;
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
+    type NativePixmap = Electron.NativePixmap;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
@@ -25172,6 +25366,7 @@ declare namespace Electron {
     type FeatureReports = Electron.FeatureReports;
     type FoundInPageResult = Electron.FoundInPageResult;
     type InputReports = Electron.InputReports;
+    type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
@@ -25181,11 +25376,15 @@ declare namespace Electron {
     type Params = Electron.Params;
     type Planes = Electron.Planes;
     type Video = Electron.Video;
+    type Alternate = Electron.Alternate;
+    type Alternates = Electron.Alternates;
+    type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
@@ -25251,6 +25450,7 @@ declare namespace Electron {
     type ServiceWorkerInfo = Electron.ServiceWorkerInfo;
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
+    type SharedTextureHandle = Electron.SharedTextureHandle;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
