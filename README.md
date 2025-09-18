@@ -6,7 +6,7 @@ Check out the [Wiki](../../wiki) for general news, guides, and other updates.
 >
 > See additional updates in the sections below, and please report any issues you find!
 
-Electron for Content Security (ECS) is a fork of Electron created by castLabs to facilitate the use of Google's [Widevine Content Decryption Module (CDM)](../../wiki/CDM) for DRM-enabled playback within Electron, including support for [Verified Media Path (VMP)](../../wiki/VMP) and persistent license storage. It is intended to be used as a drop-in replacement for stock Electron and currently has full support for Windows and macOS platforms, with partial support for Linux (which lacks support for persistent licenses due to VMP limitations on the platform).
+Electron for Content Security (ECS) is a fork of Electron created by Castlabs to facilitate the use of Google's [Widevine Content Decryption Module (CDM)](../../wiki/CDM) for DRM-enabled playback within Electron, including support for [Verified Media Path (VMP)](../../wiki/VMP) and persistent license storage. It is intended to be used as a drop-in replacement for stock Electron and currently has full support for Windows and macOS platforms, with partial support for Linux (which lacks support for persistent licenses due to VMP limitations on the platform).
 
 The sections below will describe the features/modifications that ECS provides, for anything else refer to the regular [Electron documentation](https://www.electronjs.org/docs).
 
