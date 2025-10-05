@@ -1,4 +1,4 @@
-// Type definitions for Electron 36.8.1+wvcus
+// Type definitions for Electron 36.9.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -14650,6 +14650,13 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     getBounds(): Rectangle;
+    /**
+     * The GUID used to uniquely identify the tray icon and allow it to retain its
+     * position between relaunches, or null if none is set.
+     *
+     * @platform darwin,win32
+     */
+    getGUID(): (string) | (null);
     /**
      * Whether double click events will be ignored.
      *
