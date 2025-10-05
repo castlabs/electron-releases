@@ -1,4 +1,4 @@
-// Type definitions for Electron 38.0.0+wvcus
+// Type definitions for Electron 38.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5825,11 +5825,15 @@ declare namespace Electron {
     /**
      * Prevents the window contents from being captured by other apps.
      *
-     * On macOS it sets the NSWindow's `sharingType` to `NSWindowSharingNone`. On
-     * Windows it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`. For
-     * Windows 10 version 2004 and up the window will be removed from capture entirely,
-     * older Windows versions behave as if `WDA_MONITOR` is applied capturing a black
-     * window.
+     * On Windows, it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`.
+     * For Windows 10 version 2004 and up the window will be removed from capture
+     * entirely, older Windows versions behave as if `WDA_MONITOR` is applied capturing
+     * a black window.
+     *
+     * On macOS, it sets the `NSWindow`'s `sharingType` to `NSWindowSharingNone`.
+     * Unfortunately, due to an intentional change in macOS, newer Mac applications
+     * that use `ScreenCaptureKit` will capture your window despite
+     * `win.setContentProtection(true)`. See here.
      *
      * @platform darwin,win32
      */
@@ -12782,8 +12786,11 @@ declare namespace Electron {
      * get complete permission handling. Most web APIs do a permission check and then
      * make a permission request if the check is denied. To clear the handler, call
      * `setPermissionCheckHandler(null)`.
+     *
+     * > [!NOTE] `isMainFrame` will always be `false` for a `fileSystem` request as a
+     * result of Chromium limitations.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read' | 'fileSystem', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -21784,7 +21791,7 @@ declare namespace Electron {
      */
     securityOrigin?: string;
     /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
+     * The type of media access being requested, can be `video`, `audio` or `unknown`.
      */
     mediaType?: ('video' | 'audio' | 'unknown');
     /**
@@ -21793,9 +21800,21 @@ declare namespace Electron {
      */
     requestingUrl?: string;
     /**
-     * Whether the frame making the request is the main frame
+     * Whether the frame making the request is the main frame.
      */
     isMainFrame: boolean;
+    /**
+     * The path of a `fileSystem` request.
+     */
+    filePath?: string;
+    /**
+     * Whether a `fileSystem` request is a directory.
+     */
+    isDirectory?: boolean;
+    /**
+     * The access type of a `fileSystem` request. Can be `writable` or `readable`.
+     */
+    fileAccessType?: ('writable' | 'readable');
   }
 
   interface PopupOptions {
