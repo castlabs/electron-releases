@@ -16,11 +16,11 @@
     "node": ">= 12.20.55"
   },
   "name": "electron",
-  "version": "37.4.0+wvcus",
+  "version": "37.6.0+wvcus",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
-  "author": "Castlabs (based on work by the Electron Community)",
+  "author": "castLabs GmbH (based on work by the Electron Community)",
   "maintainers": [
     {
       "name": "Emil Pettersson",

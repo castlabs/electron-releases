@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.4.0+wvcus
+// Type definitions for Electron 37.6.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -12777,8 +12777,11 @@ declare namespace Electron {
      * get complete permission handling. Most web APIs do a permission check and then
      * make a permission request if the check is denied. To clear the handler, call
      * `setPermissionCheckHandler(null)`.
+     *
+     * > [!NOTE] `isMainFrame` will always be `false` for a `fileSystem` request as a
+     * result of Chromium limitations.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read' | 'fileSystem', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -21764,7 +21767,7 @@ declare namespace Electron {
      */
     securityOrigin?: string;
     /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
+     * The type of media access being requested, can be `video`, `audio` or `unknown`.
      */
     mediaType?: ('video' | 'audio' | 'unknown');
     /**
@@ -21773,9 +21776,21 @@ declare namespace Electron {
      */
     requestingUrl?: string;
     /**
-     * Whether the frame making the request is the main frame
+     * Whether the frame making the request is the main frame.
      */
     isMainFrame: boolean;
+    /**
+     * The path of a `fileSystem` request.
+     */
+    filePath?: string;
+    /**
+     * Whether a `fileSystem` request is a directory.
+     */
+    isDirectory?: boolean;
+    /**
+     * The access type of a `fileSystem` request. Can be `writable` or `readable`.
+     */
+    fileAccessType?: ('writable' | 'readable');
   }
 
   interface PluginCrashedEvent extends DOMEvent {
@@ -22416,6 +22431,20 @@ declare namespace Electron {
      * The total amount of memory not being used by applications or disk cache.
      */
     free: number;
+    /**
+     * The amount of memory that currently has been paged out to storage. Includes
+     * memory for file caches, network buffers, and other system services.
+     *
+     * @platform darwin
+     */
+    fileBacked: number;
+    /**
+     * The amount of memory that is marked as "purgeable". The system can reclaim it if
+     * memory pressure increases.
+     *
+     * @platform darwin
+     */
+    purgeable: number;
     /**
      * The total amount of swap memory in Kilobytes available to the system.
      *
@@ -25410,6 +25439,11 @@ declare namespace NodeJS {
      * to the system.
      * * `free` Integer - The total amount of memory not being used by applications or
      * disk cache.
+     * * `fileBacked` Integer _macOS_ - The amount of memory that currently has been
+     * paged out to storage. Includes memory for file caches, network buffers, and
+     * other system services.
+     * * `purgeable` Integer _macOS_ - The amount of memory that is marked as
+     * "purgeable". The system can reclaim it if memory pressure increases.
      * * `swapTotal` Integer _Windows_ _Linux_ - The total amount of swap memory in
      * Kilobytes available to the system.
      * * `swapFree` Integer _Windows_ _Linux_ - The free amount of swap memory in
