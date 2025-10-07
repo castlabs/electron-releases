@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.0.0-alpha.1+wvcus
+// Type definitions for Electron 39.0.0-alpha.8+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -5825,11 +5825,15 @@ declare namespace Electron {
     /**
      * Prevents the window contents from being captured by other apps.
      *
-     * On macOS it sets the NSWindow's `sharingType` to `NSWindowSharingNone`. On
-     * Windows it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`. For
-     * Windows 10 version 2004 and up the window will be removed from capture entirely,
-     * older Windows versions behave as if `WDA_MONITOR` is applied capturing a black
-     * window.
+     * On Windows, it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`.
+     * For Windows 10 version 2004 and up the window will be removed from capture
+     * entirely, older Windows versions behave as if `WDA_MONITOR` is applied capturing
+     * a black window.
+     *
+     * On macOS, it sets the `NSWindow`'s `sharingType` to `NSWindowSharingNone`.
+     * Unfortunately, due to an intentional change in macOS, newer Mac applications
+     * that use `ScreenCaptureKit` will capture your window despite
+     * `win.setContentProtection(true)`. See here.
      *
      * @platform darwin,win32
      */
