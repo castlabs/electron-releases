@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.0.0-alpha.8+wvcus
+// Type definitions for Electron 39.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1049,6 +1049,30 @@ declare namespace Electron {
      */
     focus(options?: FocusOptions): void;
     /**
+     * Array of strings naming currently enabled accessibility support components.
+     * Possible values:
+     *
+     * * `nativeAPIs` - Native OS accessibility APIs integration enabled.
+     * * `webContents` - Web contents accessibility tree exposure enabled.
+     * * `inlineTextBoxes` - Inline text boxes (character bounding boxes) enabled.
+     * * `extendedProperties` - Extended accessibility properties enabled.
+     * * `screenReader` - Screen reader specific mode enabled.
+     * * `html` - HTML accessibility tree construction enabled.
+     * * `labelImages` - Accessibility support for automatic image annotations.
+     * * `pdfPrinting` - Accessibility support for PDF printing enabled.
+     *
+     * Notes:
+     *
+     * * The array may be empty if no accessibility modes are active.
+     * * Use `app.isAccessibilitySupportEnabled()` for the legacy boolean check; prefer
+     * this method for granular diagnostics or telemetry.
+     *
+     * Example:
+     *
+     * @platform darwin,win32
+     */
+    getAccessibilitySupportFeatures(): string[];
+    /**
      * Resolve with an object containing the following:
      *
      * * `icon` NativeImage - the display icon of the app handling the protocol.
@@ -1506,11 +1530,32 @@ declare namespace Electron {
      * This API must be called after the `ready` event is emitted.
      *
      * > [!NOTE] Rendering accessibility tree can significantly affect the performance
-     * of your app. It should not be enabled by default.
+     * of your app. It should not be enabled by default. Calling this method will
+     * enable the following accessibility support features: `nativeAPIs`,
+     * `webContents`, `inlineTextBoxes`, and `extendedProperties`.
      *
      * @platform darwin,win32
      */
     setAccessibilitySupportEnabled(enabled: boolean): void;
+    /**
+     * Possible values are:
+     *
+     * * `nativeAPIs` - Native OS accessibility APIs integration enabled.
+     * * `webContents` - Web contents accessibility tree exposure enabled.
+     * * `inlineTextBoxes` - Inline text boxes (character bounding boxes) enabled.
+     * * `extendedProperties` - Extended accessibility properties enabled.
+     * * `screenReader` - Screen reader specific mode enabled.
+     * * `html` - HTML accessibility tree construction enabled.
+     * * `labelImages` - Accessibility support for automatic image annotations.
+     * * `pdfPrinting` - Accessibility support for PDF printing enabled.
+     *
+     * To disable all supported features, pass an empty array `[]`.
+     *
+     * Example:
+     *
+     * @platform darwin,win32
+     */
+    setAccessibilitySupportFeatures(features: string[]): void;
     /**
      * Sets the activation policy for a given app.
      *
@@ -3800,9 +3845,12 @@ declare namespace Electron {
      */
     tabbingIdentifier?: string;
     /**
-     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
-     * window frame. Setting it to `false` will remove window shadow and window
-     * animations. Default is `true`.
+     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds the
+     * standard window frame. Setting it to `false` will remove window shadow and
+     * window animations, and disable window resizing via dragging the window edges.
+     * Default is `true`.
+     *
+     * @platform win32
      */
     thickFrame?: boolean;
     /**
@@ -11423,7 +11471,7 @@ declare namespace Electron {
     /**
      * The reason the render process is gone.  Possible values:
      */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure' | 'memory-eviction');
   }
 
   interface ResolvedEndpoint {
@@ -12808,8 +12856,11 @@ declare namespace Electron {
      * get complete permission handling. Most web APIs do a permission check and then
      * make a permission request if the check is denied. To clear the handler, call
      * `setPermissionCheckHandler(null)`.
+     *
+     * > [!NOTE] `isMainFrame` will always be `false` for a `fileSystem` request as a
+     * result of Chromium limitations.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read' | 'fileSystem', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -13227,7 +13278,7 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/system-preferences
 
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     on(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -13235,7 +13286,7 @@ declare namespace Electron {
                                                   */
                                                  newColor: string) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     off(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -13243,7 +13294,7 @@ declare namespace Electron {
                                                   */
                                                  newColor: string) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     once(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -13251,7 +13302,7 @@ declare namespace Electron {
                                                   */
                                                  newColor: string) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     addListener(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -13259,7 +13310,7 @@ declare namespace Electron {
                                                   */
                                                  newColor: string) => void): this;
     /**
-     * @platform win32
+     * @platform win32,linux
      */
     removeListener(event: 'accent-color-changed', listener: (event: Event,
                                                  /**
@@ -13318,8 +13369,6 @@ declare namespace Electron {
      * The users current system wide accent color preference in RGBA hexadecimal form.
      *
      * This API is only available on macOS 10.14 Mojave or newer.
-     *
-     * @platform win32,darwin
      */
     getAccentColor(): string;
     /**
@@ -18510,7 +18559,9 @@ declare namespace Electron {
      * If set, this will sandbox the renderer associated with the window, making it
      * compatible with the Chromium OS-level sandbox and disabling the Node.js engine.
      * This is not the same as the `nodeIntegration` option and the APIs available to
-     * the preload script are more limited. Read more about the option here.
+     * the preload script are more limited. Default is `true` since Electron 20. The
+     * sandbox will automatically be disabled when `nodeIntegration` is set to `true`.
+     * Read more about the option here.
      */
     sandbox?: boolean;
     /**
@@ -20353,7 +20404,7 @@ declare namespace Electron {
     /**
      * The reason the child process is gone. Possible values:
      */
-    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure');
+    reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure' | 'memory-eviction');
     /**
      * The exit code for the process (e.g. status from waitpid if on POSIX, from
      * GetExitCodeProcess on Windows).
@@ -21488,6 +21539,16 @@ declare namespace Electron {
      * @experimental
      */
     useSharedTexture?: boolean;
+    /**
+     * The requested output format of the shared texture. Defaults to `argb`. The name
+     * is originated from Chromium `media::VideoPixelFormat` enum suffix and only
+     * subset of them are supported. The actual output pixel format and color space of
+     * the texture should refer to `OffscreenSharedTexture` object in the `paint`
+     * event.
+     *
+     * @experimental
+     */
+    sharedTexturePixelFormat?: ('argb' | 'rgbaf16');
   }
 
   interface OnBeforeRedirectListenerDetails {
@@ -21885,7 +21946,7 @@ declare namespace Electron {
      */
     securityOrigin?: string;
     /**
-     * The type of media access being requested, can be `video`, `audio` or `unknown`
+     * The type of media access being requested, can be `video`, `audio` or `unknown`.
      */
     mediaType?: ('video' | 'audio' | 'unknown');
     /**
@@ -21894,9 +21955,21 @@ declare namespace Electron {
      */
     requestingUrl?: string;
     /**
-     * Whether the frame making the request is the main frame
+     * Whether the frame making the request is the main frame.
      */
     isMainFrame: boolean;
+    /**
+     * The path of a `fileSystem` request.
+     */
+    filePath?: string;
+    /**
+     * Whether a `fileSystem` request is a directory.
+     */
+    isDirectory?: boolean;
+    /**
+     * The access type of a `fileSystem` request. Can be `writable` or `readable`.
+     */
+    fileAccessType?: ('writable' | 'readable');
   }
 
   interface PopupOptions {
@@ -22566,9 +22639,9 @@ declare namespace Electron {
      */
     widgetType: ('popup' | 'frame');
     /**
-     * The pixel format of the texture. Can be `rgba` or `bgra`.
+     * The pixel format of the texture.
      */
-    pixelFormat: ('rgba' | 'bgra');
+    pixelFormat: ('rgba' | 'bgra' | 'rgbaf16');
     /**
      * The full dimensions of the video frame.
      */
