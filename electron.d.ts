@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.0.0+wvcus.2
+// Type definitions for Electron 39.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1042,8 +1042,10 @@ declare namespace Electron {
      */
     exit(exitCode?: number): void;
     /**
-     * On Linux, focuses on the first visible window. On macOS, makes the application
-     * the active app. On Windows, focuses on the application's first window.
+     * On macOS, makes the application the active app. On Windows, focuses on the
+     * application's first window. On Linux, either focuses on the first visible window
+     * (X11) or requests focus but may instead show a notification or flash the app
+     * icon (Wayland).
      *
      * You should seek to use the `steal` option as sparingly as possible.
      */
@@ -5256,6 +5258,8 @@ declare namespace Electron {
     addTabbedWindow(browserWindow: BrowserWindow): void;
     /**
      * Removes focus from the window.
+     *
+     * Not supported on Wayland (Linux).
      */
     blur(): void;
     blurWebView(): void;
@@ -5271,6 +5275,8 @@ declare namespace Electron {
     capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
      * Moves window to the center of the screen.
+     *
+     * Not supported on Wayland (Linux).
      */
     center(): void;
     /**
@@ -5297,6 +5303,9 @@ declare namespace Electron {
     flashFrame(flag: boolean): void;
     /**
      * Focuses on the window.
+     *
+     * On Wayland (Linux), the desktop environment may show a notification or flash the
+     * app icon if the window or app is not already focused.
      */
     focus(): void;
     focusOnWebView(): void;
@@ -5687,7 +5696,9 @@ declare namespace Electron {
      */
     moveTabToNewWindow(): void;
     /**
-     * Moves window to top(z-order) regardless of focus
+     * Moves window to top(z-order) regardless of focus.
+     *
+     * Not supported on Wayland (Linux).
      */
     moveTop(): void;
     /**
@@ -5845,6 +5856,8 @@ declare namespace Electron {
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
      *
+     * On Wayland (Linux), has the same limitations as `setSize` and `setPosition`.
+     *
      * > [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray
      * height. The tray height has changed over time and depends on the operating
      * system, but is between 20-40px. Passing a value lower than the tray height will
@@ -5868,6 +5881,9 @@ declare namespace Electron {
     /**
      * Resizes and moves the window's client area (e.g. the web page) to the supplied
      * bounds.
+     *
+     * On Wayland (Linux), has the same limitations as `setContentSize` and
+     * `setPosition`.
      */
     setContentBounds(bounds: Rectangle, animate?: boolean): void;
     /**
@@ -5888,6 +5904,9 @@ declare namespace Electron {
     setContentProtection(enable: boolean): void;
     /**
      * Resizes the window's client area (e.g. the web page) to `width` and `height`.
+     *
+     * On Wayland (Linux), may not work as some window managers restrict programmatic
+     * window resizing.
      */
     setContentSize(width: number, height: number, animate?: boolean): void;
     /**
@@ -6012,6 +6031,8 @@ declare namespace Electron {
     setParentWindow(parent: (BrowserWindow) | (null)): void;
     /**
      * Moves window to `x` and `y`.
+     *
+     * Not supported on Wayland (Linux).
      */
     setPosition(x: number, y: number, animate?: boolean): void;
     /**
@@ -6071,6 +6092,9 @@ declare namespace Electron {
     /**
      * Resizes the window to `width` and `height`. If `width` or `height` are below any
      * set minimum size constraints the window will snap to its minimum size.
+     *
+     * On Wayland (Linux), may not work as some window managers restrict programmatic
+     * window resizing.
      */
     setSize(width: number, height: number, animate?: boolean): void;
     /**
@@ -6216,6 +6240,8 @@ declare namespace Electron {
     showDefinitionForSelection(): void;
     /**
      * Shows the window but doesn't focus on it.
+     *
+     * Not supported on Wayland (Linux).
      */
     showInactive(): void;
     /**
