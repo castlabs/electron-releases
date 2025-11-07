@@ -1,4 +1,4 @@
-// Type definitions for Electron 38.2.0+wvcus
+// Type definitions for Electron 38.5.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1049,6 +1049,30 @@ declare namespace Electron {
      */
     focus(options?: FocusOptions): void;
     /**
+     * Array of strings naming currently enabled accessibility support components.
+     * Possible values:
+     *
+     * * `nativeAPIs` - Native OS accessibility APIs integration enabled.
+     * * `webContents` - Web contents accessibility tree exposure enabled.
+     * * `inlineTextBoxes` - Inline text boxes (character bounding boxes) enabled.
+     * * `extendedProperties` - Extended accessibility properties enabled.
+     * * `screenReader` - Screen reader specific mode enabled.
+     * * `html` - HTML accessibility tree construction enabled.
+     * * `labelImages` - Accessibility support for automatic image annotations.
+     * * `pdfPrinting` - Accessibility support for PDF printing enabled.
+     *
+     * Notes:
+     *
+     * * The array may be empty if no accessibility modes are active.
+     * * Use `app.isAccessibilitySupportEnabled()` for the legacy boolean check; prefer
+     * this method for granular diagnostics or telemetry.
+     *
+     * Example:
+     *
+     * @platform darwin,win32
+     */
+    getAccessibilitySupportFeatures(): string[];
+    /**
      * Resolve with an object containing the following:
      *
      * * `icon` NativeImage - the display icon of the app handling the protocol.
@@ -1506,11 +1530,32 @@ declare namespace Electron {
      * This API must be called after the `ready` event is emitted.
      *
      * > [!NOTE] Rendering accessibility tree can significantly affect the performance
-     * of your app. It should not be enabled by default.
+     * of your app. It should not be enabled by default. Calling this method will
+     * enable the following accessibility support features: `nativeAPIs`,
+     * `webContents`, `inlineTextBoxes`, and `extendedProperties`.
      *
      * @platform darwin,win32
      */
     setAccessibilitySupportEnabled(enabled: boolean): void;
+    /**
+     * Possible values are:
+     *
+     * * `nativeAPIs` - Native OS accessibility APIs integration enabled.
+     * * `webContents` - Web contents accessibility tree exposure enabled.
+     * * `inlineTextBoxes` - Inline text boxes (character bounding boxes) enabled.
+     * * `extendedProperties` - Extended accessibility properties enabled.
+     * * `screenReader` - Screen reader specific mode enabled.
+     * * `html` - HTML accessibility tree construction enabled.
+     * * `labelImages` - Accessibility support for automatic image annotations.
+     * * `pdfPrinting` - Accessibility support for PDF printing enabled.
+     *
+     * To disable all supported features, pass an empty array `[]`.
+     *
+     * Example:
+     *
+     * @platform darwin,win32
+     */
+    setAccessibilitySupportFeatures(features: string[]): void;
     /**
      * Sets the activation policy for a given app.
      *
@@ -3800,9 +3845,12 @@ declare namespace Electron {
      */
     tabbingIdentifier?: string;
     /**
-     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds standard
-     * window frame. Setting it to `false` will remove window shadow and window
-     * animations. Default is `true`.
+     * Use `WS_THICKFRAME` style for frameless windows on Windows, which adds the
+     * standard window frame. Setting it to `false` will remove window shadow and
+     * window animations, and disable window resizing via dragging the window edges.
+     * Default is `true`.
+     *
+     * @platform win32
      */
     thickFrame?: boolean;
     /**
@@ -18456,7 +18504,9 @@ declare namespace Electron {
      * If set, this will sandbox the renderer associated with the window, making it
      * compatible with the Chromium OS-level sandbox and disabling the Node.js engine.
      * This is not the same as the `nodeIntegration` option and the APIs available to
-     * the preload script are more limited. Read more about the option here.
+     * the preload script are more limited. Default is `true` since Electron 20. The
+     * sandbox will automatically be disabled when `nodeIntegration` is set to `true`.
+     * Read more about the option here.
      */
     sandbox?: boolean;
     /**
