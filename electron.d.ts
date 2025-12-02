@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.1.0+wvcus
+// Type definitions for Electron 39.2.4+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1371,6 +1371,13 @@ declare namespace Electron {
      * whether or not the current OS version allows for native emoji pickers.
      */
     isEmojiPanelSupported(): boolean;
+    /**
+     * whether hardware acceleration is currently enabled.
+     *
+     * > [!NOTE] This information is only usable after the `gpu-info-update` event is
+     * emitted.
+     */
+    isHardwareAccelerationEnabled(): boolean;
     /**
      * `true` if the application—including all of its windows—is hidden (e.g. with
      * `Command-H`), `false` otherwise.
@@ -3005,18 +3012,22 @@ declare namespace Electron {
      *
      * The `accentColor` parameter accepts the following values:
      *
-     * * **Color string** - Sets a custom accent color using standard CSS color formats
-     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
-     * are ignored and the color is treated as fully opaque.
-     * * **`true`** - Uses the system's default accent color from user preferences in
+     * * **Color string** - Like `true`, but sets a custom accent color using standard
+     * CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in
+     * RGBA/HSLA formats are ignored and the color is treated as fully opaque.
+     * * **`true`** - Enable accent color highlighting for the window with the system
+     * accent color regardless of whether accent colors are enabled for windows in
+     * System `Settings.`
+     * * **`false`** - Disable accent color highlighting for the window regardless of
+     * whether accent colors are currently enabled for windows in System Settings.
+     * * **`null`** - Reset window accent color behavior to follow behavior set in
      * System Settings.
-     * * **`false`** - Explicitly disables accent color highlighting for the window.
      *
      * Examples:
      *
      * @platform win32
      */
-    setAccentColor(accentColor: (boolean) | (string)): void;
+    setAccentColor(accentColor: (boolean) | (string) | (null)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -3881,7 +3892,9 @@ declare namespace Electron {
     trafficLightPosition?: Point;
     /**
      * Makes the window transparent. Default is `false`. On Windows, does not work
-     * unless the window is frameless.
+     * unless the window is frameless. When you add a `View` to a `BaseWindow`, you'll
+     * need to call `view.setBackgroundColor` with a transparent background color on
+     * that view to make its background transparent as well.
      */
     transparent?: boolean;
     /**
@@ -5652,6 +5665,9 @@ declare namespace Electron {
     /**
      * the promise will resolve when the page has finished loading (see
      * `did-finish-load`), and rejects if the page fails to load (see `did-fail-load`).
+     * A noop rejection handler is already attached, which avoids unhandled rejection
+     * errors. If the existing page has a beforeUnload handler, `did-fail-load` will be
+     * called unless `will-prevent-unload` is handled.
      *
      * Same as `webContents.loadURL(url[, options])`.
      *
@@ -5748,18 +5764,22 @@ declare namespace Electron {
      *
      * The `accentColor` parameter accepts the following values:
      *
-     * * **Color string** - Sets a custom accent color using standard CSS color formats
-     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
-     * are ignored and the color is treated as fully opaque.
-     * * **`true`** - Uses the system's default accent color from user preferences in
+     * * **Color string** - Like `true`, but sets a custom accent color using standard
+     * CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in
+     * RGBA/HSLA formats are ignored and the color is treated as fully opaque.
+     * * **`true`** - Enable accent color highlighting for the window with the system
+     * accent color regardless of whether accent colors are enabled for windows in
+     * System `Settings.`
+     * * **`false`** - Disable accent color highlighting for the window regardless of
+     * whether accent colors are currently enabled for windows in System Settings.
+     * * **`null`** - Reset window accent color behavior to follow behavior set in
      * System Settings.
-     * * **`false`** - Explicitly disables accent color highlighting for the window.
      *
      * Examples:
      *
      * @platform win32
      */
-    setAccentColor(accentColor: (boolean) | (string)): void;
+    setAccentColor(accentColor: (boolean) | (string) | (null)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -9695,8 +9715,8 @@ declare namespace Electron {
     static createFromDataURL(dataURL: string): NativeImage;
     /**
      * Creates a new `NativeImage` instance from the `NSImage` that maps to the given
-     * image name. See Apple's `NSImageName` documentation for a list of possible
-     * values.
+     * image name. See Apple's `NSImageName` documentation and SF Symbols for a list of
+     * possible values.
      *
      * The `hslShift` is applied to the image with the following rules:
      *
@@ -9719,6 +9739,10 @@ declare namespace Electron {
      * following:
      *
      * where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
+     *
+     * For SF Symbols, usage looks as follows:
+     *
+     * where `'square.and.pencil'` is the symbol name from the SF Symbols app.
      *
      * @platform darwin
      */
@@ -17534,7 +17558,8 @@ declare namespace Electron {
      * the promise will resolve when the page has finished loading (see
      * `did-finish-load`), and rejects if the page fails to load (see `did-fail-load`).
      * A noop rejection handler is already attached, which avoids unhandled rejection
-     * errors.
+     * errors. If the existing page has a beforeUnload handler, `did-fail-load` will be
+     * called unless `will-prevent-unload` is handled.
      *
      * Loads the `url` in the window. The `url` must contain the protocol prefix, e.g.
      * the `http://` or `file://`. If the load should bypass http cache then use the
@@ -19837,6 +19862,13 @@ declare namespace Electron {
      */
     partition?: string;
     /**
+     * When set to `true`, custom protocol handlers registered for the request's URL
+     * scheme will not be called. This allows forwarding an intercepted request to the
+     * built-in handler. webRequest handlers will still be triggered when bypassing
+     * custom protocols. Defaults to `false`.
+     */
+    bypassCustomProtocolHandlers?: boolean;
+    /**
      * Can be `include`, `omit` or `same-origin`. Whether to send credentials with this
      * request. If set to `include`, credentials from the session associated with the
      * request will be used. If set to `omit`, credentials will not be sent with the
@@ -21197,6 +21229,9 @@ declare namespace Electron {
      * An Accelerator string.
      */
     accelerator?: string;
+    /**
+     * Can be a NativeImage or the file path of an icon.
+     */
     icon?: (NativeImage) | (string);
     /**
      * If false, the menu item will be greyed out and unclickable.
@@ -24859,6 +24894,8 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const net: Net;
     type Net = Electron.Net;
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const systemPreferences: SystemPreferences;
     type SystemPreferences = Electron.SystemPreferences;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
@@ -25222,6 +25259,8 @@ declare namespace Electron {
     const netLog: NetLog;
     type NetLog = Electron.NetLog;
     class Notification extends Electron.Notification {}
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const powerMonitor: PowerMonitor;
     type PowerMonitor = Electron.PowerMonitor;
     const powerSaveBlocker: PowerSaveBlocker;
