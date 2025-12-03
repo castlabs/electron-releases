@@ -1,4 +1,4 @@
-// Type definitions for Electron 38.5.0+wvcus
+// Type definitions for Electron 38.7.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1369,6 +1369,13 @@ declare namespace Electron {
      * whether or not the current OS version allows for native emoji pickers.
      */
     isEmojiPanelSupported(): boolean;
+    /**
+     * whether hardware acceleration is currently disabled.
+     *
+     * > [!NOTE] This information is only usable after the `gpu-info-update` event is
+     * emitted.
+     */
+    isHardwareAccelerationEnabled(): boolean;
     /**
      * `true` if the application—including all of its windows—is hidden (e.g. with
      * `Command-H`), `false` otherwise.
@@ -3003,18 +3010,22 @@ declare namespace Electron {
      *
      * The `accentColor` parameter accepts the following values:
      *
-     * * **Color string** - Sets a custom accent color using standard CSS color formats
-     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
-     * are ignored and the color is treated as fully opaque.
-     * * **`true`** - Uses the system's default accent color from user preferences in
+     * * **Color string** - Like `true`, but sets a custom accent color using standard
+     * CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in
+     * RGBA/HSLA formats are ignored and the color is treated as fully opaque.
+     * * **`true`** - Enable accent color highlighting for the window with the system
+     * accent color regardless of whether accent colors are enabled for windows in
+     * System `Settings.`
+     * * **`false`** - Disable accent color highlighting for the window regardless of
+     * whether accent colors are currently enabled for windows in System Settings.
+     * * **`null`** - Reset window accent color behavior to follow behavior set in
      * System Settings.
-     * * **`false`** - Explicitly disables accent color highlighting for the window.
      *
      * Examples:
      *
      * @platform win32
      */
-    setAccentColor(accentColor: (boolean) | (string)): void;
+    setAccentColor(accentColor: (boolean) | (string) | (null)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -5737,18 +5748,22 @@ declare namespace Electron {
      *
      * The `accentColor` parameter accepts the following values:
      *
-     * * **Color string** - Sets a custom accent color using standard CSS color formats
-     * (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in RGBA/HSLA formats
-     * are ignored and the color is treated as fully opaque.
-     * * **`true`** - Uses the system's default accent color from user preferences in
+     * * **Color string** - Like `true`, but sets a custom accent color using standard
+     * CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values in
+     * RGBA/HSLA formats are ignored and the color is treated as fully opaque.
+     * * **`true`** - Enable accent color highlighting for the window with the system
+     * accent color regardless of whether accent colors are enabled for windows in
+     * System `Settings.`
+     * * **`false`** - Disable accent color highlighting for the window regardless of
+     * whether accent colors are currently enabled for windows in System Settings.
+     * * **`null`** - Reset window accent color behavior to follow behavior set in
      * System Settings.
-     * * **`false`** - Explicitly disables accent color highlighting for the window.
      *
      * Examples:
      *
      * @platform win32
      */
-    setAccentColor(accentColor: (boolean) | (string)): void;
+    setAccentColor(accentColor: (boolean) | (string) | (null)): void;
     /**
      * Sets whether the window should show always on top of other windows. After
      * setting this, the window is still a normal window, not a toolbox window which
@@ -19756,6 +19771,13 @@ declare namespace Electron {
      */
     partition?: string;
     /**
+     * When set to `true`, custom protocol handlers registered for the request's URL
+     * scheme will not be called. This allows forwarding an intercepted request to the
+     * built-in handler. webRequest handlers will still be triggered when bypassing
+     * custom protocols. Defaults to `false`.
+     */
+    bypassCustomProtocolHandlers?: boolean;
+    /**
      * Can be `include`, `omit` or `same-origin`. Whether to send credentials with this
      * request. If set to `include`, credentials from the session associated with the
      * request will be used. If set to `omit`, credentials will not be sent with the
@@ -24643,6 +24665,8 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const net: Net;
     type Net = Electron.Net;
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const systemPreferences: SystemPreferences;
     type SystemPreferences = Electron.SystemPreferences;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
@@ -24997,6 +25021,8 @@ declare namespace Electron {
     const netLog: NetLog;
     type NetLog = Electron.NetLog;
     class Notification extends Electron.Notification {}
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const powerMonitor: PowerMonitor;
     type PowerMonitor = Electron.PowerMonitor;
     const powerSaveBlocker: PowerSaveBlocker;
