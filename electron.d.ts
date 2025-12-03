@@ -1,4 +1,4 @@
-// Type definitions for Electron 37.8.0+wvcus
+// Type definitions for Electron 37.10.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1369,6 +1369,13 @@ declare namespace Electron {
      * whether or not the current OS version allows for native emoji pickers.
      */
     isEmojiPanelSupported(): boolean;
+    /**
+     * whether hardware acceleration is currently disabled.
+     *
+     * > [!NOTE] This information is only usable after the `gpu-info-update` event is
+     * emitted.
+     */
+    isHardwareAccelerationEnabled(): boolean;
     /**
      * `true` if the application—including all of its windows—is hidden (e.g. with
      * `Command-H`), `false` otherwise.
@@ -24624,6 +24631,8 @@ declare namespace Electron {
     type IncomingMessage = Electron.IncomingMessage;
     const net: Net;
     type Net = Electron.Net;
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const systemPreferences: SystemPreferences;
     type SystemPreferences = Electron.SystemPreferences;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
@@ -24979,6 +24988,8 @@ declare namespace Electron {
     const netLog: NetLog;
     type NetLog = Electron.NetLog;
     class Notification extends Electron.Notification {}
+    const parentPort: ParentPort;
+    type ParentPort = Electron.ParentPort;
     const powerMonitor: PowerMonitor;
     type PowerMonitor = Electron.PowerMonitor;
     const powerSaveBlocker: PowerSaveBlocker;
