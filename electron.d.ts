@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.0.0-alpha.2+wvcus
+// Type definitions for Electron 40.0.0-beta.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1370,7 +1370,7 @@ declare namespace Electron {
      */
     isEmojiPanelSupported(): boolean;
     /**
-     * whether hardware acceleration is currently disabled.
+     * whether hardware acceleration is currently enabled.
      *
      * > [!NOTE] This information is only usable after the `gpu-info-update` event is
      * emitted.
@@ -3890,7 +3890,9 @@ declare namespace Electron {
     trafficLightPosition?: Point;
     /**
      * Makes the window transparent. Default is `false`. On Windows, does not work
-     * unless the window is frameless.
+     * unless the window is frameless. When you add a `View` to a `BaseWindow`, you'll
+     * need to call `view.setBackgroundColor` with a transparent background color on
+     * that view to make its background transparent as well.
      */
     transparent?: boolean;
     /**
@@ -5654,6 +5656,9 @@ declare namespace Electron {
     /**
      * the promise will resolve when the page has finished loading (see
      * `did-finish-load`), and rejects if the page fails to load (see `did-fail-load`).
+     * A noop rejection handler is already attached, which avoids unhandled rejection
+     * errors. If the existing page has a beforeUnload handler, `did-fail-load` will be
+     * called unless `will-prevent-unload` is handled.
      *
      * Same as `webContents.loadURL(url[, options])`.
      *
@@ -9684,8 +9689,8 @@ declare namespace Electron {
     static createFromDataURL(dataURL: string): NativeImage;
     /**
      * Creates a new `NativeImage` instance from the `NSImage` that maps to the given
-     * image name. See Apple's `NSImageName` documentation for a list of possible
-     * values.
+     * image name. See Apple's `NSImageName` documentation and SF Symbols for a list of
+     * possible values.
      *
      * The `hslShift` is applied to the image with the following rules:
      *
@@ -9708,6 +9713,10 @@ declare namespace Electron {
      * following:
      *
      * where `SYSTEM_IMAGE_NAME` should be replaced with any value from this list.
+     *
+     * For SF Symbols, usage looks as follows:
+     *
+     * where `'square.and.pencil'` is the symbol name from the SF Symbols app.
      *
      * @platform darwin
      */
@@ -13106,6 +13115,50 @@ declare namespace Electron {
     totalSizeBytes: number;
   }
 
+  interface SharedTexture {
+
+    // Docs: https://electronjs.org/docs/api/shared-texture
+
+    /**
+     * Imports the shared texture from the given options.
+     *
+     * > [!NOTE] This method is only available in the main process.
+     *
+     * The imported shared texture.
+     *
+     * @experimental
+     */
+    importSharedTexture(options: ImportSharedTextureOptions): SharedTextureImported;
+    /**
+     * Send the imported shared texture to a renderer process. You must register a
+     * receiver at renderer process before calling this method. This method has a
+     * 1000ms timeout. Ensure the receiver is set and the renderer process is alive
+     * before calling this method.
+     *
+     * > [!NOTE] This method is only available in the main process.
+     *
+     * Resolves when the transfer is complete.
+     *
+     * @experimental
+     */
+    sendSharedTexture(options: SendSharedTextureOptions, ...args: any[]): Promise<void>;
+    /**
+     * Set a callback to receive imported shared textures from the main process.
+     *
+     * > [!NOTE] This method is only available in the renderer process.
+     *
+     * @experimental
+     */
+    setSharedTextureReceiver(callback: (receivedSharedTextureData: ReceivedSharedTextureData, ...args: any[]) => Promise<void>): void;
+    /**
+     * A `SharedTextureSubtle` property, provides subtle APIs for interacting with
+     * shared texture for advanced users.
+     *
+     * @experimental
+     */
+    subtle: SharedTextureSubtle;
+  }
+
   interface SharedTextureHandle {
 
     // Docs: https://electronjs.org/docs/api/structures/shared-texture-handle
@@ -13130,6 +13183,165 @@ declare namespace Electron {
      * @platform win32
      */
     ntHandle?: Buffer;
+  }
+
+  interface SharedTextureImported {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-imported
+
+    /**
+     * Create a `VideoFrame` that uses the imported shared texture in the current
+     * process. You can call `VideoFrame.close()` once you've finished using the
+     * object. The underlying resources will wait for GPU finish internally.
+     */
+    getVideoFrame: () => VideoFrame;
+    /**
+     * Release this object's reference of the imported shared texture. The underlying
+     * resource will be alive until every reference is released.
+     */
+    release: () => void;
+    /**
+     * Provides subtle APIs to interact with the imported shared texture for advanced
+     * users.
+     */
+    subtle: SharedTextureImportedSubtle;
+    /**
+     * The unique identifier of the imported shared texture.
+     */
+    textureId: string;
+  }
+
+  interface SharedTextureImportedSubtle {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-imported-subtle
+
+    /**
+     * This method is for advanced users. If used, it is typically called after
+     * `finishTransferSharedTexture`, and should be passed to the object which was
+     * called `startTransferSharedTexture` to prevent the source object release the
+     * underlying resource before the target object actually acquire the reference at
+     * gpu process asyncly.
+     */
+    getFrameCreationSyncToken: () => SharedTextureSyncToken;
+    /**
+     * Create a `VideoFrame` that uses the imported shared texture in the current
+     * process. You can call `VideoFrame.close()` once you've finished using the
+     * object. The underlying resources will wait for GPU finish internally.
+     */
+    getVideoFrame: () => VideoFrame;
+    /**
+     * Release the resources. If you transferred and get multiple
+     * `SharedTextureImported` objects, you have to `release` every one of them. The
+     * resource on the GPU process will be destroyed when the last one is released.
+     */
+    release: (callback?: () => void) => void;
+    /**
+     * This method is for advanced users. If used, this object's underlying resource
+     * will not be released until the set sync token is fulfilled at gpu process. By
+     * using sync tokens, users are not required to use release callbacks for lifetime
+     * management.
+     */
+    setReleaseSyncToken: (syncToken: SharedTextureSyncToken) => void;
+    /**
+     * Create a `SharedTextureTransfer` that can be serialized and transferred to other
+     * processes.
+     */
+    startTransferSharedTexture: () => SharedTextureTransfer;
+  }
+
+  interface SharedTextureImportTextureInfo {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-import-texture-info
+
+    /**
+     * The full dimensions of the shared texture.
+     */
+    codedSize: Size;
+    /**
+     * The color space of the texture.
+     */
+    colorSpace?: ColorSpace;
+    /**
+     * The shared texture handle.
+     */
+    handle: SharedTextureHandle;
+    /**
+     * The pixel format of the texture.
+     */
+    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16');
+    /**
+     * A timestamp in microseconds that will be reflected to `VideoFrame`.
+     */
+    timestamp?: number;
+    /**
+     * A subsection of [0, 0, codedSize.width, codedSize.height]. In common cases, it
+     * is the full section area.
+     */
+    visibleRect?: Rectangle;
+  }
+
+  interface SharedTextureSubtle {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-subtle
+
+    /**
+     * Finishes the transfer of the shared texture and gets the transferred shared
+     * texture. Returns the imported shared texture from the transfer object.
+     */
+    finishTransferSharedTexture: (transfer: SharedTextureTransfer) => SharedTextureImportedSubtle;
+    /**
+     * Imports the shared texture from the given options. Returns the imported shared
+     * texture.
+     */
+    importSharedTexture: (textureInfo: SharedTextureImportTextureInfo) => SharedTextureImportedSubtle;
+  }
+
+  interface SharedTextureSyncToken {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-sync-token
+
+    /**
+     * The opaque data for sync token.
+     */
+    syncToken: string;
+  }
+
+  interface SharedTextureTransfer {
+
+    // Docs: https://electronjs.org/docs/api/structures/shared-texture-transfer
+
+    /**
+     * The full dimensions of the shared texture.
+     *
+     */
+    readonly codedSize: Size;
+    /**
+     * The pixel format of the transferring texture.
+     *
+     */
+    readonly pixelFormat: string;
+    /**
+     * The opaque sync token data for frame creation.
+     *
+     */
+    readonly syncToken: string;
+    /**
+     * A timestamp in microseconds that will be reflected to `VideoFrame`.
+     *
+     */
+    readonly timestamp: number;
+    /**
+     * The opaque transfer data of the shared texture. This can be transferred across
+     * Electron processes.
+     *
+     */
+    readonly transfer: string;
+    /**
+     * A subsection of [0, 0, codedSize.width(), codedSize.height()]. In common cases,
+     * it is the full section area.
+     *
+     */
+    readonly visibleRect: Rectangle;
   }
 
   interface SharedWorkerInfo {
@@ -17524,7 +17736,8 @@ declare namespace Electron {
      * the promise will resolve when the page has finished loading (see
      * `did-finish-load`), and rejects if the page fails to load (see `did-fail-load`).
      * A noop rejection handler is already attached, which avoids unhandled rejection
-     * errors.
+     * errors. If the existing page has a beforeUnload handler, `did-fail-load` will be
+     * called unless `will-prevent-unload` is handled.
      *
      * Loads the `url` in the window. The `url` must contain the protocol prefix, e.g.
      * the `http://` or `file://`. If the load should bypass http cache then use the
@@ -19827,6 +20040,13 @@ declare namespace Electron {
      */
     partition?: string;
     /**
+     * When set to `true`, custom protocol handlers registered for the request's URL
+     * scheme will not be called. This allows forwarding an intercepted request to the
+     * built-in handler. webRequest handlers will still be triggered when bypassing
+     * custom protocols. Defaults to `false`.
+     */
+    bypassCustomProtocolHandlers?: boolean;
+    /**
      * Can be `include`, `omit` or `same-origin`. Whether to send credentials with this
      * request. If set to `include`, credentials from the session associated with the
      * request will be used. If set to `omit`, credentials will not be sent with the
@@ -20898,6 +21118,18 @@ declare namespace Electron {
     password: string;
   }
 
+  interface ImportSharedTextureOptions {
+    /**
+     * The information of the shared texture to import.
+     */
+    textureInfo: SharedTextureImportTextureInfo;
+    /**
+     * Called when all references in all processes are released. You should keep the
+     * imported texture valid until this callback is called.
+     */
+    allReferencesReleased?: () => void;
+  }
+
   interface Info {
     /**
      * Security origin for the isolated world.
@@ -21187,6 +21419,9 @@ declare namespace Electron {
      * An Accelerator string.
      */
     accelerator?: string;
+    /**
+     * Can be a NativeImage or the file path of an icon.
+     */
     icon?: (NativeImage) | (string);
     /**
      * If false, the menu item will be greyed out and unclickable.
@@ -22190,6 +22425,13 @@ declare namespace Electron {
     url: string;
   }
 
+  interface ReceivedSharedTextureData {
+    /**
+     * The imported shared texture.
+     */
+    importedSharedTexture: SharedTextureImported;
+  }
+
   interface RegistrationCompletedDetails {
     /**
      * The base URL that a service worker is registered for
@@ -22450,6 +22692,20 @@ declare namespace Electron {
      * either navigated or been destroyed.
      */
     frame: (WebFrameMain) | (null);
+  }
+
+  interface SendSharedTextureOptions {
+    /**
+     * The target frame to transfer the shared texture to. For `WebContents`, you can
+     * pass `webContents.mainFrame`. If you provide a `webFrameMain` that is not a main
+     * frame, you'll need to enable `webPreferences.nodeIntegrationInSubFrames` for
+     * this, since this feature requires IPC between main and the frame.
+     */
+    frame: WebFrameMain;
+    /**
+     * The imported shared texture.
+     */
+    importedSharedTexture: SharedTextureImported;
   }
 
   interface SerialPortRevokedDetails {
@@ -23827,6 +24083,8 @@ declare namespace Electron {
     type CrashReporter = Electron.CrashReporter;
     const nativeImage: typeof NativeImage;
     type NativeImage = Electron.NativeImage;
+    const sharedTexture: SharedTexture;
+    type SharedTexture = Electron.SharedTexture;
     const shell: Shell;
     type Shell = Electron.Shell;
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
@@ -23906,6 +24164,7 @@ declare namespace Electron {
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
@@ -23959,6 +24218,7 @@ declare namespace Electron {
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
+    type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
     type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
@@ -23974,6 +24234,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
@@ -24114,6 +24375,12 @@ declare namespace Electron {
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedTextureHandle = Electron.SharedTextureHandle;
+    type SharedTextureImported = Electron.SharedTextureImported;
+    type SharedTextureImportedSubtle = Electron.SharedTextureImportedSubtle;
+    type SharedTextureImportTextureInfo = Electron.SharedTextureImportTextureInfo;
+    type SharedTextureSubtle = Electron.SharedTextureSubtle;
+    type SharedTextureSyncToken = Electron.SharedTextureSyncToken;
+    type SharedTextureTransfer = Electron.SharedTextureTransfer;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -24297,6 +24564,7 @@ declare namespace Electron {
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
@@ -24350,6 +24618,7 @@ declare namespace Electron {
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
+    type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
     type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
@@ -24365,6 +24634,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
@@ -24505,6 +24775,12 @@ declare namespace Electron {
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedTextureHandle = Electron.SharedTextureHandle;
+    type SharedTextureImported = Electron.SharedTextureImported;
+    type SharedTextureImportedSubtle = Electron.SharedTextureImportedSubtle;
+    type SharedTextureImportTextureInfo = Electron.SharedTextureImportTextureInfo;
+    type SharedTextureSubtle = Electron.SharedTextureSubtle;
+    type SharedTextureSyncToken = Electron.SharedTextureSyncToken;
+    type SharedTextureTransfer = Electron.SharedTextureTransfer;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -24614,6 +24890,7 @@ declare namespace Electron {
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
@@ -24667,6 +24944,7 @@ declare namespace Electron {
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
+    type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
     type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
@@ -24682,6 +24960,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
@@ -24822,6 +25101,12 @@ declare namespace Electron {
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedTextureHandle = Electron.SharedTextureHandle;
+    type SharedTextureImported = Electron.SharedTextureImported;
+    type SharedTextureImportedSubtle = Electron.SharedTextureImportedSubtle;
+    type SharedTextureImportTextureInfo = Electron.SharedTextureImportTextureInfo;
+    type SharedTextureSubtle = Electron.SharedTextureSubtle;
+    type SharedTextureSyncToken = Electron.SharedTextureSyncToken;
+    type SharedTextureTransfer = Electron.SharedTextureTransfer;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -24930,6 +25215,7 @@ declare namespace Electron {
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
@@ -24983,6 +25269,7 @@ declare namespace Electron {
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
+    type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
     type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
@@ -24998,6 +25285,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
@@ -25138,6 +25426,12 @@ declare namespace Electron {
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedTextureHandle = Electron.SharedTextureHandle;
+    type SharedTextureImported = Electron.SharedTextureImported;
+    type SharedTextureImportedSubtle = Electron.SharedTextureImportedSubtle;
+    type SharedTextureImportTextureInfo = Electron.SharedTextureImportTextureInfo;
+    type SharedTextureSubtle = Electron.SharedTextureSubtle;
+    type SharedTextureSyncToken = Electron.SharedTextureSyncToken;
+    type SharedTextureTransfer = Electron.SharedTextureTransfer;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -25232,6 +25526,8 @@ declare namespace Electron {
     type ServiceWorkers = Electron.ServiceWorkers;
     const session: typeof Session;
     type Session = Electron.Session;
+    const sharedTexture: SharedTexture;
+    type SharedTexture = Electron.SharedTexture;
     class ShareMenu extends Electron.ShareMenu {}
     const shell: Shell;
     type Shell = Electron.Shell;
@@ -25340,6 +25636,7 @@ declare namespace Electron {
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
+    type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
@@ -25393,6 +25690,7 @@ declare namespace Electron {
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReadBookmark = Electron.ReadBookmark;
+    type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
     type RenderProcessGoneEvent = Electron.RenderProcessGoneEvent;
@@ -25408,6 +25706,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
     type Settings = Electron.Settings;
@@ -25548,6 +25847,12 @@ declare namespace Electron {
     type SharedDictionaryInfo = Electron.SharedDictionaryInfo;
     type SharedDictionaryUsageInfo = Electron.SharedDictionaryUsageInfo;
     type SharedTextureHandle = Electron.SharedTextureHandle;
+    type SharedTextureImported = Electron.SharedTextureImported;
+    type SharedTextureImportedSubtle = Electron.SharedTextureImportedSubtle;
+    type SharedTextureImportTextureInfo = Electron.SharedTextureImportTextureInfo;
+    type SharedTextureSubtle = Electron.SharedTextureSubtle;
+    type SharedTextureSyncToken = Electron.SharedTextureSyncToken;
+    type SharedTextureTransfer = Electron.SharedTextureTransfer;
     type SharedWorkerInfo = Electron.SharedWorkerInfo;
     type SharingItem = Electron.SharingItem;
     type ShortcutDetails = Electron.ShortcutDetails;
@@ -25594,6 +25899,7 @@ declare namespace Electron {
   const safeStorage: SafeStorage;
   const screen: Screen;
   const session: typeof Session;
+  const sharedTexture: SharedTexture;
   const shell: Shell;
   const systemPreferences: SystemPreferences;
   const utilityProcess: typeof UtilityProcess;
