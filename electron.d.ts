@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.2.7+wvcus
+// Type definitions for Electron 39.5.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1942,7 +1942,7 @@ declare namespace Electron {
     /**
      * Emitted when an update has been downloaded.
      *
-     * On Windows only `releaseName` is available.
+     * With Squirrel.Windows only `releaseName` is available.
      *
      * > [!NOTE] It is not strictly necessary to handle this event. A successfully
      * downloaded update will still be applied the next time the application starts.
@@ -3824,10 +3824,9 @@ declare namespace Electron {
      */
     resizable?: boolean;
     /**
-     * Whether frameless window should have rounded corners. Default is `true`. Setting
-     * this property to `false` will prevent the window from being fullscreenable on
-     * macOS. On Windows versions older than Windows 11 Build 22000 this property has
-     * no effect, and frameless windows will not have rounded corners.
+     * Whether frameless window should have rounded corners. Default is `true`. On
+     * Windows versions older than Windows 11 Build 22000 this property has no effect,
+     * and frameless windows will not have rounded corners.
      *
      * @platform darwin,win32
      */
@@ -13254,6 +13253,10 @@ declare namespace Electron {
      *
      * This moves a path to the OS-specific trash location (Trash on macOS, Recycle Bin
      * on Windows, and a desktop-environment-specific location on Linux).
+     *
+     * The path must use the default path separator for the platform (backslash on
+     * Windows). Use `path.resolve()` from the `node:path` module to ensure correct
+     * handling on all filesystems.
      */
     trashItem(path: string): Promise<void>;
     /**
@@ -17906,10 +17909,11 @@ declare namespace Electron {
      */
     frameRate: number;
     /**
-     * A `WebContents` instance that might own this `WebContents`.
+     * A `WebContents | null` property that represents a `WebContents` instance that
+     * might own this `WebContents`.
      *
      */
-    readonly hostWebContents: WebContents;
+    readonly hostWebContents: (WebContents) | (null);
     /**
      * A `Integer` representing the unique ID of this WebContents. Each ID is unique
      * among all `WebContents` instances of the entire Electron application.
@@ -20698,6 +20702,11 @@ declare namespace Electron {
   }
 
   interface FeedURLOptions {
+    /**
+     * The update server URL. For _Windows_ MSIX, this can be either a direct link to
+     * an MSIX file (e.g., `https://example.com/update.msix`) or a JSON endpoint that
+     * returns update information (see the Squirrel.Mac README for more information).
+     */
     url: string;
     /**
      * HTTP request headers.
@@ -20711,6 +20720,13 @@ declare namespace Electron {
      * @platform darwin
      */
     serverType?: ('json' | 'default');
+    /**
+     * If `true`, allows downgrades to older versions for MSIX packages. Defaults to
+     * `false`.
+     *
+     * @platform win32
+     */
+    allowAnyVersion?: boolean;
   }
 
   interface FileIconOptions {
@@ -25868,11 +25884,11 @@ declare namespace NodeJS {
      */
     noAsar: boolean;
     /**
-     * A `boolean` that controls whether or not deprecation warnings are printed to
-     * `stderr`. Setting this to `true` will silence deprecation warnings. This
-     * property is used instead of the `--no-deprecation` command line flag.
+     * A `boolean` (optional) that controls whether or not deprecation warnings are
+     * printed to `stderr`. Setting this to `true` will silence deprecation warnings.
+     * This property is used instead of the `--no-deprecation` command line flag.
      */
-    noDeprecation: boolean;
+    noDeprecation?: boolean;
     /**
      * A `Electron.ParentPort` property if this is a `UtilityProcess` (or `null`
      * otherwise) allowing communication with the parent process.
@@ -25921,8 +25937,8 @@ declare namespace NodeJS {
      */
     readonly type: ('browser' | 'renderer' | 'service-worker' | 'worker' | 'utility');
     /**
-     * A `boolean`. If the app is running as a Windows Store app (appx), this property
-     * is `true`, for otherwise it is `undefined`.
+     * A `boolean`. If the app is running as an MSIX package (including AppX for
+     * Windows Store), this property is `true`, otherwise it is `undefined`.
      *
      */
     readonly windowsStore: boolean;
