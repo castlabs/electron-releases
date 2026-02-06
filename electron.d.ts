@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.1.0+wvcus
+// Type definitions for Electron 41.0.0-alpha.5+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1042,8 +1042,10 @@ declare namespace Electron {
      */
     exit(exitCode?: number): void;
     /**
-     * On Linux, focuses on the first visible window. On macOS, makes the application
-     * the active app. On Windows, focuses on the application's first window.
+     * On macOS, makes the application the active app. On Windows, focuses on the
+     * application's first window. On Linux, either focuses on the first visible window
+     * (X11) or requests focus but may instead show a notification or flash the app
+     * icon (Wayland).
      *
      * You should seek to use the `steal` option as sparingly as possible.
      */
@@ -1149,6 +1151,9 @@ declare namespace Electron {
      *
      * Using `basic` should be preferred if only basic information like `vendorId` or
      * `deviceId` is needed.
+     *
+     * Promise is rejected if the GPU is completely disabled, i.e. no hardware and
+     * software implementations are available.
      */
     getGPUInfo(infoType: 'basic' | 'complete'): Promise<unknown>;
     /**
@@ -1940,7 +1945,7 @@ declare namespace Electron {
     /**
      * Emitted when an update has been downloaded.
      *
-     * On Windows only `releaseName` is available.
+     * With Squirrel.Windows only `releaseName` is available.
      *
      * > [!NOTE] It is not strictly necessary to handle this event. A successfully
      * downloaded update will still be applied the next time the application starts.
@@ -5268,6 +5273,8 @@ declare namespace Electron {
     addTabbedWindow(browserWindow: BrowserWindow): void;
     /**
      * Removes focus from the window.
+     *
+     * Not supported on Wayland (Linux).
      */
     blur(): void;
     blurWebView(): void;
@@ -5283,6 +5290,8 @@ declare namespace Electron {
     capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
      * Moves window to the center of the screen.
+     *
+     * Not supported on Wayland (Linux).
      */
     center(): void;
     /**
@@ -5309,6 +5318,9 @@ declare namespace Electron {
     flashFrame(flag: boolean): void;
     /**
      * Focuses on the window.
+     *
+     * On Wayland (Linux), the desktop environment may show a notification or flash the
+     * app icon if the window or app is not already focused.
      */
     focus(): void;
     focusOnWebView(): void;
@@ -5702,7 +5714,9 @@ declare namespace Electron {
      */
     moveTabToNewWindow(): void;
     /**
-     * Moves window to top(z-order) regardless of focus
+     * Moves window to top(z-order) regardless of focus.
+     *
+     * Not supported on Wayland (Linux).
      */
     moveTop(): void;
     /**
@@ -5864,6 +5878,8 @@ declare namespace Electron {
      * Resizes and moves the window to the supplied bounds. Any properties that are not
      * supplied will default to their current values.
      *
+     * On Wayland (Linux), has the same limitations as `setSize` and `setPosition`.
+     *
      * > [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray
      * height. The tray height has changed over time and depends on the operating
      * system, but is between 20-40px. Passing a value lower than the tray height will
@@ -5887,6 +5903,9 @@ declare namespace Electron {
     /**
      * Resizes and moves the window's client area (e.g. the web page) to the supplied
      * bounds.
+     *
+     * On Wayland (Linux), has the same limitations as `setContentSize` and
+     * `setPosition`.
      */
     setContentBounds(bounds: Rectangle, animate?: boolean): void;
     /**
@@ -5907,6 +5926,9 @@ declare namespace Electron {
     setContentProtection(enable: boolean): void;
     /**
      * Resizes the window's client area (e.g. the web page) to `width` and `height`.
+     *
+     * On Wayland (Linux), may not work as some window managers restrict programmatic
+     * window resizing.
      */
     setContentSize(width: number, height: number, animate?: boolean): void;
     /**
@@ -6031,6 +6053,8 @@ declare namespace Electron {
     setParentWindow(parent: (BrowserWindow) | (null)): void;
     /**
      * Moves window to `x` and `y`.
+     *
+     * Not supported on Wayland (Linux).
      */
     setPosition(x: number, y: number, animate?: boolean): void;
     /**
@@ -6090,6 +6114,9 @@ declare namespace Electron {
     /**
      * Resizes the window to `width` and `height`. If `width` or `height` are below any
      * set minimum size constraints the window will snap to its minimum size.
+     *
+     * On Wayland (Linux), may not work as some window managers restrict programmatic
+     * window resizing.
      */
     setSize(width: number, height: number, animate?: boolean): void;
     /**
@@ -6235,6 +6262,8 @@ declare namespace Electron {
     showDefinitionForSelection(): void;
     /**
      * Shows the window but doesn't focus on it.
+     *
+     * Not supported on Wayland (Linux).
      */
     showInactive(): void;
     /**
@@ -13267,7 +13296,7 @@ declare namespace Electron {
     /**
      * The pixel format of the texture.
      */
-    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16');
+    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12');
     /**
      * A timestamp in microseconds that will be reflected to `VideoFrame`.
      */
@@ -20877,6 +20906,11 @@ declare namespace Electron {
   }
 
   interface FeedURLOptions {
+    /**
+     * The update server URL. For _Windows_ MSIX, this can be either a direct link to
+     * an MSIX file (e.g., `https://example.com/update.msix`) or a JSON endpoint that
+     * returns update information (see the Squirrel.Mac README for more information).
+     */
     url: string;
     /**
      * HTTP request headers.
@@ -20890,6 +20924,13 @@ declare namespace Electron {
      * @platform darwin
      */
     serverType?: ('json' | 'default');
+    /**
+     * If `true`, allows downgrades to older versions for MSIX packages. Defaults to
+     * `false`.
+     *
+     * @platform win32
+     */
+    allowAnyVersion?: boolean;
   }
 
   interface FileIconOptions {
@@ -26183,8 +26224,8 @@ declare namespace NodeJS {
      */
     readonly type: ('browser' | 'renderer' | 'service-worker' | 'worker' | 'utility');
     /**
-     * A `boolean`. If the app is running as a Windows Store app (appx), this property
-     * is `true`, for otherwise it is `undefined`.
+     * A `boolean`. If the app is running as an MSIX package (including AppX for
+     * Windows Store), this property is `true`, otherwise it is `undefined`.
      *
      */
     readonly windowsStore: boolean;
