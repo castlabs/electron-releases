@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.0.0-beta.5+wvcus
+// Type definitions for Electron 40.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -3822,10 +3822,9 @@ declare namespace Electron {
      */
     resizable?: boolean;
     /**
-     * Whether frameless window should have rounded corners. Default is `true`. Setting
-     * this property to `false` will prevent the window from being fullscreenable on
-     * macOS. On Windows versions older than Windows 11 Build 22000 this property has
-     * no effect, and frameless windows will not have rounded corners.
+     * Whether frameless window should have rounded corners. Default is `true`. On
+     * Windows versions older than Windows 11 Build 22000 this property has no effect,
+     * and frameless windows will not have rounded corners.
      *
      * @platform darwin,win32
      */
@@ -7400,7 +7399,7 @@ declare namespace Electron {
 
     /**
      * Emitted when the debugging session is terminated. This happens either when
-     * `webContents` is closed or devtools is invoked for the attached `webContents`.
+     * `webContents` is closed or DevTools is invoked for the attached `webContents`.
      */
     on(event: 'detach', listener: (event: Event,
                                    /**
@@ -9898,7 +9897,7 @@ declare namespace Electron {
      *
      * * `nativeTheme.shouldUseDarkColors` will be `true` when accessed
      * * Any UI Electron renders on Linux and Windows including context menus,
-     * devtools, etc. will use the dark UI.
+     * DevTools, etc. will use the dark UI.
      * * Any UI the OS renders on macOS including menus, window frames, etc. will use
      * the dark UI.
      * * The `prefers-color-scheme` CSS query will match `dark` mode.
@@ -9908,7 +9907,7 @@ declare namespace Electron {
      *
      * * `nativeTheme.shouldUseDarkColors` will be `false` when accessed
      * * Any UI Electron renders on Linux and Windows including context menus,
-     * devtools, etc. will use the light UI.
+     * DevTools, etc. will use the light UI.
      * * Any UI the OS renders on macOS including menus, window frames, etc. will use
      * the light UI.
      * * The `prefers-color-scheme` CSS query will match `light` mode.
@@ -13432,6 +13431,10 @@ declare namespace Electron {
      *
      * This moves a path to the OS-specific trash location (Trash on macOS, Recycle Bin
      * on Windows, and a desktop-environment-specific location on Linux).
+     *
+     * The path must use the default path separator for the platform (backslash on
+     * Windows). Use `path.resolve()` from the `node:path` module to ensure correct
+     * handling on all filesystems.
      */
     trashItem(path: string): Promise<void>;
     /**
@@ -15501,7 +15504,7 @@ declare namespace Electron {
     static fromId(id: number): (WebContents) | (undefined);
     /**
      * An array of all `WebContents` instances. This will contain web contents for all
-     * windows, webviews, opened devtools, and devtools extension background pages.
+     * windows, webviews, opened DevTools, and DevTools extension background pages.
      */
     static getAllWebContents(): WebContents[];
     /**
@@ -15942,7 +15945,7 @@ declare namespace Electron {
     addListener(event: 'devtools-opened', listener: () => void): this;
     removeListener(event: 'devtools-opened', listener: () => void): this;
     /**
-     * Emitted when the devtools window instructs the webContents to reload
+     * Emitted when the DevTools window instructs the webContents to reload
      */
     on(event: 'devtools-reload-page', listener: () => void): this;
     off(event: 'devtools-reload-page', listener: () => void): this;
@@ -17442,7 +17445,7 @@ declare namespace Electron {
      */
     close(opts?: CloseOpts): void;
     /**
-     * Closes the devtools.
+     * Closes the DevTools view.
      */
     closeDevTools(): void;
     /**
@@ -17688,11 +17691,11 @@ declare namespace Electron {
      */
     isDestroyed(): boolean;
     /**
-     * Whether the devtools view is focused .
+     * Whether the DevTools view is focused .
      */
     isDevToolsFocused(): boolean;
     /**
-     * Whether the devtools is opened.
+     * Whether the DevTools view is opened.
      */
     isDevToolsOpened(): boolean;
     /**
@@ -17745,12 +17748,12 @@ declare namespace Electron {
      */
     loadURL(url: string, options?: LoadURLOptions): Promise<void>;
     /**
-     * Opens the devtools.
+     * Opens the DevTools.
      *
      * When `contents` is a `<webview>` tag, the `mode` would be `detach` by default,
      * explicitly passing an empty `mode` can force using last used dock state.
      *
-     * On Windows, if Windows Control Overlay is enabled, Devtools will be opened with
+     * On Windows, if Windows Control Overlay is enabled, DevTools will be opened with
      * `mode: 'detach'`.
      */
     openDevTools(options?: OpenDevToolsOptions): void;
@@ -17910,23 +17913,20 @@ declare namespace Electron {
      */
     setDevToolsTitle(title: string): void;
     /**
-     * Uses the `devToolsWebContents` as the target `WebContents` to show devtools.
+     * Uses the `devToolsWebContents` as the target `WebContents` to show DevTools.
      *
      * The `devToolsWebContents` must not have done any navigation, and it should not
      * be used for other purposes after the call.
      *
-     * By default Electron manages the devtools by creating an internal `WebContents`
+     * By default, Electron manages the DevTools by creating an internal `WebContents`
      * with native view, which developers have very limited control of. With the
      * `setDevToolsWebContents` method, developers can use any `WebContents` to show
-     * the devtools in it, including `BrowserWindow`, `BrowserView` and `<webview>`
-     * tag.
+     * the DevTools in it, such as `BrowserWindow` or `WebContentsView`.
      *
-     * Note that closing the devtools does not destroy the `devToolsWebContents`, it is
-     * caller's responsibility to destroy `devToolsWebContents`.
+     * Note that closing the DevTools does not destroy the `devToolsWebContents`, it is
+     * the caller's responsibility to destroy `devToolsWebContents` manually.
      *
-     * An example of showing devtools in a `<webview>` tag:
-     *
-     * An example of showing devtools in a `BrowserWindow`:
+     * An example of showing DevTools in a `BrowserWindow`:
      */
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
@@ -18084,10 +18084,11 @@ declare namespace Electron {
      */
     frameRate: number;
     /**
-     * A `WebContents` instance that might own this `WebContents`.
+     * A `WebContents | null` property that represents a `WebContents` instance that
+     * might own this `WebContents`.
      *
      */
-    readonly hostWebContents: WebContents;
+    readonly hostWebContents: (WebContents) | (null);
     /**
      * A `Integer` representing the unique ID of this WebContents. Each ID is unique
      * among all `WebContents` instances of the entire Electron application.
@@ -21140,7 +21141,7 @@ declare namespace Electron {
      */
     csp?: string;
     /**
-     * Name for isolated world. Useful in devtools.
+     * Name for isolated world. Useful in DevTools.
      */
     name?: string;
   }
@@ -21249,7 +21250,7 @@ declare namespace Electron {
     /**
      * Whether to allow the extension to read local files over `file://` protocol and
      * inject content scripts into `file://` pages. This is required e.g. for loading
-     * devtools extensions on `file://` URLs. Defaults to false.
+     * DevTools extensions on `file://` URLs. Defaults to false.
      */
     allowFileAccess: boolean;
   }
@@ -21997,13 +21998,13 @@ declare namespace Electron {
 
   interface OpenDevToolsOptions {
     /**
-     * Opens the devtools with specified dock state, can be `left`, `right`, `bottom`,
+     * Opens the DevTools with specified dock state, can be `left`, `right`, `bottom`,
      * `undocked`, `detach`. Defaults to last used dock state. In `undocked` mode it's
      * possible to dock back. In `detach` mode it's not.
      */
     mode: ('left' | 'right' | 'bottom' | 'undocked' | 'detach');
     /**
-     * Whether to bring the opened devtools window to the foreground. The default is
+     * Whether to bring the opened DevTools window to the foreground. The default is
      * `true`.
      */
     activate?: boolean;
@@ -26129,11 +26130,11 @@ declare namespace NodeJS {
      */
     noAsar: boolean;
     /**
-     * A `boolean` that controls whether or not deprecation warnings are printed to
-     * `stderr`. Setting this to `true` will silence deprecation warnings. This
-     * property is used instead of the `--no-deprecation` command line flag.
+     * A `boolean` (optional) that controls whether or not deprecation warnings are
+     * printed to `stderr`. Setting this to `true` will silence deprecation warnings.
+     * This property is used instead of the `--no-deprecation` command line flag.
      */
-    noDeprecation: boolean;
+    noDeprecation?: boolean;
     /**
      * A `Electron.ParentPort` property if this is a `UtilityProcess` (or `null`
      * otherwise) allowing communication with the parent process.
