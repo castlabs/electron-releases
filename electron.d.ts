@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.5.1+wvcus
+// Type definitions for Electron 39.8.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -517,7 +517,10 @@ declare namespace Electron {
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when the user clicks the native macOS new tab button. The new tab button
-     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -1207,7 +1210,7 @@ declare namespace Electron {
      * indicates that the app should restore the windows that were open the last time
      * the app was closed. This setting is not available on MAS builds or on macOS 13
      * and up.
-     * * `status` string _macOS_ - can be one of `not-registered`, `enabled`,
+     * * `status` string _macOS_ - can be `not-registered`, `enabled`,
      * `requires-approval`, or `not-found`.
      * * `executableWillLaunchAtLogin` boolean _Windows_ - `true` if app is set to open
      * at login and its run key is not deactivated. This differs from `openAtLogin` as
@@ -1219,7 +1222,7 @@ declare namespace Electron {
      * registry entry.
      *   * `args` string[] _Windows_ - the command-line arguments to pass to the
      * executable.
-     *   * `scope` string _Windows_ - one of `user` or `machine`. Indicates whether the
+     *   * `scope` string _Windows_ - can be `user` or `machine`. Indicates whether the
      * registry entry is under `HKEY_CURRENT USER` or `HKEY_LOCAL_MACHINE`.
      *   * `enabled` boolean _Windows_ - `true` if the app registry key is startup
      * approved and therefore shows as `enabled` in Task Manager and Windows settings.
@@ -2185,7 +2188,11 @@ declare namespace Electron {
      */
     removeListener(event: 'moved', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -2664,6 +2671,10 @@ declare namespace Electron {
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
+     *
+     * > [!NOTE] On Wayland, this method will return `{ x: 0, y: 0, ... }` as
+     * introspecting or programmatically changing the global window coordinates is
+     * prohibited.
      */
     getBounds(): Rectangle;
     /**
@@ -2727,6 +2738,9 @@ declare namespace Electron {
     getParentWindow(): (BaseWindow) | (null);
     /**
      * Contains the window's current position.
+     *
+     * > [!NOTE] On Wayland, this method will return `[0, 0]` as introspecting or
+     * programmatically changing the global window coordinates is prohibited.
      */
     getPosition(): number[];
     /**
@@ -4383,7 +4397,11 @@ declare namespace Electron {
      */
     removeListener(event: 'moved', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -4405,7 +4423,11 @@ declare namespace Electron {
      */
     removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -5350,6 +5372,10 @@ declare namespace Electron {
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
+     *
+     * > [!NOTE] On Wayland, this method will return `{ x: 0, y: 0, ... }` as
+     * introspecting or programmatically changing the global window coordinates is
+     * prohibited.
      */
     getBounds(): Rectangle;
     /**
@@ -5432,6 +5458,9 @@ declare namespace Electron {
     getParentWindow(): (BrowserWindow) | (null);
     /**
      * Contains the window's current position.
+     *
+     * > [!NOTE] On Wayland, this method will return `[0, 0]` as introspecting or
+     * programmatically changing the global window coordinates is prohibited.
      */
     getPosition(): number[];
     /**
@@ -7561,9 +7590,12 @@ declare namespace Electron {
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
      *
-     * > [!NOTE] Capturing the screen contents requires user consent on macOS 10.15
-     * Catalina or higher, which can detected by
-     * `systemPreferences.getMediaAccessStatus`.
+     * > [!NOTE]
+     *
+     * > * Capturing audio requires `NSAudioCaptureUsageDescription` Info.plist key on
+     * macOS 14.2 Sonoma and higher - read more.
+     * * Capturing the screen contents requires user consent on macOS 10.15 Catalina or
+     * higher, which can detected by `systemPreferences.getMediaAccessStatus`.
      */
     getSources(options: SourcesOptions): Promise<Electron.DesktopCapturerSource[]>;
   }
@@ -9463,9 +9495,9 @@ declare namespace Electron {
      */
     constructor(options: MenuItemConstructorOptions);
     /**
-     * An `Accelerator` (optional) indicating the item's accelerator, if set.
+     * An `Accelerator | null` indicating the item's accelerator, if set.
      */
-    accelerator?: Accelerator;
+    accelerator: (Accelerator) | (null);
     /**
      * A `boolean` indicating whether the item is checked. This property can be
      * dynamically changed.
@@ -20814,6 +20846,18 @@ declare namespace Electron {
      */
     allowLoadingUnsignedLibraries?: boolean;
     /**
+     * With this flag, the utility process will disclaim responsibility for the child
+     * process. This causes the operating system to consider the child process as a
+     * separate entity for purposes of security policies like Transparency, Consent,
+     * and Control (TCC). When responsibility is disclaimed, the parent process will
+     * not be attributed for any TCC requests initiated by the child process. This is
+     * useful when launching processes that run third-party or otherwise untrusted
+     * code. Default is `false`.
+     *
+     * @platform darwin
+     */
+    disclaim?: boolean;
+    /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
      * will allow responding to them via the `app#login` event in the main process
      * instead of the default `login` event on the `ClientRequest` object. Default is
@@ -21160,11 +21204,11 @@ declare namespace Electron {
      */
     restoreState: boolean;
     /**
-     * can be one of `not-registered`, `enabled`, `requires-approval`, or `not-found`.
+     * can be `not-registered`, `enabled`, `requires-approval`, or `not-found`.
      *
      * @platform darwin
      */
-    status: string;
+    status: ('not-registered' | 'enabled' | 'requires-approval' | 'not-found');
     /**
      * `true` if app is set to open at login and its run key is not deactivated. This
      * differs from `openAtLogin` as it ignores the `args` option, this property will
@@ -21179,13 +21223,13 @@ declare namespace Electron {
 
   interface LoginItemSettingsOptions {
     /**
-     * Can be one of `mainAppService`, `agentService`, `daemonService`, or
-     * `loginItemService`. Defaults to `mainAppService`. Only available on macOS 13 and
-     * up. See app.setLoginItemSettings for more information about each type.
+     * Can be `mainAppService`, `agentService`, `daemonService`, or `loginItemService`.
+     * Defaults to `mainAppService`. Only available on macOS 13 and up. See
+     * app.setLoginItemSettings for more information about each type.
      *
      * @platform darwin
      */
-    type?: string;
+    type?: ('mainAppService' | 'agentService' | 'daemonService' | 'loginItemService');
     /**
      * The name of the service. Required if `type` is non-default. Only available on
      * macOS 13 and up.
@@ -23546,12 +23590,12 @@ declare namespace Electron {
      */
     args: string[];
     /**
-     * one of `user` or `machine`. Indicates whether the registry entry is under
+     * can be `user` or `machine`. Indicates whether the registry entry is under
      * `HKEY_CURRENT USER` or `HKEY_LOCAL_MACHINE`.
      *
      * @platform win32
      */
-    scope: string;
+    scope: ('user' | 'machine');
     /**
      * `true` if the app registry key is startup approved and therefore shows as
      * `enabled` in Task Manager and Windows settings.
