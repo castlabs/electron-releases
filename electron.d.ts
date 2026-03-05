@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.1.0+wvcus
+// Type definitions for Electron 40.7.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -517,7 +517,10 @@ declare namespace Electron {
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
      * Emitted when the user clicks the native macOS new tab button. The new tab button
-     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -1014,7 +1017,7 @@ declare namespace Electron {
     configureHostResolver(options: ConfigureHostResolverOptions): void;
     /**
      * By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain
-     * basis if the GPU processes crashes too frequently. This function disables that
+     * basis if the GPU process crashes too frequently. This function disables that
      * behavior.
      *
      * This method can only be called before app is ready.
@@ -1122,7 +1125,7 @@ declare namespace Electron {
      *
      * Fetches a path's associated icon.
      *
-     * On _Windows_, there a 2 kinds of icons:
+     * On _Windows_, there are 2 kinds of icons:
      *
      * * Icons associated with certain file extensions, like `.mp3`, `.png`, etc.
      * * Icons inside the file itself, like `.exe`, `.dll`, `.ico`.
@@ -1149,6 +1152,9 @@ declare namespace Electron {
      *
      * Using `basic` should be preferred if only basic information like `vendorId` or
      * `deviceId` is needed.
+     *
+     * Promise is rejected if the GPU is completely disabled, i.e. no hardware and
+     * software implementations are available.
      */
     getGPUInfo(infoType: 'basic' | 'complete'): Promise<unknown>;
     /**
@@ -1205,7 +1211,7 @@ declare namespace Electron {
      * indicates that the app should restore the windows that were open the last time
      * the app was closed. This setting is not available on MAS builds or on macOS 13
      * and up.
-     * * `status` string _macOS_ - can be one of `not-registered`, `enabled`,
+     * * `status` string _macOS_ - can be `not-registered`, `enabled`,
      * `requires-approval`, or `not-found`.
      * * `executableWillLaunchAtLogin` boolean _Windows_ - `true` if app is set to open
      * at login and its run key is not deactivated. This differs from `openAtLogin` as
@@ -1217,7 +1223,7 @@ declare namespace Electron {
      * registry entry.
      *   * `args` string[] _Windows_ - the command-line arguments to pass to the
      * executable.
-     *   * `scope` string _Windows_ - one of `user` or `machine`. Indicates whether the
+     *   * `scope` string _Windows_ - can be `user` or `machine`. Indicates whether the
      * registry entry is under `HKEY_CURRENT USER` or `HKEY_LOCAL_MACHINE`.
      *   * `enabled` boolean _Windows_ - `true` if the app registry key is startup
      * approved and therefore shows as `enabled` in Task Manager and Windows settings.
@@ -1239,7 +1245,7 @@ declare namespace Electron {
      * A path to a special directory or file associated with `name`. On failure, an
      * `Error` is thrown.
      *
-     * If `app.getPath('logs')` is called without called `app.setAppLogsPath()` being
+     * If `app.getPath('logs')` is called without calling `app.setAppLogsPath()` being
      * called first, a default log directory will be created equivalent to calling
      * `app.setAppLogsPath()` without a `path` parameter.
      */
@@ -1275,7 +1281,7 @@ declare namespace Electron {
      * preferred system language has no country code, and that one of the preferred
      * system languages corresponds with the language used for the regional format. On
      * macOS, the region serves more as a default country code: the user doesn't need
-     * to have Finnish as a preferred language to use Finland as the region,and the
+     * to have Finnish as a preferred language to use Finland as the region, and the
      * country code `FI` is used as the country code for preferred system languages
      * that do not have associated countries in the language name.
      */
@@ -1738,6 +1744,26 @@ declare namespace Electron {
      */
     setSecureKeyboardEntryEnabled(enabled: boolean): void;
     /**
+     * Changes the Toast Activator CLSID to `id`. If one is not set via this method, it
+     * will be randomly generated for the app.
+     *
+     * * The value must be a valid GUID/CLSID in one of the following forms:
+     *   * Canonical brace-wrapped: `{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}`
+     * (preferred)
+     *   * Canonical without braces: `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX` (braces
+     * will be added automatically)
+     * * Hex digits are case-insensitive.
+     *
+     * This method should be called early (before showing notifications) so the value
+     * is baked into the registration/shortcut. Supplying an empty string or an
+     * unparsable value throws and leaves the existing (or generated) CLSID unchanged.
+     * If this method is never called, a random CLSID is generated once per run and
+     * exposed via `app.toastActivatorCLSID`.
+     *
+     * @platform win32
+     */
+    setToastActivatorCLSID(id: string): void;
+    /**
      * Creates an `NSUserActivity` and sets it as the current activity. The activity is
      * eligible for Handoff to another device afterward.
      *
@@ -1884,6 +1910,12 @@ declare namespace Electron {
      */
     readonly runningUnderARM64Translation: boolean;
     /**
+     * A `string` property that returns the app's Toast Activator CLSID.
+     *
+     * @platform win32
+     */
+    readonly toastActivatorCLSID: string;
+    /**
      * A `string` which is the user agent string Electron will use as a global
      * fallback.
      *
@@ -1940,7 +1972,7 @@ declare namespace Electron {
     /**
      * Emitted when an update has been downloaded.
      *
-     * On Windows only `releaseName` is available.
+     * With Squirrel.Windows only `releaseName` is available.
      *
      * > [!NOTE] It is not strictly necessary to handle this event. A successfully
      * downloaded update will still be applied the next time the application starts.
@@ -2183,7 +2215,11 @@ declare namespace Electron {
      */
     removeListener(event: 'moved', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -2662,6 +2698,10 @@ declare namespace Electron {
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
+     *
+     * > [!NOTE] On Wayland, this method will return `{ x: 0, y: 0, ... }` as
+     * introspecting or programmatically changing the global window coordinates is
+     * prohibited.
      */
     getBounds(): Rectangle;
     /**
@@ -2725,6 +2765,9 @@ declare namespace Electron {
     getParentWindow(): (BaseWindow) | (null);
     /**
      * Contains the window's current position.
+     *
+     * > [!NOTE] On Wayland, this method will return `[0, 0]` as introspecting or
+     * programmatically changing the global window coordinates is prohibited.
      */
     getPosition(): number[];
     /**
@@ -2918,7 +2961,7 @@ declare namespace Electron {
      * hiding titlebar buttons.
      *
      * This API returns whether the window is in tablet mode, and the `resize` event
-     * can be be used to listen to changes to tablet mode.
+     * can be used to listen to changes to tablet mode.
      *
      * @platform win32
      */
@@ -4381,7 +4424,11 @@ declare namespace Electron {
      */
     removeListener(event: 'moved', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -4403,7 +4450,11 @@ declare namespace Electron {
      */
     removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
-     * Emitted when the native new tab button is clicked.
+     * Emitted when the user clicks the native macOS new tab button. The new tab button
+     * is only visible if the current `BrowserWindow` has a `tabbingIdentifier`.
+     *
+     * You must create a window in this handler in order for macOS tabbing to work as
+     * expected.
      *
      * @platform darwin
      */
@@ -5341,6 +5392,10 @@ declare namespace Electron {
      * height. For example, calling `win.setBounds({ x: 25, y: 20, width: 800, height:
      * 600 })` with a tray height of 38 means that `win.getBounds()` will return `{ x:
      * 25, y: 38, width: 800, height: 600 }`.
+     *
+     * > [!NOTE] On Wayland, this method will return `{ x: 0, y: 0, ... }` as
+     * introspecting or programmatically changing the global window coordinates is
+     * prohibited.
      */
     getBounds(): Rectangle;
     /**
@@ -5423,6 +5478,9 @@ declare namespace Electron {
     getParentWindow(): (BrowserWindow) | (null);
     /**
      * Contains the window's current position.
+     *
+     * > [!NOTE] On Wayland, this method will return `[0, 0]` as introspecting or
+     * programmatically changing the global window coordinates is prohibited.
      */
     getPosition(): number[];
     /**
@@ -5620,7 +5678,7 @@ declare namespace Electron {
      * hiding titlebar buttons.
      *
      * This API returns whether the window is in tablet mode, and the `resize` event
-     * can be be used to listen to changes to tablet mode.
+     * can be used to listen to changes to tablet mode.
      *
      * @platform win32
      */
@@ -6657,7 +6715,7 @@ declare namespace Electron {
      * Cancels an ongoing HTTP transaction. If the request has already emitted the
      * `close` event, the abort operation will have no effect. Otherwise an ongoing
      * event will emit `abort` and `close` events. Additionally, if there is an ongoing
-     * response object,it will emit the `aborted` event.
+     * response object, it will emit the `aborted` event.
      */
     abort(): void;
     /**
@@ -7535,9 +7593,12 @@ declare namespace Electron {
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
      *
-     * > [!NOTE] Capturing the screen contents requires user consent on macOS 10.15
-     * Catalina or higher, which can detected by
-     * `systemPreferences.getMediaAccessStatus`.
+     * > [!NOTE]
+     *
+     * > * Capturing audio requires `NSAudioCaptureUsageDescription` Info.plist key on
+     * macOS 14.2 Sonoma and higher - read more.
+     * * Capturing the screen contents requires user consent on macOS 10.15 Catalina or
+     * higher, which can detected by `systemPreferences.getMediaAccessStatus`.
      */
     getSources(options: SourcesOptions): Promise<Electron.DesktopCapturerSource[]>;
   }
@@ -7626,8 +7687,8 @@ declare namespace Electron {
      *
      * This API can be called safely before the `ready` event the `app` module emits,
      * it is usually used to report errors in early stage of startup. If called before
-     * the app `ready`event on Linux, the message will be emitted to stderr, and no GUI
-     * dialog will appear.
+     * the app `ready` event on Linux, the message will be emitted to stderr, and no
+     * GUI dialog will appear.
      */
     showErrorBox(title: string, content: string): void;
     /**
@@ -7882,9 +7943,9 @@ declare namespace Electron {
      */
     displayFrequency: number;
     /**
-     * Unique identifier associated with the display. A value of of -1 means the
-     * display is invalid or the correct `id` is not yet known, and a value of -10
-     * means the display is a virtual display assigned to a unified desktop.
+     * Unique identifier associated with the display. A value of -1 means the display
+     * is invalid or the correct `id` is not yet known, and a value of -10 means the
+     * display is a virtual display assigned to a unified desktop.
      */
     id: number;
     /**
@@ -8687,9 +8748,9 @@ declare namespace Electron {
     removeListener(event: 'end', listener: () => void): this;
     /**
      * Emitted when an error was encountered while streaming response data events. For
-     * instance, if the server closes the underlying while the response is still
-     * streaming, an `error` event will be emitted on the response object and a `close`
-     * event will subsequently follow on the request object.
+     * instance, if the server closes the underlying connection while the response is
+     * still streaming, an `error` event will be emitted on the response object and a
+     * `close` event will subsequently follow on the request object.
      */
     on(event: 'error', listener: (
                                   /**
@@ -9386,7 +9447,7 @@ declare namespace Electron {
      * opens the associated menu. The indicated character in the button label then gets
      * an underline, and the `&` character is not displayed on the button label.
      *
-     * In order to escape the `&` character in an item name, add a proceeding `&`. For
+     * In order to escape the `&` character in an item name, add a preceding `&`. For
      * example, `&&File` would result in `&File` displayed on the button label.
      *
      * Passing `null` will suppress the default menu. On Windows and Linux, this has
@@ -9437,12 +9498,13 @@ declare namespace Electron {
      */
     constructor(options: MenuItemConstructorOptions);
     /**
-     * An `Accelerator` (optional) indicating the item's accelerator, if set.
+     * An `Accelerator | null` indicating the item's accelerator, if set.
      */
-    accelerator?: Accelerator;
+    accelerator: (Accelerator) | (null);
     /**
-     * A `boolean` indicating whether the item is checked. This property can be
-     * dynamically changed.
+     * A `boolean` indicating whether the item is checked.
+     *
+     * This property can be dynamically changed.
      *
      * A `checkbox` menu item will toggle the `checked` property on and off when
      * selected.
@@ -9467,21 +9529,27 @@ declare namespace Electron {
      */
     commandId: number;
     /**
-     * A `boolean` indicating whether the item is enabled. This property can be
-     * dynamically changed.
+     * A `boolean` indicating whether the item is enabled.
+     *
+     * This property can be dynamically changed.
      */
     enabled: boolean;
     /**
      * A `NativeImage | string` (optional) indicating the item's icon, if set.
+     *
+     * This property can be dynamically changed.
      */
     icon?: (NativeImage) | (string);
     /**
-     * A `string` indicating the item's unique id. This property can be dynamically
-     * changed.
+     * A `string` indicating the item's unique id.
+     *
+     * This property can be dynamically changed.
      */
     id: string;
     /**
      * A `string` indicating the item's visible label.
+     *
+     * This property can be dynamically changed.
      */
     label: string;
     /**
@@ -9517,6 +9585,8 @@ declare namespace Electron {
     sharingItem: SharingItem;
     /**
      * A `string` indicating the item's sublabel.
+     *
+     * This property can be dynamically changed.
      */
     sublabel: string;
     /**
@@ -9549,8 +9619,9 @@ declare namespace Electron {
      */
     readonly userAccelerator: (Accelerator) | (null);
     /**
-     * A `boolean` indicating whether the item is visible. This property can be
-     * dynamically changed.
+     * A `boolean` indicating whether the item is visible.
+     *
+     * This property can be dynamically changed.
      */
     visible: boolean;
   }
@@ -9849,8 +9920,8 @@ declare namespace Electron {
      */
     readonly inForcedColorsMode: boolean;
     /**
-     * A `boolean` that indicates the whether the user has chosen via system
-     * accessibility settings to reduce transparency at the OS level.
+     * A `boolean` that indicates whether the user has chosen via system accessibility
+     * settings to reduce transparency at the OS level.
      *
      */
     readonly prefersReducedTransparency: boolean;
@@ -10111,45 +10182,70 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/notification
 
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    on(event: 'action', listener: (event: Event,
+    on(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
-                                    * The index of the action that was activated.
+                                    * @deprecated
                                     */
-                                   index: number) => void): this;
+                                   actionIndex: number,
+                                   /**
+                                    * @deprecated
+                                    * @platform win32
+                                    */
+                                   selectionIndex: number) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    off(event: 'action', listener: (event: Event,
+    off(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
-                                    * The index of the action that was activated.
+                                    * @deprecated
                                     */
-                                   index: number) => void): this;
+                                   actionIndex: number,
+                                   /**
+                                    * @deprecated
+                                    * @platform win32
+                                    */
+                                   selectionIndex: number) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    once(event: 'action', listener: (event: Event,
+    once(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
-                                    * The index of the action that was activated.
+                                    * @deprecated
                                     */
-                                   index: number) => void): this;
+                                   actionIndex: number,
+                                   /**
+                                    * @deprecated
+                                    * @platform win32
+                                    */
+                                   selectionIndex: number) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    addListener(event: 'action', listener: (event: Event,
+    addListener(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
-                                    * The index of the action that was activated.
+                                    * @deprecated
                                     */
-                                   index: number) => void): this;
+                                   actionIndex: number,
+                                   /**
+                                    * @deprecated
+                                    * @platform win32
+                                    */
+                                   selectionIndex: number) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    removeListener(event: 'action', listener: (event: Event,
+    removeListener(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
-                                    * The index of the action that was activated.
+                                    * @deprecated
                                     */
-                                   index: number) => void): this;
+                                   actionIndex: number,
+                                   /**
+                                    * @deprecated
+                                    * @platform win32
+                                    */
+                                   selectionIndex: number) => void): this;
     /**
      * Emitted when the notification is clicked by the user.
      */
@@ -10223,43 +10319,43 @@ declare namespace Electron {
      * Emitted when the user clicks the "Reply" button on a notification with
      * `hasReply: true`.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
-    on(event: 'reply', listener: (event: Event,
+    on(event: 'reply', listener: (details: Event<NotificationReplyEventParams>,
                                   /**
-                                   * The string the user entered into the inline reply field.
+                                   * @deprecated
                                    */
                                   reply: string) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    off(event: 'reply', listener: (event: Event,
+    off(event: 'reply', listener: (details: Event<NotificationReplyEventParams>,
                                   /**
-                                   * The string the user entered into the inline reply field.
+                                   * @deprecated
                                    */
                                   reply: string) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    once(event: 'reply', listener: (event: Event,
+    once(event: 'reply', listener: (details: Event<NotificationReplyEventParams>,
                                   /**
-                                   * The string the user entered into the inline reply field.
+                                   * @deprecated
                                    */
                                   reply: string) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    addListener(event: 'reply', listener: (event: Event,
+    addListener(event: 'reply', listener: (details: Event<NotificationReplyEventParams>,
                                   /**
-                                   * The string the user entered into the inline reply field.
+                                   * @deprecated
                                    */
                                   reply: string) => void): this;
     /**
-     * @platform darwin
+     * @platform darwin,win32
      */
-    removeListener(event: 'reply', listener: (event: Event,
+    removeListener(event: 'reply', listener: (details: Event<NotificationReplyEventParams>,
                                   /**
-                                   * The string the user entered into the inline reply field.
+                                   * @deprecated
                                    */
                                   reply: string) => void): this;
     /**
@@ -10367,13 +10463,20 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/notification-action
 
     /**
+     * The list of items for the `selection` action `type`.
+     *
+     * @platform win32
+     */
+    items?: string[];
+    /**
      * The label for the given action.
      */
     text?: string;
     /**
-     * The type of action, can be `button`.
+     * The type of action, can be `button` or `selection`. `selection` is only
+     * supported on Windows.
      */
-    type: ('button');
+    type: ('button' | 'selection');
   }
 
   interface NotificationResponse {
@@ -12979,8 +13082,8 @@ declare namespace Electron {
     /**
      * Overrides the `userAgent` and `acceptLanguages` for this session.
      *
-     * The `acceptLanguages` must a comma separated ordered list of language codes, for
-     * example `"en-US,fr,de,ko,zh-CN,ja"`.
+     * The `acceptLanguages` must be a comma separated ordered list of language codes,
+     * for example `"en-US,fr,de,ko,zh-CN,ja"`.
      *
      * This doesn't affect existing `WebContents`, and each `WebContents` can use
      * `webContents.setUserAgent` to override the session-wide user agent.
@@ -13267,7 +13370,7 @@ declare namespace Electron {
     /**
      * The pixel format of the texture.
      */
-    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16');
+    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12');
     /**
      * A timestamp in microseconds that will be reflected to `VideoFrame`.
      */
@@ -16331,7 +16434,7 @@ declare namespace Electron {
      * 302 redirect.
      *
      * This event cannot be prevented, if you want to prevent redirects you should
-     * checkout out the `will-redirect` event above.
+     * check out the `will-redirect` event above.
      */
     on(event: 'did-redirect-navigation', listener: (details: Event<WebContentsDidRedirectNavigationEventParams>,
                                                     /**
@@ -17931,7 +18034,8 @@ declare namespace Electron {
     setDevToolsWebContents(devToolsWebContents: WebContents): void;
     /**
      * If _offscreen rendering_ is enabled sets the frame rate to the specified number.
-     * Only values between 1 and 240 are accepted.
+     * When `webPreferences.offscreen.useSharedTexture` is `false` only values between
+     * 1 and 240 are accepted.
      */
     setFrameRate(fps: number): void;
     /**
@@ -17972,10 +18076,10 @@ declare namespace Electron {
      */
     setWebRTCUDPPortRange(udpPortRange: UdpPortRange): void;
     /**
-     * Called before creating a window a new window is requested by the renderer, e.g.
-     * by `window.open()`, a link with `target="_blank"`, shift+clicking on a link, or
-     * submitting a form with `<form target="_blank">`. See `window.open()` for more
-     * details and how to use this in conjunction with `did-create-window`.
+     * Called before creating a window when a new window is requested by the renderer,
+     * e.g. by `window.open()`, a link with `target="_blank"`, shift+clicking on a
+     * link, or submitting a form with `<form target="_blank">`. See `window.open()`
+     * for more details and how to use this in conjunction with `did-create-window`.
      *
      * An example showing how to customize the process of new `BrowserWindow` creation
      * to be `BrowserView` attached to main window instead:
@@ -18061,7 +18165,7 @@ declare namespace Electron {
      */
     readonly debugger: Debugger;
     /**
-     * A `WebContents | null` property that represents the of DevTools `WebContents`
+     * A `WebContents | null` property that represents the DevTools `WebContents`
      * associated with a given `WebContents`.
      *
      * > [!NOTE] Users should never store this object because it may become `null` when
@@ -18712,6 +18816,10 @@ declare namespace Electron {
      */
     experimentalFeatures?: boolean;
     /**
+     * Whether to focus the WebContents when navigating. Default is `true`.
+     */
+    focusOnNavigation?: boolean;
+    /**
      * Specifies how to run image animations (E.g. GIFs).  Can be `animate`,
      * `animateOnce` or `noAnimation`.  Default is `animate`.
      */
@@ -18833,7 +18941,7 @@ declare namespace Electron {
     /**
      * When `false`, it will disable the same-origin policy (usually using testing
      * websites by people), and set `allowRunningInsecureContent` to `true` if this
-     * options has not been set by user. Default is `true`.
+     * option has not been set by user. Default is `true`.
      */
     webSecurity?: boolean;
     /**
@@ -20877,6 +20985,11 @@ declare namespace Electron {
   }
 
   interface FeedURLOptions {
+    /**
+     * The update server URL. For _Windows_ MSIX, this can be either a direct link to
+     * an MSIX file (e.g., `https://example.com/update.msix`) or a JSON endpoint that
+     * returns update information (see the Squirrel.Mac README for more information).
+     */
     url: string;
     /**
      * HTTP request headers.
@@ -20890,6 +21003,13 @@ declare namespace Electron {
      * @platform darwin
      */
     serverType?: ('json' | 'default');
+    /**
+     * If `true`, allows downgrades to older versions for MSIX packages. Defaults to
+     * `false`.
+     *
+     * @platform win32
+     */
+    allowAnyVersion?: boolean;
   }
 
   interface FileIconOptions {
@@ -20976,6 +21096,18 @@ declare namespace Electron {
      * @platform darwin
      */
     allowLoadingUnsignedLibraries?: boolean;
+    /**
+     * With this flag, the utility process will disclaim responsibility for the child
+     * process. This causes the operating system to consider the child process as a
+     * separate entity for purposes of security policies like Transparency, Consent,
+     * and Control (TCC). When responsibility is disclaimed, the parent process will
+     * not be attributed for any TCC requests initiated by the child process. This is
+     * useful when launching processes that run third-party or otherwise untrusted
+     * code. Default is `false`.
+     *
+     * @platform darwin
+     */
+    disclaim?: boolean;
     /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
      * will allow responding to them via the `app#login` event in the main process
@@ -21335,11 +21467,11 @@ declare namespace Electron {
      */
     restoreState: boolean;
     /**
-     * can be one of `not-registered`, `enabled`, `requires-approval`, or `not-found`.
+     * can be `not-registered`, `enabled`, `requires-approval`, or `not-found`.
      *
      * @platform darwin
      */
-    status: string;
+    status: ('not-registered' | 'enabled' | 'requires-approval' | 'not-found');
     /**
      * `true` if app is set to open at login and its run key is not deactivated. This
      * differs from `openAtLogin` as it ignores the `args` option, this property will
@@ -21354,13 +21486,13 @@ declare namespace Electron {
 
   interface LoginItemSettingsOptions {
     /**
-     * Can be one of `mainAppService`, `agentService`, `daemonService`, or
-     * `loginItemService`. Defaults to `mainAppService`. Only available on macOS 13 and
-     * up. See app.setLoginItemSettings for more information about each type.
+     * Can be `mainAppService`, `agentService`, `daemonService`, or `loginItemService`.
+     * Defaults to `mainAppService`. Only available on macOS 13 and up. See
+     * app.setLoginItemSettings for more information about each type.
      *
      * @platform darwin
      */
-    type?: string;
+    type?: ('mainAppService' | 'agentService' | 'daemonService' | 'loginItemService');
     /**
      * The name of the service. Required if `type` is non-default. Only available on
      * macOS 13 and up.
@@ -21703,6 +21835,19 @@ declare namespace Electron {
     supportsZeroCopyWebGpuImport: boolean;
   }
 
+  interface NotificationActionEventParams {
+    /**
+     * The index of the action that was activated.
+     */
+    actionIndex: number;
+    /**
+     * The index of the selected item, if one was chosen. -1 if none was chosen.
+     *
+     * @platform win32
+     */
+    selectionIndex: number;
+  }
+
   interface NotificationConstructorOptions {
     /**
      * A title for the notification, which will be displayed at the top of the
@@ -21783,6 +21928,13 @@ declare namespace Electron {
     toastXml?: string;
   }
 
+  interface NotificationReplyEventParams {
+    /**
+     * The string the user entered into the inline reply field.
+     */
+    reply: string;
+  }
+
   interface Offscreen {
     /**
      * Whether to use GPU shared texture for accelerated paint event. Defaults to
@@ -21801,6 +21953,13 @@ declare namespace Electron {
      * @experimental
      */
     sharedTexturePixelFormat?: ('argb' | 'rgbaf16');
+    /**
+     * The device scale factor of the offscreen rendering output. If not set, will use
+     * primary display's scale factor as default.
+     *
+     * @experimental
+     */
+    deviceScaleFactor?: number;
   }
 
   interface OnBeforeRedirectListenerDetails {
@@ -23742,12 +23901,12 @@ declare namespace Electron {
      */
     args: string[];
     /**
-     * one of `user` or `machine`. Indicates whether the registry entry is under
+     * can be `user` or `machine`. Indicates whether the registry entry is under
      * `HKEY_CURRENT USER` or `HKEY_LOCAL_MACHINE`.
      *
      * @platform win32
      */
-    scope: string;
+    scope: ('user' | 'machine');
     /**
      * `true` if the app registry key is startup approved and therefore shows as
      * `enabled` in Task Manager and Windows settings.
@@ -24187,7 +24346,9 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
+    type NotificationActionEventParams = Electron.NotificationActionEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
@@ -24587,7 +24748,9 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
+    type NotificationActionEventParams = Electron.NotificationActionEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
@@ -24913,7 +25076,9 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
+    type NotificationActionEventParams = Electron.NotificationActionEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
@@ -25238,7 +25403,9 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
+    type NotificationActionEventParams = Electron.NotificationActionEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
@@ -25659,7 +25826,9 @@ declare namespace Electron {
     type MessageEvent = Electron.MessageEvent;
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
+    type NotificationActionEventParams = Electron.NotificationActionEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
+    type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
     type OnBeforeRedirectListenerDetails = Electron.OnBeforeRedirectListenerDetails;
     type OnBeforeRequestListenerDetails = Electron.OnBeforeRequestListenerDetails;
@@ -26160,14 +26329,14 @@ declare namespace NodeJS {
     /**
      * A `boolean` that controls whether or not deprecations printed to `stderr`
      * include their stack trace. Setting this to `true` will print stack traces for
-     * deprecations. This property is instead of the `--trace-deprecation` command line
-     * flag.
+     * deprecations. This property is used instead of the `--trace-deprecation` command
+     * line flag.
      */
     traceDeprecation: boolean;
     /**
      * A `boolean` that controls whether or not process warnings printed to `stderr`
      * include their stack trace. Setting this to `true` will print stack traces for
-     * process warnings (including deprecations). This property is instead of the
+     * process warnings (including deprecations). This property is used instead of the
      * `--trace-warnings` command line flag.
      */
     traceProcessWarnings: boolean;
@@ -26183,8 +26352,8 @@ declare namespace NodeJS {
      */
     readonly type: ('browser' | 'renderer' | 'service-worker' | 'worker' | 'utility');
     /**
-     * A `boolean`. If the app is running as a Windows Store app (appx), this property
-     * is `true`, for otherwise it is `undefined`.
+     * A `boolean`. If the app is running as an MSIX package (including AppX for
+     * Windows Store), this property is `true`, otherwise it is `undefined`.
      *
      */
     readonly windowsStore: boolean;
