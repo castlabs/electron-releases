@@ -1,4 +1,4 @@
-// Type definitions for Electron 39.8.0+wvcus
+// Type definitions for Electron 39.8.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11705,6 +11705,8 @@ declare namespace Electron {
     getAllDisplays(): Display[];
     /**
      * The current absolute position of the mouse pointer.
+     *
+     * Not supported on Wayland (Linux).
      *
      * > [!NOTE] The return value is a DIP point, not a screen physical point.
      */
