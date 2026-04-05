@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.7.0+wvcus
+// Type definitions for Electron 40.8.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -10267,11 +10267,11 @@ declare namespace Electron {
      * notification from the action center but the `close` event will not be emitted
      * again.
      */
-    on(event: 'close', listener: (event: Event) => void): this;
-    off(event: 'close', listener: (event: Event) => void): this;
-    once(event: 'close', listener: (event: Event) => void): this;
-    addListener(event: 'close', listener: (event: Event) => void): this;
-    removeListener(event: 'close', listener: (event: Event) => void): this;
+    on(event: 'close', listener: (details: Event<NotificationCloseEventParams>) => void): this;
+    off(event: 'close', listener: (details: Event<NotificationCloseEventParams>) => void): this;
+    once(event: 'close', listener: (details: Event<NotificationCloseEventParams>) => void): this;
+    addListener(event: 'close', listener: (details: Event<NotificationCloseEventParams>) => void): this;
+    removeListener(event: 'close', listener: (details: Event<NotificationCloseEventParams>) => void): this;
     /**
      * Emitted when an error is encountered while creating and showing the native
      * notification.
@@ -11750,6 +11750,8 @@ declare namespace Electron {
     getAllDisplays(): Display[];
     /**
      * The current absolute position of the mouse pointer.
+     *
+     * Not supported on Wayland (Linux).
      *
      * > [!NOTE] The return value is a DIP point, not a screen physical point.
      */
@@ -21848,6 +21850,14 @@ declare namespace Electron {
     selectionIndex: number;
   }
 
+  interface NotificationCloseEventParams {
+    /**
+     * The reason the notification was closed. This can be 'userCanceled',
+     * 'applicationHidden', or 'timedOut'.
+     */
+    reason?: ('userCanceled' | 'applicationHidden' | 'timedOut');
+  }
+
   interface NotificationConstructorOptions {
     /**
      * A title for the notification, which will be displayed at the top of the
@@ -24347,6 +24357,7 @@ declare namespace Electron {
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
     type NotificationActionEventParams = Electron.NotificationActionEventParams;
+    type NotificationCloseEventParams = Electron.NotificationCloseEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
@@ -24749,6 +24760,7 @@ declare namespace Electron {
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
     type NotificationActionEventParams = Electron.NotificationActionEventParams;
+    type NotificationCloseEventParams = Electron.NotificationCloseEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
@@ -25077,6 +25089,7 @@ declare namespace Electron {
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
     type NotificationActionEventParams = Electron.NotificationActionEventParams;
+    type NotificationCloseEventParams = Electron.NotificationCloseEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
@@ -25404,6 +25417,7 @@ declare namespace Electron {
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
     type NotificationActionEventParams = Electron.NotificationActionEventParams;
+    type NotificationCloseEventParams = Electron.NotificationCloseEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
@@ -25827,6 +25841,7 @@ declare namespace Electron {
     type MoveToApplicationsFolderOptions = Electron.MoveToApplicationsFolderOptions;
     type NativePixmap = Electron.NativePixmap;
     type NotificationActionEventParams = Electron.NotificationActionEventParams;
+    type NotificationCloseEventParams = Electron.NotificationCloseEventParams;
     type NotificationConstructorOptions = Electron.NotificationConstructorOptions;
     type NotificationReplyEventParams = Electron.NotificationReplyEventParams;
     type Offscreen = Electron.Offscreen;
