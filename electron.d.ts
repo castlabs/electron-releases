@@ -1,4 +1,4 @@
-// Type definitions for Electron 41.1.1+wvcus
+// Type definitions for Electron 42.0.0-alpha.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -17,6 +17,33 @@ declare namespace Electron {
     preventDefault: () => void;
     readonly defaultPrevented: boolean;
   } & Params;
+
+  interface ActivationArguments {
+
+    // Docs: https://electronjs.org/docs/api/structures/activation-arguments
+
+    /**
+     * For `'action'` type, the index of the button that was clicked.
+     */
+    actionIndex?: number;
+    /**
+     * The raw activation arguments string from Windows.
+     */
+    arguments: string;
+    /**
+     * For `'reply'` type, the text the user entered in the reply field.
+     */
+    reply?: string;
+    /**
+     * The type of activation that launched the app: `'click'`, `'action'`, or
+     * `'reply'`.
+     */
+    type: string;
+    /**
+     * A dictionary of all user inputs from the notification.
+     */
+    userInputs?: Record<string, string>;
+  }
 
   interface App extends NodeJS.EventEmitter {
 
@@ -1360,6 +1387,12 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     isAccessibilitySupportEnabled(): boolean;
+    /**
+     * `true` if the application is active (i.e. focused).
+     *
+     * @platform darwin
+     */
+    isActive(): boolean;
     /**
      * Whether the current executable is the default handler for a protocol (aka URI
      * scheme).
@@ -7319,12 +7352,12 @@ declare namespace Electron {
                                      */
                                     removed: boolean) => void): this;
     /**
-     * A promise which resolves when the cookie store has been flushed
+     * A promise which resolves when the cookie store has been flushed.
      *
-     * Writes any unwritten cookies data to disk
+     * Writes any unwritten cookies data to disk.
      *
      * Cookies written by any method will not be written to disk immediately, but will
-     * be written every 30 seconds or 512 operations
+     * be written every 30 seconds or 512 operations.
      *
      * Calling this method can cause the cookie to be written to disk immediately.
      */
@@ -7337,13 +7370,13 @@ declare namespace Electron {
      */
     get(filter: CookiesGetFilter): Promise<Electron.Cookie[]>;
     /**
-     * A promise which resolves when the cookie has been removed
+     * A promise which resolves when the cookie has been removed.
      *
-     * Removes the cookies matching `url` and `name`
+     * Removes the cookies matching `url` and `name`.
      */
     remove(url: string, name: string): Promise<void>;
     /**
-     * A promise which resolves when the cookie has been set
+     * A promise which resolves when the cookie has been set.
      *
      * Sets a cookie with `details`.
      */
@@ -10407,6 +10440,34 @@ declare namespace Electron {
      */
     constructor(options?: NotificationConstructorOptions);
     /**
+     * Registers a callback to handle all notification activations. The callback is
+     * invoked whenever a notification is clicked, replied to, or has an action button
+     * pressed - regardless of whether the original `Notification` object is still in
+     * memory.
+     *
+     * This method handles timing automatically:
+     *
+     * * If an activation already occurred before calling this method, the callback is
+     * invoked immediately with those details.
+     * * For all subsequent activations, the callback is invoked when they occur.
+     *
+     * The callback remains registered until replaced by another call to
+     * `handleActivation`.
+     *
+     * This provides a centralized way to handle notification interactions that works
+     * in all scenarios:
+     *
+     * * Cold start (app launched from notification click)
+     * * Notifications persisted in AC that have no in-memory representation after app
+     * re-start
+     * * Notification object was garbage collected
+     * * Notification object is still in memory (callback is invoked in addition to
+     * instance events)
+     *
+     * @platform win32
+     */
+    static handleActivation(callback: (details: ActivationArguments) => void): void;
+    /**
      * Whether or not desktop notifications are supported on the current system
      */
     static isSupported(): boolean;
@@ -10442,9 +10503,25 @@ declare namespace Electron {
      */
     closeButtonText: string;
     /**
+     * A `string` property representing the group identifier of the notification.
+     * Notifications with the same `groupId` will be visually grouped together in
+     * Notification Center.
+     *
+     * @platform darwin
+     */
+    readonly groupId: string;
+    /**
      * A `boolean` property representing whether the notification has a reply action.
      */
     hasReply: boolean;
+    /**
+     * A `string` property representing the unique identifier of the notification. This
+     * is set at construction time — either from the `id` option or as a generated UUID
+     * if none was provided.
+     *
+     * @platform darwin
+     */
+    readonly id: string;
     /**
      * A `string` property representing the reply placeholder of the notification.
      */
@@ -11662,16 +11739,28 @@ declare namespace Electron {
     /**
      * the decrypted string. Decrypts the encrypted buffer obtained  with
      * `safeStorage.encryptString` back into a string.
-     *
-     * This function will throw an error if decryption fails.
      */
     decryptString(encrypted: Buffer): string;
+    /**
+     * Resolve with an object containing the following:
+     *
+     * * `shouldReEncrypt` boolean - whether data that has just been returned from the
+     * decrypt operation should be re-encrypted, as the key has been rotated or a new
+     * key is available that provides a different security level. If `true`, you should
+     * call `decryptStringAsync` again to receive the new decrypted string.
+     * * `result` string - the decrypted string.
+     */
+    decryptStringAsync(encrypted: Buffer): Promise<Electron.DecryptStringAsyncReturnValue>;
     /**
      * An array of bytes representing the encrypted string.
      *
      * This function will throw an error if encryption fails.
      */
     encryptString(plainText: string): Buffer;
+    /**
+     * An array of bytes representing the encrypted string.
+     */
+    encryptStringAsync(plainText: string): Promise<Buffer>;
     /**
      * User friendly name of the password manager selected on Linux.
      *
@@ -11694,6 +11783,10 @@ declare namespace Electron {
      * @platform linux
      */
     getSelectedStorageBackend(): ('basic_text' | 'gnome_libsecret' | 'kwallet' | 'kwallet5' | 'kwallet6' | 'unknown');
+    /**
+     * Whether encryption is available for asynchronous safeStorage operations.
+     */
+    isAsyncEncryptionAvailable(): Promise<boolean>;
     /**
      * Whether encryption is available.
      *
@@ -13408,7 +13501,7 @@ declare namespace Electron {
     /**
      * The pixel format of the texture.
      */
-    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12');
+    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12' | 'p010le');
     /**
      * A timestamp in microseconds that will be reflected to `VideoFrame`.
      */
@@ -15612,7 +15705,7 @@ declare namespace Electron {
      * > [!NOTE] The area cutout of the view's border still captures clicks.
      */
     setBorderRadius(radius: number): void;
-    setBounds(bounds: Rectangle): void;
+    setBounds(bounds: Rectangle, options?: BoundsOptions): void;
     setVisible(visible: boolean): void;
     /**
      * A `View[]` property representing the child views of this view.
@@ -20061,6 +20154,14 @@ declare namespace Electron {
     pin?: string;
   }
 
+  interface BoundsOptions {
+    /**
+     * If true, the bounds change will be animated. If an object is passed, it can
+     * contain the following properties:
+     */
+    animate?: (boolean) | (Animate);
+  }
+
   interface BrowserViewConstructorOptions {
     /**
      * Settings of web page's features.
@@ -20149,11 +20250,6 @@ declare namespace Electron {
      * not specified, clear all storage types.
      */
     storages?: Array<'cookies' | 'filesystem' | 'indexdb' | 'localstorage' | 'shadercache' | 'websql' | 'serviceworkers' | 'cachestorage'>;
-    /**
-     * The types of quotas to clear, can be `temporary`. If not specified, clear all
-     * quotas.
-     */
-    quotas?: Array<'temporary'>;
   }
 
   interface ClientCertRequestParams {
@@ -20755,6 +20851,20 @@ declare namespace Electron {
      * The title of the URL at `text`.
      */
     bookmark?: string;
+  }
+
+  interface DecryptStringAsyncReturnValue {
+    /**
+     * whether data that has just been returned from the decrypt operation should be
+     * re-encrypted, as the key has been rotated or a new  key is available that
+     * provides a different security level. If `true`, you should call
+     * `decryptStringAsync` again to receive the new decrypted string.
+     */
+    shouldReEncrypt: boolean;
+    /**
+     * the decrypted string.
+     */
+    result: string;
   }
 
   interface DefaultFontFamily {
@@ -21905,6 +22015,23 @@ declare namespace Electron {
 
   interface NotificationConstructorOptions {
     /**
+     * A unique identifier for the notification, mapping to `UNNotificationRequest`'s
+     * `identifier` property. Defaults to a random UUID if not provided or if an empty
+     * string is passed. This can be used to remove or update previously delivered
+     * notifications.
+     *
+     * @platform darwin
+     */
+    id?: string;
+    /**
+     * A string identifier used to visually group notifications together in
+     * Notification Center. Maps to `UNNotificationContent`'s `threadIdentifier`
+     * property.
+     *
+     * @platform darwin
+     */
+    groupId?: string;
+    /**
      * A title for the notification, which will be displayed at the top of the
      * notification window when it is shown.
      */
@@ -21933,7 +22060,7 @@ declare namespace Electron {
     /**
      * Whether or not to add an inline reply option to the notification.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     hasReply?: boolean;
     /**
@@ -21945,7 +22072,7 @@ declare namespace Electron {
     /**
      * The placeholder to write in the inline reply input field.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     replyPlaceholder?: string;
     /**
@@ -21964,7 +22091,7 @@ declare namespace Electron {
      * Actions to add to the notification. Please read the available actions and
      * limitations in the `NotificationAction` documentation.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     actions?: NotificationAction[];
     /**
@@ -22008,6 +22135,13 @@ declare namespace Electron {
      * @experimental
      */
     sharedTexturePixelFormat?: ('argb' | 'rgbaf16');
+    /**
+     * The device scale factor of the offscreen rendering output. If not set, will use
+     * `1` as default.
+     *
+     * @experimental
+     */
+    deviceScaleFactor?: number;
   }
 
   interface OnBeforeRedirectListenerDetails {
@@ -23865,6 +23999,17 @@ declare namespace Electron {
     edge: ('bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right');
   }
 
+  interface Animate {
+    /**
+     * Duration of the animation in milliseconds. Default is `250`.
+     */
+    duration?: number;
+    /**
+     * Easing function for the animation. Default is `linear`.
+     */
+    easing?: ('linear' | 'ease-in' | 'ease-out' | 'ease-in-out');
+  }
+
   interface Children {
   }
 
@@ -24324,6 +24469,7 @@ declare namespace Electron {
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
+    type BoundsOptions = Electron.BoundsOptions;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
@@ -24350,6 +24496,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
@@ -24511,6 +24658,7 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Animate = Electron.Animate;
     type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
@@ -24532,6 +24680,7 @@ declare namespace Electron {
     type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type ActivationArguments = Electron.ActivationArguments;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
@@ -24727,6 +24876,7 @@ declare namespace Electron {
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
+    type BoundsOptions = Electron.BoundsOptions;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
@@ -24753,6 +24903,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
@@ -24914,6 +25065,7 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Animate = Electron.Animate;
     type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
@@ -24935,6 +25087,7 @@ declare namespace Electron {
     type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type ActivationArguments = Electron.ActivationArguments;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
@@ -25056,6 +25209,7 @@ declare namespace Electron {
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
+    type BoundsOptions = Electron.BoundsOptions;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
@@ -25082,6 +25236,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
@@ -25243,6 +25398,7 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Animate = Electron.Animate;
     type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
@@ -25264,6 +25420,7 @@ declare namespace Electron {
     type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type ActivationArguments = Electron.ActivationArguments;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
@@ -25384,6 +25541,7 @@ declare namespace Electron {
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
+    type BoundsOptions = Electron.BoundsOptions;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
@@ -25410,6 +25568,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
@@ -25571,6 +25730,7 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Animate = Electron.Animate;
     type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
@@ -25592,6 +25752,7 @@ declare namespace Electron {
     type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type ActivationArguments = Electron.ActivationArguments;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
@@ -25808,6 +25969,7 @@ declare namespace Electron {
     type BitmapOptions = Electron.BitmapOptions;
     type BlinkMemoryInfo = Electron.BlinkMemoryInfo;
     type BluetoothPairingHandlerHandlerDetails = Electron.BluetoothPairingHandlerHandlerDetails;
+    type BoundsOptions = Electron.BoundsOptions;
     type BrowserViewConstructorOptions = Electron.BrowserViewConstructorOptions;
     type CallbackResponse = Electron.CallbackResponse;
     type CertificateTrustDialogOptions = Electron.CertificateTrustDialogOptions;
@@ -25834,6 +25996,7 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
+    type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
     type DevicePermissionHandlerHandlerDetails = Electron.DevicePermissionHandlerHandlerDetails;
@@ -25995,6 +26158,7 @@ declare namespace Electron {
     type WillFrameNavigateEvent = Electron.WillFrameNavigateEvent;
     type WillNavigateEvent = Electron.WillNavigateEvent;
     type WillResizeDetails = Electron.WillResizeDetails;
+    type Animate = Electron.Animate;
     type Children = Electron.Children;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
@@ -26016,6 +26180,7 @@ declare namespace Electron {
     type Endpoints = Electron.Endpoints;
     type BaseWindowConstructorOptions = Electron.BaseWindowConstructorOptions;
     type BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+    type ActivationArguments = Electron.ActivationArguments;
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
