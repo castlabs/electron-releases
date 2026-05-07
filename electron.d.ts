@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.8.6+wvcus
+// Type definitions for Electron 40.9.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9454,8 +9454,7 @@ declare namespace Electron {
      * the additional effect of removing the menu bar from the window.
      *
      * > [!NOTE] The default menu will be created automatically if the app does not set
-     * one. It contains standard items such as `File`, `Edit`, `View`, `Window` and
-     * `Help`.
+     * one. It contains standard items such as `File`, `Edit`, `View`, and `Window`.
      */
     static setApplicationMenu(menu: (Menu) | (null)): void;
     /**
@@ -22562,6 +22561,11 @@ declare namespace Electron {
      * true. Default false.
      */
     codeCache?: boolean;
+    /**
+     * Allow Chrome extensions to be used on pages served over this protocol. Default
+     * false.
+     */
+    allowExtensions?: boolean;
   }
 
   interface ProgressBarOptions {

@@ -7,6 +7,16 @@
   "scripts": {
     "postinstall": "node install.js"
   },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "abi_version",
+    "checksums.json",
+    "cli.js",
+    "electron.d.ts",
+    "index.js",
+    "install.js"
+  ],
   "dependencies": {
     "@electron/get": "^2.0.0",
     "@types/node": "^24.9.0",
@@ -16,7 +26,7 @@
     "node": ">= 12.20.55"
   },
   "name": "electron",
-  "version": "40.8.6+wvcus",
+  "version": "40.9.3+wvcus",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",
