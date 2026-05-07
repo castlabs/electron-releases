@@ -1,4 +1,4 @@
-// Type definitions for Electron 42.0.0-alpha.6+wvcus
+// Type definitions for Electron 42.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1042,6 +1042,26 @@ declare namespace Electron {
      * This API must be called after the `ready` event is emitted.
      */
     configureHostResolver(options: ConfigureHostResolverOptions): void;
+    /**
+     * Configures platform authenticators for the Web Authentication API
+     * (`navigator.credentials.create()` / `navigator.credentials.get()`). Until this
+     * is called, `PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()`
+     * resolves to `false` and platform-authenticator requests are not serviced.
+     *
+     * When `touchID` is provided, WebAuthn credentials are stored in the macOS
+     * keychain and bound to this device's Secure Enclave. Electron automatically
+     * generates and persists a per-`session` metadata secret so that credentials
+     * created in one partition are not visible to another.
+     *
+     * With the matching entitlement in your app's `entitlements.plist`:
+     *
+     * > [!NOTE] Touch ID WebAuthn credentials are device-bound and are not synced via
+     * iCloud Keychain. They are only available on Macs with a Secure Enclave (Apple
+     * silicon, or Intel Macs with a T2 chip).
+     *
+     * @platform darwin
+     */
+    configureWebAuthn(options: ConfigureWebAuthnOptions): void;
     /**
      * By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain
      * basis if the GPU process crashes too frequently. This function disables that
@@ -7159,6 +7179,34 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/content-tracing
 
     /**
+     * Resolves once heap profiling has been enabled.
+     *
+     * Enable heap profiling for MemoryInfra traces. Equivalent to the `--memlog`
+     * switch in Chrome.
+     *
+     * Only takes effect if the `disabled-by-default-memory-infra` category is
+     * included.
+     *
+     * Needs to be called before `contentTracing.startRecording()`.
+     *
+     * Usage:
+     *
+     * To view the recorded heap dumps:
+     *
+     * * Download the breakpad symbols for your Electron version from the Electron
+     * GitHub releases
+     * * Clone the Electron source code
+     * * In your Chromium checkout for Electron, run this command to symbolicate the
+     * heap dump:
+     * * Open the symbolicated trace in `chrome://tracing` (the Perfetto UI does not
+     * support memory dumps yet)
+     * * Click on one of the `M` symbols
+     * * Click on a `☰` triple bar icon (e.g., in the `malloc` column)
+     *
+     * @experimental
+     */
+    enableHeapProfiling(options?: EnableHeapProfilingOptions): Promise<void>;
+    /**
      * resolves with an array of category groups once all child processes have
      * acknowledged the `getCategories` request
      *
@@ -8338,6 +8386,32 @@ declare namespace Electron {
     savePath: string;
   }
 
+  interface EnableHeapProfilingOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/enable-heap-profiling-options
+
+    /**
+     * Controls which processes are profiled. Equivalent to `--memlog` in Chrome.
+     * Default is `all`.
+     */
+    mode?: ('all' | 'browser' | 'gpu' | 'minimal' | 'renderer-sampling' | 'all-renderers' | 'utility-sampling' | 'all-utilities' | 'utility-and-browser');
+    /**
+     * Controls the sampling interval in bytes. The lower the interval, the more
+     * precise the profile is. However it comes at the cost of performance. Default is
+     * `100000` (100KB). That is enough to observe allocation sites that make
+     * allocations >500KB total, where total equals to a single allocation size times
+     * the number of such allocations at the same call site. Equivalent to
+     * `--memlog-sampling-rate` in Chrome. Must be an integer between `1000` and
+     * `10000000`.
+     */
+    samplingRate?: number;
+    /**
+     * Controls the type of metadata recorded for each allocation. Equivalent to
+     * `--memlog-stack-mode` in Chrome. Default is `native`.
+     */
+    stackMode?: ('native' | 'native-with-thread-names');
+  }
+
   interface Extension {
 
     // Docs: https://electronjs.org/docs/api/structures/extension
@@ -8518,6 +8592,10 @@ declare namespace Electron {
      */
     isRegistered(accelerator: string): boolean;
     /**
+     * Whether global shortcut handling is currently suspended.
+     */
+    isSuspended(): boolean;
+    /**
      * Whether or not the shortcut was registered successfully.
      *
      * Registers a global shortcut of `accelerator`. The `callback` is called when the
@@ -8554,6 +8632,17 @@ declare namespace Electron {
      * * "Media Stop"
      */
     registerAll(accelerators: string[], callback: () => void): void;
+    /**
+     * Suspends or resumes global shortcut handling. When suspended, all registered
+     * global shortcuts will stop listening for key presses. When resumed, all
+     * previously registered shortcuts will begin listening again. New shortcut
+     * registrations will fail while handling is suspended.
+     *
+     * This can be useful when you want to temporarily allow the user to press key
+     * combinations without your application intercepting them, for example while
+     * displaying a UI to rebind shortcuts.
+     */
+    setSuspended(suspended: boolean): void;
     /**
      * Unregisters the global shortcut of `accelerator`.
      */
@@ -9513,8 +9602,7 @@ declare namespace Electron {
      * the additional effect of removing the menu bar from the window.
      *
      * > [!NOTE] The default menu will be created automatically if the app does not set
-     * one. It contains standard items such as `File`, `Edit`, `View`, `Window` and
-     * `Help`.
+     * one. It contains standard items such as `File`, `Edit`, `View`, and `Window`.
      */
     static setApplicationMenu(menu: (Menu) | (null)): void;
     /**
@@ -10440,6 +10528,35 @@ declare namespace Electron {
      */
     constructor(options?: NotificationConstructorOptions);
     /**
+     * Resolves with an array of `Notification` objects representing all delivered
+     * notifications still present in Notification Center.
+     *
+     * Each returned `Notification` is a live object connected to the corresponding
+     * delivered notification. Interaction events (`click`, `reply`, `action`, `close`)
+     * will fire on these objects when the user interacts with the notification in
+     * Notification Center. This is useful after an app restart to re-attach event
+     * handlers to notifications from a previous session.
+     *
+     * The returned notifications have their `id`, `groupId`, `title`, `subtitle`, and
+     * `body` properties populated from information available in the Notification
+     * Center. Other properties (e.g., `actions`, `silent`, `icon`) are not available
+     * from delivered notifications and will have default values.
+     *
+     * > [!NOTE] Like all macOS notification APIs, this method requires the application
+     * to be code-signed. In unsigned development builds, notifications are not
+     * delivered to Notification Center and this method will resolve with an empty
+     * array.
+     *
+     * > [!NOTE] Unlike notifications created with `new Notification()`, notifications
+     * returned by `getHistory()` will remain visible in Notification Center when the
+     * object is garbage collected. Calling `show()` on a restored notification will
+     * remove the original from Notification Center and post a new one with the same
+     * properties.
+     *
+     * @platform darwin
+     */
+    static getHistory(): Promise<Electron.Notification[]>;
+    /**
      * Registers a callback to handle all notification activations. The callback is
      * invoked whenever a notification is clicked, replied to, or has an action button
      * pressed - regardless of whether the original `Notification` object is still in
@@ -10488,6 +10605,10 @@ declare namespace Electron {
      *
      * If the notification has been shown before, this method will dismiss the
      * previously shown notification and create a new one with identical properties.
+     *
+     * On macOS, calling `show()` on a notification returned by
+     * `Notification.getHistory()` will remove the original notification from
+     * Notification Center and post a new one with the same properties.
      */
     show(): void;
     /**
@@ -10505,11 +10626,17 @@ declare namespace Electron {
     /**
      * A `string` property representing the group identifier of the notification.
      * Notifications with the same `groupId` will be visually grouped together in
-     * Notification Center.
+     * Notification Center (macOS) or Action Center (Windows).
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     readonly groupId: string;
+    /**
+     * A `string` property representing the title of the notification group header.
+     *
+     * @platform win32
+     */
+    readonly groupTitle: string;
     /**
      * A `boolean` property representing whether the notification has a reply action.
      */
@@ -10519,7 +10646,7 @@ declare namespace Electron {
      * is set at construction time — either from the `id` option or as a generated UUID
      * if none was provided.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     readonly id: string;
     /**
@@ -12472,6 +12599,37 @@ declare namespace Electron {
                                               details: SelectUsbDeviceDetails,
                                               callback: (deviceId?: string) => void) => void): this;
     /**
+     * Emitted when a call to `navigator.credentials.get()` resolves multiple
+     * discoverable WebAuthn credentials and the user must choose one. `callback`
+     * should be called with the `credentialId` of the selected account; passing no
+     * arguments — or a `credentialId` that does not match one of the provided accounts
+     * — will cancel the request and the page will receive a `NotAllowedError`. If no
+     * listener is registered for this event, the request is cancelled with the same
+     * error. The credential request remains pending until the listener invokes the
+     * callback, so always invoke it exactly once — typically from a `try { … } finally
+     * { callback(…) }` block.
+     *
+     * On macOS, the Touch ID platform authenticator surfaces accounts via this event
+     * once it has been configured with `app.configureWebAuthn`. The event may also
+     * fire on other platforms when a roaming FIDO2 authenticator returns multiple
+     * discoverable credentials.
+     */
+    on(event: 'select-webauthn-account', listener: (event: Event,
+                                                    details: SelectWebauthnAccountDetails,
+                                                    callback: (credentialId?: (string) | (null)) => void) => void): this;
+    off(event: 'select-webauthn-account', listener: (event: Event,
+                                                    details: SelectWebauthnAccountDetails,
+                                                    callback: (credentialId?: (string) | (null)) => void) => void): this;
+    once(event: 'select-webauthn-account', listener: (event: Event,
+                                                    details: SelectWebauthnAccountDetails,
+                                                    callback: (credentialId?: (string) | (null)) => void) => void): this;
+    addListener(event: 'select-webauthn-account', listener: (event: Event,
+                                                    details: SelectWebauthnAccountDetails,
+                                                    callback: (credentialId?: (string) | (null)) => void) => void): this;
+    removeListener(event: 'select-webauthn-account', listener: (event: Event,
+                                                    details: SelectWebauthnAccountDetails,
+                                                    callback: (credentialId?: (string) | (null)) => void) => void): this;
+    /**
      * Emitted after `navigator.serial.requestPort` has been called and
      * `select-serial-port` has fired if a new serial port becomes available before the
      * callback from `select-serial-port` is called.  This event is intended for use
@@ -13501,7 +13659,7 @@ declare namespace Electron {
     /**
      * The pixel format of the texture.
      */
-    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12' | 'p010le');
+    pixelFormat: ('bgra' | 'rgba' | 'rgbaf16' | 'nv12' | 'nv16' | 'p010le');
     /**
      * A timestamp in microseconds that will be reflected to `VideoFrame`.
      */
@@ -15712,6 +15870,32 @@ declare namespace Electron {
      *
      */
     readonly children: View[];
+  }
+
+  interface WebAuthnAccount {
+
+    // Docs: https://electronjs.org/docs/api/structures/webauthn-account
+
+    /**
+     * URL-safe base64-encoded (no padding) credential ID of the discoverable
+     * credential. Matches `PublicKeyCredential.id` returned by
+     * `navigator.credentials.get()` in the renderer.
+     */
+    credentialId: string;
+    /**
+     * Human-palatable name for the account, intended for display.
+     */
+    displayName?: string;
+    /**
+     * Human-palatable identifier for the account (for example, an email address or
+     * username).
+     */
+    name?: string;
+    /**
+     * URL-safe base64-encoded (no padding) user handle (`user.id`) that was provided
+     * when the credential was created.
+     */
+    userHandle?: string;
   }
 
   class WebContents extends NodeEventEmitter {
@@ -20500,6 +20684,14 @@ declare namespace Electron {
     enableAdditionalDnsQueryTypes?: boolean;
   }
 
+  interface ConfigureWebAuthnOptions {
+    /**
+     * Enables the Touch ID / Secure Enclave platform authenticator for Web
+     * Authentication requests.
+     */
+    touchID?: TouchId;
+  }
+
   interface ConsoleMessageEvent extends DOMEvent {
     /**
      * The log level, from 0 to 3. In order it matches `verbose`, `info`, `warning` and
@@ -20988,6 +21180,8 @@ declare namespace Electron {
     postBody?: PostBody;
     /**
      * Can be `default`, `foreground-tab`, `background-tab`, `new-window` or `other`.
+     * Corresponds to the manner an associated link was clicked. See Chromium's
+     * WindowOpenDisposition.
      */
     disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'other');
   }
@@ -21319,6 +21513,8 @@ declare namespace Electron {
     features: string;
     /**
      * Can be `default`, `foreground-tab`, `background-tab`, `new-window` or `other`.
+     * Corresponds to the manner an associated link was clicked. See Chromium's
+     * WindowOpenDisposition.
      */
     disposition: ('default' | 'foreground-tab' | 'background-tab' | 'new-window' | 'other');
     /**
@@ -22015,22 +22211,33 @@ declare namespace Electron {
 
   interface NotificationConstructorOptions {
     /**
-     * A unique identifier for the notification, mapping to `UNNotificationRequest`'s
-     * `identifier` property. Defaults to a random UUID if not provided or if an empty
-     * string is passed. This can be used to remove or update previously delivered
-     * notifications.
+     * A unique identifier for the notification. On macOS, maps to
+     * `UNNotificationRequest`'s `identifier` property. On Windows, maps to the toast
+     * notification's `Tag` property. Defaults to a random UUID if not provided or if
+     * an empty string is passed. This can be used to remove or update previously
+     * delivered notifications.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     id?: string;
     /**
      * A string identifier used to visually group notifications together in
-     * Notification Center. Maps to `UNNotificationContent`'s `threadIdentifier`
-     * property.
+     * Notification Center / Action Center. On macOS, maps to `UNNotificationContent`'s
+     * `threadIdentifier` property. On Windows, maps to the toast notification's
+     * `Group` property.
      *
-     * @platform darwin
+     * @platform darwin,win32
      */
     groupId?: string;
+    /**
+     * A title for the notification group header. When both `groupId` and `groupTitle`
+     * are specified, Windows will display a header above the notification that groups
+     * related notifications together. Maps to the toast notification's `header`
+     * element.
+     *
+     * @platform win32
+     */
+    groupTitle?: string;
     /**
      * A title for the notification, which will be displayed at the top of the
      * notification window when it is shown.
@@ -22734,6 +22941,11 @@ declare namespace Electron {
      * true. Default false.
      */
     codeCache?: boolean;
+    /**
+     * Allow Chrome extensions to be used on pages served over this protocol. Default
+     * false.
+     */
+    allowExtensions?: boolean;
   }
 
   interface ProgressBarOptions {
@@ -23029,6 +23241,19 @@ declare namespace Electron {
 
   interface SelectUsbDeviceDetails {
     deviceList: USBDevice[];
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
+  }
+
+  interface SelectWebauthnAccountDetails {
+    /**
+     * The relying party identifier from the WebAuthn request.
+     */
+    relyingPartyId: string;
+    accounts: WebAuthnAccount[];
     /**
      * The frame initiating this event. May be `null` if accessed after the frame has
      * either navigated or been destroyed.
@@ -24377,6 +24602,16 @@ declare namespace Electron {
     fd: number;
   }
 
+  interface TouchId {
+    /**
+     * The keychain access group that WebAuthn credentials will be stored under. This
+     * value **must** also be present in your app's `keychain-access-groups`
+     * code-signing entitlement, and is typically of the form
+     * `<TEAM_ID>.<BUNDLE_ID>.webauthn`.
+     */
+    keychainAccessGroup: string;
+  }
+
   interface Video {
     /**
      * The id of the stream being granted. This will usually come from a
@@ -24485,6 +24720,7 @@ declare namespace Electron {
     type Configuration = Electron.Configuration;
     type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
+    type ConfigureWebAuthnOptions = Electron.ConfigureWebAuthnOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
@@ -24608,6 +24844,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SelectWebauthnAccountDetails = Electron.SelectWebauthnAccountDetails;
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
@@ -24674,6 +24911,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
+    type TouchId = Electron.TouchId;
     type Video = Electron.Video;
     type Alternate = Electron.Alternate;
     type Alternates = Electron.Alternates;
@@ -24695,6 +24933,7 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
+    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -24771,6 +25010,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -24892,6 +25132,7 @@ declare namespace Electron {
     type Configuration = Electron.Configuration;
     type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
+    type ConfigureWebAuthnOptions = Electron.ConfigureWebAuthnOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
@@ -25015,6 +25256,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SelectWebauthnAccountDetails = Electron.SelectWebauthnAccountDetails;
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
@@ -25081,6 +25323,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
+    type TouchId = Electron.TouchId;
     type Video = Electron.Video;
     type Alternate = Electron.Alternate;
     type Alternates = Electron.Alternates;
@@ -25102,6 +25345,7 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
+    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -25178,6 +25422,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -25225,6 +25470,7 @@ declare namespace Electron {
     type Configuration = Electron.Configuration;
     type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
+    type ConfigureWebAuthnOptions = Electron.ConfigureWebAuthnOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
@@ -25348,6 +25594,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SelectWebauthnAccountDetails = Electron.SelectWebauthnAccountDetails;
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
@@ -25414,6 +25661,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
+    type TouchId = Electron.TouchId;
     type Video = Electron.Video;
     type Alternate = Electron.Alternate;
     type Alternates = Electron.Alternates;
@@ -25435,6 +25683,7 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
+    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -25511,6 +25760,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -25557,6 +25807,7 @@ declare namespace Electron {
     type Configuration = Electron.Configuration;
     type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
+    type ConfigureWebAuthnOptions = Electron.ConfigureWebAuthnOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
@@ -25680,6 +25931,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SelectWebauthnAccountDetails = Electron.SelectWebauthnAccountDetails;
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
@@ -25746,6 +25998,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
+    type TouchId = Electron.TouchId;
     type Video = Electron.Video;
     type Alternate = Electron.Alternate;
     type Alternates = Electron.Alternates;
@@ -25767,6 +26020,7 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
+    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -25843,6 +26097,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
@@ -25985,6 +26240,7 @@ declare namespace Electron {
     type Configuration = Electron.Configuration;
     type Configurations = Electron.Configurations;
     type ConfigureHostResolverOptions = Electron.ConfigureHostResolverOptions;
+    type ConfigureWebAuthnOptions = Electron.ConfigureWebAuthnOptions;
     type ConsoleMessageEvent = Electron.ConsoleMessageEvent;
     type ContextMenuEvent = Electron.ContextMenuEvent;
     type ContextMenuParams = Electron.ContextMenuParams;
@@ -26108,6 +26364,7 @@ declare namespace Electron {
     type SaveDialogSyncOptions = Electron.SaveDialogSyncOptions;
     type SelectHidDeviceDetails = Electron.SelectHidDeviceDetails;
     type SelectUsbDeviceDetails = Electron.SelectUsbDeviceDetails;
+    type SelectWebauthnAccountDetails = Electron.SelectWebauthnAccountDetails;
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
@@ -26174,6 +26431,7 @@ declare namespace Electron {
     type PageRanges = Electron.PageRanges;
     type Params = Electron.Params;
     type Planes = Electron.Planes;
+    type TouchId = Electron.TouchId;
     type Video = Electron.Video;
     type Alternate = Electron.Alternate;
     type Alternates = Electron.Alternates;
@@ -26195,6 +26453,7 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
+    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -26271,6 +26530,7 @@ declare namespace Electron {
     type UploadRawData = Electron.UploadRawData;
     type USBDevice = Electron.USBDevice;
     type UserDefaultTypes = Electron.UserDefaultTypes;
+    type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
     type WebSource = Electron.WebSource;
