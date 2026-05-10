@@ -1,4 +1,4 @@
-// Type definitions for Electron 42.0.0+wvcus
+// Type definitions for Electron 43.0.0-alpha.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1133,8 +1133,6 @@ declare namespace Electron {
      *
      * This method returns a promise that contains the application name, icon and path
      * of the default handler for the protocol (aka URI scheme) of a URL.
-     *
-     * @platform darwin,win32
      */
     getApplicationInfoForProtocol(url: string): Promise<Electron.ApplicationInfoForProtocolReturnValue>;
     /**
@@ -8146,6 +8144,11 @@ declare namespace Electron {
     /**
      * Hides the dock icon.
      *
+     * > [!IMPORTANT] **Known issue:** Calling `dock.hide()` within one second of a
+     * previous call will have no effect. As a workaround, ensure at least one second
+     * has elapsed between calls — for example, by deferring with a `setTimeout` of
+     * 1100ms or more after a previous call.
+     *
      * @platform darwin
      */
     hide(): void;
@@ -9649,6 +9652,15 @@ declare namespace Electron {
      */
     accelerator: (Accelerator) | (null);
     /**
+     * A `string` indicating the item's accessibility label (used by assistive
+     * technology), if set.
+     *
+     * This property can be dynamically changed.
+     *
+     * @platform darwin
+     */
+    accessibilityLabel: string;
+    /**
      * A `boolean` indicating whether the item is checked.
      *
      * This property can be dynamically changed.
@@ -9937,13 +9949,20 @@ declare namespace Electron {
      *
      * @platform darwin
      */
-    static createFromNamedImage(imageName: string, hslShift?: number[]): NativeImage;
+    static createFromNamedImage(imageName: string, options?: (CreateFromNamedImageOptions) | (number[])): NativeImage;
     /**
      * Creates a new `NativeImage` instance from an image file (e.g., PNG or JPEG)
      * located at `path`. This method returns an empty image if the `path` does not
      * exist, cannot be read, or is not a valid image.
      */
     static createFromPath(path: string): NativeImage;
+    /**
+     * Creates a new `NativeImage` instance from an SF Symbol for use in a native Menu.
+     * See SF Symbols for a list of possible values.
+     *
+     * @platform darwin
+     */
+    static createMenuSymbol(imageName: string): NativeImage;
     /**
      * fulfilled with the file's thumbnail preview image, which is a NativeImage.
      *
@@ -11911,7 +11930,12 @@ declare namespace Electron {
      */
     getSelectedStorageBackend(): ('basic_text' | 'gnome_libsecret' | 'kwallet' | 'kwallet5' | 'kwallet6' | 'unknown');
     /**
-     * Whether encryption is available for asynchronous safeStorage operations.
+     * Resolves with whether encryption is available for asynchronous safeStorage
+     * operations.
+     *
+     * The asynchronous encryptor is initialized lazily the first time this method,
+     * `encryptStringAsync`, or `decryptStringAsync` is called after the app is ready.
+     * The returned promise resolves once initialization completes.
      */
     isAsyncEncryptionAvailable(): Promise<boolean>;
     /**
@@ -15739,6 +15763,31 @@ declare namespace Electron {
                                   */
                                  code: number) => void): this;
     /**
+     * Emitted when the utility process encounters an HTTP 401 or 407 authentication
+     * challenge, if the process was created with both
+     * `respondToAuthRequestsFromMainProcess: true` and a `session` option. The
+     * `callback` should be called with credentials to respond to the challenge.
+     * Calling `callback` without arguments will cancel the request.
+     *
+     * This behaves the same as the `login` event on `app` but is scoped to the
+     * individual utility process instance.
+     */
+    on(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    off(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    once(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    addListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    removeListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    /**
      * Emitted when the child process sends a message using
      * `process.parentPort.postMessage()`.
      */
@@ -15830,6 +15879,11 @@ declare namespace Electron {
      * no-op.
      */
     removeChildView(view: View): void;
+    /**
+     * > [!NOTE] You must set a background color with an alpha channel (e.g.
+     * `#80ffffff`) in order for the blur effect to be visible.
+     */
+    setBackgroundBlur(blurRadius: number): void;
     /**
      * Examples of valid `color` values:
      *
@@ -17855,6 +17909,31 @@ declare namespace Electron {
      */
     clearHistory(): void;
     /**
+     * A cloned WebContents instance. This method creates a copy of the WebContents
+     * with the following attributes:
+     *
+     * * **WebPreferences** - All preferences from the original WebContents are copied
+     * * **SiteInstance** - Uses the same SiteInstance as the original. This means the
+     * cloned WebContents will reuse the same render process as the original when
+     * loading same-origin pages, and only spawn a new render process for cross-origin
+     * navigations. This process allocation behavior is consistent with window.open and
+     * tab duplication in Chromium. For more details, see Chromium's Site Isolation
+     * design document.
+     * * **Opener relationship** - Inherits the opener (window.opener) relationship
+     * * **Navigation state** - Copies the navigation history and controller state
+     *
+     * The cloned WebContents is an independent instance with its own lifecycle that
+     * can be destroyed separately and will not contain any open web pages.
+     *
+     * This API is useful for use cases where you want to create a new WebContents that
+     * shares the same render process with the original for same-origin content, while
+     * maintaining full lifecycle independence. Additionally, reusing the existing
+     * render process can help optimize memory usage and page load speed to a certain
+     * extent, as it eliminates the overhead of spawning and initializing a new render
+     * process from scratch.
+     */
+    clone(): WebContents;
+    /**
      * Closes the page, as if the web content had called `window.close()`.
      *
      * If the page is successfully closed (i.e. the unload is not prevented by the
@@ -17874,6 +17953,11 @@ declare namespace Electron {
      * Copy the image at the given position to the clipboard.
      */
     copyImageAt(x: number, y: number): void;
+    /**
+     * When executed on a video media element, copies the frame at (x, y) to the
+     * clipboard.
+     */
+    copyVideoFrameAt(x: number, y: number): void;
     /**
      * Executes the editing command `cut` in web page.
      */
@@ -18271,6 +18355,11 @@ declare namespace Electron {
      * resolves if the page is saved.
      */
     savePage(fullPath: string, saveType: 'HTMLOnly' | 'HTMLComplete' | 'MHTML'): Promise<void>;
+    /**
+     * When executed on a video media element, shows a save dialog and saves the frame
+     * at (x, y) to disk.
+     */
+    saveVideoFrameAs(x: number, y: number): void;
     /**
      * Scrolls to the bottom of the current `webContents`.
      */
@@ -18866,6 +18955,11 @@ declare namespace Electron {
      */
     collectJavaScriptCallStack(): (Promise<string>) | (Promise<void>);
     /**
+     * When executed on a video media element, copies the frame at (x, y) to the
+     * clipboard.
+     */
+    copyVideoFrameAt(x: number, y: number): void;
+    /**
      * A promise that resolves with the result of the executed code or is rejected if
      * execution throws or results in a rejected promise.
      *
@@ -18896,6 +18990,11 @@ declare namespace Electron {
      * frame has no history.
      */
     reload(): boolean;
+    /**
+     * When executed on a video media element, shows a save dialog and saves the frame
+     * at (x, y) to disk.
+     */
+    saveVideoFrameAs(x: number, y: number): void;
     /**
      * Send an asynchronous message to the renderer process via `channel`, along with
      * arguments. Arguments will be serialized with the Structured Clone Algorithm,
@@ -20430,10 +20529,10 @@ declare namespace Electron {
     origin?: string;
     /**
      * The types of storages to clear, can be `cookies`, `filesystem`, `indexdb`,
-     * `localstorage`, `shadercache`, `websql`, `serviceworkers`, `cachestorage`. If
-     * not specified, clear all storage types.
+     * `localstorage`, `shadercache`, `serviceworkers`, `cachestorage`. If not
+     * specified, clear all storage types.
      */
-    storages?: Array<'cookies' | 'filesystem' | 'indexdb' | 'localstorage' | 'shadercache' | 'websql' | 'serviceworkers' | 'cachestorage'>;
+    storages?: Array<'cookies' | 'filesystem' | 'indexdb' | 'localstorage' | 'shadercache' | 'serviceworkers' | 'cachestorage'>;
   }
 
   interface ClientCertRequestParams {
@@ -21002,6 +21101,22 @@ declare namespace Electron {
     scaleFactor?: number;
   }
 
+  interface CreateFromNamedImageOptions {
+    hslShift?: number[];
+    /**
+     * Defaults to `30.0`.
+     */
+    pointSize?: number;
+    /**
+     * Defaults to `regular`.
+     */
+    weight?: ('ultralight') | ('thin') | ('light') | ('regular') | ('medium') | ('semibold') | ('bold') | ('heavy') | ('black');
+    /**
+     * Defaults to `medium`.
+     */
+    scale?: ('small') | ('medium') | ('large');
+  }
+
   interface CreateInterruptedDownloadOptions {
     /**
      * Absolute path of the download.
@@ -21421,6 +21536,22 @@ declare namespace Electron {
      */
     cwd?: string;
     /**
+     * Sets the session used by the process for network requests. By default, network
+     * requests from the utility process will use the system network context which does
+     * not have HTTP cache support. Setting a session enables HTTP caching and other
+     * session-specific network features. See session for more information.
+     */
+    session?: Session;
+    /**
+     * Sets the session used by the process according to the session's partition
+     * string. If `partition` starts with `persist:`, the process will use a persistent
+     * session available to all pages in the app with the same `partition`. If there is
+     * no `persist:` prefix, the process will use an in-memory session. By assigning
+     * the same `partition`, multiple processes can share the same session. If the
+     * `session` option is set, this option is ignored.
+     */
+    partition?: string;
+    /**
      * Allows configuring the mode for `stdout` and `stderr` of the child process.
      * Default is `inherit`. String value can be one of `pipe`, `ignore`, `inherit`,
      * for more details on these values you can refer to stdio documentation from
@@ -21461,9 +21592,11 @@ declare namespace Electron {
     disclaim?: boolean;
     /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
-     * will allow responding to them via the `app#login` event in the main process
-     * instead of the default `login` event on the `ClientRequest` object. Default is
-     * `false`.
+     * will allow responding to them via the `login` event on the `UtilityProcess`
+     * instance when a `session` is provided, or via the `app#login` event in the main
+     * process when using the default system network context. Without this flag, auth
+     * challenges are handled by the default `login` event on the `ClientRequest`
+     * object. Default is `false`.
      */
     respondToAuthRequestsFromMainProcess?: boolean;
   }
@@ -21889,6 +22022,7 @@ declare namespace Electron {
     role?: ('undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'delete' | 'selectAll' | 'reload' | 'forceReload' | 'toggleDevTools' | 'resetZoom' | 'zoomIn' | 'zoomOut' | 'toggleSpellChecker' | 'togglefullscreen' | 'window' | 'minimize' | 'close' | 'help' | 'about' | 'services' | 'hide' | 'hideOthers' | 'unhide' | 'quit' | 'showSubstitutions' | 'toggleSmartQuotes' | 'toggleSmartDashes' | 'toggleTextReplacement' | 'startSpeaking' | 'stopSpeaking' | 'zoom' | 'front' | 'appMenu' | 'fileMenu' | 'editMenu' | 'viewMenu' | 'shareMenu' | 'recentDocuments' | 'toggleTabBar' | 'selectNextTab' | 'selectPreviousTab' | 'showAllTabs' | 'mergeAllWindows' | 'clearRecentDocuments' | 'moveTabToNewWindow' | 'windowMenu');
     type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio' | 'header' | 'palette');
     label?: string;
+    accessibilityLabel?: string;
     /**
      * Available in macOS >= 14.4
      *
@@ -22341,7 +22475,7 @@ declare namespace Electron {
      *
      * @experimental
      */
-    sharedTexturePixelFormat?: ('argb' | 'rgbaf16');
+    sharedTexturePixelFormat?: ('argb' | 'rgbaf16' | 'nv12');
     /**
      * The device scale factor of the offscreen rendering output. If not set, will use
      * `1` as default.
@@ -22564,6 +22698,11 @@ declare namespace Electron {
 
   interface OpenDialogOptions {
     title?: string;
+    /**
+     * Absolute directory path, absolute file path, or file name to use by default. If
+     * not provided, the dialog will default to the user's Downloads folder, or their
+     * home directory if Downloads doesn't exist.
+     */
     defaultPath?: string;
     /**
      * Custom label for the confirmation button, when left empty the default label will
@@ -22612,6 +22751,11 @@ declare namespace Electron {
 
   interface OpenDialogSyncOptions {
     title?: string;
+    /**
+     * Absolute directory path, absolute file path, or file name to use by default. If
+     * not provided, the dialog will default to the user's Downloads folder, or their
+     * home directory if Downloads doesn't exist.
+     */
     defaultPath?: string;
     /**
      * Custom label for the confirmation button, when left empty the default label will
@@ -23129,7 +23273,9 @@ declare namespace Electron {
      */
     title?: string;
     /**
-     * Absolute directory path, absolute file path, or file name to use by default.
+     * Absolute directory path, absolute file path, or file name to use by default. If
+     * not provided, the dialog will default to the user's Downloads folder, or their
+     * home directory if Downloads doesn't exist.
      */
     defaultPath?: string;
     /**
@@ -23192,7 +23338,9 @@ declare namespace Electron {
      */
     title?: string;
     /**
-     * Absolute directory path, absolute file path, or file name to use by default.
+     * Absolute directory path, absolute file path, or file name to use by default. If
+     * not provided, the dialog will default to the user's Downloads folder, or their
+     * home directory if Downloads doesn't exist.
      */
     defaultPath?: string;
     /**
@@ -24730,6 +24878,7 @@ declare namespace Electron {
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
     type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
@@ -25142,6 +25291,7 @@ declare namespace Electron {
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
     type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
@@ -25480,6 +25630,7 @@ declare namespace Electron {
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
     type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
@@ -25817,6 +25968,7 @@ declare namespace Electron {
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
     type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
@@ -26250,6 +26402,7 @@ declare namespace Electron {
     type CrashReporterStartOptions = Electron.CrashReporterStartOptions;
     type CreateFromBitmapOptions = Electron.CreateFromBitmapOptions;
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
+    type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
     type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
