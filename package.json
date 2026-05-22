@@ -13,7 +13,8 @@
     "cli.js",
     "electron.d.ts",
     "index.js",
-    "install.js"
+    "install.js",
+    "vmp-resign.py"
   ],
   "dependencies": {
     "@electron/get": "^5.0.0",
