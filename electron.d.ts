@@ -1,4 +1,4 @@
-// Type definitions for Electron 42.0.0+wvcus
+// Type definitions for Electron 42.3.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1133,8 +1133,6 @@ declare namespace Electron {
      *
      * This method returns a promise that contains the application name, icon and path
      * of the default handler for the protocol (aka URI scheme) of a URL.
-     *
-     * @platform darwin,win32
      */
     getApplicationInfoForProtocol(url: string): Promise<Electron.ApplicationInfoForProtocolReturnValue>;
     /**
@@ -2231,6 +2229,10 @@ declare namespace Electron {
     removeListener(event: 'maximize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
+     *
+     * > [!NOTE] On Wayland, “minimized” is not currently a supported state. The
+     * minimize event will only fire when triggered by client-side decoration (e.g.
+     * clicking the minimize button on a frameless window’s Window Control Overlay)
      */
     on(event: 'minimize', listener: () => void): this;
     off(event: 'minimize', listener: () => void): this;
@@ -4400,6 +4402,10 @@ declare namespace Electron {
     removeListener(event: 'maximize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
+     *
+     * > [!NOTE] On Wayland, “minimized” is not currently a supported state. The
+     * minimize event will only fire when triggered by client-side decoration (e.g.
+     * clicking the minimize button on a frameless window’s Window Control Overlay)
      */
     on(event: 'minimize', listener: () => void): this;
     off(event: 'minimize', listener: () => void): this;
@@ -4408,6 +4414,10 @@ declare namespace Electron {
     removeListener(event: 'minimize', listener: () => void): this;
     /**
      * Emitted when the window is minimized.
+     *
+     * > [!NOTE] On Wayland, “minimized” is not currently a supported state. The
+     * minimize event will only fire when triggered by client-side decoration (e.g.
+     * clicking the minimize button on a frameless window’s Window Control Overlay)
      */
     on(event: 'minimize', listener: () => void): this;
     off(event: 'minimize', listener: () => void): this;
@@ -10431,7 +10441,7 @@ declare namespace Electron {
      * Emitted when an error is encountered while creating and showing the native
      * notification.
      *
-     * @platform win32
+     * @platform darwin,win32
      */
     on(event: 'failed', listener: (event: Event,
                                    /**
@@ -10439,7 +10449,7 @@ declare namespace Electron {
                                     */
                                    error: string) => void): this;
     /**
-     * @platform win32
+     * @platform darwin,win32
      */
     off(event: 'failed', listener: (event: Event,
                                    /**
@@ -10447,7 +10457,7 @@ declare namespace Electron {
                                     */
                                    error: string) => void): this;
     /**
-     * @platform win32
+     * @platform darwin,win32
      */
     once(event: 'failed', listener: (event: Event,
                                    /**
@@ -10455,7 +10465,7 @@ declare namespace Electron {
                                     */
                                    error: string) => void): this;
     /**
-     * @platform win32
+     * @platform darwin,win32
      */
     addListener(event: 'failed', listener: (event: Event,
                                    /**
@@ -10463,7 +10473,7 @@ declare namespace Electron {
                                     */
                                    error: string) => void): this;
     /**
-     * @platform win32
+     * @platform darwin,win32
      */
     removeListener(event: 'failed', listener: (event: Event,
                                    /**
@@ -10588,6 +10598,26 @@ declare namespace Electron {
      * Whether or not desktop notifications are supported on the current system
      */
     static isSupported(): boolean;
+    /**
+     * Removes one or more delivered notifications from Notification Center by their
+     * identifier(s).
+     *
+     * @platform darwin
+     */
+    static remove(id: (string) | (string[])): void;
+    /**
+     * Removes all of the app's delivered notifications from Notification Center.
+     *
+     * @platform darwin
+     */
+    static removeAll(): void;
+    /**
+     * Removes all delivered notifications with the given `groupId` from Notification
+     * Center.
+     *
+     * @platform darwin
+     */
+    static removeGroup(groupId: string): void;
     /**
      * Dismisses the notification.
      *
@@ -15739,6 +15769,31 @@ declare namespace Electron {
                                   */
                                  code: number) => void): this;
     /**
+     * Emitted when the utility process encounters an HTTP 401 or 407 authentication
+     * challenge, if the process was created with both
+     * `respondToAuthRequestsFromMainProcess: true` and a `session` option. The
+     * `callback` should be called with credentials to respond to the challenge.
+     * Calling `callback` without arguments will cancel the request.
+     *
+     * This behaves the same as the `login` event on `app` but is scoped to the
+     * individual utility process instance.
+     */
+    on(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    off(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    once(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    addListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    removeListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+                                  authInfo: AuthInfo,
+                                  callback: (username?: string, password?: string) => void) => void): this;
+    /**
      * Emitted when the child process sends a message using
      * `process.parentPort.postMessage()`.
      */
@@ -18179,7 +18234,7 @@ declare namespace Electron {
      * When `contents` is a `<webview>` tag, the `mode` would be `detach` by default,
      * explicitly passing an empty `mode` can force using last used dock state.
      *
-     * On Windows, if Windows Control Overlay is enabled, DevTools will be opened with
+     * On Windows, if Window Control Overlay is enabled, DevTools will be opened with
      * `mode: 'detach'`.
      */
     openDevTools(options?: OpenDevToolsOptions): void;
@@ -21421,6 +21476,22 @@ declare namespace Electron {
      */
     cwd?: string;
     /**
+     * Sets the session used by the process for network requests. By default, network
+     * requests from the utility process will use the system network context which does
+     * not have HTTP cache support. Setting a session enables HTTP caching and other
+     * session-specific network features. See session for more information.
+     */
+    session?: Session;
+    /**
+     * Sets the session used by the process according to the session's partition
+     * string. If `partition` starts with `persist:`, the process will use a persistent
+     * session available to all pages in the app with the same `partition`. If there is
+     * no `persist:` prefix, the process will use an in-memory session. By assigning
+     * the same `partition`, multiple processes can share the same session. If the
+     * `session` option is set, this option is ignored.
+     */
+    partition?: string;
+    /**
      * Allows configuring the mode for `stdout` and `stderr` of the child process.
      * Default is `inherit`. String value can be one of `pipe`, `ignore`, `inherit`,
      * for more details on these values you can refer to stdio documentation from
@@ -21461,9 +21532,11 @@ declare namespace Electron {
     disclaim?: boolean;
     /**
      * With this flag, all HTTP 401 and 407 network requests created via the net module
-     * will allow responding to them via the `app#login` event in the main process
-     * instead of the default `login` event on the `ClientRequest` object. Default is
-     * `false`.
+     * will allow responding to them via the `login` event on the `UtilityProcess`
+     * instance when a `session` is provided, or via the `app#login` event in the main
+     * process when using the default system network context. Without this flag, auth
+     * challenges are handled by the default `login` event on the `ClientRequest`
+     * object. Default is `false`.
      */
     respondToAuthRequestsFromMainProcess?: boolean;
   }
@@ -22214,8 +22287,9 @@ declare namespace Electron {
      * A unique identifier for the notification. On macOS, maps to
      * `UNNotificationRequest`'s `identifier` property. On Windows, maps to the toast
      * notification's `Tag` property. Defaults to a random UUID if not provided or if
-     * an empty string is passed. This can be used to remove or update previously
-     * delivered notifications.
+     * an empty string is passed. Use this identifier with `Notification.remove()` to
+     * remove specific delivered notifications, or with `Notification.getHistory()` to
+     * identify them.
      *
      * @platform darwin,win32
      */
@@ -22224,7 +22298,8 @@ declare namespace Electron {
      * A string identifier used to visually group notifications together in
      * Notification Center / Action Center. On macOS, maps to `UNNotificationContent`'s
      * `threadIdentifier` property. On Windows, maps to the toast notification's
-     * `Group` property.
+     * `Group` property. Use this identifier with `Notification.removeGroup()` to
+     * remove all notifications in a group.
      *
      * @platform darwin,win32
      */
@@ -24610,6 +24685,14 @@ declare namespace Electron {
      * `<TEAM_ID>.<BUNDLE_ID>.webauthn`.
      */
     keychainAccessGroup: string;
+    /**
+     * Customizes the reason text shown in the macOS Touch ID prompt. macOS renders the
+     * prompt as `"<App Name>" is trying to <promptReason>`, so the value should be a
+     * lowercase sentence fragment. An optional `$1` placeholder is replaced with the
+     * relying party ID (e.g. `example.com`) of the request being authenticated.
+     * Defaults to `verify your identity on $1`.
+     */
+    promptReason?: string;
   }
 
   interface Video {
