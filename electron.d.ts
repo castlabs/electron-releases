@@ -1,4 +1,4 @@
-// Type definitions for Electron 40.9.3+wvcus
+// Type definitions for Electron 40.10.2+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -13281,7 +13281,9 @@ declare namespace Electron {
     nativePixmap?: NativePixmap;
     /**
      * NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current
-     * process.
+     * process. Output textures of `rgba`, `bgra`, `rgbaf16` formats don't have a keyed
+     * mutex on the texture handle, but `nv12` format texture handles do have a keyed
+     * mutex.
      *
      * @platform win32
      */

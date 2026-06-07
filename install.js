@@ -24,8 +24,12 @@ if (isInstalled()) {
 const platform = process.env.npm_config_platform || process.platform;
 let arch = process.env.npm_config_arch || process.arch;
 
-if (platform === 'darwin' && process.platform === 'darwin' && arch === 'x64' &&
-    process.env.npm_config_arch === undefined) {
+if (
+  platform === 'darwin' &&
+  process.platform === 'darwin' &&
+  arch === 'x64' &&
+  process.env.npm_config_arch === undefined
+) {
   // When downloading for macOS ON macOS and we think we need x64 we should
   // check if we're running under rosetta and download the arm64 version if appropriate
   try {
@@ -45,15 +49,20 @@ downloadArtifact({
   mirrorOptions: { mirror: "https://github.com/castlabs/electron-releases/releases/download/" },
   force: process.env.force_no_cache === 'true',
   cacheRoot: process.env.electron_config_cache,
-  checksums: (process.env.electron_use_remote_checksums || process.env.npm_config_electron_use_remote_checksums) ? undefined : require('./checksums.json'),
+  checksums:
+    process.env.electron_use_remote_checksums || process.env.npm_config_electron_use_remote_checksums
+      ? undefined
+      : require('./checksums.json'),
   platform,
   arch
-}).then(extractFile).catch(err => {
-  console.error(err.stack);
-  process.exit(1);
-});
+})
+  .then(extractFile)
+  .catch((err) => {
+    console.error(err.stack);
+    process.exit(1);
+  });
 
-function isInstalled () {
+function isInstalled() {
   try {
     if (fs.readFileSync(path.join(__dirname, 'dist', 'version'), 'utf-8').replace(/^v/, '') !== version) {
       return false;
@@ -72,7 +81,7 @@ function isInstalled () {
 }
 
 // unzips and makes path.txt point at the correct executable
-function extractFile (zipPath) {
+function extractFile(zipPath) {
   const distPath = process.env.ELECTRON_OVERRIDE_DIST_PATH || path.join(__dirname, 'dist');
 
   return extract(zipPath, { dir: path.join(__dirname, 'dist') }).then(() => {
@@ -91,7 +100,7 @@ function extractFile (zipPath) {
   });
 }
 
-function getPlatformPath () {
+function getPlatformPath() {
   const platform = process.env.npm_config_platform || os.platform();
 
   switch (platform) {
