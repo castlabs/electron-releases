@@ -1,4 +1,4 @@
-// Type definitions for Electron 41.5.0+wvcus
+// Type definitions for Electron 41.7.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -24407,6 +24407,14 @@ declare namespace Electron {
      * `<TEAM_ID>.<BUNDLE_ID>.webauthn`.
      */
     keychainAccessGroup: string;
+    /**
+     * Customizes the reason text shown in the macOS Touch ID prompt. macOS renders the
+     * prompt as `"<App Name>" is trying to <promptReason>`, so the value should be a
+     * lowercase sentence fragment. An optional `$1` placeholder is replaced with the
+     * relying party ID (e.g. `example.com`) of the request being authenticated.
+     * Defaults to `verify your identity on $1`.
+     */
+    promptReason?: string;
   }
 
   interface Video {
