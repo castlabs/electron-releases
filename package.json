@@ -17,15 +17,15 @@
     "vmp-resign.py"
   ],
   "dependencies": {
+    "@electron-internal/extract-zip": "^1.0.1",
     "@electron/get": "^5.0.0",
-    "@types/node": "^24.9.0",
-    "extract-zip": "^2.0.1"
+    "@types/node": "^24.9.0"
   },
   "engines": {
     "node": ">= 22.12.0"
   },
   "name": "electron",
-  "version": "43.0.0-beta.1+wvcus",
+  "version": "43.0.0+wvcus",
   "repository": "https://github.com/castlabs/electron-releases",
   "description": "Build cross platform desktop apps with JavaScript, HTML, CSS, and Widevine DRM protection",
   "license": "MIT",

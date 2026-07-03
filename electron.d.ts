@@ -1,4 +1,4 @@
-// Type definitions for Electron 43.0.0-beta.1+wvcus
+// Type definitions for Electron 43.0.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1700,6 +1700,22 @@ declare namespace Electron {
      * for `hostname`.
      */
     setClientCertRequestPasswordHandler(handler: (clientCertRequestParams: ClientCertRequestParams) => Promise<string>): void;
+    /**
+     * Sets the `.desktop` filename on Linux. This should match the base filename of
+     * the app's installed `.desktop` file. The `.desktop` suffix is optional.
+     *
+     * This value is used to determine the default XDG application ID on Wayland and
+     * `WM_CLASS` on X11. If it is not set, Electron will attempt to infer a name, but
+     * it may not match the packaged app's actual `.desktop` file. This could result in
+     * the app showing a generic icon or failing to respond to global keyboard
+     * shortcuts.
+     *
+     * This API must be called before the `ready` event. The value can also be set
+     * using `desktopName` in `package.json`.
+     *
+     * @platform linux
+     */
+    setDesktopName(name: string): void;
     /**
      * Sets or removes a custom Jump List for the application, and returns one of the
      * following strings:
@@ -3922,11 +3938,10 @@ declare namespace Electron {
      */
     resizable?: boolean;
     /**
-     * Whether frameless window should have rounded corners. Default is `true`. On
+     * Whether a frameless window should have rounded corners. Default is `true`. On
      * Windows versions older than Windows 11 Build 22000 this property has no effect,
-     * and frameless windows will not have rounded corners.
-     *
-     * @platform darwin,win32
+     * and frameless windows will not have rounded corners. On Linux, rounded corners
+     * are only drawn when the desktop environment supports client-side decorations.
      */
     roundedCorners?: boolean;
     /**
@@ -7212,6 +7227,8 @@ declare namespace Electron {
      * support memory dumps yet)
      * * Click on one of the `M` symbols
      * * Click on a `☰` triple bar icon (e.g., in the `malloc` column)
+     *
+     * [Image: Screenshot showing how to view a heapdump in Chromium's tracing view]
      *
      * @experimental
      */
@@ -17866,7 +17883,11 @@ declare namespace Electron {
      *
      * Before:
      *
+     * [Image: Image Before Text Selection Adjustment]
+     *
      * After:
+     *
+     * [Image: Image After Text Selection Adjustment]
      */
     adjustSelection(options: AdjustSelectionOptions): void;
     /**
