@@ -1,4 +1,4 @@
-// Type definitions for Electron 43.0.0+wvcus
+// Type definitions for Electron 43.2.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1876,7 +1876,7 @@ declare namespace Electron {
      * resources will be leaked and your app will lose its ability to reach outside the
      * sandbox completely, until your app is restarted.
      *
-     * Start accessing a security scoped resource. With this method Electron
+     * Start accessing a security scoped resource. With this method, Electron
      * applications that are packaged for the Mac App Store may reach outside their
      * sandbox to access files chosen by the user. See Apple's documentation for a
      * description of how this system works.
@@ -10353,6 +10353,14 @@ declare namespace Electron {
      *
      */
     readonly online: boolean;
+    /**
+     * > [!NOTE] This property is only available in the main process.
+     *
+     * A `typeof WebSocket` reference to the `WebSocket` class, which can be used to
+     * create WHATWG-compatible WebSocket connections through Chromium's network stack
+     * from the main process.
+     */
+    WebSocket: typeof WebSocket;
   }
 
   interface NetLog {
@@ -19567,6 +19575,147 @@ declare namespace Electron {
     urls: string[];
   }
 
+  class WebSocket extends EventTarget {
+
+    // Docs: https://electronjs.org/docs/api/web-socket
+
+    /**
+     * WebSocket
+     */
+    constructor(url: string, protocols?: (string) | (string[]) | (WebSocketOptions));
+    /**
+     * Closes the connection. Calling `close()` while still `CONNECTING` aborts the
+     * handshake.
+     */
+    close(code?: number, reason?: string): void;
+    /**
+     * Enqueues `data` to be transmitted to the server. Throws an `InvalidStateError`
+     * `DOMException` if `readyState` is `CONNECTING`.
+     */
+    send(data: (string) | (ArrayBufferLike) | (ArrayBufferView) | (Blob)): void;
+    /**
+     * A `string` controlling how incoming binary messages are exposed on the `message`
+     * event. Can be `nodebuffer`, `arraybuffer`, or `blob`. The default is
+     * `nodebuffer`.
+     *
+     * `'nodebuffer'` is an Electron extension that delivers binary messages as
+     * `Buffer` objects, which is generally the most convenient representation in the
+     * main process. Set `binaryType` to `'arraybuffer'` or `'blob'` for behavior
+     * identical to the renderer `WebSocket`.
+     */
+    binaryType: ('nodebuffer' | 'arraybuffer' | 'blob');
+    /**
+     * An `Integer` representing the number of bytes of application data that have been
+     * queued via `send()` but not yet handed off to the network.
+     *
+     */
+    readonly bufferedAmount: number;
+    /**
+     * A `string` containing the extensions negotiated by the server (for example
+     * `permessage-deflate`).
+     *
+     */
+    readonly extensions: string;
+    /**
+     * A `Function | null` event handler for the `close` event. Equivalent to calling
+     * `addEventListener('close', ...)`.
+     */
+    onclose: (Function) | (null);
+    /**
+     * A `Function | null` event handler for the `error` event. Equivalent to calling
+     * `addEventListener('error', ...)`.
+     */
+    onerror: (Function) | (null);
+    /**
+     * A `Function | null` event handler for the `message` event. Equivalent to calling
+     * `addEventListener('message', ...)`.
+     */
+    onmessage: (Function) | (null);
+    /**
+     * A `Function | null` event handler for the `open` event. Equivalent to calling
+     * `addEventListener('open', ...)`.
+     */
+    onopen: (Function) | (null);
+    /**
+     * A `string` containing the subprotocol selected by the server. The empty string
+     * until the connection is open or if the server did not select a subprotocol.
+     *
+     */
+    readonly protocol: string;
+    /**
+     * An `Integer` representing the current state of the connection: one of
+     * `WebSocket.CONNECTING` (`0`), `WebSocket.OPEN` (`1`), `WebSocket.CLOSING` (`2`),
+     * or `WebSocket.CLOSED` (`3`).
+     *
+     */
+    readonly readyState: number;
+    /**
+     * A `string` representing the resolved URL of the connection.
+     *
+     */
+    readonly url: string;
+    /**
+     * An `Integer` constant equal to `3`, the `readyState` value once the connection
+     * is closed.
+     *
+     */
+    static readonly CLOSED: number;
+    /**
+     * An `Integer` constant equal to `2`, the `readyState` value while the closing
+     * handshake is in progress.
+     *
+     */
+    static readonly CLOSING: number;
+    /**
+     * An `Integer` constant equal to `0`, the `readyState` value while the opening
+     * handshake is in progress.
+     *
+     */
+    static readonly CONNECTING: number;
+    /**
+     * An `Integer` constant equal to `1`, the `readyState` value once the connection
+     * is established.
+     *
+     */
+    static readonly OPEN: number;
+  }
+
+  interface WebSocketOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/web-socket-options
+
+    /**
+     * Extra HTTP headers to send with the opening handshake.
+     */
+    headers?: Record<string, string>;
+    /**
+     * Value of the `Origin` header to send with the opening handshake. Defaults to the
+     * `http(s)` equivalent of the WebSocket URL's origin (e.g. connecting to
+     * `wss://api.example.com` sends `Origin: https://api.example.com`), so that the
+     * connection is treated as same-origin by the server and by SameSite cookie rules.
+     */
+    origin?: string;
+    /**
+     * The name of the `partition` the connection is associated with. Defaults to the
+     * empty string, which corresponds to the default session. If `session` is
+     * provided, `partition` is ignored.
+     */
+    partition?: string;
+    /**
+     * Requested WebSocket subprotocols.
+     */
+    protocols?: (string) | (string[]);
+    /**
+     * The `Session` the connection is associated with.
+     */
+    session?: Session;
+    /**
+     * Whether to send cookies from the session with the opening handshake and store
+     * cookies received in the handshake response. Default is `false`.
+     */
+    useSessionCookies?: boolean;
+  }
+
   interface WebSource {
 
     // Docs: https://electronjs.org/docs/api/structures/web-source
@@ -25237,6 +25386,7 @@ declare namespace Electron {
     type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSocketOptions = Electron.WebSocketOptions;
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
@@ -25327,6 +25477,7 @@ declare namespace Electron {
     const webFrameMain: typeof WebFrameMain;
     type WebFrameMain = Electron.WebFrameMain;
     type WebRequest = Electron.WebRequest;
+    class WebSocket extends Electron.WebSocket {}
     type AboutPanelOptionsOptions = Electron.AboutPanelOptionsOptions;
     type AddRepresentationOptions = Electron.AddRepresentationOptions;
     type AdjustSelectionOptions = Electron.AdjustSelectionOptions;
@@ -25650,6 +25801,7 @@ declare namespace Electron {
     type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSocketOptions = Electron.WebSocketOptions;
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
@@ -25989,6 +26141,7 @@ declare namespace Electron {
     type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSocketOptions = Electron.WebSocketOptions;
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
@@ -26327,6 +26480,7 @@ declare namespace Electron {
     type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSocketOptions = Electron.WebSocketOptions;
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
@@ -26435,6 +26589,7 @@ declare namespace Electron {
     const webFrameMain: typeof WebFrameMain;
     type WebFrameMain = Electron.WebFrameMain;
     type WebRequest = Electron.WebRequest;
+    class WebSocket extends Electron.WebSocket {}
     const webUtils: WebUtils;
     type WebUtils = Electron.WebUtils;
     type WebviewTag = Electron.WebviewTag;
@@ -26761,6 +26916,7 @@ declare namespace Electron {
     type WebAuthnAccount = Electron.WebAuthnAccount;
     type WebPreferences = Electron.WebPreferences;
     type WebRequestFilter = Electron.WebRequestFilter;
+    type WebSocketOptions = Electron.WebSocketOptions;
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
