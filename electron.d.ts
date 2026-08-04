@@ -1,4 +1,4 @@
-// Type definitions for Electron 44.0.0-alpha.1+wvcus
+// Type definitions for Electron 44.0.0-alpha.8+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -50,7 +50,7 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/app
 
     /**
-     * Emitted when Chrome's accessibility support changes. This event fires when
+     * Emitted when Chromium's accessibility support changes. This event fires when
      * assistive technologies, such as screen readers, are enabled or disabled. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
@@ -59,7 +59,7 @@ declare namespace Electron {
      */
     on(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -67,7 +67,7 @@ declare namespace Electron {
      */
     off(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -75,7 +75,7 @@ declare namespace Electron {
      */
     once(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -83,7 +83,7 @@ declare namespace Electron {
      */
     addListener(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -91,7 +91,7 @@ declare namespace Electron {
      */
     removeListener(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -806,6 +806,13 @@ declare namespace Electron {
      * and `callback` can be called with an entry filtered from the list. Using
      * `event.preventDefault()` prevents the application from using the first
      * certificate from the store.
+     *
+     * `webContents` is `null` when the request does not originate from a renderer
+     * process, for example when using `net.request` or `net.fetch` in the main
+     * process, or from a utility process created with
+     * `respondToAuthRequestsFromMainProcess: true`. For utility processes created
+     * without that flag, `net` requests proceed without a client certificate and this
+     * event is not emitted.
      */
     on(event: 'select-client-certificate', listener: (event: Event,
                                                       webContents: WebContents,
@@ -1396,9 +1403,9 @@ declare namespace Electron {
      */
     invalidateCurrentActivity(): void;
     /**
-     * `true` if Chrome's accessibility support is enabled, `false` otherwise. This API
-     * will return `true` if the use of assistive technologies, such as screen readers,
-     * has been detected. See
+     * `true` if Chromium's accessibility support is enabled, `false` otherwise. This
+     * API will return `true` if the use of assistive technologies, such as screen
+     * readers, has been detected. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
      *
@@ -1583,7 +1590,7 @@ declare namespace Electron {
      */
     setAboutPanelOptions(options: AboutPanelOptionsOptions): void;
     /**
-     * Manually enables Chrome's accessibility support, allowing to expose
+     * Manually enables Chromium's accessibility support, allowing to expose
      * accessibility switch to users in application settings. See Chromium's
      * accessibility docs for more details. Disabled by default.
      *
@@ -1865,7 +1872,7 @@ declare namespace Electron {
      * resources will be leaked and your app will lose its ability to reach outside the
      * sandbox completely, until your app is restarted.
      *
-     * Start accessing a security scoped resource. With this method Electron
+     * Start accessing a security scoped resource. With this method, Electron
      * applications that are packaged for the Mac App Store may reach outside their
      * sandbox to access files chosen by the user. See Apple's documentation for a
      * description of how this system works.
@@ -1887,10 +1894,10 @@ declare namespace Electron {
      */
     whenReady(): Promise<void>;
     /**
-     * A `boolean` property that's `true` if Chrome's accessibility support is enabled,
-     * `false` otherwise. This property will be `true` if the use of assistive
+     * A `boolean` property that's `true` if Chromium's accessibility support is
+     * enabled, `false` otherwise. This property will be `true` if the use of assistive
      * technologies, such as screen readers, has been detected. Setting this property
-     * to `true` manually enables Chrome's accessibility support, allowing developers
+     * to `true` manually enables Chromium's accessibility support, allowing developers
      * to expose accessibility switch to users in application settings.
      *
      * See Chromium's accessibility docs for more details. Disabled by default.
@@ -2298,6 +2305,20 @@ declare namespace Electron {
      */
     removeListener(event: 'new-window-for-tab', listener: () => void): this;
     /**
+     * Emitted after the persisted window state has been restored.
+     *
+     * Window state includes the window bounds (x, y, height, width) and display mode
+     * (maximized, fullscreen, kiosk).
+     *
+     * > [!NOTE] This event is only emitted when windowStatePersistence is enabled in
+     * BaseWindowConstructorOptions or in BrowserWindowConstructorOptions.
+     */
+    on(event: 'persisted-state-restored', listener: () => void): this;
+    off(event: 'persisted-state-restored', listener: () => void): this;
+    once(event: 'persisted-state-restored', listener: () => void): this;
+    addListener(event: 'persisted-state-restored', listener: () => void): this;
+    removeListener(event: 'persisted-state-restored', listener: () => void): this;
+    /**
      * Emitted when a session is about to end due to a shutdown, machine restart, or
      * user log-off. Calling `event.preventDefault()` can delay the system shutdown,
      * though it’s generally best to respect the user’s choice to end the session.
@@ -2674,6 +2695,15 @@ declare namespace Electron {
      * BaseWindow
      */
     constructor(options?: BaseWindowConstructorOptions);
+    /**
+     * Clears the saved state for a window with the given name. This removes all
+     * persisted window bounds, display mode, and work area information that was
+     * previously saved when `windowStatePersistence` was enabled.
+     *
+     * If the window `name` is empty or the window state doesn't exist, the method will
+     * log a warning.
+     */
+    static clearPersistedState(name: string): void;
     /**
      * The window with the given `id`.
      */
@@ -3909,6 +3939,14 @@ declare namespace Electron {
      */
     movable?: boolean;
     /**
+     * A unique identifier for the window, used internally by Electron to enable
+     * features such as state persistence. Each window must have a distinct name. It
+     * can only be reused after the corresponding window has been destroyed. An error
+     * is thrown if the name is already in use. This is not the visible title shown to
+     * users on the title bar.
+     */
+    name?: string;
+    /**
      * Set the initial opacity of the window, between 0.0 (fully transparent) and 1.0
      * (fully opaque). This is only implemented on Windows and macOS.
      *
@@ -4025,6 +4063,13 @@ declare namespace Electron {
      * Window's width in pixels. Default is `800`.
      */
     width?: number;
+    /**
+     * Configures or enables the persistence of window state (position, size, maximized
+     * state, etc.) across application restarts. Has no effect if window `name` is not
+     * provided. Automatically disabled when there is no available display.
+     * _Experimental_
+     */
+    windowStatePersistence?: (WindowStatePersistence) | (boolean);
     /**
      * (**required** if y is used) Window's left offset from screen. Default is to
      * center the window.
@@ -4561,6 +4606,20 @@ declare namespace Electron {
     removeListener(event: 'page-title-updated', listener: (event: Event,
                                                title: string,
                                                explicitSet: boolean) => void): this;
+    /**
+     * Emitted after the persisted window state has been restored.
+     *
+     * Window state includes the window bounds (x, y, height, width) and display mode
+     * (maximized, fullscreen, kiosk).
+     *
+     * > [!NOTE] This event is only emitted when windowStatePersistence is enabled in
+     * BaseWindowConstructorOptions or in BrowserWindowConstructorOptions.
+     */
+    on(event: 'persisted-state-restored', listener: () => void): this;
+    off(event: 'persisted-state-restored', listener: () => void): this;
+    once(event: 'persisted-state-restored', listener: () => void): this;
+    addListener(event: 'persisted-state-restored', listener: () => void): this;
+    removeListener(event: 'persisted-state-restored', listener: () => void): this;
     /**
      * Emitted when a session is about to end due to a shutdown, machine restart, or
      * user log-off. Calling `event.preventDefault()` can delay the system shutdown,
@@ -6891,117 +6950,90 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/clipboard
 
     /**
-     * An array of supported formats for the clipboard `type`.
-     */
-    availableFormats(type?: 'selection' | 'clipboard'): string[];
-    /**
      * Clears the clipboard content.
      */
-    clear(type?: 'selection' | 'clipboard'): void;
+    clear(): void;
     /**
-     * Whether the clipboard supports the specified `format`.
+     * A promise that resolves with `true` if the clipboard contains data of the
+     * specified `mimetype`, otherwise `false`. To check for a raw format, eg
+     * `public/utf8-plain-text`, use the `electron application/osclipboard` custom
+     * format (`electron application/osclipboard;format="public/utf8-plain-text"`).
+     */
+    has(mimetype: string): Promise<boolean>;
+    /**
+     * A promise that resolves with an array of ClipboardItem objects containing the
+     * clipboard's contents.
+     */
+    read(): Promise<Electron.ClipboardItem[]>;
+    /**
+     * A promise that resolves with the content of the clipboard as plain text. Modeled
+     * after the W3C `navigator.clipboard.readText` API.
+     */
+    readText(): Promise<string>;
+    /**
+     * Resolves once the data has been written to the clipboard. All entries supplied
+     * in a single `write()` call are committed to the system clipboard atomically.
+     */
+    write(data: ClipboardItem[]): Promise<void>;
+    /**
+     * A promise that resolves once the text has been written to the clipboard. Modeled
+     * after the W3C `navigator.clipboard.writeText` API.
+     */
+    writeText(text: string): Promise<void>;
+    /**
+     * A `Clipboard` property — a `Clipboard` object on Linux that operates against the
+     * selection clipboard instead of the system clipboard, and `undefined` on all
+     * other platforms. It exposes the same `read`, `write`, `readText`, `writeText`,
+     * `has`, and `clear` methods as the top-level `clipboard` module.
      *
-     * @experimental
+     * @platform linux
      */
-    has(format: string, type?: 'selection' | 'clipboard'): boolean;
+    readonly selection: Clipboard;
+  }
+
+  interface ClipboardBookmark {
+
+    // Docs: https://electronjs.org/docs/api/structures/clipboard-bookmark
+
     /**
-     * Reads `format` type from the clipboard.
+     * The title of the bookmark.
+     */
+    title: string;
+    /**
+     * The URL of the bookmark.
+     */
+    url: string;
+  }
+
+  class ClipboardItem {
+
+    // Docs: https://electronjs.org/docs/api/clipboard-item
+
+    /**
+     * ClipboardItem
+     */
+    constructor(items: Record<string, (string) | (ClipboardBookmark) | (Blob) | (Promise<(Blob) | (string)>)>);
+    /**
+     * Resolves with the payload for the given MIME type. Modeled after the W3C
+     * `ClipboardItem.getType` method. The promise resolves to a `Blob` for most MIME
+     * types; the one exception is `getType('electron application/bookmark')`, which
+     * resolves to a ClipboardBookmark object instead. Rejects when `type` is not
+     * present in `clipboardItem.types`.
+     */
+    getType(type: string): (Promise<Blob>) | (Promise<Electron.ClipboardBookmark>);
+    /**
+     * Resolves with a ClipboardBookmark when a bookmark is available in the clipboard.
+     * Rejects when a bookmark is not available in the clipboard.
+     */
+    getType(bookmark: 'electron application/bookmark'): Promise<Electron.ClipboardBookmark>;
+    /**
+     * A `string[]` property — the MIME types of the data carried by this entry. For a
+     * constructed `ClipboardItem` these are the keys passed to the constructor; for an
+     * item returned by `clipboard.read()` these are the MIME types the platform
+     * clipboard currently makes available.
      *
-     * `format` should contain valid ASCII characters and have `/` separator. `a/c`,
-     * `a/bc` are valid formats while `/abc`, `abc/`, `a/`, `/a`, `a` are not valid.
-     *
-     * @experimental
      */
-    read(format: string): string;
-    /**
-     * * `title` string
-     * * `url` string
-     *
-     * Returns an Object containing `title` and `url` keys representing the bookmark in
-     * the clipboard. The `title` and `url` values will be empty strings when the
-     * bookmark is unavailable.  The `title` value will always be empty on Windows.
-     *
-     * @platform darwin,win32
-     */
-    readBookmark(): ReadBookmark;
-    /**
-     * Reads `format` type from the clipboard.
-     *
-     * @experimental
-     */
-    readBuffer(format: string): Buffer;
-    /**
-     * The text on the find pasteboard, which is the pasteboard that holds information
-     * about the current state of the active application’s find panel.
-     *
-     * This method uses synchronous IPC when called from the renderer process. The
-     * cached value is reread from the find pasteboard whenever the application is
-     * activated.
-     *
-     * @platform darwin
-     */
-    readFindText(): string;
-    /**
-     * The content in the clipboard as markup.
-     */
-    readHTML(type?: 'selection' | 'clipboard'): string;
-    /**
-     * The image content in the clipboard.
-     */
-    readImage(type?: 'selection' | 'clipboard'): NativeImage;
-    /**
-     * The content in the clipboard as RTF.
-     */
-    readRTF(type?: 'selection' | 'clipboard'): string;
-    /**
-     * The content in the clipboard as plain text.
-     */
-    readText(type?: 'selection' | 'clipboard'): string;
-    /**
-     * Writes `data` to the clipboard.
-     */
-    write(data: Data, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes the `title` (macOS only) and `url` into the clipboard as a bookmark.
-     *
-     * > [!NOTE] Most apps on Windows don't support pasting bookmarks into them so you
-     * can use `clipboard.write` to write both a bookmark and fallback text to the
-     * clipboard.
-     *
-     * @platform darwin,win32
-     */
-    writeBookmark(title: string, url: string, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes the `buffer` into the clipboard as `format`.
-     *
-     * @experimental
-     */
-    writeBuffer(format: string, buffer: Buffer, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes the `text` into the find pasteboard (the pasteboard that holds
-     * information about the current state of the active application’s find panel) as
-     * plain text. This method uses synchronous IPC when called from the renderer
-     * process.
-     *
-     * @platform darwin
-     */
-    writeFindText(text: string): void;
-    /**
-     * Writes `markup` to the clipboard.
-     */
-    writeHTML(markup: string, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes `image` to the clipboard.
-     */
-    writeImage(image: NativeImage, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes the `text` into the clipboard in RTF.
-     */
-    writeRTF(text: string, type?: 'selection' | 'clipboard'): void;
-    /**
-     * Writes the `text` into the clipboard as plain text.
-     */
-    writeText(text: string, type?: 'selection' | 'clipboard'): void;
+    readonly types: string[];
   }
 
   interface ColorSpace {
@@ -10273,8 +10305,8 @@ declare namespace Electron {
      * see Response.
      *
      * Sends a request, similarly to how `fetch()` works in the renderer, using
-     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
-     * HTTP stack.
+     * Chromium's network stack. This differs from Node's `fetch()`, which uses
+     * Node.js's HTTP stack.
      *
      * Example:
      *
@@ -13047,8 +13079,8 @@ declare namespace Electron {
      * see Response.
      *
      * Sends a request, similarly to how `fetch()` works in the renderer, using
-     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
-     * HTTP stack.
+     * Chromium's network stack. This differs from Node's `fetch()`, which uses
+     * Node.js's HTTP stack.
      *
      * Example:
      *
@@ -17202,23 +17234,23 @@ declare namespace Electron {
      * The usage is the same with the `login` event of `app`.
      */
     on(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     off(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
@@ -20433,6 +20465,22 @@ declare namespace Electron {
     reasons: Array<'shutdown' | 'close-app' | 'critical' | 'logoff'>;
   }
 
+  interface WindowStatePersistence {
+
+    // Docs: https://electronjs.org/docs/api/structures/window-state-persistence
+
+    /**
+     * Whether to persist window position and size across application restarts.
+     * Defaults to `true` if not specified.
+     */
+    bounds?: boolean;
+    /**
+     * Whether to persist display modes (fullscreen, kiosk, maximized, etc.) across
+     * application restarts. Defaults to `true` if not specified.
+     */
+    displayMode?: boolean;
+  }
+
   interface AboutPanelOptionsOptions {
     /**
      * The app's name.
@@ -20575,6 +20623,18 @@ declare namespace Electron {
   interface AuthenticationResponseDetails {
     url: string;
     pid: number;
+    /**
+     * Indicates whether the request is for a navigation.
+     */
+    isRequestForNavigation: boolean;
+    /**
+     * Indicates whether this is the first authentication attempt.
+     */
+    firstAuthAttempt: boolean;
+    /**
+     * The headers returned in the response.
+     */
+    responseHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface AuthInfo {
@@ -21369,17 +21429,6 @@ declare namespace Electron {
     startTime?: number;
   }
 
-  interface Data {
-    text?: string;
-    html?: string;
-    image?: NativeImage;
-    rtf?: string;
-    /**
-     * The title of the URL at `text`.
-     */
-    bookmark?: string;
-  }
-
   interface DecryptStringAsyncReturnValue {
     /**
      * whether data that has just been returned from the decrypt operation should be
@@ -21814,9 +21863,11 @@ declare namespace Electron {
      * With this flag, all HTTP 401 and 407 network requests created via the net module
      * will allow responding to them via the `login` event on the `UtilityProcess`
      * instance when a `session` is provided, or via the `app#login` event in the main
-     * process when using the default system network context. Without this flag, auth
-     * challenges are handled by the default `login` event on the `ClientRequest`
-     * object. Default is `false`.
+     * process when using the default system network context. This flag also routes
+     * client-certificate selection to the `app#select-client-certificate` event in the
+     * main process; without it, `net` requests from the utility process proceed
+     * without a client certificate. Without this flag, auth challenges are handled by
+     * the default `login` event on the `ClientRequest` object. Default is `false`.
      */
     respondToAuthRequestsFromMainProcess?: boolean;
   }
@@ -22128,10 +22179,6 @@ declare namespace Electron {
      * files.
      */
     baseURLForDataURL?: string;
-  }
-
-  interface LoginAuthenticationResponseDetails {
-    url: string;
   }
 
   interface LoginItemSettings {
@@ -23340,11 +23387,6 @@ declare namespace Electron {
     username?: string;
   }
 
-  interface ReadBookmark {
-    title: string;
-    url: string;
-  }
-
   interface ReceivedSharedTextureData {
     /**
      * The imported shared texture.
@@ -23814,6 +23856,15 @@ declare namespace Electron {
      * The total amount of memory not being used by applications or disk cache.
      */
     free: number;
+    /**
+     * The kernel's estimate of the amount of memory available for allocation without
+     * swapping, from `/proc/meminfo` `MemAvailable`. Use this as the memory pressure
+     * signal on Linux; `free` there is `MemFree`, which excludes page cache and other
+     * reclaimable memory.
+     *
+     * @platform linux
+     */
+    available: number;
     /**
      * The amount of memory that currently has been paged out to storage. Includes
      * memory for file caches, network buffers, and other system services.
@@ -25065,8 +25116,6 @@ declare namespace Electron {
 
   namespace Common {
     type Event<Params extends object = {}> = Electron.Event<Params>;
-    const clipboard: Clipboard;
-    type Clipboard = Electron.Clipboard;
     const crashReporter: CrashReporter;
     type CrashReporter = Electron.CrashReporter;
     const nativeImage: typeof NativeImage;
@@ -25116,7 +25165,6 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
-    type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
@@ -25167,7 +25215,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25212,7 +25259,6 @@ declare namespace Electron {
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
-    type ReadBookmark = Electron.ReadBookmark;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -25307,6 +25353,7 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
@@ -25402,6 +25449,7 @@ declare namespace Electron {
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
+    type WindowStatePersistence = Electron.WindowStatePersistence;
   }
 
   namespace Main {
@@ -25414,6 +25462,9 @@ declare namespace Electron {
     class BrowserView extends Electron.BrowserView {}
     class BrowserWindow extends Electron.BrowserWindow {}
     type ClientRequest = Electron.ClientRequest;
+    const clipboard: Clipboard;
+    type Clipboard = Electron.Clipboard;
+    class ClipboardItem extends Electron.ClipboardItem {}
     type CommandLine = Electron.CommandLine;
     const components: Components;
     type Components = Electron.Components;
@@ -25531,7 +25582,6 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
-    type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
@@ -25582,7 +25632,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25627,7 +25676,6 @@ declare namespace Electron {
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
-    type ReadBookmark = Electron.ReadBookmark;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -25722,6 +25770,7 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
@@ -25817,6 +25866,7 @@ declare namespace Electron {
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
+    type WindowStatePersistence = Electron.WindowStatePersistence;
   }
 
   namespace Renderer {
@@ -25871,7 +25921,6 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
-    type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
@@ -25922,7 +25971,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25967,7 +26015,6 @@ declare namespace Electron {
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
-    type ReadBookmark = Electron.ReadBookmark;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -26062,6 +26109,7 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
@@ -26157,6 +26205,7 @@ declare namespace Electron {
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
+    type WindowStatePersistence = Electron.WindowStatePersistence;
   }
 
   namespace Utility {
@@ -26210,7 +26259,6 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
-    type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
@@ -26261,7 +26309,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -26306,7 +26353,6 @@ declare namespace Electron {
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
-    type ReadBookmark = Electron.ReadBookmark;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -26401,6 +26447,7 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
@@ -26496,6 +26543,7 @@ declare namespace Electron {
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
+    type WindowStatePersistence = Electron.WindowStatePersistence;
   }
 
   namespace CrossProcessExports {
@@ -26510,6 +26558,7 @@ declare namespace Electron {
     type ClientRequest = Electron.ClientRequest;
     const clipboard: Clipboard;
     type Clipboard = Electron.Clipboard;
+    class ClipboardItem extends Electron.ClipboardItem {}
     type CommandLine = Electron.CommandLine;
     const components: Components;
     type Components = Electron.Components;
@@ -26646,7 +26695,6 @@ declare namespace Electron {
     type CreateFromBufferOptions = Electron.CreateFromBufferOptions;
     type CreateFromNamedImageOptions = Electron.CreateFromNamedImageOptions;
     type CreateInterruptedDownloadOptions = Electron.CreateInterruptedDownloadOptions;
-    type Data = Electron.Data;
     type DecryptStringAsyncReturnValue = Electron.DecryptStringAsyncReturnValue;
     type DefaultFontFamily = Electron.DefaultFontFamily;
     type Details = Electron.Details;
@@ -26697,7 +26745,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -26742,7 +26789,6 @@ declare namespace Electron {
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
-    type ReadBookmark = Electron.ReadBookmark;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
     type RegistrationCompletedDetails = Electron.RegistrationCompletedDetails;
     type RelaunchOptions = Electron.RelaunchOptions;
@@ -26837,6 +26883,7 @@ declare namespace Electron {
     type BluetoothDevice = Electron.BluetoothDevice;
     type Certificate = Electron.Certificate;
     type CertificatePrincipal = Electron.CertificatePrincipal;
+    type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
     type ComponentResult = Electron.ComponentResult;
@@ -26932,6 +26979,7 @@ declare namespace Electron {
     type WebSource = Electron.WebSource;
     type WindowOpenHandlerResponse = Electron.WindowOpenHandlerResponse;
     type WindowSessionEndEvent = Electron.WindowSessionEndEvent;
+    type WindowStatePersistence = Electron.WindowStatePersistence;
   }
 
   const app: App;
@@ -27097,6 +27145,10 @@ declare namespace NodeJS {
      * to the system.
      * * `free` Integer - The total amount of memory not being used by applications or
      * disk cache.
+     * * `available` Integer _Linux_ - The kernel's estimate of the amount of memory
+     * available for allocation without swapping, from `/proc/meminfo` `MemAvailable`.
+     * Use this as the memory pressure signal on Linux; `free` there is `MemFree`,
+     * which excludes page cache and other reclaimable memory.
      * * `fileBacked` Integer _macOS_ - The amount of memory that currently has been
      * paged out to storage. Includes memory for file caches, network buffers, and
      * other system services.
