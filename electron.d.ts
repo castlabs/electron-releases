@@ -1,4 +1,4 @@
-// Type definitions for Electron 41.10.3+wvcus
+// Type definitions for Electron 41.10.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -19953,6 +19953,13 @@ declare namespace Electron {
      * another value by including an `=`, followed by the value. Special values `yes`
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
+     *
+     * Security-critical preferences cannot be used to make the guest less secure than
+     * its embedder. When the embedder has any of `contextIsolation`, `javascript`,
+     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox`,
+     * `nodeIntegrationInSubFrames` or `enableWebSQL` set to its more secure value, the
+     * guest inherits that value and the corresponding `webpreferences` entry is
+     * ignored.
      */
     webpreferences: string;
   }
