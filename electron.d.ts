@@ -1,4 +1,4 @@
-// Type definitions for Electron 43.2.0+wvcus
+// Type definitions for Electron 43.5.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -50,7 +50,7 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/app
 
     /**
-     * Emitted when Chrome's accessibility support changes. This event fires when
+     * Emitted when Chromium's accessibility support changes. This event fires when
      * assistive technologies, such as screen readers, are enabled or disabled. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
@@ -59,7 +59,7 @@ declare namespace Electron {
      */
     on(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -67,7 +67,7 @@ declare namespace Electron {
      */
     off(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -75,7 +75,7 @@ declare namespace Electron {
      */
     once(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -83,7 +83,7 @@ declare namespace Electron {
      */
     addListener(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -91,7 +91,7 @@ declare namespace Electron {
      */
     removeListener(event: 'accessibility-support-changed', listener: (event: Event,
                                                           /**
-                                                           * `true` when Chrome's accessibility support is enabled, `false` otherwise.
+                                                           * `true` when Chromium's accessibility support is enabled, `false` otherwise.
                                                            */
                                                           accessibilitySupportEnabled: boolean) => void): this;
     /**
@@ -1396,9 +1396,9 @@ declare namespace Electron {
      */
     invalidateCurrentActivity(): void;
     /**
-     * `true` if Chrome's accessibility support is enabled, `false` otherwise. This API
-     * will return `true` if the use of assistive technologies, such as screen readers,
-     * has been detected. See
+     * `true` if Chromium's accessibility support is enabled, `false` otherwise. This
+     * API will return `true` if the use of assistive technologies, such as screen
+     * readers, has been detected. See
      * https://www.chromium.org/developers/design-documents/accessibility for more
      * details.
      *
@@ -1561,6 +1561,11 @@ declare namespace Electron {
      * line, the system's single instance mechanism will be bypassed, and you have to
      * use this method to ensure single instance.
      *
+     * > [!NOTE] On macOS and Linux, the second instance's command line arguments and
+     * `additionalData` are sent to the primary instance in a single message that is
+     * limited to 32 MB. Larger messages are dropped: this method still returns
+     * `false`, but the primary instance does not emit `second-instance`.
+     *
      * An example of activating the window of primary instance when a second instance
      * starts:
      */
@@ -1589,7 +1594,7 @@ declare namespace Electron {
      */
     setAboutPanelOptions(options: AboutPanelOptionsOptions): void;
     /**
-     * Manually enables Chrome's accessibility support, allowing to expose
+     * Manually enables Chromium's accessibility support, allowing to expose
      * accessibility switch to users in application settings. See Chromium's
      * accessibility docs for more details. Disabled by default.
      *
@@ -1701,14 +1706,31 @@ declare namespace Electron {
      */
     setClientCertRequestPasswordHandler(handler: (clientCertRequestParams: ClientCertRequestParams) => Promise<string>): void;
     /**
-     * Sets the `.desktop` filename on Linux. This should match the base filename of
-     * the app's installed `.desktop` file. The `.desktop` suffix is optional.
+     * Sets the `.desktop` filename on Linux. This must match the base filename of the
+     * app's installed `.desktop` file. The `.desktop` suffix is optional.
      *
-     * This value is used to determine the default XDG application ID on Wayland and
-     * `WM_CLASS` on X11. If it is not set, Electron will attempt to infer a name, but
-     * it may not match the packaged app's actual `.desktop` file. This could result in
-     * the app showing a generic icon or failing to respond to global keyboard
-     * shortcuts.
+     * The name (without the `.desktop` suffix) is the app's identity for Linux desktop
+     * integration. It should be a reverse-DNS style ID such as `com.example.MyApp`,
+     * following the desktop entry naming conventions. This value is used as:
+     *
+     * * the XDG application ID (`app_id`) on Wayland and `WM_CLASS` on X11, used to
+     * match the app's icon and window grouping.
+     * * the app ID that `xdg-desktop-portal` reports to portal backends such as
+     * GlobalShortcuts.
+     *
+     * Portals increasingly enforce this identity. If the name is not a valid
+     * reverse-DNS ID or does not match an installed `.desktop` file:
+     *
+     * * GNOME 50.0/50.1 (Ubuntu 26.04) rejects `globalShortcut` binds with
+     * `org.freedesktop.portal.Error.NotAllowed` — with no error surfaced to the app
+     * (see #52218).
+     * * `xdg-desktop-portal` 1.21 and later refuses portal sessions for app IDs it
+     * cannot resolve to a `.desktop` file.
+     *
+     * If this value is not set and `desktopName` is not present in `package.json`,
+     * Electron falls back to a lowercased, hyphenated slug of the app's name (e.g. `My
+     * App` → `my-app.desktop`), which is unlikely to be a valid portal identity —
+     * packaged apps should always set it explicitly.
      *
      * This API must be called before the `ready` event. The value can also be set
      * using `desktopName` in `package.json`.
@@ -1898,10 +1920,10 @@ declare namespace Electron {
      */
     whenReady(): Promise<void>;
     /**
-     * A `boolean` property that's `true` if Chrome's accessibility support is enabled,
-     * `false` otherwise. This property will be `true` if the use of assistive
+     * A `boolean` property that's `true` if Chromium's accessibility support is
+     * enabled, `false` otherwise. This property will be `true` if the use of assistive
      * technologies, such as screen readers, has been detected. Setting this property
-     * to `true` manually enables Chrome's accessibility support, allowing developers
+     * to `true` manually enables Chromium's accessibility support, allowing developers
      * to expose accessibility switch to users in application settings.
      *
      * See Chromium's accessibility docs for more details. Disabled by default.
@@ -9749,6 +9771,8 @@ declare namespace Electron {
      * or just displayed.
      *
      * This property can be dynamically changed.
+     *
+     * @platform linux,win32
      */
     registerAccelerator: boolean;
     /**
@@ -10294,8 +10318,8 @@ declare namespace Electron {
      * see Response.
      *
      * Sends a request, similarly to how `fetch()` works in the renderer, using
-     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
-     * HTTP stack.
+     * Chromium's network stack. This differs from Node's `fetch()`, which uses
+     * Node.js's HTTP stack.
      *
      * Example:
      *
@@ -11299,6 +11323,95 @@ declare namespace Electron {
      * an object containing a variable number of platform-specific printer information.
      */
     options: Options;
+  }
+
+  interface PrintToPDFMargins {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-margins
+
+    /**
+     * Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    bottom?: number;
+    /**
+     * Left margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    left?: number;
+    /**
+     * Right margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    right?: number;
+    /**
+     * Top margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    top?: number;
+  }
+
+  interface PrintToPDFOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-options
+
+    /**
+     * Whether to display header and footer. Defaults to false.
+     */
+    displayHeaderFooter?: boolean;
+    /**
+     * HTML template for the print footer. Should use the same format as the
+     * `headerTemplate`.
+     */
+    footerTemplate?: string;
+    /**
+     * Whether or not to generate a PDF document outline from content headers. Defaults
+     * to false.
+     *
+     * @experimental
+     */
+    generateDocumentOutline?: boolean;
+    /**
+     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
+     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
+     * WCAG standards.
+     *
+     * @experimental
+     */
+    generateTaggedPDF?: boolean;
+    /**
+     * HTML template for the print header. Should be valid HTML markup with following
+     * classes used to inject printing values into them: `date` (formatted print date),
+     * `title` (document title), `url` (document location), `pageNumber` (current page
+     * number) and `totalPages` (total pages in the document). For example, `<span
+     * class=title></span>` would generate span containing the title.
+     */
+    headerTemplate?: string;
+    /**
+     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
+     */
+    landscape?: boolean;
+    margins?: PrintToPDFMargins;
+    /**
+     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
+     * means print all pages.
+     */
+    pageRanges?: string;
+    /**
+     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
+     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
+     * `height` and `width` in inches. Defaults to `Letter`.
+     */
+    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
+    /**
+     * Whether or not to prefer page size as defined by css. Defaults to false, in
+     * which case the content will be scaled to fit the paper size.
+     */
+    preferCSSPageSize?: boolean;
+    /**
+     * Whether to print background graphics. Defaults to false.
+     */
+    printBackground?: boolean;
+    /**
+     * Scale of the webpage rendering. Defaults to 1.
+     */
+    scale?: number;
   }
 
   interface ProcessMemoryInfo {
@@ -13068,8 +13181,8 @@ declare namespace Electron {
      * see Response.
      *
      * Sends a request, similarly to how `fetch()` works in the renderer, using
-     * Chrome's network stack. This differs from Node's `fetch()`, which uses Node.js's
-     * HTTP stack.
+     * Chromium's network stack. This differs from Node's `fetch()`, which uses
+     * Node.js's HTTP stack.
      *
      * Example:
      *
@@ -17223,23 +17336,23 @@ declare namespace Electron {
      * The usage is the same with the `login` event of `app`.
      */
     on(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     off(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  authenticationResponseDetails: LoginAuthenticationResponseDetails,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
@@ -19047,6 +19160,22 @@ declare namespace Electron {
      */
     postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
     /**
+     * Resolves with the generated PDF data.
+     *
+     * Prints the frame's web page as PDF.
+     *
+     * Unlike `webContents.printToPDF`, this method prints only the contents of the
+     * frame it is called on. This can be used to print an individual `<iframe>` from
+     * the main process.
+     *
+     * The `landscape` will be ignored if `@page` CSS at-rule is used in the web page.
+     *
+     * An example of printing an iframe to PDF:
+     *
+     * See Page.printToPdf for more information.
+     */
+    printToPDF(options: PrintToPDFOptions): Promise<Buffer>;
+    /**
      * Whether the reload was initiated successfully. Only results in `false` when the
      * frame has no history.
      */
@@ -20379,6 +20508,13 @@ declare namespace Electron {
      * another value by including an `=`, followed by the value. Special values `yes`
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
+     *
+     * Security-critical preferences cannot be used to make the guest less secure than
+     * its embedder. When the embedder has any of `contextIsolation`, `javascript`,
+     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox`,
+     * `nodeIntegrationInSubFrames` or `enableWebSQL` set to its more secure value, the
+     * guest inherits that value and the corresponding `webpreferences` entry is
+     * ignored.
      */
     webpreferences: string;
   }
@@ -20563,6 +20699,18 @@ declare namespace Electron {
   interface AuthenticationResponseDetails {
     url: string;
     pid: number;
+    /**
+     * Indicates whether the request is for a navigation.
+     */
+    isRequestForNavigation: boolean;
+    /**
+     * Indicates whether this is the first authentication attempt.
+     */
+    firstAuthAttempt: boolean;
+    /**
+     * The headers returned in the response.
+     */
+    responseHeaders?: Record<string, (string) | (string[])>;
   }
 
   interface AuthInfo {
@@ -22118,10 +22266,6 @@ declare namespace Electron {
     baseURLForDataURL?: string;
   }
 
-  interface LoginAuthenticationResponseDetails {
-    url: string;
-  }
-
   interface LoginItemSettings {
     /**
      * `true` if the app is set to open at login.
@@ -23197,70 +23341,6 @@ declare namespace Electron {
     numSockets?: number;
   }
 
-  interface PrintToPDFOptions {
-    /**
-     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
-     */
-    landscape?: boolean;
-    /**
-     * Whether to display header and footer. Defaults to false.
-     */
-    displayHeaderFooter?: boolean;
-    /**
-     * Whether to print background graphics. Defaults to false.
-     */
-    printBackground?: boolean;
-    /**
-     * Scale of the webpage rendering. Defaults to 1.
-     */
-    scale?: number;
-    /**
-     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
-     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
-     * `height` and `width` in inches. Defaults to `Letter`.
-     */
-    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
-    margins?: Margins;
-    /**
-     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
-     * means print all pages.
-     */
-    pageRanges?: string;
-    /**
-     * HTML template for the print header. Should be valid HTML markup with following
-     * classes used to inject printing values into them: `date` (formatted print date),
-     * `title` (document title), `url` (document location), `pageNumber` (current page
-     * number) and `totalPages` (total pages in the document). For example, `<span
-     * class=title></span>` would generate span containing the title.
-     */
-    headerTemplate?: string;
-    /**
-     * HTML template for the print footer. Should use the same format as the
-     * `headerTemplate`.
-     */
-    footerTemplate?: string;
-    /**
-     * Whether or not to prefer page size as defined by css. Defaults to false, in
-     * which case the content will be scaled to fit the paper size.
-     */
-    preferCSSPageSize?: boolean;
-    /**
-     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
-     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
-     * WCAG standards.
-     *
-     * @experimental
-     */
-    generateTaggedPDF?: boolean;
-    /**
-     * Whether or not to generate a PDF document outline from content headers. Defaults
-     * to false.
-     *
-     * @experimental
-     */
-    generateDocumentOutline?: boolean;
-  }
-
   interface Privileges {
     /**
      * Default false.
@@ -23802,6 +23882,15 @@ declare namespace Electron {
      * The total amount of memory not being used by applications or disk cache.
      */
     free: number;
+    /**
+     * The kernel's estimate of the amount of memory available for allocation without
+     * swapping, from `/proc/meminfo` `MemAvailable`. Use this as the memory pressure
+     * signal on Linux; `free` there is `MemFree`, which excludes page cache and other
+     * reclaimable memory.
+     *
+     * @platform linux
+     */
+    available: number;
     /**
      * The amount of memory that currently has been paged out to storage. Includes
      * memory for file caches, network buffers, and other system services.
@@ -25155,7 +25244,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25195,7 +25283,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25342,6 +25429,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -25570,7 +25659,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25610,7 +25698,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25757,6 +25844,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -25910,7 +25999,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -25950,7 +26038,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26097,6 +26184,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26249,7 +26338,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -26289,7 +26377,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26436,6 +26523,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26685,7 +26774,6 @@ declare namespace Electron {
     type LoadExtensionOptions = Electron.LoadExtensionOptions;
     type LoadFileOptions = Electron.LoadFileOptions;
     type LoadURLOptions = Electron.LoadURLOptions;
-    type LoginAuthenticationResponseDetails = Electron.LoginAuthenticationResponseDetails;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
@@ -26725,7 +26813,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26872,6 +26959,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -27085,6 +27174,10 @@ declare namespace NodeJS {
      * to the system.
      * * `free` Integer - The total amount of memory not being used by applications or
      * disk cache.
+     * * `available` Integer _Linux_ - The kernel's estimate of the amount of memory
+     * available for allocation without swapping, from `/proc/meminfo` `MemAvailable`.
+     * Use this as the memory pressure signal on Linux; `free` there is `MemFree`,
+     * which excludes page cache and other reclaimable memory.
      * * `fileBacked` Integer _macOS_ - The amount of memory that currently has been
      * paged out to storage. Includes memory for file caches, network buffers, and
      * other system services.
