@@ -1,4 +1,4 @@
-// Type definitions for Electron 42.8.0+wvcus
+// Type definitions for Electron 42.11.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1560,6 +1560,11 @@ declare namespace Electron {
      * events will be emitted for that. However when users start your app in command
      * line, the system's single instance mechanism will be bypassed, and you have to
      * use this method to ensure single instance.
+     *
+     * > [!NOTE] On macOS and Linux, the second instance's command line arguments and
+     * `additionalData` are sent to the primary instance in a single message that is
+     * limited to 32 MB. Larger messages are dropped: this method still returns
+     * `false`, but the primary instance does not emit `second-instance`.
      *
      * An example of activating the window of primary instance when a second instance
      * starts:
@@ -9736,6 +9741,8 @@ declare namespace Electron {
      * or just displayed.
      *
      * This property can be dynamically changed.
+     *
+     * @platform linux,win32
      */
     registerAccelerator: boolean;
     /**
@@ -11279,6 +11286,95 @@ declare namespace Electron {
      * an object containing a variable number of platform-specific printer information.
      */
     options: Options;
+  }
+
+  interface PrintToPDFMargins {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-margins
+
+    /**
+     * Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    bottom?: number;
+    /**
+     * Left margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    left?: number;
+    /**
+     * Right margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    right?: number;
+    /**
+     * Top margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    top?: number;
+  }
+
+  interface PrintToPDFOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-options
+
+    /**
+     * Whether to display header and footer. Defaults to false.
+     */
+    displayHeaderFooter?: boolean;
+    /**
+     * HTML template for the print footer. Should use the same format as the
+     * `headerTemplate`.
+     */
+    footerTemplate?: string;
+    /**
+     * Whether or not to generate a PDF document outline from content headers. Defaults
+     * to false.
+     *
+     * @experimental
+     */
+    generateDocumentOutline?: boolean;
+    /**
+     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
+     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
+     * WCAG standards.
+     *
+     * @experimental
+     */
+    generateTaggedPDF?: boolean;
+    /**
+     * HTML template for the print header. Should be valid HTML markup with following
+     * classes used to inject printing values into them: `date` (formatted print date),
+     * `title` (document title), `url` (document location), `pageNumber` (current page
+     * number) and `totalPages` (total pages in the document). For example, `<span
+     * class=title></span>` would generate span containing the title.
+     */
+    headerTemplate?: string;
+    /**
+     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
+     */
+    landscape?: boolean;
+    margins?: PrintToPDFMargins;
+    /**
+     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
+     * means print all pages.
+     */
+    pageRanges?: string;
+    /**
+     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
+     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
+     * `height` and `width` in inches. Defaults to `Letter`.
+     */
+    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
+    /**
+     * Whether or not to prefer page size as defined by css. Defaults to false, in
+     * which case the content will be scaled to fit the paper size.
+     */
+    preferCSSPageSize?: boolean;
+    /**
+     * Whether to print background graphics. Defaults to false.
+     */
+    printBackground?: boolean;
+    /**
+     * Scale of the webpage rendering. Defaults to 1.
+     */
+    scale?: number;
   }
 
   interface ProcessMemoryInfo {
@@ -18982,6 +19078,22 @@ declare namespace Electron {
      */
     postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
     /**
+     * Resolves with the generated PDF data.
+     *
+     * Prints the frame's web page as PDF.
+     *
+     * Unlike `webContents.printToPDF`, this method prints only the contents of the
+     * frame it is called on. This can be used to print an individual `<iframe>` from
+     * the main process.
+     *
+     * The `landscape` will be ignored if `@page` CSS at-rule is used in the web page.
+     *
+     * An example of printing an iframe to PDF:
+     *
+     * See Page.printToPdf for more information.
+     */
+    printToPDF(options: PrintToPDFOptions): Promise<Buffer>;
+    /**
      * Whether the reload was initiated successfully. Only results in `false` when the
      * frame has no history.
      */
@@ -20309,6 +20421,13 @@ declare namespace Electron {
      * another value by including an `=`, followed by the value. Special values `yes`
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
+     *
+     * Security-critical preferences cannot be used to make the guest less secure than
+     * its embedder. When the embedder has any of `contextIsolation`, `javascript`,
+     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox`,
+     * `nodeIntegrationInSubFrames` or `enableWebSQL` set to its more secure value, the
+     * guest inherits that value and the corresponding `webpreferences` entry is
+     * ignored.
      */
     webpreferences: string;
   }
@@ -23102,70 +23221,6 @@ declare namespace Electron {
     numSockets?: number;
   }
 
-  interface PrintToPDFOptions {
-    /**
-     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
-     */
-    landscape?: boolean;
-    /**
-     * Whether to display header and footer. Defaults to false.
-     */
-    displayHeaderFooter?: boolean;
-    /**
-     * Whether to print background graphics. Defaults to false.
-     */
-    printBackground?: boolean;
-    /**
-     * Scale of the webpage rendering. Defaults to 1.
-     */
-    scale?: number;
-    /**
-     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
-     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
-     * `height` and `width` in inches. Defaults to `Letter`.
-     */
-    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
-    margins?: Margins;
-    /**
-     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
-     * means print all pages.
-     */
-    pageRanges?: string;
-    /**
-     * HTML template for the print header. Should be valid HTML markup with following
-     * classes used to inject printing values into them: `date` (formatted print date),
-     * `title` (document title), `url` (document location), `pageNumber` (current page
-     * number) and `totalPages` (total pages in the document). For example, `<span
-     * class=title></span>` would generate span containing the title.
-     */
-    headerTemplate?: string;
-    /**
-     * HTML template for the print footer. Should use the same format as the
-     * `headerTemplate`.
-     */
-    footerTemplate?: string;
-    /**
-     * Whether or not to prefer page size as defined by css. Defaults to false, in
-     * which case the content will be scaled to fit the paper size.
-     */
-    preferCSSPageSize?: boolean;
-    /**
-     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
-     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
-     * WCAG standards.
-     *
-     * @experimental
-     */
-    generateTaggedPDF?: boolean;
-    /**
-     * Whether or not to generate a PDF document outline from content headers. Defaults
-     * to false.
-     *
-     * @experimental
-     */
-    generateDocumentOutline?: boolean;
-  }
-
   interface Privileges {
     /**
      * Default false.
@@ -25097,7 +25152,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25244,6 +25298,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -25510,7 +25566,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25657,6 +25712,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -25848,7 +25905,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25995,6 +26051,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26185,7 +26243,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26332,6 +26389,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26619,7 +26678,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26766,6 +26824,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
