@@ -1,4 +1,4 @@
-// Type definitions for Electron 44.1.0+wvcus
+// Type definitions for Electron 45.0.0-alpha.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1060,7 +1060,71 @@ declare namespace Electron {
      * generates and persists a per-`session` metadata secret so that credentials
      * created in one partition are not visible to another.
      *
-     * With the matching entitlement in your app's `entitlements.plist`:
+     * When `platformPasskeys` is `true`, passkey operations use Apple's
+     * `ASAuthorizationController` which delegates to the system's configured
+     * Credential Provider Extensions. This enables the same passkey experience as
+     * Safari — credentials are available across all devices signed into the same
+     * account. Unlike Touch ID credentials, platform passkeys are stored by the
+     * credential provider and scoped to the relying party, not to Electron: they are
+     * shared across all `session` partitions and with any other app or browser
+     * associated with the same domain. Platform passkeys cannot serve cross-origin
+     * (iframe) requests; those requests are left to the other available authenticators
+     * (Touch ID supports iframes) and a warning is logged to the DevTools console. The
+     * `prf` and `largeBlob` WebAuthn extensions are not currently supported by this
+     * authenticator — `prf` inputs are ignored, and a `create()` call with `largeBlob:
+     * { support: 'required' }` fails.
+     *
+     * With the matching entitlements in your app's `entitlements.plist`:
+     *
+     * For platform passkeys, your app needs the Associated Domains entitlement plus an
+     * application identifier, both in the same `entitlements.plist`:
+     *
+     * Listing these entitlements is **not** sufficient on its own — unlike most
+     * entitlements, `com.apple.developer.associated-domains` is _provisioning-profile
+     * backed_. For platform passkeys to work, **all** of the following must hold:
+     *
+     * * In the Apple Developer portal, your App ID (`com.example.app`) has the
+     * **Associated Domains** capability enabled, and you have created a provisioning
+     * profile for that App ID.
+     * * That provisioning profile is **embedded in the built app bundle** at
+     * `Contents/embedded.provisionprofile`. This is what authorizes the
+     * associated-domains entitlement at runtime; without an embedded profile macOS
+     * silently ignores the `webcredentials` association and the request fails. (Xcode
+     * and `@electron/osx-sign` embed the profile for you; if you sign manually, copy
+     * it into the bundle before signing.)
+     * * The app is signed (ad-hoc / unsigned builds do not qualify). Both distribution
+     * and development signing work — for development builds, use the developer-mode
+     * path described below.
+     * * `com.apple.application-identifier` matches the profile's App ID. Without it,
+     * `ASAuthorizationController` fails with "The calling process does not have an
+     * application identifier" — this is `ASAuthorizationError` code 1004.
+     * * The relying party's domain (`example.com` above) serves a valid
+     * `apple-app-site-association` file over HTTPS at
+     * `/.well-known/apple-app-site-association` containing a `webcredentials` entry
+     * whose `apps` array lists this app's `<TEAM_ID>.<BUNDLE_ID>`.
+     * * The relying party ID of each request matches that associated domain.
+     *
+     * If these aren't satisfied, `ASAuthorizationController` fails before it can
+     * present the passkey sheet. The request surfaces to the page as a bare
+     * `NotAllowedError` with no further detail (Electron logs an explanatory message
+     * to the DevTools console on this path). Because the association is domain-based,
+     * platform passkeys always require a real associated domain and its AASA file —
+     * there is no `localhost` rpId escape hatch as there is in browsers.
+     *
+     * To test against your domain with a development-signed build (before shipping a
+     * distribution profile), append `?mode=developer` to the entitlement value and
+     * enable developer mode on the machine with `swcutil developer-mode -e true`. This
+     * makes macOS fetch the AASA directly from the domain — bypassing Apple's CDN
+     * cache — and honor the association for a development-signed app. You still need
+     * the embedded development provisioning profile described above:
+     *
+     * > [!NOTE] Because the request is fulfilled by the system credential provider
+     * (not a browser), the `clientDataJSON` returned to the page reports `origin:
+     * "https://<rpId>"` — the associated domain — rather than the page's own origin.
+     * Relying-party servers that enforce a strict `expectedOrigin` allowlist must
+     * include `https://<rpId>` for verification to succeed. This also means the
+     * relying party cannot distinguish which subdomain of the associated domain
+     * initiated the ceremony.
      *
      * > [!NOTE] Touch ID WebAuthn credentials are device-bound and are not synced via
      * iCloud Keychain. They are only available on Macs with a Secure Enclave (Apple
@@ -9558,12 +9622,184 @@ declare namespace Electron {
     type: ('rawKeyDown' | 'keyDown' | 'keyUp' | 'char');
   }
 
+  interface LanguageModelAppendOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-append-options
+
+    signal: AbortSignal;
+  }
+
+  interface LanguageModelCloneOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-clone-options
+
+    signal: AbortSignal;
+  }
+
+  interface LanguageModelCreateCoreOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-create-core-options
+
+    expectedInputs?: LanguageModelExpected[];
+    expectedOutputs?: LanguageModelExpected[];
+  }
+
+  interface LanguageModelCreateOptions extends LanguageModelCreateCoreOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-create-options
+
+    initialPrompts?: LanguageModelMessage[];
+    signal: AbortSignal;
+  }
+
+  interface LanguageModelExpected {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-expected
+
+    languages?: string[];
+    /**
+     * Can be one of the following values:
+     */
+    type: ('text' | 'image' | 'audio');
+  }
+
+  interface LanguageModelMessage {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-message
+
+    content: LanguageModelMessageContent[];
+    prefix?: boolean;
+    /**
+     * Can be one of the following values:
+     */
+    role: ('system' | 'user' | 'assistant');
+  }
+
+  interface LanguageModelMessageContent {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-message-content
+
+    /**
+     * Can be one of the following values:
+     */
+    type: ('text' | 'image' | 'audio');
+    value: (ArrayBuffer) | (string);
+  }
+
+  interface LanguageModelPromptOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/language-model-prompt-options
+
+    /**
+     * a JSON schema object or a `RegExp` used to constrain the response to match the
+     * specified restraints.
+     */
+    responseConstraint?: (ResponseConstraint) | (RegExp);
+    signal: AbortSignal;
+  }
+
+  class LanguageModelUtility {
+
+    // Docs: https://electronjs.org/docs/api/language-model-utility
+
+    /**
+     * LanguageModelUtility
+     */
+    constructor(initialState: InitialState);
+    /**
+     * Determines the availability of the language model and returns one of the
+     * following strings:
+     *
+     * * `available`
+     * * `downloadable`
+     * * `downloading`
+     * * `unavailable`
+     *
+     * @experimental
+     */
+    static availability(options?: LanguageModelCreateCoreOptions): Promise<string>;
+    /**
+     * Creates a new `LanguageModelUtility` with the provided `options`.
+     *
+     * @experimental
+     */
+    static create(options: LanguageModelCreateOptions): Promise<Electron.LanguageModelUtility>;
+    /**
+     * Append a message without prompting for a response.
+     *
+     * @experimental
+     */
+    append(input: LanguageModelMessage[], options: LanguageModelAppendOptions): Promise<undefined>;
+    /**
+     * Clones the `LanguageModelUtility` such that the context and initial prompt
+     * should be preserved.
+     *
+     * @experimental
+     */
+    clone(options: LanguageModelCloneOptions): Promise<Electron.LanguageModelUtility>;
+    /**
+     * Destroys the model, and any ongoing executions are aborted.
+     *
+     * @experimental
+     */
+    destroy(): void;
+    /**
+     * Measure how many tokens the input would use.
+     *
+     * @experimental
+     */
+    measureContextUsage(input: LanguageModelMessage[], options: LanguageModelPromptOptions): Promise<number>;
+    /**
+     * Prompt the model for a response.
+     *
+     * @experimental
+     */
+    prompt(input: LanguageModelMessage[], options: LanguageModelPromptOptions): (Promise<string>) | (Promise<import('stream/web').ReadableStream<string>>);
+    /**
+     * A `number` representing how many tokens are currently in the context window.
+     *
+     * @experimental
+     */
+    contextUsage: number;
+    /**
+     * A `number` representing the size of the context window, in tokens.
+     *
+     * @experimental
+     */
+    contextWindow: number;
+  }
+
+  interface LocalAIHandler {
+
+    // Docs: https://electronjs.org/docs/api/local-ai-handler
+
+    /**
+     * Sets the handler for new Prompt API binding requests from the renderer process.
+     * This happens once per pair of `webContentsId` and `securityOrigin`. Returning
+     * `null` from the handler will reject the creation of a new Prompt API session in
+     * the renderer. If you want to invalidate existing Prompt API sessions, clear the
+     * local AI handler for the session using `ses.registerLocalAIHandler(null)`.
+     *
+     * > [!NOTE] If a renderer calls the Prompt API before `setPromptAPIHandler()` has
+     * been called, the request is queued. Once the handler is set, all queued requests
+     * are flushed. If too many requests are queued, the oldest pending request is
+     * dropped and pending promises in the renderer will be rejected. To avoid this, be
+     * sure to call `setPromptAPIHandler()` as early as possible.
+     *
+     * @experimental
+     */
+    setPromptAPIHandler(promptAPIHandler: (details: PromptAPIHandlerDetails) => (typeof LanguageModelUtility) | (null)): void;
+  }
+
   interface MediaAccessPermissionRequest extends PermissionRequest {
 
     // Docs: https://electronjs.org/docs/api/structures/media-access-permission-request
 
     /**
      * The types of media access being requested - elements can be `video` or `audio`.
+     * For a `media` permission request these are the camera and microphone
+     * respectively; for a `display-capture` permission request they are the screen,
+     * window or tab video and its audio.
      */
     mediaTypes?: Array<'video' | 'audio'>;
     /**
@@ -12840,11 +13076,18 @@ declare namespace Electron {
      * discoverable WebAuthn credentials and the user must choose one. `callback`
      * should be called with the `credentialId` of the selected account; passing no
      * arguments — or a `credentialId` that does not match one of the provided accounts
-     * — will cancel the request and the page will receive a `NotAllowedError`. If no
-     * listener is registered for this event, the request is cancelled with the same
-     * error. The credential request remains pending until the listener invokes the
-     * callback, so always invoke it exactly once — typically from a `try { … } finally
-     * { callback(…) }` block.
+     * — will cancel the request and the page will receive a `NotAllowedError`. The
+     * credential request remains pending until the listener invokes the callback, so
+     * always invoke it exactly once — typically from a `try { … } finally {
+     * callback(…) }` block.
+     *
+     * > [!NOTE] If no listener is registered for this event,
+     * `navigator.credentials.get()` calls that resolve discoverable Touch ID
+     * credentials are cancelled with a `NotAllowedError` — even when only a single
+     * credential matches. Register a listener if your app supports
+     * discoverable-credential (passkey) sign-in. Assertions fulfilled by
+     * `platformPasskeys` select the account in the system sheet and do not use this
+     * event.
      *
      * On macOS, the Touch ID platform authenticator surfaces accounts via this event
      * once it has been configured with `app.configureWebAuthn`. The event may also
@@ -12866,6 +13109,43 @@ declare namespace Electron {
     removeListener(event: 'select-webauthn-account', listener: (event: Event,
                                                     details: SelectWebauthnAccountDetails,
                                                     callback: (credentialId?: (string) | (null)) => void) => void): this;
+    /**
+     * Emitted when both `touchID` and `platformPasskeys` are configured via
+     * `app.configureWebAuthn` and a WebAuthn request needs to choose which platform
+     * authenticator to use. `callback` should be called with one of the names from
+     * `event.authenticators`; passing no arguments or a name that does not match will
+     * cancel the request and the page will receive a `NotAllowedError`. The request
+     * remains pending until the listener invokes the callback, so always invoke it
+     * exactly once — typically from a `try { … } finally { callback(…) }` block. If no
+     * listener is registered, `platformPasskeys` is used by default; a listener that
+     * throws before invoking the callback is treated as unhandled and the default
+     * applies. If only one authenticator is available for the request, this event is
+     * not emitted and that authenticator is used automatically.
+     *
+     * @platform darwin
+     */
+    on(event: 'select-webauthn-authenticator', listener: (event: Event<SessionSelectWebauthnAuthenticatorEventParams>,
+                                                          callback: (authenticatorName?: (string) | (null)) => void) => void): this;
+    /**
+     * @platform darwin
+     */
+    off(event: 'select-webauthn-authenticator', listener: (event: Event<SessionSelectWebauthnAuthenticatorEventParams>,
+                                                          callback: (authenticatorName?: (string) | (null)) => void) => void): this;
+    /**
+     * @platform darwin
+     */
+    once(event: 'select-webauthn-authenticator', listener: (event: Event<SessionSelectWebauthnAuthenticatorEventParams>,
+                                                          callback: (authenticatorName?: (string) | (null)) => void) => void): this;
+    /**
+     * @platform darwin
+     */
+    addListener(event: 'select-webauthn-authenticator', listener: (event: Event<SessionSelectWebauthnAuthenticatorEventParams>,
+                                                          callback: (authenticatorName?: (string) | (null)) => void) => void): this;
+    /**
+     * @platform darwin
+     */
+    removeListener(event: 'select-webauthn-authenticator', listener: (event: Event<SessionSelectWebauthnAuthenticatorEventParams>,
+                                                          callback: (authenticatorName?: (string) | (null)) => void) => void): this;
     /**
      * Emitted after `navigator.serial.requestPort` has been called and
      * `select-serial-port` has fired if a new serial port becomes available before the
@@ -13392,6 +13672,14 @@ declare namespace Electron {
      */
     preconnect(options: PreconnectOptions): void;
     /**
+     * Registers a local AI handler `UtilityProcess`. To clear the handler, call
+     * `registerLocalAIHandler(null)`, which will disconnect any existing Prompt API
+     * sessions and destroy any `LanguageModelUtility` instances.
+     *
+     * @experimental
+     */
+    registerLocalAIHandler(handler: (UtilityProcess) | (null)): void;
+    /**
      * Registers preload script that will be executed in its associated context type in
      * this session. For `frame` contexts, this will run prior to any preload defined
      * in the web preferences of a WebContents.
@@ -13519,6 +13807,14 @@ declare namespace Electron {
      * `setPermissionRequestHandler(null)`.  Please note that you must also implement
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
+     *
+     * Both `media` and `display-capture` requests carry a MediaAccessPermissionRequest
+     * as `details`. A `media` request is for camera and/or microphone devices, while a
+     * `display-capture` request is for the screen, a window or a tab (whether made
+     * through `getDisplayMedia` or through `getUserMedia` with `chromeMediaSource`
+     * constraints). Applications that allow camera and microphone access but want to
+     * control screen sharing separately should handle the two permissions
+     * individually:
      */
     setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'top-level-storage-access' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
     /**
@@ -18981,10 +19277,39 @@ declare namespace Electron {
     readonly webContents: WebContents;
   }
 
-  interface WebFrame {
+  interface WebFrame extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/web-frame
 
+    /**
+     * Emitted when a new isolated world is created for `webFrame`. This event does not
+     * fire for the main world (ID `0`) or Electron's preload world (ID `999`).
+     */
+    on(event: 'isolated-world-created', listener: (
+                                                   /**
+                                                    * The ID of the isolated world that was just created.
+                                                    */
+                                                   worldId: number) => void): this;
+    off(event: 'isolated-world-created', listener: (
+                                                   /**
+                                                    * The ID of the isolated world that was just created.
+                                                    */
+                                                   worldId: number) => void): this;
+    once(event: 'isolated-world-created', listener: (
+                                                   /**
+                                                    * The ID of the isolated world that was just created.
+                                                    */
+                                                   worldId: number) => void): this;
+    addListener(event: 'isolated-world-created', listener: (
+                                                   /**
+                                                    * The ID of the isolated world that was just created.
+                                                    */
+                                                   worldId: number) => void): this;
+    removeListener(event: 'isolated-world-created', listener: (
+                                                   /**
+                                                    * The ID of the isolated world that was just created.
+                                                    */
+                                                   worldId: number) => void): this;
     /**
      * Attempts to free memory that is no longer being used (like images from a
      * previous navigation).
@@ -19041,6 +19366,15 @@ declare namespace Electron {
      * current renderer process.
      */
     getFrameForSelector(selector: string): (WebFrame) | (null);
+    /**
+     * The IDs of isolated worlds that currently exist for this frame. This does not
+     * include the main world (ID `0`) or Electron's preload world (ID `999`).
+     *
+     * This can be used to discover existing isolated worlds before calling APIs such
+     * as `webFrame.executeJavaScriptInIsolatedWorld(...)` or
+     * `contextBridge.exposeInIsolatedWorld(...)`.
+     */
+    getIsolatedWorlds(): number[];
     /**
      * * `images` MemoryUsageDetails
      * * `scripts` MemoryUsageDetails
@@ -19499,6 +19833,10 @@ declare namespace Electron {
      * Default is `false`.
      */
     disableHtmlFullscreenWindowResize?: boolean;
+    /**
+     * Whether to disable the wake locks of the WebContents. Default is `false`.
+     */
+    disableWakeLocks?: boolean;
     /**
      * A list of feature strings separated by `,`, like `CSSVariables,KeyboardEventKey`
      * to enable. The full list of supported feature strings can be found in the
@@ -21264,6 +21602,14 @@ declare namespace Electron {
      * Authentication requests.
      */
     touchID?: TouchId;
+    /**
+     * Enables passkeys via Apple's `ASAuthorizationController`. When enabled, passkey
+     * operations present the system credential provider sheet (iCloud Keychain,
+     * 1Password, Bitwarden, etc.) and credentials sync across the user's devices.
+     * Defaults to `false`. Passing `null`/`undefined` (or omitting the key) leaves the
+     * previous setting unchanged.
+     */
+    platformPasskeys?: boolean;
   }
 
   interface ConsoleMessageEvent extends DOMEvent {
@@ -22228,6 +22574,11 @@ declare namespace Electron {
      * Name for isolated world. Useful in DevTools.
      */
     name?: string;
+  }
+
+  interface InitialState {
+    contextUsage: number;
+    contextWindow: number;
   }
 
   interface Input {
@@ -23481,6 +23832,25 @@ declare namespace Electron {
     mode: ('none' | 'normal' | 'indeterminate' | 'error' | 'paused');
   }
 
+  interface PromptAPIHandlerDetails {
+    /**
+     * The unique id of the WebContents calling the Prompt API.
+     */
+    webContentsId: number;
+    /**
+     * Origin of the page calling the Prompt API.
+     */
+    securityOrigin: string;
+    /**
+     * The frame token of the frame calling the Prompt API.
+     */
+    frameToken: string;
+    /**
+     * The process id of the renderer process hosting the frame calling the Prompt API.
+     */
+    renderProcessId: number;
+  }
+
   interface Provider {
     spellCheck: (words: string[], callback: (misspeltWords: string[]) => void) => void;
   }
@@ -23609,6 +23979,9 @@ declare namespace Electron {
      * the Bluetooth device.
      */
     pin?: (string) | (null);
+  }
+
+  interface ResponseConstraint {
   }
 
   interface RestoreOptions {
@@ -23820,6 +24193,23 @@ declare namespace Electron {
      * `stopped`.
      */
     runningStatus: ('starting' | 'running' | 'stopping' | 'stopped');
+  }
+
+  interface SessionSelectWebauthnAuthenticatorEventParams {
+    /**
+     * The relying party identifier from the WebAuthn request.
+     */
+    relyingPartyId: string;
+    /**
+     * The available authenticator names. Possible values are `'touchID'` and
+     * `'platformPasskeys'`.
+     */
+    authenticators: string[];
+    /**
+     * The frame initiating this event. May be `null` if accessed after the frame has
+     * either navigated or been destroyed.
+     */
+    frame: (WebFrameMain) | (null);
   }
 
   interface Settings {
@@ -25308,6 +25698,7 @@ declare namespace Electron {
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
+    type InitialState = Electron.InitialState;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
     type IpcMessageEvent = Electron.IpcMessageEvent;
@@ -25358,6 +25749,7 @@ declare namespace Electron {
     type PreconnectOptions = Electron.PreconnectOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
+    type PromptAPIHandlerDetails = Electron.PromptAPIHandlerDetails;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
@@ -25369,6 +25761,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type ResponseConstraint = Electron.ResponseConstraint;
     type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
@@ -25380,6 +25773,7 @@ declare namespace Electron {
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
+    type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
@@ -25484,6 +25878,14 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type LanguageModelAppendOptions = Electron.LanguageModelAppendOptions;
+    type LanguageModelCloneOptions = Electron.LanguageModelCloneOptions;
+    type LanguageModelCreateCoreOptions = Electron.LanguageModelCreateCoreOptions;
+    type LanguageModelCreateOptions = Electron.LanguageModelCreateOptions;
+    type LanguageModelExpected = Electron.LanguageModelExpected;
+    type LanguageModelMessage = Electron.LanguageModelMessage;
+    type LanguageModelMessageContent = Electron.LanguageModelMessageContent;
+    type LanguageModelPromptOptions = Electron.LanguageModelPromptOptions;
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
@@ -25727,6 +26129,7 @@ declare namespace Electron {
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
+    type InitialState = Electron.InitialState;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
     type IpcMessageEvent = Electron.IpcMessageEvent;
@@ -25777,6 +26180,7 @@ declare namespace Electron {
     type PreconnectOptions = Electron.PreconnectOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
+    type PromptAPIHandlerDetails = Electron.PromptAPIHandlerDetails;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
@@ -25788,6 +26192,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type ResponseConstraint = Electron.ResponseConstraint;
     type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
@@ -25799,6 +26204,7 @@ declare namespace Electron {
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
+    type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
@@ -25903,6 +26309,14 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type LanguageModelAppendOptions = Electron.LanguageModelAppendOptions;
+    type LanguageModelCloneOptions = Electron.LanguageModelCloneOptions;
+    type LanguageModelCreateCoreOptions = Electron.LanguageModelCreateCoreOptions;
+    type LanguageModelCreateOptions = Electron.LanguageModelCreateOptions;
+    type LanguageModelExpected = Electron.LanguageModelExpected;
+    type LanguageModelMessage = Electron.LanguageModelMessage;
+    type LanguageModelMessageContent = Electron.LanguageModelMessageContent;
+    type LanguageModelPromptOptions = Electron.LanguageModelPromptOptions;
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
@@ -26068,6 +26482,7 @@ declare namespace Electron {
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
+    type InitialState = Electron.InitialState;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
     type IpcMessageEvent = Electron.IpcMessageEvent;
@@ -26118,6 +26533,7 @@ declare namespace Electron {
     type PreconnectOptions = Electron.PreconnectOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
+    type PromptAPIHandlerDetails = Electron.PromptAPIHandlerDetails;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
@@ -26129,6 +26545,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type ResponseConstraint = Electron.ResponseConstraint;
     type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
@@ -26140,6 +26557,7 @@ declare namespace Electron {
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
+    type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
@@ -26244,6 +26662,14 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type LanguageModelAppendOptions = Electron.LanguageModelAppendOptions;
+    type LanguageModelCloneOptions = Electron.LanguageModelCloneOptions;
+    type LanguageModelCreateCoreOptions = Electron.LanguageModelCreateCoreOptions;
+    type LanguageModelCreateOptions = Electron.LanguageModelCreateOptions;
+    type LanguageModelExpected = Electron.LanguageModelExpected;
+    type LanguageModelMessage = Electron.LanguageModelMessage;
+    type LanguageModelMessageContent = Electron.LanguageModelMessageContent;
+    type LanguageModelPromptOptions = Electron.LanguageModelPromptOptions;
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
@@ -26320,6 +26746,9 @@ declare namespace Electron {
     type Event<Params extends object = {}> = Electron.Event<Params>;
     type ClientRequest = Electron.ClientRequest;
     type IncomingMessage = Electron.IncomingMessage;
+    class LanguageModelUtility extends Electron.LanguageModelUtility {}
+    const localAIHandler: LocalAIHandler;
+    type LocalAIHandler = Electron.LocalAIHandler;
     const net: Net;
     type Net = Electron.Net;
     const parentPort: ParentPort;
@@ -26408,6 +26837,7 @@ declare namespace Electron {
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
+    type InitialState = Electron.InitialState;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
     type IpcMessageEvent = Electron.IpcMessageEvent;
@@ -26458,6 +26888,7 @@ declare namespace Electron {
     type PreconnectOptions = Electron.PreconnectOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
+    type PromptAPIHandlerDetails = Electron.PromptAPIHandlerDetails;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
@@ -26469,6 +26900,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type ResponseConstraint = Electron.ResponseConstraint;
     type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
@@ -26480,6 +26912,7 @@ declare namespace Electron {
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
+    type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
@@ -26584,6 +27017,14 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type LanguageModelAppendOptions = Electron.LanguageModelAppendOptions;
+    type LanguageModelCloneOptions = Electron.LanguageModelCloneOptions;
+    type LanguageModelCreateCoreOptions = Electron.LanguageModelCreateCoreOptions;
+    type LanguageModelCreateOptions = Electron.LanguageModelCreateOptions;
+    type LanguageModelExpected = Electron.LanguageModelExpected;
+    type LanguageModelMessage = Electron.LanguageModelMessage;
+    type LanguageModelMessageContent = Electron.LanguageModelMessageContent;
+    type LanguageModelPromptOptions = Electron.LanguageModelPromptOptions;
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
@@ -26698,6 +27139,9 @@ declare namespace Electron {
     class IpcMainServiceWorker extends Electron.IpcMainServiceWorker {}
     const ipcRenderer: IpcRenderer;
     type IpcRenderer = Electron.IpcRenderer;
+    class LanguageModelUtility extends Electron.LanguageModelUtility {}
+    const localAIHandler: LocalAIHandler;
+    type LocalAIHandler = Electron.LocalAIHandler;
     class Menu extends Electron.Menu {}
     class MenuItem extends Electron.MenuItem {}
     class MessageChannelMain extends Electron.MessageChannelMain {}
@@ -26846,6 +27290,7 @@ declare namespace Electron {
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
     type Info = Electron.Info;
+    type InitialState = Electron.InitialState;
     type Input = Electron.Input;
     type InsertCSSOptions = Electron.InsertCSSOptions;
     type IpcMessageEvent = Electron.IpcMessageEvent;
@@ -26896,6 +27341,7 @@ declare namespace Electron {
     type PreconnectOptions = Electron.PreconnectOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
+    type PromptAPIHandlerDetails = Electron.PromptAPIHandlerDetails;
     type Provider = Electron.Provider;
     type PurchaseProductOpts = Electron.PurchaseProductOpts;
     type ReceivedSharedTextureData = Electron.ReceivedSharedTextureData;
@@ -26907,6 +27353,7 @@ declare namespace Electron {
     type ResolveHostOptions = Electron.ResolveHostOptions;
     type ResourceUsage = Electron.ResourceUsage;
     type Response = Electron.Response;
+    type ResponseConstraint = Electron.ResponseConstraint;
     type RestoreOptions = Electron.RestoreOptions;
     type Result = Electron.Result;
     type SaveDialogOptions = Electron.SaveDialogOptions;
@@ -26918,6 +27365,7 @@ declare namespace Electron {
     type SendSharedTextureOptions = Electron.SendSharedTextureOptions;
     type SerialPortRevokedDetails = Electron.SerialPortRevokedDetails;
     type ServiceWorkersRunningStatusChangedEventParams = Electron.ServiceWorkersRunningStatusChangedEventParams;
+    type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type SourcesOptions = Electron.SourcesOptions;
@@ -27022,6 +27470,14 @@ declare namespace Electron {
     type JumpListItem = Electron.JumpListItem;
     type KeyboardEvent = Electron.KeyboardEvent;
     type KeyboardInputEvent = Electron.KeyboardInputEvent;
+    type LanguageModelAppendOptions = Electron.LanguageModelAppendOptions;
+    type LanguageModelCloneOptions = Electron.LanguageModelCloneOptions;
+    type LanguageModelCreateCoreOptions = Electron.LanguageModelCreateCoreOptions;
+    type LanguageModelCreateOptions = Electron.LanguageModelCreateOptions;
+    type LanguageModelExpected = Electron.LanguageModelExpected;
+    type LanguageModelMessage = Electron.LanguageModelMessage;
+    type LanguageModelMessageContent = Electron.LanguageModelMessageContent;
+    type LanguageModelPromptOptions = Electron.LanguageModelPromptOptions;
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
@@ -27107,6 +27563,7 @@ declare namespace Electron {
   const inAppPurchase: InAppPurchase;
   const ipcMain: IpcMain;
   const ipcRenderer: IpcRenderer;
+  const localAIHandler: LocalAIHandler;
   const nativeImage: typeof NativeImage;
   const nativeTheme: NativeTheme;
   const net: Net;
