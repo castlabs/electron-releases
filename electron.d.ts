@@ -1,4 +1,4 @@
-// Type definitions for Electron 44.0.0-alpha.9+wvcus
+// Type definitions for Electron 44.1.0+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -518,27 +518,27 @@ declare namespace Electron {
      * page.
      */
     on(event: 'login', listener: (event: Event,
-                                  webContents: WebContents,
+                                  webContents: (WebContents) | (null),
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     off(event: 'login', listener: (event: Event,
-                                  webContents: WebContents,
+                                  webContents: (WebContents) | (null),
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     once(event: 'login', listener: (event: Event,
-                                  webContents: WebContents,
+                                  webContents: (WebContents) | (null),
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     addListener(event: 'login', listener: (event: Event,
-                                  webContents: WebContents,
+                                  webContents: (WebContents) | (null),
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     removeListener(event: 'login', listener: (event: Event,
-                                  webContents: WebContents,
+                                  webContents: (WebContents) | (null),
                                   authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
@@ -815,27 +815,27 @@ declare namespace Electron {
      * event is not emitted.
      */
     on(event: 'select-client-certificate', listener: (event: Event,
-                                                      webContents: WebContents,
+                                                      webContents: (WebContents) | (null),
                                                       url: string,
                                                       certificateList: Certificate[],
                                                       callback: (certificate?: Certificate) => void) => void): this;
     off(event: 'select-client-certificate', listener: (event: Event,
-                                                      webContents: WebContents,
+                                                      webContents: (WebContents) | (null),
                                                       url: string,
                                                       certificateList: Certificate[],
                                                       callback: (certificate?: Certificate) => void) => void): this;
     once(event: 'select-client-certificate', listener: (event: Event,
-                                                      webContents: WebContents,
+                                                      webContents: (WebContents) | (null),
                                                       url: string,
                                                       certificateList: Certificate[],
                                                       callback: (certificate?: Certificate) => void) => void): this;
     addListener(event: 'select-client-certificate', listener: (event: Event,
-                                                      webContents: WebContents,
+                                                      webContents: (WebContents) | (null),
                                                       url: string,
                                                       certificateList: Certificate[],
                                                       callback: (certificate?: Certificate) => void) => void): this;
     removeListener(event: 'select-client-certificate', listener: (event: Event,
-                                                      webContents: WebContents,
+                                                      webContents: (WebContents) | (null),
                                                       url: string,
                                                       certificateList: Certificate[],
                                                       callback: (certificate?: Certificate) => void) => void): this;
@@ -1252,19 +1252,8 @@ declare namespace Electron {
      *
      *
      * * `openAtLogin` boolean - `true` if the app is set to open at login.
-     * * `openAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app is set to open
-     * as hidden at login. This does not work on macOS 13 and up.
      * * `wasOpenedAtLogin` boolean _macOS_ - `true` if the app was opened at login
      * automatically.
-     * * `wasOpenedAsHidden` boolean _macOS_ _Deprecated_ - `true` if the app was
-     * opened as a hidden login item. This indicates that the app should not open any
-     * windows at startup. This setting is not available on MAS builds or on macOS 13
-     * and up.
-     * * `restoreState` boolean _macOS_ _Deprecated_ - `true` if the app was opened as
-     * a login item that should restore the state from the previous session. This
-     * indicates that the app should restore the windows that were open the last time
-     * the app was closed. This setting is not available on MAS builds or on macOS 13
-     * and up.
      * * `status` string _macOS_ - can be `not-registered`, `enabled`,
      * `requires-approval`, or `not-found`.
      * * `executableWillLaunchAtLogin` boolean _Windows_ - `true` if app is set to open
@@ -1562,6 +1551,11 @@ declare namespace Electron {
      * line, the system's single instance mechanism will be bypassed, and you have to
      * use this method to ensure single instance.
      *
+     * > [!NOTE] On macOS and Linux, the second instance's command line arguments and
+     * `additionalData` are sent to the primary instance in a single message that is
+     * limited to 32 MB. Larger messages are dropped: this method still returns
+     * `false`, but the primary instance does not emit `second-instance`.
+     *
      * An example of activating the window of primary instance when a second instance
      * starts:
      */
@@ -1682,13 +1676,20 @@ declare namespace Electron {
     /**
      * Whether the call succeeded.
      *
-     * Sets the Dock icon counter badge for current app. Setting the count to `0` will
-     * hide the badge.
+     * Sets the counter badge for current app. Setting the count to `0` will hide the
+     * badge.
      *
-     * > [!NOTE] You need to ensure that your application has the permission to display
-     * notifications for this method to work.
+     * On macOS, it shows on the Dock icon. On Linux, it shows on docks and taskbars
+     * that support the LauncherEntry D-Bus API,
      *
-     * @platform darwin
+     * > [!NOTE] On Linux, the badge is associated with the app's `.desktop` file, so
+     * `app.setDesktopName` (or the `desktopName` field in `package.json`) must match
+     * the name of the app's actual `.desktop` file.
+     *
+     * > [!NOTE] On macOS, you need to ensure that your application has the permission
+     * to display notifications for this method to work.
+     *
+     * @platform linux,darwin
      */
     setBadgeCount(count?: number): boolean;
     /**
@@ -1697,14 +1698,31 @@ declare namespace Electron {
      */
     setClientCertRequestPasswordHandler(handler: (clientCertRequestParams: ClientCertRequestParams) => Promise<string>): void;
     /**
-     * Sets the `.desktop` filename on Linux. This should match the base filename of
-     * the app's installed `.desktop` file. The `.desktop` suffix is optional.
+     * Sets the `.desktop` filename on Linux. This must match the base filename of the
+     * app's installed `.desktop` file. The `.desktop` suffix is optional.
      *
-     * This value is used to determine the default XDG application ID on Wayland and
-     * `WM_CLASS` on X11. If it is not set, Electron will attempt to infer a name, but
-     * it may not match the packaged app's actual `.desktop` file. This could result in
-     * the app showing a generic icon or failing to respond to global keyboard
-     * shortcuts.
+     * The name (without the `.desktop` suffix) is the app's identity for Linux desktop
+     * integration. It should be a reverse-DNS style ID such as `com.example.MyApp`,
+     * following the desktop entry naming conventions. This value is used as:
+     *
+     * * the XDG application ID (`app_id`) on Wayland and `WM_CLASS` on X11, used to
+     * match the app's icon and window grouping.
+     * * the app ID that `xdg-desktop-portal` reports to portal backends such as
+     * GlobalShortcuts.
+     *
+     * Portals increasingly enforce this identity. If the name is not a valid
+     * reverse-DNS ID or does not match an installed `.desktop` file:
+     *
+     * * GNOME 50.0/50.1 (Ubuntu 26.04) rejects `globalShortcut` binds with
+     * `org.freedesktop.portal.Error.NotAllowed` — with no error surfaced to the app
+     * (see #52218).
+     * * `xdg-desktop-portal` 1.21 and later refuses portal sessions for app IDs it
+     * cannot resolve to a `.desktop` file.
+     *
+     * If this value is not set and `desktopName` is not present in `package.json`,
+     * Electron falls back to a lowercased, hyphenated slug of the app's name (e.g. `My
+     * App` → `my-app.desktop`), which is unlikely to be a valid portal identity —
+     * packaged apps should always set it explicitly.
      *
      * This API must be called before the `ready` event. The value can also be set
      * using `desktopName` in `package.json`.
@@ -1759,8 +1777,8 @@ declare namespace Electron {
      * is a stub application automatically generated by Squirrel which will
      * automatically launch the latest version.
      *
-     * For more information about setting different services as login items on macOS 13
-     * and up, see `SMAppService`.
+     * For more information about setting different services as login items on macOS,
+     * see `SMAppService`.
      *
      * @platform darwin,win32
      */
@@ -1918,12 +1936,12 @@ declare namespace Electron {
     /**
      * An `Integer` property that returns the badge count for current app. Setting the
      * count to `0` will hide the badge. Setting this with any nonzero integer shows
-     * the count on the Dock icon.
+     * the count on the Dock icon on macOS, or on the launcher on Linux.
      *
-     * > [!NOTE] You need to ensure that your application has the permission to display
-     * notifications for this property to take effect.
+     * > [!NOTE] On macOS, you need to ensure that your application has the permission
+     * to display notifications for this property to take effect.
      *
-     * @platform darwin
+     * @platform linux,darwin
      */
     badgeCount: number;
     /**
@@ -3426,7 +3444,10 @@ declare namespace Electron {
      * `indeterminate`, `error`, and `paused`. If you call `setProgressBar` without a
      * mode set (but with a value within the valid range), `normal` will be assumed.
      *
-     * @platform win32,darwin
+     * On Linux, the progress bar shows on docks and taskbars that support the
+     * LauncherEntry D-Bus API. It is associated with the app's `.desktop` file, so
+     * `app.setDesktopName` must match the name of the app's actual `.desktop` file.
+     * Indeterminate mode is not supported.
      */
     setProgressBar(progress: number, options?: ProgressBarOptions): void;
     /**
@@ -6246,7 +6267,10 @@ declare namespace Electron {
      * `indeterminate`, `error`, and `paused`. If you call `setProgressBar` without a
      * mode set (but with a value within the valid range), `normal` will be assumed.
      *
-     * @platform win32,darwin
+     * On Linux, the progress bar shows on docks and taskbars that support the
+     * LauncherEntry D-Bus API. It is associated with the app's `.desktop` file, so
+     * `app.setDesktopName` must match the name of the app's actual `.desktop` file.
+     * Indeterminate mode is not supported.
      */
     setProgressBar(progress: number, options?: ProgressBarOptions): void;
     /**
@@ -9701,6 +9725,15 @@ declare namespace Electron {
      */
     accessibilityLabel: string;
     /**
+     * A `MenuItemBadge` (optional) indicating the badge for the menu item.
+     *
+     * This property can be dynamically changed; setting it to `undefined` removes the
+     * badge. Only available on macOS 14 and up.
+     *
+     * @platform darwin
+     */
+    badge?: MenuItemBadge;
+    /**
      * A `boolean` indicating whether the item is checked.
      *
      * This property can be dynamically changed.
@@ -9760,6 +9793,8 @@ declare namespace Electron {
      * or just displayed.
      *
      * This property can be dynamically changed.
+     *
+     * @platform linux,win32
      */
     registerAccelerator: boolean;
     /**
@@ -9823,6 +9858,27 @@ declare namespace Electron {
      * This property can be dynamically changed.
      */
     visible: boolean;
+  }
+
+  interface MenuItemBadge {
+
+    // Docs: https://electronjs.org/docs/api/structures/menu-item-badge
+
+    /**
+     * A custom string to display in the badge. Required for, and only usable with, the
+     * `none` type.
+     */
+    content?: string;
+    /**
+     * The number of items the badge displays. Required for the `alerts`, `updates` and
+     * `new-items` types; cannot be used with `none`.
+     */
+    count?: number;
+    /**
+     * Can be `alerts`, `updates`, `new-items` or `none`. Default is `none`. See
+     * Creating badges of a specific type for further explanation of these types.
+     */
+    type?: ('alerts' | 'updates' | 'new-items' | 'none');
   }
 
   class MessageChannelMain {
@@ -11310,6 +11366,95 @@ declare namespace Electron {
      * an object containing a variable number of platform-specific printer information.
      */
     options: Options;
+  }
+
+  interface PrintToPDFMargins {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-margins
+
+    /**
+     * Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    bottom?: number;
+    /**
+     * Left margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    left?: number;
+    /**
+     * Right margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    right?: number;
+    /**
+     * Top margin in inches. Defaults to 1cm (~0.4 inches).
+     */
+    top?: number;
+  }
+
+  interface PrintToPDFOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/print-to-pdf-options
+
+    /**
+     * Whether to display header and footer. Defaults to false.
+     */
+    displayHeaderFooter?: boolean;
+    /**
+     * HTML template for the print footer. Should use the same format as the
+     * `headerTemplate`.
+     */
+    footerTemplate?: string;
+    /**
+     * Whether or not to generate a PDF document outline from content headers. Defaults
+     * to false.
+     *
+     * @experimental
+     */
+    generateDocumentOutline?: boolean;
+    /**
+     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
+     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
+     * WCAG standards.
+     *
+     * @experimental
+     */
+    generateTaggedPDF?: boolean;
+    /**
+     * HTML template for the print header. Should be valid HTML markup with following
+     * classes used to inject printing values into them: `date` (formatted print date),
+     * `title` (document title), `url` (document location), `pageNumber` (current page
+     * number) and `totalPages` (total pages in the document). For example, `<span
+     * class=title></span>` would generate span containing the title.
+     */
+    headerTemplate?: string;
+    /**
+     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
+     */
+    landscape?: boolean;
+    margins?: PrintToPDFMargins;
+    /**
+     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
+     * means print all pages.
+     */
+    pageRanges?: string;
+    /**
+     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
+     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
+     * `height` and `width` in inches. Defaults to `Letter`.
+     */
+    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
+    /**
+     * Whether or not to prefer page size as defined by css. Defaults to false, in
+     * which case the content will be scaled to fit the paper size.
+     */
+    preferCSSPageSize?: boolean;
+    /**
+     * Whether to print background graphics. Defaults to false.
+     */
+    printBackground?: boolean;
+    /**
+     * Scale of the webpage rendering. Defaults to 1.
+     */
+    scale?: number;
   }
 
   interface ProcessMemoryInfo {
@@ -13366,7 +13511,7 @@ declare namespace Electron {
      * > [!NOTE] `isMainFrame` will always be `false` for a `fileSystem` request as a
      * result of Chromium limitations.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'geolocation' | 'fullscreen' | 'hid' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'openExternal' | 'pointerLock' | 'serial' | 'storage-access' | 'top-level-storage-access' | 'usb' | 'deprecated-sync-clipboard-read' | 'fileSystem', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'top-level-storage-access' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -13375,7 +13520,7 @@ declare namespace Electron {
      * `setPermissionCheckHandler` to get complete permission handling. Most web APIs
      * do a permission check and then make a permission request if the check is denied.
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'clipboard-read' | 'clipboard-sanitized-write' | 'display-capture' | 'fullscreen' | 'geolocation' | 'idle-detection' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'notifications' | 'pointerLock' | 'keyboardLock' | 'openExternal' | 'speaker-selection' | 'storage-access' | 'top-level-storage-access' | 'window-management' | 'unknown' | 'fileSystem', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'top-level-storage-access' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -18265,6 +18410,10 @@ declare namespace Electron {
      */
     isBeingCaptured(): boolean;
     /**
+     * Whether caret browsing is enabled for this page.
+     */
+    isCaretBrowsingEnabled(): boolean;
+    /**
      * Whether the renderer process has crashed.
      */
     isCrashed(): boolean;
@@ -18500,6 +18649,10 @@ declare namespace Electron {
      */
     setBackgroundThrottling(allowed: boolean): void;
     /**
+     * Sets whether caret browsing is enabled on the current web page.
+     */
+    setCaretBrowsingEnabled(enabled: boolean): void;
+    /**
      * Changes the title of the DevTools window to `title`. This will only be visible
      * if DevTools is opened in `undocked` or `detach` mode.
      */
@@ -18666,6 +18819,25 @@ declare namespace Electron {
      * affects the Page Visibility API.
      */
     backgroundThrottling: boolean;
+    /**
+     * A `boolean` property that determines whether caret browsing is enabled for this
+     * page.
+     *
+     * When enabled, a movable cursor is placed in the page's text, allowing the user
+     * to navigate and select content with the keyboard. Changes apply to the live page
+     * without reloading it.
+     *
+     * A `<webview>` guest inherits this value from its embedder when it is created and
+     * then tracks it independently, so disabling caret browsing on the embedder leaves
+     * an existing guest enabled.
+     *
+     * While any `WebContents` in the process has caret browsing enabled, assistive
+     * technology is notified process-wide that caret browsing is active, so that
+     * screen readers report the caret's position as it moves. That notification is
+     * only withdrawn once every `WebContents` that enabled caret browsing has either
+     * disabled it or been destroyed.
+     */
+    caretBrowsingEnabled: boolean;
     /**
      * A `Debugger` instance for this webContents.
      *
@@ -19085,6 +19257,22 @@ declare namespace Electron {
      * For example:
      */
     postMessage(channel: string, message: any, transfer?: MessagePortMain[]): void;
+    /**
+     * Resolves with the generated PDF data.
+     *
+     * Prints the frame's web page as PDF.
+     *
+     * Unlike `webContents.printToPDF`, this method prints only the contents of the
+     * frame it is called on. This can be used to print an individual `<iframe>` from
+     * the main process.
+     *
+     * The `landscape` will be ignored if `@page` CSS at-rule is used in the web page.
+     *
+     * An example of printing an iframe to PDF:
+     *
+     * See Page.printToPdf for more information.
+     */
+    printToPDF(options: PrintToPDFOptions): Promise<Buffer>;
     /**
      * Whether the reload was initiated successfully. Only results in `false` when the
      * frame has no history.
@@ -20423,6 +20611,13 @@ declare namespace Electron {
      * another value by including an `=`, followed by the value. Special values `yes`
      * and `1` are interpreted as `true`, while `no` and `0` are interpreted as
      * `false`.
+     *
+     * Security-critical preferences cannot be used to make the guest less secure than
+     * its embedder. When the embedder has any of `contextIsolation`, `javascript`,
+     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox`,
+     * `nodeIntegrationInSubFrames` or `enableWebSQL` set to its more secure value, the
+     * guest inherits that value and the corresponding `webpreferences` entry is
+     * ignored.
      */
     webpreferences: string;
   }
@@ -22187,38 +22382,11 @@ declare namespace Electron {
      */
     openAtLogin: boolean;
     /**
-     * `true` if the app is set to open as hidden at login. This does not work on macOS
-     * 13 and up.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    openAsHidden: boolean;
-    /**
      * `true` if the app was opened at login automatically.
      *
      * @platform darwin
      */
     wasOpenedAtLogin: boolean;
-    /**
-     * `true` if the app was opened as a hidden login item. This indicates that the app
-     * should not open any windows at startup. This setting is not available on MAS
-     * builds or on macOS 13 and up.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    wasOpenedAsHidden: boolean;
-    /**
-     * `true` if the app was opened as a login item that should restore the state from
-     * the previous session. This indicates that the app should restore the windows
-     * that were open the last time the app was closed. This setting is not available
-     * on MAS builds or on macOS 13 and up.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    restoreState: boolean;
     /**
      * can be `not-registered`, `enabled`, `requires-approval`, or `not-found`.
      *
@@ -22240,15 +22408,14 @@ declare namespace Electron {
   interface LoginItemSettingsOptions {
     /**
      * Can be `mainAppService`, `agentService`, `daemonService`, or `loginItemService`.
-     * Defaults to `mainAppService`. Only available on macOS 13 and up. See
-     * app.setLoginItemSettings for more information about each type.
+     * Defaults to `mainAppService`. See app.setLoginItemSettings for more information
+     * about each type.
      *
      * @platform darwin
      */
     type?: ('mainAppService' | 'agentService' | 'daemonService' | 'loginItemService');
     /**
-     * The name of the service. Required if `type` is non-default. Only available on
-     * macOS 13 and up.
+     * The name of the service. Required if `type` is non-default.
      *
      * @platform darwin
      */
@@ -22374,6 +22541,13 @@ declare namespace Electron {
      * containing group after the containing group of the item with the specified id.
      */
     afterGroupContaining?: string[];
+    /**
+     * A badge shown alongside the label, either a system-styled count (`alerts`,
+     * `updates`, `new-items`) or a custom string. Only available on macOS 14 and up.
+     *
+     * @platform darwin
+     */
+    badge?: MenuItemBadge;
   }
 
   interface MessageBoxOptions {
@@ -23256,70 +23430,6 @@ declare namespace Electron {
     numSockets?: number;
   }
 
-  interface PrintToPDFOptions {
-    /**
-     * Paper orientation.`true` for landscape, `false` for portrait. Defaults to false.
-     */
-    landscape?: boolean;
-    /**
-     * Whether to display header and footer. Defaults to false.
-     */
-    displayHeaderFooter?: boolean;
-    /**
-     * Whether to print background graphics. Defaults to false.
-     */
-    printBackground?: boolean;
-    /**
-     * Scale of the webpage rendering. Defaults to 1.
-     */
-    scale?: number;
-    /**
-     * Specify page size of the generated PDF. Can be `A0`, `A1`, `A2`, `A3`, `A4`,
-     * `A5`, `A6`, `Legal`, `Letter`, `Tabloid`, `Ledger`, or an Object containing
-     * `height` and `width` in inches. Defaults to `Letter`.
-     */
-    pageSize?: (('A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5' | 'A6' | 'Legal' | 'Letter' | 'Tabloid' | 'Ledger')) | (Size);
-    margins?: Margins;
-    /**
-     * Page ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
-     * means print all pages.
-     */
-    pageRanges?: string;
-    /**
-     * HTML template for the print header. Should be valid HTML markup with following
-     * classes used to inject printing values into them: `date` (formatted print date),
-     * `title` (document title), `url` (document location), `pageNumber` (current page
-     * number) and `totalPages` (total pages in the document). For example, `<span
-     * class=title></span>` would generate span containing the title.
-     */
-    headerTemplate?: string;
-    /**
-     * HTML template for the print footer. Should use the same format as the
-     * `headerTemplate`.
-     */
-    footerTemplate?: string;
-    /**
-     * Whether or not to prefer page size as defined by css. Defaults to false, in
-     * which case the content will be scaled to fit the paper size.
-     */
-    preferCSSPageSize?: boolean;
-    /**
-     * Whether or not to generate a tagged (accessible) PDF. Defaults to false. As this
-     * property is experimental, the generated PDF may not adhere fully to PDF/UA and
-     * WCAG standards.
-     *
-     * @experimental
-     */
-    generateTaggedPDF?: boolean;
-    /**
-     * Whether or not to generate a PDF document outline from content headers. Defaults
-     * to false.
-     *
-     * @experimental
-     */
-    generateDocumentOutline?: boolean;
-  }
-
   interface Privileges {
     /**
      * Default false.
@@ -23719,26 +23829,13 @@ declare namespace Electron {
      */
     openAtLogin?: boolean;
     /**
-     * `true` to open the app as hidden. Defaults to `false`. The user can edit this
-     * setting from the System Preferences so
-     * `app.getLoginItemSettings().wasOpenedAsHidden` should be checked when the app is
-     * opened to know the current value. This setting is not available on MAS builds or
-     * on macOS 13 and up.
-     *
-     * @deprecated
-     * @platform darwin
-     */
-    openAsHidden?: boolean;
-    /**
-     * The type of service to add as a login item. Defaults to `mainAppService`. Only
-     * available on macOS 13 and up.
+     * The type of service to add as a login item. Defaults to `mainAppService`.
      *
      * @platform darwin
      */
     type?: ('mainAppService' | 'agentService' | 'daemonService' | 'loginItemService');
     /**
-     * The name of the service. Required if `type` is non-default. Only available on
-     * macOS 13 and up.
+     * The name of the service. Required if `type` is non-default.
      *
      * @platform darwin
      */
@@ -24328,10 +24425,11 @@ declare namespace Electron {
      */
     frame: (WebFrameMain) | (null);
     /**
-     * The frame which initiated the navigation, which can be a parent frame (e.g. via
-     * `window.open` with a frame's name), or null if the navigation was not initiated
-     * by a frame. This can also be null if the initiating frame was deleted before the
-     * event was emitted.
+     * The frame which initiated the navigation. This can be a parent frame (e.g. via
+     * `window.open` with a frame's name), a child frame (e.g. an unsandboxed iframe
+     * navigating its parent via `<a target="_top">`), or null if the navigation was
+     * not initiated by a frame. This can also be null if the initiating frame was
+     * deleted before the event was emitted.
      */
     initiator?: (WebFrameMain) | (null);
   }
@@ -24357,10 +24455,11 @@ declare namespace Electron {
      */
     frame: (WebFrameMain) | (null);
     /**
-     * The frame which initiated the navigation, which can be a parent frame (e.g. via
-     * `window.open` with a frame's name), or null if the navigation was not initiated
-     * by a frame. This can also be null if the initiating frame was deleted before the
-     * event was emitted.
+     * The frame which initiated the navigation. This can be a parent frame (e.g. via
+     * `window.open` with a frame's name), a child frame (e.g. an unsandboxed iframe
+     * navigating its parent via `<a target="_top">`), or null if the navigation was
+     * not initiated by a frame. This can also be null if the initiating frame was
+     * deleted before the event was emitted.
      */
     initiator?: (WebFrameMain) | (null);
   }
@@ -24482,10 +24581,11 @@ declare namespace Electron {
      */
     frame: (WebFrameMain) | (null);
     /**
-     * The frame which initiated the navigation, which can be a parent frame (e.g. via
-     * `window.open` with a frame's name), or null if the navigation was not initiated
-     * by a frame. This can also be null if the initiating frame was deleted before the
-     * event was emitted.
+     * The frame which initiated the navigation. This can be a parent frame (e.g. via
+     * `window.open` with a frame's name), a child frame (e.g. an unsandboxed iframe
+     * navigating its parent via `<a target="_top">`), or null if the navigation was
+     * not initiated by a frame. This can also be null if the initiating frame was
+     * deleted before the event was emitted.
      */
     initiator?: (WebFrameMain) | (null);
   }
@@ -24511,10 +24611,11 @@ declare namespace Electron {
      */
     frame: (WebFrameMain) | (null);
     /**
-     * The frame which initiated the navigation, which can be a parent frame (e.g. via
-     * `window.open` with a frame's name), or null if the navigation was not initiated
-     * by a frame. This can also be null if the initiating frame was deleted before the
-     * event was emitted.
+     * The frame which initiated the navigation. This can be a parent frame (e.g. via
+     * `window.open` with a frame's name), a child frame (e.g. an unsandboxed iframe
+     * navigating its parent via `<a target="_top">`), or null if the navigation was
+     * not initiated by a frame. This can also be null if the initiating frame was
+     * deleted before the event was emitted.
      */
     initiator?: (WebFrameMain) | (null);
   }
@@ -24540,10 +24641,11 @@ declare namespace Electron {
      */
     frame: (WebFrameMain) | (null);
     /**
-     * The frame which initiated the navigation, which can be a parent frame (e.g. via
-     * `window.open` with a frame's name), or null if the navigation was not initiated
-     * by a frame. This can also be null if the initiating frame was deleted before the
-     * event was emitted.
+     * The frame which initiated the navigation. This can be a parent frame (e.g. via
+     * `window.open` with a frame's name), a child frame (e.g. an unsandboxed iframe
+     * navigating its parent via `<a target="_top">`), or null if the navigation was
+     * not initiated by a frame. This can also be null if the initiating frame was
+     * deleted before the event was emitted.
      */
     initiator?: (WebFrameMain) | (null);
   }
@@ -25254,7 +25356,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25386,6 +25487,7 @@ declare namespace Electron {
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MenuItemBadge = Electron.MenuItemBadge;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
@@ -25401,6 +25503,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -25671,7 +25775,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -25803,6 +25906,7 @@ declare namespace Electron {
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MenuItemBadge = Electron.MenuItemBadge;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
@@ -25818,6 +25922,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26010,7 +26116,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26142,6 +26247,7 @@ declare namespace Electron {
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MenuItemBadge = Electron.MenuItemBadge;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
@@ -26157,6 +26263,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26348,7 +26456,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26480,6 +26587,7 @@ declare namespace Electron {
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MenuItemBadge = Electron.MenuItemBadge;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
@@ -26495,6 +26603,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
@@ -26784,7 +26894,6 @@ declare namespace Electron {
     type PowerMonitorSpeedLimitChangeEventParams = Electron.PowerMonitorSpeedLimitChangeEventParams;
     type PowerMonitorThermalStateChangeEventParams = Electron.PowerMonitorThermalStateChangeEventParams;
     type PreconnectOptions = Electron.PreconnectOptions;
-    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type Privileges = Electron.Privileges;
     type ProgressBarOptions = Electron.ProgressBarOptions;
     type Provider = Electron.Provider;
@@ -26916,6 +27025,7 @@ declare namespace Electron {
     type MediaAccessPermissionRequest = Electron.MediaAccessPermissionRequest;
     type MemoryInfo = Electron.MemoryInfo;
     type MemoryUsageDetails = Electron.MemoryUsageDetails;
+    type MenuItemBadge = Electron.MenuItemBadge;
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
@@ -26931,6 +27041,8 @@ declare namespace Electron {
     type PreloadScript = Electron.PreloadScript;
     type PreloadScriptRegistration = Electron.PreloadScriptRegistration;
     type PrinterInfo = Electron.PrinterInfo;
+    type PrintToPDFMargins = Electron.PrintToPDFMargins;
+    type PrintToPDFOptions = Electron.PrintToPDFOptions;
     type ProcessMemoryInfo = Electron.ProcessMemoryInfo;
     type ProcessMetric = Electron.ProcessMetric;
     type Product = Electron.Product;
