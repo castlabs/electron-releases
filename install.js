@@ -40,7 +40,7 @@ if (
 downloadArtifact({
   version,
   artifactName: 'electron',
-  mirrorOptions: { mirror: "https://github.com/castlabs/electron-releases/releases/download/" },
+  mirrorOptions: { mirror: 'https://github.com/castlabs/electron-releases/releases/download/' },
   force: process.env.force_no_cache === 'true',
   cacheRoot: process.env.electron_config_cache,
   checksums:
