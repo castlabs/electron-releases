@@ -1,4 +1,4 @@
-// Type definitions for Electron 45.0.0-alpha.3+wvcus
+// Type definitions for Electron 45.0.0-alpha.14+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -300,7 +300,8 @@ declare namespace Electron {
                                               isMainFrame: boolean) => void): this;
     /**
      * Emitted when the child process unexpectedly disappears. This is normally because
-     * it was crashed or killed. It does not include renderer processes.
+     * it was crashed or killed, or because it failed to launch. It does not include
+     * renderer processes.
      */
     on(event: 'child-process-gone', listener: (event: Event,
                                                details: Details) => void): this;
@@ -1220,6 +1221,12 @@ declare namespace Electron {
     /**
      * Array of `ProcessMetric` objects that correspond to memory and CPU usage
      * statistics of all the processes associated with the app.
+     *
+     * > [!NOTE] `cpu.percentCPUUsage` and `cpu.idleWakeupsPerSecond` are averages over
+     * the time since the last call to `app.getAppMetrics()`, and each call starts a
+     * new measurement interval for every process at once. Other code in the main
+     * process, including dependencies, shares those intervals. See `CPUUsage` for more
+     * details.
      */
     getAppMetrics(): ProcessMetric[];
     /**
@@ -3011,6 +3018,10 @@ declare namespace Electron {
     isContentProtected(): boolean;
     /**
      * Whether the window is destroyed.
+     *
+     * > [!NOTE] Once a window is destroyed, accessing most of its other properties and
+     * methods throws `Object has been destroyed`, so callbacks that may run after the
+     * window is gone should guard with `isDestroyed()`.
      */
     isDestroyed(): boolean;
     /**
@@ -3362,6 +3373,16 @@ declare namespace Electron {
      * it calls SetWindowDisplayAffinity with `WDA_EXCLUDEFROMCAPTURE`. For Windows 10
      * version 2004 and up the window will be removed from capture entirely, older
      * Windows versions behave as if `WDA_MONITOR` is applied capturing a black window.
+     * The change takes effect with the next desktop composition, not when the call
+     * returns, so a capture started immediately afterwards can still contain the
+     * window.
+     *
+     * Protection also applies in a Windows remote session. A Remote Desktop client
+     * still shows the window to the remote user, but remote access software that works
+     * by capturing the desktop cannot. To leave windows unprotected in remote sessions
+     * instead, disable the `AllowWindowCaptureExclusionInRemoteSessions` Chromium
+     * feature at the start of your main script. `win.isContentProtected()` still
+     * returns `true` in that case.
      *
      * @platform darwin,win32
      */
@@ -3427,7 +3448,10 @@ declare namespace Electron {
      * Makes the window ignore all mouse events.
      *
      * All mouse events happened in this window will be passed to the window below this
-     * window, but if this window has focus, it will still receive keyboard events.
+     * window, but if this window has focus, it will still receive keyboard events. On
+     * Linux this is supported on both X11 and Wayland. On X11 the X server has applied
+     * the window's new input shape when the call returns; on Wayland the new input
+     * region is applied with the window's next frame.
      */
     setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
     /**
@@ -6180,7 +6204,16 @@ declare namespace Electron {
      * On Windows, it calls `SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`.
      * For Windows 10 version 2004 and up the window will be removed from capture
      * entirely, older Windows versions behave as if `WDA_MONITOR` is applied capturing
-     * a black window.
+     * a black window. The change takes effect with the next desktop composition, not
+     * when the call returns, so a capture started immediately afterwards can still
+     * contain the window.
+     *
+     * Protection also applies in a Windows remote session. A Remote Desktop client
+     * still shows the window to the remote user, but remote access software that works
+     * by capturing the desktop cannot. To leave windows unprotected in remote sessions
+     * instead, disable the `AllowWindowCaptureExclusionInRemoteSessions` Chromium
+     * feature at the start of your main script. `win.isContentProtected()` still
+     * returns `true` in that case.
      *
      * On macOS, it sets the `NSWindow`'s `sharingType` to `NSWindowSharingNone`.
      * Unfortunately, due to an intentional change in macOS, newer Mac applications
@@ -6250,7 +6283,10 @@ declare namespace Electron {
      * Makes the window ignore all mouse events.
      *
      * All mouse events happened in this window will be passed to the window below this
-     * window, but if this window has focus, it will still receive keyboard events.
+     * window, but if this window has focus, it will still receive keyboard events. On
+     * Linux this is supported on both X11 and Wayland. On X11 the X server has applied
+     * the window's new input shape when the call returns; on Wayland the new input
+     * region is applied with the window's next frame.
      */
     setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
     /**
@@ -6712,6 +6748,9 @@ declare namespace Electron {
      *
      * See the `webContents` documentation for its methods and events.
      *
+     * > [!NOTE] Reading this property throws `Object has been destroyed` once the
+     * window has been destroyed; see `win.isDestroyed()`.
+     *
      */
     readonly webContents: WebContents;
   }
@@ -7108,7 +7147,7 @@ declare namespace Electron {
      * resolves to a ClipboardBookmark object instead. Rejects when `type` is not
      * present in `clipboardItem.types`.
      */
-    getType(type: string): (Promise<Blob>) | (Promise<Electron.ClipboardBookmark>);
+    getType<T extends string>(type: T): Promise<string extends T ? (Blob | ClipboardBookmark) : T extends 'electron application/bookmark' ? ClipboardBookmark : Blob>;
     /**
      * Resolves with a ClipboardBookmark when a bookmark is available in the clipboard.
      * Rejects when a bookmark is not available in the clipboard.
@@ -7302,36 +7341,6 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/content-tracing
 
-    /**
-     * Resolves once heap profiling has been enabled.
-     *
-     * Enable heap profiling for MemoryInfra traces. Equivalent to the `--memlog`
-     * switch in Chrome.
-     *
-     * Only takes effect if the `disabled-by-default-memory-infra` category is
-     * included.
-     *
-     * Needs to be called before `contentTracing.startRecording()`.
-     *
-     * Usage:
-     *
-     * To view the recorded heap dumps:
-     *
-     * * Download the breakpad symbols for your Electron version from the Electron
-     * GitHub releases
-     * * Clone the Electron source code
-     * * In your Chromium checkout for Electron, run this command to symbolicate the
-     * heap dump:
-     * * Open the symbolicated trace in `chrome://tracing` (the Perfetto UI does not
-     * support memory dumps yet)
-     * * Click on one of the `M` symbols
-     * * Click on a `☰` triple bar icon (e.g., in the `malloc` column)
-     *
-     * [Image: Screenshot showing how to view a heapdump in Chromium's tracing view]
-     *
-     * @experimental
-     */
-    enableHeapProfiling(options?: EnableHeapProfilingOptions): Promise<void>;
     /**
      * resolves with an array of category groups once all child processes have
      * acknowledged the `getCategories` request
@@ -7566,12 +7575,14 @@ declare namespace Electron {
      */
     cumulativeCPUUsage?: number;
     /**
-     * The number of average idle CPU wakeups per second since the last call to
-     * getCPUUsage. First call returns 0. Will always return 0 on Windows.
+     * The number of average idle CPU wakeups per second since the last call to the API
+     * that returned this object. First call returns 0. Will always return 0 on
+     * Windows.
      */
     idleWakeupsPerSecond: number;
     /**
-     * Percentage of CPU used since the last call to getCPUUsage. First call returns 0.
+     * Percentage of CPU used since the last call to the API that returned this object.
+     * First call returns 0.
      */
     percentCPUUsage: number;
   }
@@ -7591,7 +7602,9 @@ declare namespace Electron {
     /**
      * Set an extra parameter to be sent with the crash report. The values specified
      * here will be sent in addition to any values set via the `extra` option when
-     * `start` was called.
+     * `start` was called. Calling this again with the same key replaces the value. The
+     * value is read when a crash happens, so you can update it as your app's state
+     * changes.
      *
      * Parameters added in this fashion (or via the `extra` parameter to
      * `crashReporter.start`) are specific to the calling process. Adding extra
@@ -7599,29 +7612,42 @@ declare namespace Electron {
      * with crashes from renderer or other child processes. Similarly, adding extra
      * parameters in a renderer process will not result in those parameters being sent
      * with crashes that occur in other renderer processes or in the main process.
+     * Processes created with `utilityProcess` have no API for setting extra
+     * parameters, so only `globalExtra` values are sent with their crashes.
      *
      * > [!NOTE] Parameters have limits on the length of the keys and values. Key names
      * must be no longer than 39 bytes, and values must be no longer than 20320 bytes.
-     * Keys with names longer than the maximum will be silently ignored. Key values
-     * longer than the maximum length will be truncated.
+     * Keys with names longer than the maximum are ignored, and a warning is emitted.
+     * Values longer than the maximum length are truncated.
      */
     addExtraParameter(key: string, value: string): void;
     /**
-     * The date and ID of the last crash report. Only crash reports that have been
-     * uploaded will be returned; even if a crash report is present on disk it will not
-     * be returned until it is uploaded. In the case that there are no uploaded
-     * reports, `null` is returned.
+     * The date and ID of the crash report with the most recent upload time, from the
+     * list returned by `getUploadedReports()`. If there are no crash reports at all,
+     * `null` is returned.
+     *
+     * If no report has been uploaded yet but some are stored on disk, a report that
+     * has not been uploaded may be returned. Check that its `id` is not empty before
+     * treating it as uploaded.
      *
      * > [!NOTE] This method is only available in the main process.
      */
     getLastCrashReport(): (CrashReport) | (null);
     /**
-     * The current 'extra' parameters of the crash reporter.
+     * The current 'extra' parameters of the crash reporter in the calling process, as
+     * set with the `extra` option and `addExtraParameter`. Parameters set with the
+     * `globalExtra` option are not included.
      */
     getParameters(): Record<string, string>;
     /**
-     * Returns all uploaded crash reports. Each report contains the date and uploaded
-     * ID.
+     * Returns the crash reports stored on disk. Each report contains the date it was
+     * uploaded and the ID that the crash server returned for it.
+     *
+     * Despite the method's name, reports that have not been uploaded (for example
+     * because `uploadToServer` is `false`, the upload failed, or the report was rate
+     * limited) are included too. For those reports, `id` is an empty string and `date`
+     * is not meaningful. To list only uploaded reports, filter out reports with an
+     * empty `id`.
      *
      * > [!NOTE] This method is only available in the main process.
      */
@@ -7664,9 +7690,9 @@ declare namespace Electron {
      *
      * > [!NOTE] Parameters passed in `extra`, `globalExtra` or set with
      * `addExtraParameter` have limits on the length of the keys and values. Key names
-     * must be at most 39 bytes long, and values must be no longer than 127 bytes. Keys
-     * with names longer than the maximum will be silently ignored. Key values longer
-     * than the maximum length will be truncated.
+     * must be at most 39 bytes long, and values must be no longer than 20320 bytes.
+     * Keys with names longer than the maximum are ignored, and a warning is emitted.
+     * Values longer than the maximum length are truncated.
      *
      * > [!NOTE] This method is only available in the main process.
      */
@@ -7813,6 +7839,14 @@ declare namespace Electron {
      * indicating the failure of the command.
      *
      * Send given command to the debugging target.
+     *
+     * > [!NOTE]
+     *
+     * * If `sendCommand` is called before the target has navigated (e.g. immediately
+     * after `attach()`), the returned promise may not resolve until navigation occurs.
+     * * If the command's response has no `result` data, as defined by that command's
+     * entry in the remote debugging protocol, the promise resolves with an empty
+     * object (`{}`), not `null` or `undefined`.
      */
     sendCommand(method: string, commandParams?: any, sessionId?: string): Promise<any>;
   }
@@ -8421,6 +8455,14 @@ declare namespace Electron {
      */
     getFilename(): string;
     /**
+     * The origin that started the download (for example `https://example.com`, or
+     * `null` for an opaque origin), or an empty string if the download was not started
+     * by web content (for example `webContents.downloadURL()`). Use this rather than
+     * `getURL()` or the `webContents` to decide whose download it is: the URL is
+     * chosen by the initiator and the `webContents` is the whole tab.
+     */
+    getInitiatorOrigin(): string;
+    /**
      * Last-Modified header value.
      */
     getLastModifiedTime(): string;
@@ -8515,32 +8557,6 @@ declare namespace Electron {
      * original routine to determine the save path; this usually prompts a save dialog.
      */
     savePath: string;
-  }
-
-  interface EnableHeapProfilingOptions {
-
-    // Docs: https://electronjs.org/docs/api/structures/enable-heap-profiling-options
-
-    /**
-     * Controls which processes are profiled. Equivalent to `--memlog` in Chrome.
-     * Default is `all`.
-     */
-    mode?: ('all' | 'browser' | 'gpu' | 'minimal' | 'renderer-sampling' | 'all-renderers' | 'utility-sampling' | 'all-utilities' | 'utility-and-browser');
-    /**
-     * Controls the sampling interval in bytes. The lower the interval, the more
-     * precise the profile is. However it comes at the cost of performance. Default is
-     * `100000` (100KB). That is enough to observe allocation sites that make
-     * allocations >500KB total, where total equals to a single allocation size times
-     * the number of such allocations at the same call site. Equivalent to
-     * `--memlog-sampling-rate` in Chrome. Must be an integer between `1000` and
-     * `10000000`.
-     */
-    samplingRate?: number;
-    /**
-     * Controls the type of metadata recorded for each allocation. Equivalent to
-     * `--memlog-stack-mode` in Chrome. Default is `native`.
-     */
-    stackMode?: ('native' | 'native-with-thread-names');
   }
 
   interface Extension {
@@ -9965,6 +9981,9 @@ declare namespace Electron {
      *
      * This property can be dynamically changed; setting it to `undefined` removes the
      * badge. Only available on macOS 14 and up.
+     *
+     * Badges are not displayed in Dock menus, though the same item shows its badge in
+     * an application menu.
      *
      * @platform darwin
      */
@@ -11720,7 +11739,8 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/process-metric
 
     /**
-     * CPU usage of the process.
+     * CPU usage of the process. Its `percentCPUUsage` and `idleWakeupsPerSecond` are
+     * averages over the time since the previous call to the API returning this object.
      */
     cpu: CPUUsage;
     /**
@@ -11882,8 +11902,20 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/protocol
 
     /**
+     * The source registered for `scheme` with `protocol.registerSource`, or `null`.
+     *
+     * @experimental
+     */
+    getSource(scheme: string): (ProtocolSource) | (null);
+    /**
      * Register a protocol handler for `scheme`. Requests made to URLs with this scheme
      * will delegate to this handler to determine what response should be sent.
+     *
+     * In addition to the standard `Request` fields, `request.initiatorOrigin` is set
+     * to the origin that issued the request (for example `https://example.com`, or
+     * `null` for an opaque origin) when web content made it; it is absent for requests
+     * the browser started itself. Unlike `request.referrer` it is not controlled by
+     * the requesting page, so prefer it when deciding whether to serve a request.
      *
      * Either a `Response` or a `Promise<Response>` can be returned.
      *
@@ -11938,7 +11970,7 @@ declare namespace Electron {
      */
     interceptStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
-     * Whether `scheme` is already handled.
+     * Whether `scheme` already has a handler or a source.
      */
     isProtocolHandled(scheme: string): boolean;
     /**
@@ -12034,6 +12066,28 @@ declare namespace Electron {
      */
     registerSchemesAsPrivileged(customSchemes: CustomScheme[]): void;
     /**
+     * Serves `scheme` from directories on disk without a JavaScript handler. Each
+     * request is matched against `routes` (a route with a `host` wins over one
+     * without, then the longest `path` prefix wins), the rest of the URL's path is
+     * resolved inside that route's `root`, and the file is streamed to the requester
+     * the way `file:` URLs are, including from `asar` archives, with `Content-Type`
+     * taken from the file extension. A path that resolves outside `root`, a missing
+     * file, a request that matches no route, or a method other than `GET`/`HEAD` fails
+     * with `net::ERR_FILE_NOT_FOUND`. A URL whose path ends in `/` serves the route's
+     * `index` file.
+     *
+     * Use this instead of `protocol.handle` when a scheme only serves an app's own
+     * bundled files: no request touches the main thread, so pages and their
+     * subresources load at the same speed whether or not the main process is busy.
+     *
+     * A scheme has either a handler or a source; `protocol.unhandle` removes either,
+     * and `protocol.isProtocolHandled` reports both. `webRequest` listeners apply to
+     * these requests as to any other.
+     *
+     * @experimental
+     */
+    registerSource(scheme: string, source: ProtocolSource): void;
+    /**
      * Whether the protocol was successfully registered
      *
      * Registers a protocol of `scheme` that will send a stream as a response.
@@ -12063,7 +12117,8 @@ declare namespace Electron {
      */
     registerStringProtocol(scheme: string, handler: (request: ProtocolRequest, callback: (response: (string) | (ProtocolResponse)) => void) => void): boolean;
     /**
-     * Removes a protocol handler registered with `protocol.handle`.
+     * Removes a protocol handler registered with `protocol.handle` or a source
+     * registered with `protocol.registerSource`.
      */
     unhandle(scheme: string): void;
     /**
@@ -12089,6 +12144,12 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/protocol-request
 
     headers: Record<string, string>;
+    /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Absent for requests the browser started itself. Unlike
+     * `referrer`, this is not controlled by the requesting page.
+     */
+    initiatorOrigin?: string;
     method: string;
     referrer: string;
     uploadData?: UploadData[];
@@ -12172,6 +12233,32 @@ declare namespace Electron {
      * Content to be sent.
      */
     data: (string) | (Buffer);
+  }
+
+  interface ProtocolRoute {
+
+    // Docs: https://electronjs.org/docs/api/structures/protocol-route
+
+    /**
+     * Which URLs on the scheme this route serves. A route without `match` serves every
+     * URL.
+     */
+    match?: Match;
+    /**
+     * What the matched URLs are served from.
+     */
+    source: Source;
+  }
+
+  interface ProtocolSource {
+
+    // Docs: https://electronjs.org/docs/api/structures/protocol-source
+
+    /**
+     * How URLs on the scheme map to directories on disk; see
+     * `protocol.registerSource`.
+     */
+    routes: ProtocolRoute[];
   }
 
   interface ProxyConfig {
@@ -12334,6 +12421,12 @@ declare namespace Electron {
     /**
      * the decrypted string. Decrypts the encrypted buffer obtained  with
      * `safeStorage.encryptString` back into a string.
+     *
+     * **Deprecated:** Use `safeStorage.decryptStringAsync(encrypted)` instead. Data
+     * encrypted with `safeStorage.encryptString` can be decrypted with
+     * `safeStorage.decryptStringAsync`.
+     *
+     * @deprecated
      */
     decryptString(encrypted: Buffer): string;
     /**
@@ -12350,6 +12443,10 @@ declare namespace Electron {
      * An array of bytes representing the encrypted string.
      *
      * This function will throw an error if encryption fails.
+     *
+     * **Deprecated:** Use `safeStorage.encryptStringAsync(plainText)` instead.
+     *
+     * @deprecated
      */
     encryptString(plainText: string): Buffer;
     /**
@@ -12393,6 +12490,10 @@ declare namespace Electron {
      * On Linux, returns true if the app has emitted the `ready` event and the secret
      * key is available. On MacOS, returns true if Keychain is available. On Windows,
      * returns true once the app has emitted the `ready` event.
+     *
+     * **Deprecated:** Use `safeStorage.isAsyncEncryptionAvailable()` instead.
+     *
+     * @deprecated
      */
     isEncryptionAvailable(): boolean;
     /**
@@ -12957,7 +13058,11 @@ declare namespace Electron {
                                         * True if the renderer is requesting that the connection include credentials (see
                                         * the spec for more details.)
                                         */
-                                       allowCredentials: boolean) => void): this;
+                                       allowCredentials: boolean,
+                                       /**
+                                        * The frame that requested the preconnection, if it still exists.
+                                        */
+                                       frame: (WebFrameMain) | (null)) => void): this;
     off(event: 'preconnect', listener: (event: Event,
                                        /**
                                         * The URL being requested for preconnection by the renderer.
@@ -12967,7 +13072,11 @@ declare namespace Electron {
                                         * True if the renderer is requesting that the connection include credentials (see
                                         * the spec for more details.)
                                         */
-                                       allowCredentials: boolean) => void): this;
+                                       allowCredentials: boolean,
+                                       /**
+                                        * The frame that requested the preconnection, if it still exists.
+                                        */
+                                       frame: (WebFrameMain) | (null)) => void): this;
     once(event: 'preconnect', listener: (event: Event,
                                        /**
                                         * The URL being requested for preconnection by the renderer.
@@ -12977,7 +13086,11 @@ declare namespace Electron {
                                         * True if the renderer is requesting that the connection include credentials (see
                                         * the spec for more details.)
                                         */
-                                       allowCredentials: boolean) => void): this;
+                                       allowCredentials: boolean,
+                                       /**
+                                        * The frame that requested the preconnection, if it still exists.
+                                        */
+                                       frame: (WebFrameMain) | (null)) => void): this;
     addListener(event: 'preconnect', listener: (event: Event,
                                        /**
                                         * The URL being requested for preconnection by the renderer.
@@ -12987,7 +13100,11 @@ declare namespace Electron {
                                         * True if the renderer is requesting that the connection include credentials (see
                                         * the spec for more details.)
                                         */
-                                       allowCredentials: boolean) => void): this;
+                                       allowCredentials: boolean,
+                                       /**
+                                        * The frame that requested the preconnection, if it still exists.
+                                        */
+                                       frame: (WebFrameMain) | (null)) => void): this;
     removeListener(event: 'preconnect', listener: (event: Event,
                                        /**
                                         * The URL being requested for preconnection by the renderer.
@@ -12997,7 +13114,11 @@ declare namespace Electron {
                                         * True if the renderer is requesting that the connection include credentials (see
                                         * the spec for more details.)
                                         */
-                                       allowCredentials: boolean) => void): this;
+                                       allowCredentials: boolean,
+                                       /**
+                                        * The frame that requested the preconnection, if it still exists.
+                                        */
+                                       frame: (WebFrameMain) | (null)) => void): this;
     /**
      * Emitted when a HID device needs to be selected when a call to
      * `navigator.hid.requestDevice` is made. `callback` should be called with
@@ -13379,26 +13500,47 @@ declare namespace Electron {
     removeListener(event: 'usb-device-revoked', listener: (event: Event,
                                                details: UsbDeviceRevokedDetails) => void): this;
     /**
-     * Emitted when Electron is about to download `item` in `webContents`.
+     * Emitted when Electron is about to download `item` in `webContents`. See also
+     * `item.getInitiatorOrigin()`.
      *
      * Calling `event.preventDefault()` will cancel the download and `item` will not be
      * available from next tick of the process.
      */
     on(event: 'will-download', listener: (event: Event,
                                           item: DownloadItem,
-                                          webContents: WebContents) => void): this;
+                                          webContents: WebContents,
+                                          /**
+                                           * The frame that started the download, if it still exists.
+                                           */
+                                          frame: (WebFrameMain) | (null)) => void): this;
     off(event: 'will-download', listener: (event: Event,
                                           item: DownloadItem,
-                                          webContents: WebContents) => void): this;
+                                          webContents: WebContents,
+                                          /**
+                                           * The frame that started the download, if it still exists.
+                                           */
+                                          frame: (WebFrameMain) | (null)) => void): this;
     once(event: 'will-download', listener: (event: Event,
                                           item: DownloadItem,
-                                          webContents: WebContents) => void): this;
+                                          webContents: WebContents,
+                                          /**
+                                           * The frame that started the download, if it still exists.
+                                           */
+                                          frame: (WebFrameMain) | (null)) => void): this;
     addListener(event: 'will-download', listener: (event: Event,
                                           item: DownloadItem,
-                                          webContents: WebContents) => void): this;
+                                          webContents: WebContents,
+                                          /**
+                                           * The frame that started the download, if it still exists.
+                                           */
+                                          frame: (WebFrameMain) | (null)) => void): this;
     removeListener(event: 'will-download', listener: (event: Event,
                                           item: DownloadItem,
-                                          webContents: WebContents) => void): this;
+                                          webContents: WebContents,
+                                          /**
+                                           * The frame that started the download, if it still exists.
+                                           */
+                                          frame: (WebFrameMain) | (null)) => void): this;
     /**
      * Whether the word was successfully written to the custom dictionary. This API
      * will not work on non-persistent (in-memory) sessions.
@@ -13777,12 +13919,16 @@ declare namespace Electron {
      * is available and `useSystemPicker` is set to `true`, the handler will not be
      * invoked.
      *
-     * Passing a WebFrameMain object as a video or audio stream will capture the video
-     * or audio stream from that frame.
+     * Passing a WebFrameMain object as a video or audio stream captures the whole
+     * `webContents` that contains that frame (the tab), not just the frame:
+     * `request.frame` from an `<iframe>` therefore grants that iframe a capture of the
+     * page that embeds it. Check `request.frame` before using it this way, and note
+     * that the callback throws if the frame has been destroyed by the time it is
+     * called.
      *
      * Passing `null` instead of a function resets the handler to its default state.
      */
-    setDisplayMediaRequestHandler(handler: ((request: DisplayMediaRequestHandlerHandlerRequest, callback: (streams: Streams) => void) => void) | (null), opts?: DisplayMediaRequestHandlerOpts): void;
+    setDisplayMediaRequestHandler(handler: ((request: DisplayMediaRequestHandlerHandlerRequest, callback: (streams: (Streams) | (null)) => void) => void) | (null), opts?: DisplayMediaRequestHandlerOpts): void;
     /**
      * Sets download saving directory. By default, the download directory will be the
      * `Downloads` under the respective app folder.
@@ -18561,7 +18707,9 @@ declare namespace Electron {
      * The identifier of a WebContents stream. This identifier can be used with
      * `navigator.mediaDevices.getUserMedia` using a `chromeMediaSource` of `tab`. The
      * identifier is restricted to the web contents that it is registered to and is
-     * only valid for 10 seconds.
+     * only valid for 10 seconds. The `desktop` source only accepts screen and window
+     * identifiers from `desktopCapturer.getSources`; to capture a WebContents use this
+     * identifier with the `tab` source, or `ses.setDisplayMediaRequestHandler`.
      */
     getMediaSourceId(requestWebContents: WebContents): string;
     /**
@@ -18995,7 +19143,8 @@ declare namespace Electron {
      */
     setUserAgent(userAgent: string): void;
     /**
-     * Sets the maximum and minimum pinch-to-zoom level.
+     * Sets the maximum and minimum pinch-to-zoom level. The page keeps its normal
+     * scale until the user pinches; a `minimumLevel` below 1 only allows zooming out.
      *
      * > [!NOTE] Visual zoom is disabled by default in Electron. To re-enable it, call:
      */
@@ -19027,14 +19176,15 @@ declare namespace Electron {
      * Changes the zoom factor to the specified factor. Zoom factor is zoom percent
      * divided by 100, so 300% = 3.0.
      *
-     * The factor must be greater than 0.0.
+     * The factor must be greater than 0.0. Values outside the range Chromium can
+     * display (0.25 to 5.0) are clamped to it.
      */
     setZoomFactor(factor: number): void;
     /**
      * Changes the zoom level to the specified level. The original size is 0 and each
-     * increment above or below represents zooming 20% larger or smaller to default
-     * limits of 300% and 50% of original size, respectively. The formula for this is
-     * `scale := 1.2 ^ level`.
+     * increment above or below represents zooming 20% larger or smaller. The formula
+     * for this is `scale := 1.2 ^ level`, and the level is clamped to the range
+     * Chromium can display (25% to 500%, about -7.6 to 8.8).
      *
      * > [!NOTE] The zoom policy at the Chromium level is same-origin by default,
      * meaning that the zoom level for a specific domain propagates across all
@@ -19901,8 +20051,10 @@ declare namespace Electron {
      */
     nodeIntegrationInSubFrames?: boolean;
     /**
-     * Whether node integration is enabled in web workers. Default is `false`. More
-     * about this can be found in Multithreading.
+     * Whether node integration is enabled in web workers. Default is `false`. Only
+     * workers created by a frame that itself has access to Node.js (the main frame, or
+     * any frame when `nodeIntegrationInSubFrames` is enabled) get it. More about this
+     * can be found in Multithreading.
      */
     nodeIntegrationInWorker?: boolean;
     /**
@@ -20472,6 +20624,10 @@ declare namespace Electron {
     removeEventListener(event: 'close', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when the guest page has sent an asynchronous message to embedder page.
+     * `frameId` does not tell the embedder which document sent the message; when that
+     * matters, have the guest use `ipcRenderer.send()` and handle the guest
+     * `webContents`' `ipc-message` event in the main process, where
+     * `event.senderFrame` identifies the sender.
      *
      * With `sendToHost` method and `ipc-message` event you can communicate between
      * guest page and embedder page:
@@ -20854,7 +21010,9 @@ declare namespace Electron {
     unselect(): void;
     /**
      * A `boolean`. When this attribute is present the guest page will be allowed to
-     * open new windows. Popups are disabled by default.
+     * open new windows, whether through `window.open()` or a link opened into a new
+     * window (for example a modifier-clicked or `target="_blank"` link). Popups are
+     * disabled by default.
      */
     allowpopups: boolean;
     /**
@@ -21865,18 +22023,20 @@ declare namespace Electron {
     uploadToServer?: boolean;
     /**
      * If true, crashes generated in the main process will not be forwarded to the
-     * system crash handler. Default is `false`.
+     * system crash handler. This option has no effect on Windows. Default is `false`.
+     *
+     * @platform darwin,linux
      */
     ignoreSystemCrashHandler?: boolean;
     /**
-     * If true, limit the number of crashes uploaded to 1/hour. Default is `false`.
-     *
-     * @platform darwin,win32
+     * If true, limit the number of crashes uploaded to 1/hour. Crash reports over the
+     * limit are not uploaded, but are still stored on disk. Default is `false`.
      */
     rateLimit?: boolean;
     /**
      * If true, crash reports will be compressed and uploaded with `Content-Encoding:
-     * gzip`. Default is `true`.
+     * gzip`. Setting this to `false` while `uploadToServer` is `true` is deprecated
+     * and logs a deprecation warning. Default is `true`.
      */
     compress?: boolean;
     /**
@@ -21893,7 +22053,8 @@ declare namespace Electron {
      * crash reporter has been started. If a key is present in both the global extra
      * parameters and the process-specific extra parameters, then the global one will
      * take precedence. By default, `productName` and the app version are included, as
-     * well as the Electron version.
+     * well as the Electron version. Global extra parameters are not returned by
+     * `getParameters()`.
      */
     globalExtra?: Record<string, string>;
   }
@@ -22026,9 +22187,17 @@ declare namespace Electron {
     reason: ('clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure' | 'memory-eviction');
     /**
      * The exit code for the process (e.g. status from waitpid if on POSIX, from
-     * GetExitCodeProcess on Windows).
+     * GetExitCodeProcess on Windows), unless `reason` is `launch-failed`, in which
+     * case `exitCode` will be a platform-specific launch failure error code.
      */
     exitCode: number;
+    /**
+     * The Windows system error code (`GetLastError()`) of the failed launch. Only set
+     * when `reason` is `launch-failed`.
+     *
+     * @platform win32
+     */
+    systemErrorCode?: number;
     /**
      * The non-localized name of the process.
      */
@@ -22305,6 +22474,15 @@ declare namespace Electron {
      * The blocked path attempting to be accessed.
      */
     path: string;
+    /**
+     * The frame that initiated access. May be `null` if the frame has since been
+     * destroyed.
+     */
+    frame: (WebFrameMain) | (null);
+    /**
+     * The WebContents that contains `frame`.
+     */
+    webContents: (WebContents) | (null);
   }
 
   interface FindInPageOptions {
@@ -22785,6 +22963,20 @@ declare namespace Electron {
     args?: string[];
   }
 
+  interface Match {
+    /**
+     * Host name to match, for standard schemes. It is compared with the URL's host as
+     * a whole, case-insensitively; there is no wildcard or subdomain matching. Omit to
+     * match any host.
+     */
+    host?: string;
+    /**
+     * Path prefix to match, starting with `/` and written as it appears in a URL
+     * (percent-encoded). Defaults to `/`.
+     */
+    path?: string;
+  }
+
   interface MenuItemConstructorOptions {
     /**
      * Will be called with `click(menuItem, window, event)` when the menu item is
@@ -22895,6 +23087,7 @@ declare namespace Electron {
     /**
      * A badge shown alongside the label, either a system-styled count (`alerts`,
      * `updates`, `new-items`) or a custom string. Only available on macOS 14 and up.
+     * Not displayed in Dock menus.
      *
      * @platform darwin
      */
@@ -23291,6 +23484,12 @@ declare namespace Electron {
      */
     frame?: (WebFrameMain) | (null);
     /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
+    /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
      */
@@ -23320,6 +23519,12 @@ declare namespace Electron {
      */
     frame?: (WebFrameMain) | (null);
     /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
+    /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
      */
@@ -23340,6 +23545,12 @@ declare namespace Electron {
      * or been destroyed.
      */
     frame?: (WebFrameMain) | (null);
+    /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -23362,6 +23573,12 @@ declare namespace Electron {
      * or been destroyed.
      */
     frame?: (WebFrameMain) | (null);
+    /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -23388,6 +23605,12 @@ declare namespace Electron {
      */
     frame?: (WebFrameMain) | (null);
     /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
+    /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
      */
@@ -23413,6 +23636,12 @@ declare namespace Electron {
      */
     frame?: (WebFrameMain) | (null);
     /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
+    /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
      */
@@ -23435,6 +23664,12 @@ declare namespace Electron {
      * or been destroyed.
      */
     frame?: (WebFrameMain) | (null);
+    /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -23462,6 +23697,12 @@ declare namespace Electron {
      * or been destroyed.
      */
     frame?: (WebFrameMain) | (null);
+    /**
+     * The origin that issued the request (for example `https://example.com`, or `null`
+     * for an opaque origin). Kept from the original request across redirects; absent
+     * for requests the browser started itself.
+     */
+    initiatorOrigin?: string;
     /**
      * Can be `mainFrame`, `subFrame`, `stylesheet`, `script`, `image`, `font`,
      * `object`, `xhr`, `ping`, `cspReport`, `media`, `webSocket` or `other`.
@@ -23680,7 +23921,8 @@ declare namespace Electron {
      */
     embeddingOrigin?: string;
     /**
-     * The security origin of the `media` check.
+     * The origin of the requesting frame, for `media`, `hid`, `usb` and `serial`
+     * checks.
      */
     securityOrigin?: string;
     /**
@@ -23688,8 +23930,8 @@ declare namespace Electron {
      */
     mediaType?: ('video' | 'audio' | 'unknown');
     /**
-     * The last URL the requesting frame loaded.  This is not provided for cross-origin
-     * sub frames making permission checks.
+     * The last URL the requesting frame loaded. Not provided when the check is not
+     * made on behalf of a document (for example for a service worker).
      */
     requestingUrl?: string;
     /**
@@ -24273,6 +24515,30 @@ declare namespace Electron {
     topFrameSite: string;
   }
 
+  interface Source {
+    /**
+     * Must be `directory`.
+     */
+    type: string;
+    /**
+     * Absolute path of the directory. The part of the URL's path after `match.path` is
+     * resolved inside it; paths that would leave it are not served. May point into an
+     * `asar` archive.
+     */
+    root: string;
+    /**
+     * File served for a URL whose path ends in `/`. Defaults to `index.html`; an empty
+     * string disables it.
+     */
+    index?: string;
+    /**
+     * Response headers added to every file served by this route. Headers computed by
+     * the file loader, including `Content-Type`, `Content-Length`, and
+     * `Content-Range`, will override these supplied values.
+     */
+    headers?: Record<string, string>;
+  }
+
   interface SourcesOptions {
     /**
      * An array of strings that lists the types of desktop sources to be captured,
@@ -24322,7 +24588,8 @@ declare namespace Electron {
     /**
      * If a string is specified, can be `loopback` or `loopbackWithMute`. Specifying a
      * loopback device will capture system audio, and is currently only supported on
-     * Windows. If a WebFrameMain is specified, will capture audio from that frame.
+     * Windows. If a WebFrameMain is specified, will capture audio from the
+     * `webContents` that contains that frame.
      */
     audio?: (('loopback' | 'loopbackWithMute')) | (WebFrameMain);
     /**
@@ -25710,6 +25977,7 @@ declare namespace Electron {
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type Match = Electron.Match;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
     type MessageBoxOptions = Electron.MessageBoxOptions;
     type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
@@ -25776,6 +26044,7 @@ declare namespace Electron {
     type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
+    type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
@@ -25860,7 +26129,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -25915,6 +26183,8 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProtocolRoute = Electron.ProtocolRoute;
+    type ProtocolSource = Electron.ProtocolSource;
     type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
@@ -26141,6 +26411,7 @@ declare namespace Electron {
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type Match = Electron.Match;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
     type MessageBoxOptions = Electron.MessageBoxOptions;
     type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
@@ -26207,6 +26478,7 @@ declare namespace Electron {
     type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
+    type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
@@ -26291,7 +26563,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -26346,6 +26617,8 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProtocolRoute = Electron.ProtocolRoute;
+    type ProtocolSource = Electron.ProtocolSource;
     type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
@@ -26494,6 +26767,7 @@ declare namespace Electron {
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type Match = Electron.Match;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
     type MessageBoxOptions = Electron.MessageBoxOptions;
     type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
@@ -26560,6 +26834,7 @@ declare namespace Electron {
     type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
+    type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
@@ -26644,7 +26919,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -26699,6 +26973,8 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProtocolRoute = Electron.ProtocolRoute;
+    type ProtocolSource = Electron.ProtocolSource;
     type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
@@ -26849,6 +27125,7 @@ declare namespace Electron {
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type Match = Electron.Match;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
     type MessageBoxOptions = Electron.MessageBoxOptions;
     type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
@@ -26915,6 +27192,7 @@ declare namespace Electron {
     type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
+    type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
@@ -26999,7 +27277,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -27054,6 +27331,8 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProtocolRoute = Electron.ProtocolRoute;
+    type ProtocolSource = Electron.ProtocolSource;
     type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
@@ -27302,6 +27581,7 @@ declare namespace Electron {
     type LoadURLOptions = Electron.LoadURLOptions;
     type LoginItemSettings = Electron.LoginItemSettings;
     type LoginItemSettingsOptions = Electron.LoginItemSettingsOptions;
+    type Match = Electron.Match;
     type MenuItemConstructorOptions = Electron.MenuItemConstructorOptions;
     type MessageBoxOptions = Electron.MessageBoxOptions;
     type MessageBoxReturnValue = Electron.MessageBoxReturnValue;
@@ -27368,6 +27648,7 @@ declare namespace Electron {
     type SessionSelectWebauthnAuthenticatorEventParams = Electron.SessionSelectWebauthnAuthenticatorEventParams;
     type Settings = Electron.Settings;
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
+    type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
@@ -27452,7 +27733,6 @@ declare namespace Electron {
     type CustomScheme = Electron.CustomScheme;
     type DesktopCapturerSource = Electron.DesktopCapturerSource;
     type Display = Electron.Display;
-    type EnableHeapProfilingOptions = Electron.EnableHeapProfilingOptions;
     type Extension = Electron.Extension;
     type ExtensionInfo = Electron.ExtensionInfo;
     type FileFilter = Electron.FileFilter;
@@ -27507,6 +27787,8 @@ declare namespace Electron {
     type ProtocolRequest = Electron.ProtocolRequest;
     type ProtocolResponse = Electron.ProtocolResponse;
     type ProtocolResponseUploadData = Electron.ProtocolResponseUploadData;
+    type ProtocolRoute = Electron.ProtocolRoute;
+    type ProtocolSource = Electron.ProtocolSource;
     type ProxyConfig = Electron.ProxyConfig;
     type Rectangle = Electron.Rectangle;
     type Referrer = Electron.Referrer;
@@ -27670,6 +27952,14 @@ declare namespace NodeJS {
      * Kilobytes.
      */
     getBlinkMemoryInfo(): Electron.BlinkMemoryInfo;
+    /**
+     * CPU usage of the process this is called in.
+     * 
+     * > [!NOTE] `percentCPUUsage` and `idleWakeupsPerSecond` are averages over the
+     * time since the previous call to `process.getCPUUsage()` in this process, and
+     * each call starts a new measurement interval. Every caller in the process shares
+     * that interval. See `CPUUsage` for details.
+     */
     getCPUUsage(): Electron.CPUUsage;
     /**
      * The number of milliseconds since epoch, or `null` if the information is
