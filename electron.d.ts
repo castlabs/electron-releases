@@ -1,4 +1,4 @@
-// Type definitions for Electron 42.11.0+wvcus
+// Type definitions for Electron 42.11.10+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -13409,8 +13409,12 @@ declare namespace Electron {
      * is available and `useSystemPicker` is set to `true`, the handler will not be
      * invoked.
      *
-     * Passing a WebFrameMain object as a video or audio stream will capture the video
-     * or audio stream from that frame.
+     * Passing a WebFrameMain object as a video or audio stream captures the whole
+     * `webContents` that contains that frame (the tab), not just the frame:
+     * `request.frame` from an `<iframe>` therefore grants that iframe a capture of the
+     * page that embeds it. Check `request.frame` before using it this way, and note
+     * that the callback throws if the frame has been destroyed by the time it is
+     * called.
      *
      * Passing `null` instead of a function resets the handler to its default state.
      */
@@ -18150,7 +18154,9 @@ declare namespace Electron {
      * The identifier of a WebContents stream. This identifier can be used with
      * `navigator.mediaDevices.getUserMedia` using a `chromeMediaSource` of `tab`. The
      * identifier is restricted to the web contents that it is registered to and is
-     * only valid for 10 seconds.
+     * only valid for 10 seconds. The `desktop` source only accepts screen and window
+     * identifiers from `desktopCapturer.getSources`; to capture a WebContents use this
+     * identifier with the `tab` source, or `ses.setDisplayMediaRequestHandler`.
      */
     getMediaSourceId(requestWebContents: WebContents): string;
     /**
@@ -19378,8 +19384,10 @@ declare namespace Electron {
      */
     nodeIntegrationInSubFrames?: boolean;
     /**
-     * Whether node integration is enabled in web workers. Default is `false`. More
-     * about this can be found in Multithreading.
+     * Whether node integration is enabled in web workers. Default is `false`. Only
+     * workers created by a frame that itself has access to Node.js (the main frame, or
+     * any frame when `nodeIntegrationInSubFrames` is enabled) get it. More about this
+     * can be found in Multithreading.
      */
     nodeIntegrationInWorker?: boolean;
     /**
@@ -19944,6 +19952,10 @@ declare namespace Electron {
     removeEventListener(event: 'close', listener: (event: DOMEvent) => void): this;
     /**
      * Fired when the guest page has sent an asynchronous message to embedder page.
+     * `frameId` does not tell the embedder which document sent the message; when that
+     * matters, have the guest use `ipcRenderer.send()` and handle the guest
+     * `webContents`' `ipc-message` event in the main process, where
+     * `event.senderFrame` identifies the sender.
      *
      * With `sendToHost` method and `ipc-message` event you can communicate between
      * guest page and embedder page:
@@ -20326,7 +20338,9 @@ declare namespace Electron {
     unselect(): void;
     /**
      * A `boolean`. When this attribute is present the guest page will be allowed to
-     * open new windows. Popups are disabled by default.
+     * open new windows, whether through `window.open()` or a link opened into a new
+     * window (for example a modifier-clicked or `target="_blank"` link). Popups are
+     * disabled by default.
      */
     allowpopups: boolean;
     /**
@@ -21742,6 +21756,15 @@ declare namespace Electron {
      * The blocked path attempting to be accessed.
      */
     path: string;
+    /**
+     * The frame that initiated access. May be `null` if the frame has since been
+     * destroyed.
+     */
+    frame: (WebFrameMain) | (null);
+    /**
+     * The WebContents that contains `frame`.
+     */
+    webContents: (WebContents) | (null);
   }
 
   interface FindInPageOptions {
@@ -23120,7 +23143,8 @@ declare namespace Electron {
      */
     embeddingOrigin?: string;
     /**
-     * The security origin of the `media` check.
+     * The origin of the requesting frame, for `media`, `hid`, `usb` and `serial`
+     * checks.
      */
     securityOrigin?: string;
     /**
@@ -23128,8 +23152,8 @@ declare namespace Electron {
      */
     mediaType?: ('video' | 'audio' | 'unknown');
     /**
-     * The last URL the requesting frame loaded.  This is not provided for cross-origin
-     * sub frames making permission checks.
+     * The last URL the requesting frame loaded. Not provided when the check is not
+     * made on behalf of a document (for example for a service worker).
      */
     requestingUrl?: string;
     /**
@@ -23737,7 +23761,8 @@ declare namespace Electron {
     /**
      * If a string is specified, can be `loopback` or `loopbackWithMute`. Specifying a
      * loopback device will capture system audio, and is currently only supported on
-     * Windows. If a WebFrameMain is specified, will capture audio from that frame.
+     * Windows. If a WebFrameMain is specified, will capture audio from the
+     * `webContents` that contains that frame.
      */
     audio?: (('loopback' | 'loopbackWithMute')) | (WebFrameMain);
     /**
