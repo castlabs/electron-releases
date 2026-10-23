@@ -1,4 +1,4 @@
-// Type definitions for Electron 43.7.7+wvcus
+// Type definitions for Electron 43.8.3+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -9665,6 +9665,10 @@ declare namespace Electron {
      * Sets `menu` as the application menu on macOS. On Windows and Linux, the `menu`
      * will be set as each window's top menu.
      *
+     * On Linux, the menu bar uses GTK theme colors when GTK is available. If GTK
+     * cannot initialize, it uses Chromium's built-in light or dark menu colors,
+     * following `nativeTheme.shouldUseDarkColors`.
+     *
      * Also on Windows and Linux, you can use a `&` in the top-level item name to
      * indicate which letter should get a generated accelerator. For example, using
      * `&File` for the file menu would result in a generated `Alt-F` accelerator that
@@ -16045,26 +16049,34 @@ declare namespace Electron {
     /**
      * Emitted when the utility process encounters an HTTP 401 or 407 authentication
      * challenge, if the process was created with both
-     * `respondToAuthRequestsFromMainProcess: true` and a `session` option. The
-     * `callback` should be called with credentials to respond to the challenge.
-     * Calling `callback` without arguments will cancel the request.
+     * `respondToAuthRequestsFromMainProcess: true` and a `session` option.
+     *
+     * The default behavior is to cancel the authentication. To override this you
+     * should prevent the default behavior with `event.preventDefault()` and call
+     * `callback(username, password)` with the credentials. Calling `callback` without
+     * arguments will cancel the request.
      *
      * This behaves the same as the `login` event on `app` but is scoped to the
      * individual utility process instance.
      */
-    on(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    on(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    off(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    off(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    once(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    once(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    addListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    addListener(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    removeListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    removeListener(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
@@ -21208,10 +21220,10 @@ declare namespace Electron {
 
   interface Config {
     /**
-     * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
-     * when connecting to remote servers. Defaults to `tls1`.
+     * Can be `tls1.2` or `tls1.3`. The minimum SSL version to allow when connecting to
+     * remote servers. Defaults to `tls1.2`.
      */
-    minVersion?: ('tls1' | 'tls1.1' | 'tls1.2' | 'tls1.3');
+    minVersion?: ('tls1.2' | 'tls1.3');
     /**
      * Can be `tls1.2` or `tls1.3`. The maximum SSL version to allow when connecting to
      * remote servers. Defaults to `tls1.3`.
