@@ -1,4 +1,4 @@
-// Type definitions for Electron 44.9.3+wvcus
+// Type definitions for Electron 44.10.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -11742,6 +11742,14 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/preload-script
 
     /**
+     * Glob patterns for URLs the script will not run in.
+     */
+    excludeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script will not run in.
+     */
+    excludeMatches?: string[];
+    /**
      * Path of the script file. Must be an absolute path.
      */
     filePath: string;
@@ -11749,6 +11757,29 @@ declare namespace Electron {
      * Unique ID of preload script.
      */
     id: string;
+    /**
+     * Glob patterns applied after `matches`. A URL must also match one of these globs.
+     * `*` matches any sequence of characters and `?` matches any single character.
+     */
+    includeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script runs in. A custom protocol can be used if its
+     * scheme is registered as `standard` with `protocol.registerSchemesAsPrivileged`.
+     * To filter documents served from a non-standard scheme, use `includeGlobs` or
+     * `excludeGlobs`, which match against the whole URL. If omitted, the script runs
+     * for all URLs not excluded by other filters.
+     */
+    matches?: string[];
+    /**
+     * Whether a document whose URL has no origin of its own (`about:`, `blob:`,
+     * `data:` or `filesystem:`) is matched by the origin of the frame that created it
+     * instead of by its URL. This includes documents with an opaque origin, such as a
+     * `data:` frame or a sandboxed `<iframe srcdoc>`. For example, an `about:blank`
+     * popup opened by `https://example.com/page` is matched as `https://example.com/`.
+     * When set, every pattern in `matches` must have a path of `/*`. Only applies to
+     * `frame` contexts. Default is `false`.
+     */
+    matchOriginAsFallback?: boolean;
     /**
      * Context type where the preload script will be executed. Possible values include
      * `frame` or `service-worker`.
@@ -11761,6 +11792,14 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/preload-script-registration
 
     /**
+     * Glob patterns for URLs the script will not run in.
+     */
+    excludeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script will not run in.
+     */
+    excludeMatches?: string[];
+    /**
      * Path of the script file. Must be an absolute path.
      */
     filePath: string;
@@ -11768,6 +11807,30 @@ declare namespace Electron {
      * Unique ID of preload script. Defaults to a random UUID.
      */
     id?: string;
+    /**
+     * Glob patterns applied after `matches`. A URL must also match one of these globs.
+     * `*` matches any sequence of characters and `?` matches zero or one character.
+     * Must not be empty.
+     */
+    includeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script runs in. A custom protocol can be used if its
+     * scheme is registered as `standard` with `protocol.registerSchemesAsPrivileged`.
+     * To filter documents served from a non-standard scheme, use `includeGlobs` or
+     * `excludeGlobs`, which match against the whole URL. If omitted, the script runs
+     * for all URLs not excluded by other filters. Must not be empty.
+     */
+    matches?: string[];
+    /**
+     * Whether a document whose URL has no origin of its own (`about:`, `blob:`,
+     * `data:` or `filesystem:`) is matched by the origin of the frame that created it
+     * instead of by its URL. This includes documents with an opaque origin, such as a
+     * `data:` frame or a sandboxed `<iframe srcdoc>`. For example, an `about:blank`
+     * popup opened by `https://example.com/page` is matched as `https://example.com/`.
+     * When set, every pattern in `matches` must have a path of `/*`. Only applies to
+     * `frame` contexts. Default is `false`.
+     */
+    matchOriginAsFallback?: boolean;
     /**
      * Context type where the preload script will be executed. Possible values include
      * `frame` or `service-worker`.
@@ -13932,7 +13995,33 @@ declare namespace Electron {
     /**
      * Registers preload script that will be executed in its associated context type in
      * this session. For `frame` contexts, this will run prior to any preload defined
-     * in the web preferences of a WebContents.
+     * in the web preferences of a WebContents. In-page navigations do not rerun the
+     * preload script.
+     *
+     * URL filters can limit which documents or service workers a script runs in. They
+     * behave like content script URL matching. A script runs for a URL that meets all
+     * of these conditions:
+     *
+     * * It matches at least one pattern in `matches`, if set.
+     * * It matches at least one glob in `includeGlobs`, if set.
+     * * It does not match any pattern in `excludeMatches`.
+     * * It does not match any glob in `excludeGlobs`.
+     *
+     * The URL that the filters are matched against depends on the context type:
+     *
+     * * For `service-worker` contexts, it is the service worker's scope.
+     * * For `frame` contexts, it is the URL of the document being loaded, with these
+     * special cases:
+     *   * The initial empty document of a frame or popup is matched as `about:blank`.
+     * Set `matchOriginAsFallback` to match such documents by the origin of the frame
+     * that created them instead, for example to keep a script out of the `about:blank`
+     * popups of an excluded site.
+     *   * A `data:` URL loaded with `baseURLForDataURL` is matched by its base URL.
+     *   * The error page of a failed navigation is matched by the URL that failed to
+     * load.
+     *
+     * Throws an error if any of the URL patterns are invalid, or if `matches` or
+     * `includeGlobs` is an empty array.
      *
      * The ID of the registered preload script.
      */
@@ -20729,6 +20818,10 @@ declare namespace Electron {
      */
     addEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void): this;
+    /**
+     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
+     * a link in its context menu.
+     */
     addEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void): this;
     /**
