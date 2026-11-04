@@ -1,4 +1,4 @@
-// Type definitions for Electron 43.8.3+wvcus
+// Type definitions for Electron 43.8.6+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -20228,6 +20228,10 @@ declare namespace Electron {
      */
     addEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void): this;
+    /**
+     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
+     * a link in its context menu.
+     */
     addEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void): this;
     /**
