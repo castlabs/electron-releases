@@ -1,4 +1,4 @@
-// Type definitions for Electron 45.0.0-alpha.14+wvcus
+// Type definitions for Electron 45.2.1+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -187,6 +187,96 @@ declare namespace Electron {
                                                     * Contains app-specific state stored by the activity.
                                                     */
                                                    userInfo: unknown) => void): this;
+    /**
+     * Emitted when an app shim connects to your app. Shims can only connect after
+     * `app.startAppShimServer()` has been called.
+     *
+     * Any process running as the same user can connect. Verify the shim before
+     * creating windows in it, for example with `shim.satisfiesCodeRequirement()`, and
+     * call `shim.quit()` to reject a shim that you do not trust.
+     *
+     * @experimental
+     * @platform darwin
+     */
+    on(event: 'app-shim-connected', listener: (event: Event,
+                                               shim: AppShimHost) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    off(event: 'app-shim-connected', listener: (event: Event,
+                                               shim: AppShimHost) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    once(event: 'app-shim-connected', listener: (event: Event,
+                                               shim: AppShimHost) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    addListener(event: 'app-shim-connected', listener: (event: Event,
+                                               shim: AppShimHost) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    removeListener(event: 'app-shim-connected', listener: (event: Event,
+                                               shim: AppShimHost) => void): this;
+    /**
+     * Emitted when an app shim was launched but could not connect because your app's
+     * bundle has been replaced by a different version since your app started. A shim
+     * loads the version of Electron that is on disk, which cannot communicate with the
+     * version that is still running.
+     *
+     * The shim quits without showing any UI, so use this event to tell the user what
+     * happened. Shims can connect again after your app restarts.
+     *
+     * @experimental
+     * @platform darwin
+     */
+    on(event: 'app-shim-version-mismatch', listener: (event: Event,
+                                                      /**
+                                                       * The path of the app shim's bundle.
+                                                       */
+                                                      bundlePath: string) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    off(event: 'app-shim-version-mismatch', listener: (event: Event,
+                                                      /**
+                                                       * The path of the app shim's bundle.
+                                                       */
+                                                      bundlePath: string) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    once(event: 'app-shim-version-mismatch', listener: (event: Event,
+                                                      /**
+                                                       * The path of the app shim's bundle.
+                                                       */
+                                                      bundlePath: string) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    addListener(event: 'app-shim-version-mismatch', listener: (event: Event,
+                                                      /**
+                                                       * The path of the app shim's bundle.
+                                                       */
+                                                      bundlePath: string) => void): this;
+    /**
+     * @experimental
+     * @platform darwin
+     */
+    removeListener(event: 'app-shim-version-mismatch', listener: (event: Event,
+                                                      /**
+                                                       * The path of the app shim's bundle.
+                                                       */
+                                                      bundlePath: string) => void): this;
     /**
      * Emitted before the application starts closing its windows. Calling
      * `event.preventDefault()` will prevent the default behavior, which is terminating
@@ -1353,6 +1443,13 @@ declare namespace Electron {
      * to the npm modules spec. You should usually also specify a `productName` field,
      * which is your application's full capitalized name, and which will be preferred
      * over `name` by Electron.
+     *
+     * Electron uses the application's name to construct the default `userData`
+     * directory. On Windows, neither `productName` nor `name` should contain the
+     * following special characters, which cannot be used in directory or file names:
+     * `<`, `>`, `:`, `"`, `\`, `/`, `|`, `?`, `*`. Using these characters in the
+     * application's name can prevent Electron from creating the default `userData`
+     * directory and cause the application to crash on startup.
      */
     getName(): string;
     /**
@@ -1857,6 +1954,8 @@ declare namespace Electron {
     /**
      * Overrides the current application's name.
      *
+     * On Windows, avoid the reserved filename characters in `name`.
+     *
      * > [!NOTE] This function overrides the name used internally by Electron; it does
      * not affect the name that the OS uses.
      */
@@ -1970,6 +2069,28 @@ declare namespace Electron {
      */
     startAccessingSecurityScopedResource(bookmarkData: string): Function;
     /**
+     * Starts accepting connections from app shims. An `app-shim-connected` event is
+     * emitted for each shim that connects.
+     *
+     * Throws if the server cannot be started, for example because another copy of your
+     * app has already started a server with the same `name`.
+     *
+     * This method can only be called after the app is ready. It is not available in
+     * Mac App Store builds.
+     *
+     * @experimental
+     * @platform darwin
+     */
+    startAppShimServer(options?: StartAppShimServerOptions): void;
+    /**
+     * Stops accepting connections from app shims. Shims that have already connected
+     * stay connected.
+     *
+     * @experimental
+     * @platform darwin
+     */
+    stopAppShimServer(): void;
+    /**
      * Updates the current activity if its type matches `type`, merging the entries
      * from `userInfo` into its current `userInfo` dictionary.
      *
@@ -2044,6 +2165,9 @@ declare namespace Electron {
      * to the npm modules spec. You should usually also specify a `productName` field,
      * which is your application's full capitalized name, and which will be preferred
      * over `name` by Electron.
+     *
+     * On Windows, the application's name must not contain reserved filename
+     * characters, because it is used to construct the default `userData` directory.
      */
     name: string;
     /**
@@ -2074,6 +2198,230 @@ declare namespace Electron {
      * app's initialization to ensure that your overridden value is used.
      */
     userAgentFallback: string;
+  }
+
+  class AppShimHost extends NodeEventEmitter {
+
+    // Docs: https://electronjs.org/docs/api/app-shim-host
+
+    /**
+     * Emitted when the user clicks the shim's Dock icon, or launches the shim again
+     * while it is already running.
+     *
+     * @experimental
+     */
+    on(event: 'activate', listener: (event: Event,
+                                     hasVisibleWindows: boolean) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'activate', listener: (event: Event,
+                                     hasVisibleWindows: boolean) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'activate', listener: (event: Event,
+                                     hasVisibleWindows: boolean) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'activate', listener: (event: Event,
+                                     hasVisibleWindows: boolean) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'activate', listener: (event: Event,
+                                     hasVisibleWindows: boolean) => void): this;
+    /**
+     * Emitted when the shim's process has exited or its connection was lost. All
+     * windows that were created in the shim have already been closed.
+     *
+     * @experimental
+     */
+    on(event: 'disconnected', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'disconnected', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'disconnected', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'disconnected', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'disconnected', listener: (event: Event) => void): this;
+    /**
+     * Emitted when the user opens a file with the shim.
+     *
+     * @experimental
+     */
+    on(event: 'open-file', listener: (event: Event,
+                                      path: string) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'open-file', listener: (event: Event,
+                                      path: string) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'open-file', listener: (event: Event,
+                                      path: string) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'open-file', listener: (event: Event,
+                                      path: string) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'open-file', listener: (event: Event,
+                                      path: string) => void): this;
+    /**
+     * Emitted when the user opens a URL with the shim.
+     *
+     * @experimental
+     */
+    on(event: 'open-url', listener: (event: Event,
+                                     url: string) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'open-url', listener: (event: Event,
+                                     url: string) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'open-url', listener: (event: Event,
+                                     url: string) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'open-url', listener: (event: Event,
+                                     url: string) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'open-url', listener: (event: Event,
+                                     url: string) => void): this;
+    /**
+     * Emitted when the shim is asked to quit: by the user, for example with Cmd+Q or
+     * from its Dock menu, or by macOS at logout.
+     *
+     * By default, the shim quits and its windows are closed without emitting their
+     * `close` events. To keep the shim running, call `event.preventDefault()`. You can
+     * then close its windows yourself and call `shim.quit()` when you are done.
+     *
+     * `event.preventDefault()` must be called synchronously in the listener. If your
+     * app's main process is unresponsive for more than five seconds, the shim quits
+     * without waiting for it.
+     *
+     * @experimental
+     */
+    on(event: 'quit-requested', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    off(event: 'quit-requested', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    once(event: 'quit-requested', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    addListener(event: 'quit-requested', listener: (event: Event) => void): this;
+    /**
+     * @experimental
+     */
+    removeListener(event: 'quit-requested', listener: (event: Event) => void): this;
+    /**
+     * Bounces the shim's Dock icon, in the same way that `dock.bounce()` bounces your
+     * app's.
+     *
+     * @experimental
+     */
+    bounce(type?: 'critical' | 'informational'): void;
+    /**
+     * Cancels a bounce started by `shim.bounce()`.
+     *
+     * @experimental
+     */
+    cancelBounce(): void;
+    /**
+     * Whether the shim's process is still connected.
+     *
+     * @experimental
+     */
+    isConnected(): boolean;
+    /**
+     * Quits the shim's process and closes its windows. The windows do not emit `close`
+     * events. They emit `closed` shortly after this method returns.
+     * `shim.isConnected()` returns `false` as soon as this method returns.
+     *
+     * @experimental
+     */
+    quit(): void;
+    /**
+     * Whether the code signature of the shim's process satisfies `requirement`. The
+     * check is performed on the running process that connected, not on the bundle at
+     * `shim.bundlePath`.
+     *
+     * Throws if `requirement` cannot be parsed.
+     *
+     * @experimental
+     */
+    satisfiesCodeRequirement(requirement: string): boolean;
+    /**
+     * Sets the menu bar that is shown while the shim is the active app. This is the
+     * shim's equivalent of `Menu.setApplicationMenu()`. Passing `null` restores the
+     * shim's minimal default menu.
+     *
+     * The `click` handlers of the menu's items and the menu's `menu-will-show` event
+     * run in your app's main process. Items with a `role` act on the shim instead of
+     * your app: for example, the `quit` role quits the shim. The default labels of the
+     * `about`, `hide` and `quit` roles use the shim's name.
+     *
+     * The shim displays the menu's items as they were when this method was called.
+     * Later changes to an item's `label`, `enabled`, `checked` or `visible` properties
+     * are applied when the shim becomes the active app, when one of its menus is
+     * opened, and after an item is clicked.
+     *
+     * @experimental
+     */
+    setApplicationMenu(menu: (Menu) | (null)): void;
+    /**
+     * Sets the text displayed on the shim's Dock icon. An empty string clears it.
+     *
+     * @experimental
+     */
+    setBadge(text: string): void;
+    /**
+     * A `string` representing the bundle identifier from that bundle's `Info.plist`.
+     * This value is not verified, so do not use it to decide whether to trust the
+     * shim. Use `shim.satisfiesCodeRequirement()` instead.
+     *
+     * @experimental
+     */
+    readonly bundleId: string;
+    /**
+     * A `string` representing the path of the app bundle that the shim's process was
+     * launched from.
+     *
+     * @experimental
+     */
+    readonly bundlePath: string;
+    /**
+     * A `number` representing the process ID of the shim.
+     *
+     * @experimental
+     */
+    readonly pid: number;
   }
 
   interface AutoUpdater extends NodeJS.EventEmitter {
@@ -3452,6 +3800,16 @@ declare namespace Electron {
      * Linux this is supported on both X11 and Wayland. On X11 the X server has applied
      * the window's new input shape when the call returns; on Wayland the new input
      * region is applied with the window's next frame.
+     *
+     * > [!NOTE] On Windows, `forward: true` stops working temporarily when the active
+     * window is running at a higher integrity level (e.g., elevated/Administrator)
+     * than your Electron app. Since Electron typically runs at standard user
+     * privilege, this occurs when an elevated window—such as Task Manager or an
+     * installer—takes focus. This is due to User Interface Privacy Isolation (UIPI).
+     *
+     * To work around it, your app must be run with Administrator privileges or
+     * configured with UIAccess privileges (see the Background section under the
+     * Reference section of this page).
      */
     setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
     /**
@@ -3913,6 +4271,15 @@ declare namespace Electron {
      * `false`. Not supported on Wayland (Linux).
      */
     alwaysOnTop?: boolean;
+    /**
+     * Creates the native window in the process of this app shim, so that it belongs to
+     * the shim's Dock icon and not to your app's. See AppShimHost for what affordances
+     * are granted to the window.
+     *
+     * @experimental
+     * @platform darwin
+     */
+    appShim?: AppShimHost;
     /**
      * Auto hide the menu bar unless the `Alt` key is pressed. Default is `false`.
      *
@@ -6287,6 +6654,16 @@ declare namespace Electron {
      * Linux this is supported on both X11 and Wayland. On X11 the X server has applied
      * the window's new input shape when the call returns; on Wayland the new input
      * region is applied with the window's next frame.
+     *
+     * > [!NOTE] On Windows, `forward: true` stops working temporarily when the active
+     * window is running at a higher integrity level (e.g., elevated/Administrator)
+     * than your Electron app. Since Electron typically runs at standard user
+     * privilege, this occurs when an elevated window—such as Task Manager or an
+     * installer—takes focus. This is due to User Interface Privacy Isolation (UIPI).
+     *
+     * To work around it, your app must be run with Administrator privileges or
+     * configured with UIAccess privileges (see the Background section under the
+     * Reference section of this page).
      */
     setIgnoreMouseEvents(ignore: boolean, options?: IgnoreMouseEventsOptions): void;
     /**
@@ -7373,7 +7750,10 @@ declare namespace Electron {
      * soon as they receive the EnableRecording request.
      *
      * If a recording is already running, the promise will be immediately resolved, as
-     * only one trace operation can be in progress at a time.
+     * only one trace operation can be in progress at a time. If
+     * `options.nativeHeapProfiling` is set while a recording is already running, the
+     * promise is rejected instead, since the already-running recording's options can't
+     * be changed to turn on heap profiling.
      */
     startRecording(options: (TraceConfig) | (TraceCategoriesAndOptions)): Promise<void>;
     /**
@@ -7391,6 +7771,12 @@ declare namespace Electron {
      * Trace data will be written into `resultFilePath`. If `resultFilePath` is empty
      * or not provided, trace data will be written to a temporary file, and the path
      * will be returned in the promise.
+     *
+     * Trace data is written in the Perfetto protobuf format.
+     *
+     * Heap profiling samples record instruction addresses and module build IDs rather
+     * than function names. To symbolize them, use the symbols published for the
+     * matching Electron release with Chromium's `symbolize_trace` tool.
      */
     stopRecording(resultFilePath?: string): Promise<string>;
   }
@@ -9908,6 +10294,10 @@ declare namespace Electron {
      * Sets `menu` as the application menu on macOS. On Windows and Linux, the `menu`
      * will be set as each window's top menu.
      *
+     * On Linux, the menu bar uses GTK theme colors when GTK is available. If GTK
+     * cannot initialize, it uses Chromium's built-in light or dark menu colors,
+     * following `nativeTheme.shouldUseDarkColors`.
+     *
      * Also on Windows and Linux, you can use a `&` in the top-level item name to
      * indicate which letter should get a generated accelerator. For example, using
      * `&File` for the file menu would result in a generated `Alt-F` accelerator that
@@ -9924,6 +10314,22 @@ declare namespace Electron {
      * one. It contains standard items such as `File`, `Edit`, `View`, and `Window`.
      */
     static setApplicationMenu(menu: (Menu) | (null)): void;
+    /**
+     * Sets the colors used to highlight the hovered or keyboard-focused item in every
+     * menu the app shows, including context menus and the menu bar's dropdowns. Light
+     * and dark colors are set separately, and any color left unset keeps the default
+     * for that mode. Each call replaces the colors set by any previous call. Passing
+     * `null` restores the defaults.
+     *
+     * Menus opened after the call use the new colors. The colors are not applied while
+     * Windows high contrast mode or forced colors are active, so the user's system
+     * colors take priority.
+     *
+     * This method has no effect on macOS and Linux.
+     *
+     * @platform win32
+     */
+    static setHighlightColors(options: (HighlightColorsOptions) | (null)): void;
     /**
      * Appends the `menuItem` to the menu.
      */
@@ -10242,6 +10648,25 @@ declare namespace Electron {
     type: ('mouseWheel');
     wheelTicksX?: number;
     wheelTicksY?: number;
+  }
+
+  interface NativeHeapProfilerOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/native-heap-profiler-options
+
+    /**
+     * The interval in milliseconds at which samples are written to the trace. Each
+     * write is a full snapshot of every sampled allocation that is still live, so
+     * short intervals can fill the trace buffer quickly in long recordings. Defaults
+     * to `0`, which writes a single snapshot when tracing stops.
+     */
+    dumpInterval?: number;
+    /**
+     * The average number of bytes allocated between samples. Lower values give a more
+     * precise profile at a higher performance cost. Must be greater than `0`. Defaults
+     * to Chromium's default, currently `131072` (128 KiB).
+     */
+    samplingInterval?: number;
   }
 
   class NativeImage {
@@ -10714,9 +11139,6 @@ declare namespace Electron {
 
     // Docs: https://electronjs.org/docs/api/notification
 
-    /**
-     * @platform darwin,win32
-     */
     on(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
                                     * @deprecated
@@ -10727,9 +11149,6 @@ declare namespace Electron {
                                     * @platform win32
                                     */
                                    selectionIndex: number) => void): this;
-    /**
-     * @platform darwin,win32
-     */
     off(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
                                     * @deprecated
@@ -10740,9 +11159,6 @@ declare namespace Electron {
                                     * @platform win32
                                     */
                                    selectionIndex: number) => void): this;
-    /**
-     * @platform darwin,win32
-     */
     once(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
                                     * @deprecated
@@ -10753,9 +11169,6 @@ declare namespace Electron {
                                     * @platform win32
                                     */
                                    selectionIndex: number) => void): this;
-    /**
-     * @platform darwin,win32
-     */
     addListener(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
                                     * @deprecated
@@ -10766,9 +11179,6 @@ declare namespace Electron {
                                     * @platform win32
                                     */
                                    selectionIndex: number) => void): this;
-    /**
-     * @platform darwin,win32
-     */
     removeListener(event: 'action', listener: (details: Event<NotificationActionEventParams>,
                                    /**
                                     * @deprecated
@@ -11568,6 +11978,14 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/preload-script
 
     /**
+     * Glob patterns for URLs the script will not run in.
+     */
+    excludeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script will not run in.
+     */
+    excludeMatches?: string[];
+    /**
      * Path of the script file. Must be an absolute path.
      */
     filePath: string;
@@ -11575,6 +11993,29 @@ declare namespace Electron {
      * Unique ID of preload script.
      */
     id: string;
+    /**
+     * Glob patterns applied after `matches`. A URL must also match one of these globs.
+     * `*` matches any sequence of characters and `?` matches any single character.
+     */
+    includeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script runs in. A custom protocol can be used if its
+     * scheme is registered as `standard` with `protocol.registerSchemesAsPrivileged`.
+     * To filter documents served from a non-standard scheme, use `includeGlobs` or
+     * `excludeGlobs`, which match against the whole URL. If omitted, the script runs
+     * for all URLs not excluded by other filters.
+     */
+    matches?: string[];
+    /**
+     * Whether a document whose URL has no origin of its own (`about:`, `blob:`,
+     * `data:` or `filesystem:`) is matched by the origin of the frame that created it
+     * instead of by its URL. This includes documents with an opaque origin, such as a
+     * `data:` frame or a sandboxed `<iframe srcdoc>`. For example, an `about:blank`
+     * popup opened by `https://example.com/page` is matched as `https://example.com/`.
+     * When set, every pattern in `matches` must have a path of `/*`. Only applies to
+     * `frame` contexts. Default is `false`.
+     */
+    matchOriginAsFallback?: boolean;
     /**
      * Context type where the preload script will be executed. Possible values include
      * `frame` or `service-worker`.
@@ -11587,6 +12028,14 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/preload-script-registration
 
     /**
+     * Glob patterns for URLs the script will not run in.
+     */
+    excludeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script will not run in.
+     */
+    excludeMatches?: string[];
+    /**
      * Path of the script file. Must be an absolute path.
      */
     filePath: string;
@@ -11594,6 +12043,30 @@ declare namespace Electron {
      * Unique ID of preload script. Defaults to a random UUID.
      */
     id?: string;
+    /**
+     * Glob patterns applied after `matches`. A URL must also match one of these globs.
+     * `*` matches any sequence of characters and `?` matches zero or one character.
+     * Must not be empty.
+     */
+    includeGlobs?: string[];
+    /**
+     * Match patterns for URLs the script runs in. A custom protocol can be used if its
+     * scheme is registered as `standard` with `protocol.registerSchemesAsPrivileged`.
+     * To filter documents served from a non-standard scheme, use `includeGlobs` or
+     * `excludeGlobs`, which match against the whole URL. If omitted, the script runs
+     * for all URLs not excluded by other filters. Must not be empty.
+     */
+    matches?: string[];
+    /**
+     * Whether a document whose URL has no origin of its own (`about:`, `blob:`,
+     * `data:` or `filesystem:`) is matched by the origin of the frame that created it
+     * instead of by its URL. This includes documents with an opaque origin, such as a
+     * `data:` frame or a sandboxed `<iframe srcdoc>`. For example, an `about:blank`
+     * popup opened by `https://example.com/page` is matched as `https://example.com/`.
+     * When set, every pattern in `matches` must have a path of `/*`. Only applies to
+     * `frame` contexts. Default is `false`.
+     */
+    matchOriginAsFallback?: boolean;
     /**
      * Context type where the preload script will be executed. Possible values include
      * `frame` or `service-worker`.
@@ -13824,7 +14297,33 @@ declare namespace Electron {
     /**
      * Registers preload script that will be executed in its associated context type in
      * this session. For `frame` contexts, this will run prior to any preload defined
-     * in the web preferences of a WebContents.
+     * in the web preferences of a WebContents. In-page navigations do not rerun the
+     * preload script.
+     *
+     * URL filters can limit which documents or service workers a script runs in. They
+     * behave like content script URL matching. A script runs for a URL that meets all
+     * of these conditions:
+     *
+     * * It matches at least one pattern in `matches`, if set.
+     * * It matches at least one glob in `includeGlobs`, if set.
+     * * It does not match any pattern in `excludeMatches`.
+     * * It does not match any glob in `excludeGlobs`.
+     *
+     * The URL that the filters are matched against depends on the context type:
+     *
+     * * For `service-worker` contexts, it is the service worker's scope.
+     * * For `frame` contexts, it is the URL of the document being loaded, with these
+     * special cases:
+     *   * The initial empty document of a frame or popup is matched as `about:blank`.
+     * Set `matchOriginAsFallback` to match such documents by the origin of the frame
+     * that created them instead, for example to keep a script out of the `about:blank`
+     * popups of an excluded site.
+     *   * A `data:` URL loaded with `baseURLForDataURL` is matched by its base URL.
+     *   * The error page of a failed navigation is matched by the URL that failed to
+     * load.
+     *
+     * Throws an error if any of the URL patterns are invalid, or if `matches` or
+     * `includeGlobs` is an empty array.
      *
      * The ID of the registered preload script.
      */
@@ -15300,6 +15799,17 @@ declare namespace Electron {
      */
     categoryFilter: string;
     /**
+     * **Electron extension; not part of Chromium's TraceCategoriesAndOptions schema.**
+     * Enables native (C/C++) heap allocation profiling for this recording. This is
+     * distinct from JavaScript heap profiling (see `contents.takeHeapSnapshot()`); it
+     * samples allocations made by Chromium and native modules. Unlike `TraceConfig`,
+     * this object has no `included_process_ids` field, so every traced process is
+     * profiled.
+     *
+     * @experimental
+     */
+    nativeHeapProfiling?: NativeHeapProfilerOptions;
+    /**
      * Controls what kind of tracing is enabled, it is a comma-delimited sequence of
      * the following strings: `record-until-full`, `record-continuously`,
      * `trace-to-console`, `enable-sampling`, `enable-systrace`, e.g.
@@ -15351,6 +15861,17 @@ declare namespace Electron {
      * memory-infra docs for more information.
      */
     memory_dump_config?: Record<string, any>;
+    /**
+     * **Electron extension; not part of Chromium's TraceConfig schema.** Enables
+     * native (C/C++) heap allocation profiling for this recording. This is distinct
+     * from JavaScript heap profiling (see `process.takeHeapSnapshot()` or
+     * `contents.takeHeapSnapshot()`); it samples allocations made by Chromium and
+     * native modules. `included_process_ids` above also limits which processes are
+     * profiled when this is enabled.
+     *
+     * @experimental
+     */
+    nativeHeapProfiling?: NativeHeapProfilerOptions;
     /**
      * Can be `record-until-full`, `record-continuously`, `record-as-much-as-possible`
      * or `trace-to-console`. Defaults to `record-until-full`.
@@ -16420,26 +16941,34 @@ declare namespace Electron {
     /**
      * Emitted when the utility process encounters an HTTP 401 or 407 authentication
      * challenge, if the process was created with both
-     * `respondToAuthRequestsFromMainProcess: true` and a `session` option. The
-     * `callback` should be called with credentials to respond to the challenge.
-     * Calling `callback` without arguments will cancel the request.
+     * `respondToAuthRequestsFromMainProcess: true` and a `session` option.
+     *
+     * The default behavior is to cancel the authentication. To override this you
+     * should prevent the default behavior with `event.preventDefault()` and call
+     * `callback(username, password)` with the credentials. Calling `callback` without
+     * arguments will cancel the request.
      *
      * This behaves the same as the `login` event on `app` but is scoped to the
      * individual utility process instance.
      */
-    on(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    on(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    off(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    off(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    once(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    once(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    addListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    addListener(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
-    removeListener(event: 'login', listener: (authenticationResponseDetails: AuthenticationResponseDetails,
+    removeListener(event: 'login', listener: (event: Event,
+                                  authenticationResponseDetails: AuthenticationResponseDetails,
                                   authInfo: AuthInfo,
                                   callback: (username?: string, password?: string) => void) => void): this;
     /**
@@ -16695,6 +17224,9 @@ declare namespace Electron {
                                                mouse: MouseInputEvent) => void): this;
     /**
      * Emitted when the `WebContents` loses focus.
+     *
+     * The `blur` event is also emitted when switching between windows or apps for the
+     * `WebContents` that has focus within its window.
      */
     on(event: 'blur', listener: () => void): this;
     off(event: 'blur', listener: () => void): this;
@@ -17708,14 +18240,8 @@ declare namespace Electron {
     /**
      * Emitted when the `WebContents` gains focus.
      *
-     * Note that on macOS, having focus means the `WebContents` is the first responder
-     * of window, so switching focus between windows would not trigger the `focus` and
-     * `blur` events of `WebContents`, as the first responder of each window is not
-     * changed.
-     *
-     * The `focus` and `blur` events of `WebContents` should only be used to detect
-     * focus change between different `WebContents` and `BrowserView` in the same
-     * window.
+     * The `focus` event is also emitted when switching between windows or apps for the
+     * `WebContents` that has focus within its window.
      */
     on(event: 'focus', listener: () => void): this;
     off(event: 'focus', listener: () => void): this;
@@ -20666,6 +21192,10 @@ declare namespace Electron {
      */
     addEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'update-target-url', listener: (event: UpdateTargetUrlEvent) => void): this;
+    /**
+     * Emitted when a link is clicked in DevTools or 'Open in new tab' is selected for
+     * a link in its context menu.
+     */
     addEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void, useCapture?: boolean): this;
     removeEventListener(event: 'devtools-open-url', listener: (event: DevtoolsOpenUrlEvent) => void): this;
     /**
@@ -21674,10 +22204,10 @@ declare namespace Electron {
 
   interface Config {
     /**
-     * Can be `tls1`, `tls1.1`, `tls1.2` or `tls1.3`. The minimum SSL version to allow
-     * when connecting to remote servers. Defaults to `tls1`.
+     * Can be `tls1.2` or `tls1.3`. The minimum SSL version to allow when connecting to
+     * remote servers. Defaults to `tls1.2`.
      */
-    minVersion?: ('tls1' | 'tls1.1' | 'tls1.2' | 'tls1.3');
+    minVersion?: ('tls1.2' | 'tls1.3');
     /**
      * Can be `tls1.2` or `tls1.3`. The maximum SSL version to allow when connecting to
      * remote servers. Defaults to `tls1.3`.
@@ -22705,6 +23235,17 @@ declare namespace Electron {
     origin?: string;
   }
 
+  interface HighlightColorsOptions {
+    /**
+     * Colors used when menus are drawn with light colors.
+     */
+    light?: Light;
+    /**
+     * Colors used when menus are drawn with dark colors.
+     */
+    dark?: Dark;
+  }
+
   interface IgnoreMouseEventsOptions {
     /**
      * If true, forwards mouse move messages to Chromium, enabling mouse related events
@@ -23418,8 +23959,6 @@ declare namespace Electron {
     /**
      * Actions to add to the notification. Please read the available actions and
      * limitations in the `NotificationAction` documentation.
-     *
-     * @platform darwin,win32
      */
     actions?: NotificationAction[];
     /**
@@ -24560,6 +25099,16 @@ declare namespace Electron {
     fetchWindowIcons?: boolean;
   }
 
+  interface StartAppShimServerOptions {
+    /**
+     * A name for this server, which lets several running copies of your app each have
+     * their own. It can only contain letters, digits, `.`, `-` and `_`, and must match
+     * the `ElectronAppShimServerName` of the shims that connect to it. Default is
+     * `appshim`.
+     */
+    name?: string;
+  }
+
   interface StartLoggingOptions {
     /**
      * What kinds of data should be captured. By default, only metadata about requests
@@ -25424,6 +25973,18 @@ declare namespace Electron {
   interface Children {
   }
 
+  interface Dark {
+    /**
+     * Background color of the hovered or keyboard-focused menu item, as a CSS color
+     * string.
+     */
+    background?: string;
+    /**
+     * Text color of the hovered or keyboard-focused menu item, as a CSS color string.
+     */
+    foreground?: string;
+  }
+
   interface EditFlags {
     /**
      * Whether the renderer believes it can undo.
@@ -25534,6 +26095,18 @@ declare namespace Electron {
      * @platform win32
      */
     enabled: boolean;
+  }
+
+  interface Light {
+    /**
+     * Background color of the hovered or keyboard-focused menu item, as a CSS color
+     * string (e.g. `#0067c0`).
+     */
+    background?: string;
+    /**
+     * Text color of the hovered or keyboard-focused menu item, as a CSS color string.
+     */
+    foreground?: string;
   }
 
   interface Margins {
@@ -25961,6 +26534,7 @@ declare namespace Electron {
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
+    type HighlightColorsOptions = Electron.HighlightColorsOptions;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
@@ -26046,6 +26620,7 @@ declare namespace Electron {
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
+    type StartAppShimServerOptions = Electron.StartAppShimServerOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
@@ -26092,6 +26667,7 @@ declare namespace Electron {
     type WillResizeDetails = Electron.WillResizeDetails;
     type Animate = Electron.Animate;
     type Children = Electron.Children;
+    type Dark = Electron.Dark;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
     type FeatureReports = Electron.FeatureReports;
@@ -26099,6 +26675,7 @@ declare namespace Electron {
     type InputReports = Electron.InputReports;
     type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
+    type Light = Electron.Light;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
@@ -26161,6 +26738,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NativeHeapProfilerOptions = Electron.NativeHeapProfilerOptions;
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
@@ -26232,6 +26810,7 @@ declare namespace Electron {
     type Event<Params extends object = {}> = Electron.Event<Params>;
     const app: App;
     type App = Electron.App;
+    type AppShimHost = Electron.AppShimHost;
     const autoUpdater: AutoUpdater;
     type AutoUpdater = Electron.AutoUpdater;
     class BaseWindow extends Electron.BaseWindow {}
@@ -26395,6 +26974,7 @@ declare namespace Electron {
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
+    type HighlightColorsOptions = Electron.HighlightColorsOptions;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
@@ -26480,6 +27060,7 @@ declare namespace Electron {
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
+    type StartAppShimServerOptions = Electron.StartAppShimServerOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
@@ -26526,6 +27107,7 @@ declare namespace Electron {
     type WillResizeDetails = Electron.WillResizeDetails;
     type Animate = Electron.Animate;
     type Children = Electron.Children;
+    type Dark = Electron.Dark;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
     type FeatureReports = Electron.FeatureReports;
@@ -26533,6 +27115,7 @@ declare namespace Electron {
     type InputReports = Electron.InputReports;
     type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
+    type Light = Electron.Light;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
@@ -26595,6 +27178,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NativeHeapProfilerOptions = Electron.NativeHeapProfilerOptions;
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
@@ -26751,6 +27335,7 @@ declare namespace Electron {
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
+    type HighlightColorsOptions = Electron.HighlightColorsOptions;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
@@ -26836,6 +27421,7 @@ declare namespace Electron {
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
+    type StartAppShimServerOptions = Electron.StartAppShimServerOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
@@ -26882,6 +27468,7 @@ declare namespace Electron {
     type WillResizeDetails = Electron.WillResizeDetails;
     type Animate = Electron.Animate;
     type Children = Electron.Children;
+    type Dark = Electron.Dark;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
     type FeatureReports = Electron.FeatureReports;
@@ -26889,6 +27476,7 @@ declare namespace Electron {
     type InputReports = Electron.InputReports;
     type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
+    type Light = Electron.Light;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
@@ -26951,6 +27539,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NativeHeapProfilerOptions = Electron.NativeHeapProfilerOptions;
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
@@ -27109,6 +27698,7 @@ declare namespace Electron {
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
+    type HighlightColorsOptions = Electron.HighlightColorsOptions;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
@@ -27194,6 +27784,7 @@ declare namespace Electron {
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
+    type StartAppShimServerOptions = Electron.StartAppShimServerOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
@@ -27240,6 +27831,7 @@ declare namespace Electron {
     type WillResizeDetails = Electron.WillResizeDetails;
     type Animate = Electron.Animate;
     type Children = Electron.Children;
+    type Dark = Electron.Dark;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
     type FeatureReports = Electron.FeatureReports;
@@ -27247,6 +27839,7 @@ declare namespace Electron {
     type InputReports = Electron.InputReports;
     type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
+    type Light = Electron.Light;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
@@ -27309,6 +27902,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NativeHeapProfilerOptions = Electron.NativeHeapProfilerOptions;
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
@@ -27380,6 +27974,7 @@ declare namespace Electron {
     type Event<Params extends object = {}> = Electron.Event<Params>;
     const app: App;
     type App = Electron.App;
+    type AppShimHost = Electron.AppShimHost;
     const autoUpdater: AutoUpdater;
     type AutoUpdater = Electron.AutoUpdater;
     class BaseWindow extends Electron.BaseWindow {}
@@ -27565,6 +28160,7 @@ declare namespace Electron {
     type HidDeviceAddedDetails = Electron.HidDeviceAddedDetails;
     type HidDeviceRemovedDetails = Electron.HidDeviceRemovedDetails;
     type HidDeviceRevokedDetails = Electron.HidDeviceRevokedDetails;
+    type HighlightColorsOptions = Electron.HighlightColorsOptions;
     type IgnoreMouseEventsOptions = Electron.IgnoreMouseEventsOptions;
     type ImportCertificateOptions = Electron.ImportCertificateOptions;
     type ImportSharedTextureOptions = Electron.ImportSharedTextureOptions;
@@ -27650,6 +28246,7 @@ declare namespace Electron {
     type SharedDictionaryInfoOptions = Electron.SharedDictionaryInfoOptions;
     type Source = Electron.Source;
     type SourcesOptions = Electron.SourcesOptions;
+    type StartAppShimServerOptions = Electron.StartAppShimServerOptions;
     type StartLoggingOptions = Electron.StartLoggingOptions;
     type StartTask = Electron.StartTask;
     type Streams = Electron.Streams;
@@ -27696,6 +28293,7 @@ declare namespace Electron {
     type WillResizeDetails = Electron.WillResizeDetails;
     type Animate = Electron.Animate;
     type Children = Electron.Children;
+    type Dark = Electron.Dark;
     type EditFlags = Electron.EditFlags;
     type Env = Electron.Env;
     type FeatureReports = Electron.FeatureReports;
@@ -27703,6 +28301,7 @@ declare namespace Electron {
     type InputReports = Electron.InputReports;
     type Interfaces = Electron.Interfaces;
     type LaunchItems = Electron.LaunchItems;
+    type Light = Electron.Light;
     type Margins = Electron.Margins;
     type MediaFlags = Electron.MediaFlags;
     type Metadata = Electron.Metadata;
@@ -27765,6 +28364,7 @@ declare namespace Electron {
     type MimeTypedBuffer = Electron.MimeTypedBuffer;
     type MouseInputEvent = Electron.MouseInputEvent;
     type MouseWheelInputEvent = Electron.MouseWheelInputEvent;
+    type NativeHeapProfilerOptions = Electron.NativeHeapProfilerOptions;
     type NavigationEntry = Electron.NavigationEntry;
     type NotificationAction = Electron.NotificationAction;
     type NotificationResponse = Electron.NotificationResponse;
