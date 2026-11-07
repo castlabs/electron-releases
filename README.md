@@ -2,9 +2,7 @@
 
 Check out the [Wiki](../../wiki) for general news, guides, and other updates.
 
-> :warning: **Starting with `v46`, the Widevine CDM is no longer installed or updated implicitly at startup. Your app has to call `components.whenReady()` or `components.start()` for that to happen, see [Widevine CDM installation](#widevine-cdm-installation).**
->
-> Apps that already wait for `components.whenReady()` before playback, as shown [below](#using), need no changes. Please report any issues you find!
+> **Note:** Starting with `v46`, the Widevine CDM is installed and updated once the app calls `components.whenReady()` or `components.start()`, see [Widevine CDM installation](#widevine-cdm-installation). Apps that already wait for `components.whenReady()` before playback, as recommended [below](#using), need no changes.
 
 Electron for Content Security (ECS) is a fork of Electron created by Castlabs to facilitate the use of Google's [Widevine Content Decryption Module (CDM)](../../wiki/CDM) for DRM-enabled playback within Electron, including support for [Verified Media Path (VMP)](../../wiki/VMP). It is intended to be used as a drop-in replacement for stock Electron and supports Windows, macOS and Linux, although VMP is not available on Linux.
 
@@ -47,7 +45,7 @@ app.whenReady().then(async () => {
 });
 ```
 
-To shorten startup, `components.start()` can begin the installation early while the app does other initialization. It also takes options, such as a minimum Widevine CDM version, which requests an immediate update if the installed CDM is older than that:
+From ECS v46, `components.start()` can shorten startup by beginning the installation early while the app does other initialization. It also takes options, such as a minimum Widevine CDM version, which requests an immediate update if the installed CDM is older than that:
 
 ```javascript
 app.whenReady().then(async () => {
@@ -68,7 +66,7 @@ The only visible extensions provided is the new [components API](docs/api/compon
 
 ### Widevine CDM installation
 
-Nothing is installed or updated until the app calls `components.start()` or `components.whenReady()`. The first call installs the Widevine CDM immediately if no version is available yet, and its options apply for the whole run. Installed versions are checked for updates in the background, and an update takes effect after a restart.
+From ECS v46, nothing is installed or updated until the app calls `components.start()` or `components.whenReady()`. The first call installs the Widevine CDM immediately if no version is available yet, and its options apply for the whole run. Installed versions are checked for updates in the background, and an update takes effect after a restart.
 
 Installation and updates can be turned off by passing `--disable-component-update`, or by setting `components.updatesEnabled` to `false`. A CDM bundled with the app, or given with `--widevine-cdm-path`, can be used instead of the component, see the [components API](docs/api/components.md#widevine-cdm-sources) for details.
 
