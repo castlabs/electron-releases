@@ -1,4 +1,4 @@
-// Type definitions for Electron 45.2.1+wvcus
+// Type definitions for Electron 46.0.0-alpha.7+wvcus
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -1114,6 +1114,21 @@ declare namespace Electron {
      * @platform darwin,win32
      */
     addRecentDocument(path: string): void;
+    /**
+     * `true` when the app runs with a full administrator token while UAC is enabled
+     * (for example because it was started with "Run as administrator", from an
+     * elevated installer or from an elevated shell), so that a filtered, non-elevated
+     * token exists to relaunch with. It is `false` when the app is not elevated, for
+     * the built-in Administrator account, and when UAC is turned off.
+     *
+     * Chromium's sandbox cannot always launch child processes from an elevated browser
+     * process, and code that was not written to run elevated should not. An app that
+     * does not need elevation can restart itself with the user's normal token before
+     * doing anything else:
+     *
+     * @platform win32
+     */
+    canDeElevate(): boolean;
     /**
      * Clears the recent documents list.
      *
@@ -4587,12 +4602,10 @@ declare namespace Electron {
     /**
      * The `bounds` of this BrowserView instance as `Object`.
      *
-     * @experimental
      * @deprecated
      */
     getBounds(): Rectangle;
     /**
-     * @experimental
      * @deprecated
      */
     setAutoResize(options: AutoResizeOptions): void;
@@ -4624,21 +4637,18 @@ declare namespace Electron {
      * > [!NOTE] Hex format with alpha takes `AARRGGBB` or `ARGB`, _not_ `RRGGBBAA` or
      * `RGB`.
      *
-     * @experimental
      * @deprecated
      */
     setBackgroundColor(color: string): void;
     /**
      * Resizes and moves the view to the supplied bounds relative to the window.
      *
-     * @experimental
      * @deprecated
      */
     setBounds(bounds: Rectangle): void;
     /**
      * A `WebContents` object owned by this view.
      *
-     * @experimental
      * @deprecated
      */
     webContents: WebContents;
@@ -5908,7 +5918,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     addBrowserView(browserView: BrowserView): void;
@@ -5932,7 +5941,10 @@ declare namespace Electron {
      * whole visible page. If the page is not visible, `rect` may be empty. The page is
      * considered visible when its browser window is hidden and the capturer count is
      * non-zero. If you would like the page to stay hidden, you should ensure that
-     * `stayHidden` is set to true.
+     * `stayHidden` is set to true. The image has the page's device scale factor (for
+     * offscreen rendering, `webPreferences.offscreen.deviceScaleFactor`), so
+     * `image.getSize()` is in DIPs and `image.toBitmap()` holds the full-resolution
+     * pixels.
      */
     capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
@@ -6013,7 +6025,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     getBrowserView(): (BrowserView) | (null);
@@ -6025,7 +6036,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     getBrowserViews(): BrowserView[];
@@ -6388,7 +6398,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     removeBrowserView(browserView: BrowserView): void;
@@ -6547,7 +6556,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     setBrowserView(browserView: (BrowserView) | (null)): void;
@@ -6877,7 +6885,6 @@ declare namespace Electron {
      * > [!WARNING] The `BrowserView` class is deprecated, and replaced by the new
      * `WebContentsView` class.
      *
-     * @experimental
      * @deprecated
      */
     setTopBrowserView(browserView: BrowserView): void;
@@ -7613,9 +7620,23 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/structures/component-error
 
     /**
+     * Error code. One of the following values:
+     */
+    code: ('install-failed' | 'below-minimum' | 'not-supported');
+    /**
      * Component result record.
      */
     detail: ComponentResult;
+  }
+
+  interface ComponentOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/component-options
+
+    /**
+     * Minimum version of the component, e.g. `4.10.2891.0`. See Minimum version.
+     */
+    minimumVersion?: string;
   }
 
   interface ComponentResult extends ComponentStatus {
@@ -7633,10 +7654,21 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/components
 
     /**
+     * Starts registering all supported components, and installing any that are
+     * missing, without waiting for the result. Only the first call has an effect, a
+     * later call with different options emits a warning. Use `components.whenReady()`
+     * to wait for the result.
+     *
+     * This API must be called after the `ready` event is emitted, otherwise it throws.
+     */
+    start(options?: ComponentsOptions): void;
+    /**
      * A record of ComponentStatus objects where the keys are component identifiers.
      *
-     * This method can be used to check the state of any registered components.
+     * This method can be used to check the state of the supported components.
      * Supported component identifiers are provided as readonly properties (see below).
+     * It lists all supported components, also before `components.start()` is called,
+     * and does not start anything itself.
      *
      * This API must be called after the `ready` event is emitted.
      */
@@ -7645,24 +7677,26 @@ declare namespace Electron {
      * Fulfilled with an array of ComponentResult when all required components are
      * ready to be used.
      *
-     * If the components are already installed this will happen as soon as they are
-     * registered, otherwise an immediate installation will be triggered and the
-     * promise will fulfill once the missing components have been properly installed.
-     * The promise will be rejected with a ComponentsError if the installation fails.
-     * This in turn has an `errors` property, which is an array of ComponentError
-     * detailing individual errors that occured.
+     * Calls `components.start(options)`, so the components are started if they were
+     * not already. If the components are already installed the promise fulfills as
+     * soon as they are registered, otherwise an immediate installation is triggered
+     * and the promise fulfills once the missing components have been properly
+     * installed. The promise will be rejected with a ComponentsError if the
+     * installation fails. This in turn has an `errors` property, which is an array of
+     * ComponentError detailing individual errors that occurred.
      *
      * The `required` argument can be used to control which components are required to
      * successfully install. If no argument is provided all supported components are
      * implicitly required. An empty array would mean no components are required. In
-     * this case the updater promises are still guarnteed to settle before the returned
-     * promise resolves, but errors won't cause a promise rejection.. Finally, an array
-     * of component identifiers may be provided to require a specific component or set
-     * of components (any unknown identifiers will yield an error).
+     * this case the updater promises are still guaranteed to settle before the
+     * returned promise resolves, but errors won't cause a promise rejection. Finally,
+     * an array of component identifiers may be provided to require a specific
+     * component or set of components (any unknown identifiers will yield an error).
      *
-     * This API must be called after the `ready` event is emitted.
+     * This API must be called after the `ready` event is emitted, otherwise the
+     * promise is rejected.
      */
-    whenReady(required?: string[]): Promise<Electron.ComponentResult[]>;
+    whenReady(required?: string[], options?: ComponentsOptions): Promise<Electron.ComponentResult[]>;
     /**
      * A `Boolean` property that is `true` if component updates are enabled, `false`
      * otherwise. The value is persisted in the local state, using the key
@@ -7696,20 +7730,45 @@ declare namespace Electron {
     errors: ComponentError[];
   }
 
+  interface ComponentsOptions {
+
+    // Docs: https://electronjs.org/docs/api/structures/components-options
+
+    /**
+     * Options of individual components, where the keys are component identifiers, e.g.
+     * `components.WIDEVINE_CDM_ID`.
+     */
+    components?: Record<string, ComponentOptions>;
+  }
+
   interface ComponentStatus {
 
     // Docs: https://electronjs.org/docs/api/structures/component-status
 
     /**
-     * Status of component.
+     * Version of the component installed by the component updater, which includes a
+     * bundled version (or `null` if not supported/installed).
      */
-    status: string;
+    installedVersion: (string) | (null);
+    /**
+     * Widevine CDM only: path of the CDM library that is used for playback (or `null`
+     * if no CDM is registered yet). This can be an explicit `--widevine-cdm-path` CDM
+     * rather than the component.
+     */
+    path?: (string) | (null);
+    /**
+     * Status of component. One of the following values:
+     */
+    status: ('not-registered' | 'not-installed' | 'new' | 'checking' | 'can-update' | 'downloading' | 'decompressing' | 'patching' | 'updating' | 'updated' | 'up-to-date' | 'update-error' | 'not-supported');
     /**
      * Name of component (or `null` if not supported).
      */
     title: (string) | (null);
     /**
-     * Version of component (or `null` if not supported/installed).
+     * Version of the component in use (or `null` if none). For the Widevine CDM this
+     * is the CDM used for playback, which can be an explicit `--widevine-cdm-path`
+     * CDM, and an update only takes effect after a restart, so it can differ from
+     * `installedVersion`.
      */
     version: (string) | (null);
   }
@@ -8242,6 +8301,20 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/desktop-capturer
 
     /**
+     * The current restore token for the source, or an empty string if it has none.
+     *
+     * The system may replace the token each time the source is opened, which happens
+     * once in `desktopCapturer.getSources` and again when a stream is started from the
+     * source, and then only the newest token works on the next launch. Read it with
+     * this method once the stream is running, or before the app quits, and store that
+     * value rather than the one `getSources` returned. See Restoring a source on
+     * Wayland.
+     *
+     * @experimental
+     * @platform linux
+     */
+    getRestoreToken(sourceId: string): string;
+    /**
      * Resolves with an array of `DesktopCapturerSource` objects, each
      * `DesktopCapturerSource` represents a screen or an individual window that can be
      * captured.
@@ -8286,6 +8359,15 @@ declare namespace Electron {
      * the name of a window source will match the window title.
      */
     name: string;
+    /**
+     * A token that lets a later `desktopCapturer.getSources` call reopen this source
+     * without showing the system picker, or an empty string if the system did not
+     * issue one. See Restoring a source on Wayland.
+     *
+     * @experimental
+     * @platform linux
+     */
+    restoreToken: string;
     /**
      * A thumbnail image. **Note:** There is no guarantee that the size of the
      * thumbnail is the same as the `thumbnailSize` specified in the `options` passed
@@ -9112,10 +9194,85 @@ declare namespace Electron {
     isDirectory?: boolean;
   }
 
-  interface GlobalShortcut {
+  interface GlobalShortcut extends NodeJS.EventEmitter {
 
     // Docs: https://electronjs.org/docs/api/global-shortcut
 
+    /**
+     * Emitted on Linux Wayland when the `org.freedesktop.portal.GlobalShortcuts`
+     * portal resolves a registration request. The bind on this path is asynchronous
+     * and consent-gated, so the boolean returned by `register()` only refers to if the
+     * request was successfully submitted; this event reports the real outcome. `bound`
+     * is `false` when the portal denied the bind (for example an invalid app identity
+     * — see `app.setDesktopName()` — or a dismissed consent dialog) or the portal is
+     * unavailable.
+     *
+     * The event is always emitted asynchronously, and may be emitted more than once
+     * for the same accelerator: registering an additional shortcut re-binds the whole
+     * set, which re-resolves previously bound accelerators.
+     *
+     * This event is not emitted on X11 or on other platforms, where the return value
+     * of `register()` is already authoritative.
+     *
+     * @platform linux
+     */
+    on(event: 'registration-resolved', listener: (
+                                                  /**
+                                                   * The accelerator, as it was passed to `register()`.
+                                                   */
+                                                  accelerator: string,
+                                                  /**
+                                                   * Whether the portal accepted the bind request.
+                                                   */
+                                                  bound: boolean) => void): this;
+    /**
+     * @platform linux
+     */
+    off(event: 'registration-resolved', listener: (
+                                                  /**
+                                                   * The accelerator, as it was passed to `register()`.
+                                                   */
+                                                  accelerator: string,
+                                                  /**
+                                                   * Whether the portal accepted the bind request.
+                                                   */
+                                                  bound: boolean) => void): this;
+    /**
+     * @platform linux
+     */
+    once(event: 'registration-resolved', listener: (
+                                                  /**
+                                                   * The accelerator, as it was passed to `register()`.
+                                                   */
+                                                  accelerator: string,
+                                                  /**
+                                                   * Whether the portal accepted the bind request.
+                                                   */
+                                                  bound: boolean) => void): this;
+    /**
+     * @platform linux
+     */
+    addListener(event: 'registration-resolved', listener: (
+                                                  /**
+                                                   * The accelerator, as it was passed to `register()`.
+                                                   */
+                                                  accelerator: string,
+                                                  /**
+                                                   * Whether the portal accepted the bind request.
+                                                   */
+                                                  bound: boolean) => void): this;
+    /**
+     * @platform linux
+     */
+    removeListener(event: 'registration-resolved', listener: (
+                                                  /**
+                                                   * The accelerator, as it was passed to `register()`.
+                                                   */
+                                                  accelerator: string,
+                                                  /**
+                                                   * Whether the portal accepted the bind request.
+                                                   */
+                                                  bound: boolean) => void): this;
     /**
      * Whether this application has registered `accelerator`.
      *
@@ -9137,6 +9294,10 @@ declare namespace Electron {
      * When the accelerator is already taken by other applications, this call will
      * silently fail. This behavior is intended by operating systems, since they don't
      * want applications to fight for global shortcuts.
+     *
+     * On Linux Wayland, the return value only indicates that the bind request was
+     * submitted to the desktop portal; the portal resolves it asynchronously and the
+     * actual outcome is reported by the `registration-resolved` event.
      *
      * The following accelerators will not be registered successfully on macOS 10.14
      * Mojave unless the app has been authorized as a trusted accessibility client:
@@ -12045,7 +12206,7 @@ declare namespace Electron {
     id?: string;
     /**
      * Glob patterns applied after `matches`. A URL must also match one of these globs.
-     * `*` matches any sequence of characters and `?` matches zero or one character.
+     * `*` matches any sequence of characters and `?` matches any single character.
      * Must not be empty.
      */
     includeGlobs?: string[];
@@ -12892,17 +13053,6 @@ declare namespace Electron {
     // Docs: https://electronjs.org/docs/api/safe-storage
 
     /**
-     * the decrypted string. Decrypts the encrypted buffer obtained  with
-     * `safeStorage.encryptString` back into a string.
-     *
-     * **Deprecated:** Use `safeStorage.decryptStringAsync(encrypted)` instead. Data
-     * encrypted with `safeStorage.encryptString` can be decrypted with
-     * `safeStorage.decryptStringAsync`.
-     *
-     * @deprecated
-     */
-    decryptString(encrypted: Buffer): string;
-    /**
      * Resolve with an object containing the following:
      *
      * * `shouldReEncrypt` boolean - whether data that has just been returned from the
@@ -12912,16 +13062,6 @@ declare namespace Electron {
      * * `result` string - the decrypted string.
      */
     decryptStringAsync(encrypted: Buffer): Promise<Electron.DecryptStringAsyncReturnValue>;
-    /**
-     * An array of bytes representing the encrypted string.
-     *
-     * This function will throw an error if encryption fails.
-     *
-     * **Deprecated:** Use `safeStorage.encryptStringAsync(plainText)` instead.
-     *
-     * @deprecated
-     */
-    encryptString(plainText: string): Buffer;
     /**
      * An array of bytes representing the encrypted string.
      */
@@ -12957,18 +13097,6 @@ declare namespace Electron {
      * The returned promise resolves once initialization completes.
      */
     isAsyncEncryptionAvailable(): Promise<boolean>;
-    /**
-     * Whether encryption is available.
-     *
-     * On Linux, returns true if the app has emitted the `ready` event and the secret
-     * key is available. On MacOS, returns true if Keychain is available. On Windows,
-     * returns true once the app has emitted the `ready` event.
-     *
-     * **Deprecated:** Use `safeStorage.isAsyncEncryptionAvailable()` instead.
-     *
-     * @deprecated
-     */
-    isEncryptionAvailable(): boolean;
     /**
      * This function on Linux will force the module to use an in memory password for
      * creating symmetric key that is used for encrypt/decrypt functions when a valid
@@ -14444,7 +14572,7 @@ declare namespace Electron {
      * > [!NOTE] `isMainFrame` will always be `false` for a `fileSystem` request as a
      * result of Chromium limitations.
      */
-    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'top-level-storage-access' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
+    setPermissionCheckHandler(handler: ((webContents: (WebContents) | (null), permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', requestingOrigin: string, details: PermissionCheckHandlerHandlerDetails) => boolean) | (null)): void;
     /**
      * Sets the handler which can be used to respond to permission requests for the
      * `session`. Calling `callback(true)` will allow the permission and
@@ -14461,7 +14589,7 @@ declare namespace Electron {
      * control screen sharing separately should handle the two permissions
      * individually:
      */
-    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'top-level-storage-access' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
+    setPermissionRequestHandler(handler: ((webContents: WebContents, permission: 'ar' | 'automatic-fullscreen' | 'background-fetch' | 'background-sync' | 'captured-surface-control' | 'clipboard-read' | 'clipboard-sanitized-write' | 'deprecated-sync-clipboard-read' | 'display-capture' | 'fileSystem' | 'fullscreen' | 'geolocation' | 'geolocation-approximate' | 'hand-tracking' | 'hid' | 'idle-detection' | 'keyboardLock' | 'local-fonts' | 'local-network' | 'local-network-access' | 'loopback-network' | 'media' | 'mediaKeySystem' | 'midi' | 'midiSysex' | 'nfc' | 'notifications' | 'openExternal' | 'payment-handler' | 'periodic-background-sync' | 'persistent-storage' | 'pointerLock' | 'screen-wake-lock' | 'sensors' | 'serial' | 'smart-card' | 'speaker-selection' | 'storage-access' | 'system-wake-lock' | 'usb' | 'vr' | 'web-app-installation' | 'web-printing' | 'window-management' | 'unknown', callback: (permissionGranted: boolean) => void, details: (PermissionRequest) | (FilesystemPermissionRequest) | (MediaAccessPermissionRequest) | (OpenExternalPermissionRequest)) => void) | (null)): void;
     /**
      * Adds scripts that will be executed on ALL web contents that are associated with
      * this session just before normal `preload` scripts run.
@@ -16989,9 +17117,12 @@ declare namespace Electron {
     addListener(event: 'spawn', listener: () => void): this;
     removeListener(event: 'spawn', listener: () => void): this;
     /**
-     * Terminates the process gracefully. On POSIX, it uses SIGTERM but will ensure the
-     * process is reaped on exit. This function returns true if the kill is successful,
-     * and false otherwise.
+     * Terminates the process gracefully. On POSIX, it sends `SIGTERM`; on Windows, it
+     * terminates the process. Like Node's `child_process.kill()`, this delivers the
+     * signal but does not guarantee that the process exits: a child that handles
+     * `SIGTERM` decides when, or whether, to exit. On POSIX, the child is reaped by
+     * Electron once it exits. Returns `true` if the signal was delivered, and `false`
+     * otherwise.
      */
     kill(): boolean;
     /**
@@ -18431,7 +18562,8 @@ declare namespace Electron {
                                                explicitSet: boolean) => void): this;
     /**
      * Emitted when a new frame is generated. Only the dirty area is passed in the
-     * buffer.
+     * buffer. `image` has the view's device scale factor, so `image.getSize()` is in
+     * DIPs, while `dirtyRect` is in the pixels of `image.toBitmap()`.
      *
      * When using shared texture (set `webPreferences.offscreen.useSharedTexture` to
      * `true`) feature, you can pass the texture handle to external rendering pipeline
@@ -19027,7 +19159,9 @@ declare namespace Electron {
      * will be called with `callback(image, dirtyRect)` when there is a presentation
      * event.
      *
-     * The `image` is an instance of NativeImage that stores the captured frame.
+     * The `image` is an instance of NativeImage that stores the captured frame. It has
+     * the page's device scale factor, so `image.getSize()` is in DIPs, while
+     * `dirtyRect` is in the pixels of `image.toBitmap()`.
      *
      * The `dirtyRect` is an object with `x, y, width, height` properties that
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
@@ -19039,7 +19173,9 @@ declare namespace Electron {
      * will be called with `callback(image, dirtyRect)` when there is a presentation
      * event.
      *
-     * The `image` is an instance of NativeImage that stores the captured frame.
+     * The `image` is an instance of NativeImage that stores the captured frame. It has
+     * the page's device scale factor, so `image.getSize()` is in DIPs, while
+     * `dirtyRect` is in the pixels of `image.toBitmap()`.
      *
      * The `dirtyRect` is an object with `x, y, width, height` properties that
      * describes which part of the page was repainted. If `onlyDirty` is set to `true`,
@@ -19078,7 +19214,10 @@ declare namespace Electron {
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
      * whole visible page. The page is considered visible when its browser window is
      * hidden and the capturer count is non-zero. If you would like the page to stay
-     * hidden, you should ensure that `stayHidden` is set to true.
+     * hidden, you should ensure that `stayHidden` is set to true. The image has the
+     * page's device scale factor (for offscreen rendering,
+     * `webPreferences.offscreen.deviceScaleFactor`), so `image.getSize()` is in DIPs
+     * and `image.toBitmap()` holds the full-resolution pixels.
      */
     capturePage(rect?: Rectangle, opts?: Opts): Promise<Electron.NativeImage>;
     /**
@@ -20305,9 +20444,9 @@ declare namespace Electron {
     send(channel: string, ...args: any[]): void;
     /**
      * A `Boolean` representing whether the frame is detached from the frame tree. If a
-     * frame is accessed while the corresponding page is running any unload listeners,
-     * it may become detached as the newly navigated page replaced it in the frame
-     * tree.
+     * frame is accessed while the corresponding page is running any `pagehide` or
+     * `unload` listeners, it may become detached as the newly navigated page replaced
+     * it in the frame tree.
      *
      */
     readonly detached: boolean;
@@ -20532,10 +20671,6 @@ declare namespace Electron {
      * `WebContents` when the preferred size changes. Default is `false`.
      */
     enablePreferredSizeMode?: boolean;
-    /**
-     * Whether to enable the WebSQL api. Default is `true`.
-     */
-    enableWebSQL?: boolean;
     /**
      * Enables Chromium's experimental features. Default is `false`.
      */
@@ -21252,7 +21387,9 @@ declare namespace Electron {
      * Resolves with a NativeImage
      *
      * Captures a snapshot of the page within `rect`. Omitting `rect` will capture the
-     * whole visible page.
+     * whole visible page. The image has the page's device scale factor (for offscreen
+     * rendering, `webPreferences.offscreen.deviceScaleFactor`), so `image.getSize()`
+     * is in DIPs and `image.toBitmap()` holds the full-resolution pixels.
      */
     capturePage(rect?: Rectangle): Promise<Electron.NativeImage>;
     /**
@@ -21576,7 +21713,7 @@ declare namespace Electron {
      */
     nodeintegration: boolean;
     /**
-     * A `boolean` for the experimental option for enabling NodeJS support in
+     * A `boolean` for the experimental option for enabling Node.js support in
      * sub-frames such as iframes inside the `webview`. All your preloads will load for
      * every iframe, you can use `process.isMainFrame` to determine if you are in the
      * main frame or not. This option is disabled by default in the guest page.
@@ -21640,10 +21777,9 @@ declare namespace Electron {
      *
      * Security-critical preferences cannot be used to make the guest less secure than
      * its embedder. When the embedder has any of `contextIsolation`, `javascript`,
-     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox`,
-     * `nodeIntegrationInSubFrames` or `enableWebSQL` set to its more secure value, the
-     * guest inherits that value and the corresponding `webpreferences` entry is
-     * ignored.
+     * `nodeIntegration`, `nodeIntegrationInWorker`, `sandbox` or
+     * `nodeIntegrationInSubFrames` set to its more secure value, the guest inherits
+     * that value and the corresponding `webpreferences` entry is ignored.
      */
     webpreferences: string;
   }
@@ -21988,7 +22124,7 @@ declare namespace Electron {
      * can potentially include data types not explicitly listed here. (See Chromium's
      * `BrowsingDataRemover` for the full list.)
      */
-    dataTypes?: Array<'backgroundFetch' | 'cache' | 'cookies' | 'downloads' | 'fileSystems' | 'indexedDB' | 'localStorage' | 'serviceWorkers' | 'webSQL'>;
+    dataTypes?: Array<'backgroundFetch' | 'cache' | 'cookies' | 'downloads' | 'fileSystems' | 'indexedDB' | 'localStorage' | 'serviceWorkers'>;
     /**
      * Clear data for only these origins. Cannot be used with `excludeOrigins`.
      */
@@ -24665,6 +24801,13 @@ declare namespace Electron {
   interface RelaunchOptions {
     args?: string[];
     execPath?: string;
+    /**
+     * Start the new instance with the user's normal token instead of the current
+     * elevated one. See `app.canDeElevate()`.
+     *
+     * @platform win32
+     */
+    deElevate?: boolean;
   }
 
   interface RenderProcessGoneEvent extends DOMEvent {
@@ -25097,6 +25240,30 @@ declare namespace Electron {
      * type screen.
      */
     fetchWindowIcons?: boolean;
+    /**
+     * Can be `transient` or `persistent`. How long the source the user picks in the
+     * system picker can be reopened without showing the picker again. `transient`, the
+     * default, lasts at most until the app exits. `persistent` lasts across launches
+     * until the user revokes it; store the returned source's `restoreToken` to use it
+     * on a later launch. See Restoring a source on Wayland.
+     *
+     * @experimental
+     * @platform linux
+     */
+    persistMode?: ('transient' | 'persistent');
+    /**
+     * A `restoreToken` from an earlier call; `persistMode` must be passed with it. If
+     * the system still honors the token, the promise resolves with that source and no
+     * picker is shown. A token that was revoked or names a source that no longer
+     * exists is ignored and the picker is shown as if no token was passed; a value
+     * that is not a token the system issued makes the promise reject. Pass
+     * `persistMode: 'persistent'` with a persistent token every time: restoring it as
+     * `transient` ends the persistent grant.
+     *
+     * @experimental
+     * @platform linux
+     */
+    restoreToken?: string;
   }
 
   interface StartAppShimServerOptions {
@@ -26697,8 +26864,10 @@ declare namespace Electron {
     type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
+    type ComponentOptions = Electron.ComponentOptions;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
+    type ComponentsOptions = Electron.ComponentsOptions;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -27137,8 +27306,10 @@ declare namespace Electron {
     type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
+    type ComponentOptions = Electron.ComponentOptions;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
+    type ComponentsOptions = Electron.ComponentsOptions;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -27498,8 +27669,10 @@ declare namespace Electron {
     type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
+    type ComponentOptions = Electron.ComponentOptions;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
+    type ComponentsOptions = Electron.ComponentsOptions;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -27861,8 +28034,10 @@ declare namespace Electron {
     type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
+    type ComponentOptions = Electron.ComponentOptions;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
+    type ComponentsOptions = Electron.ComponentsOptions;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
@@ -28323,8 +28498,10 @@ declare namespace Electron {
     type ClipboardBookmark = Electron.ClipboardBookmark;
     type ColorSpace = Electron.ColorSpace;
     type ComponentError = Electron.ComponentError;
+    type ComponentOptions = Electron.ComponentOptions;
     type ComponentResult = Electron.ComponentResult;
     type ComponentsError = Electron.ComponentsError;
+    type ComponentsOptions = Electron.ComponentsOptions;
     type ComponentStatus = Electron.ComponentStatus;
     type Cookie = Electron.Cookie;
     type CPUUsage = Electron.CPUUsage;
